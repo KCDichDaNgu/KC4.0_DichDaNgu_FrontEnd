@@ -7,3 +7,4 @@ uvicorn
 python-dotenv
 cassandra-driver
 aiohttp
+aiokafka
