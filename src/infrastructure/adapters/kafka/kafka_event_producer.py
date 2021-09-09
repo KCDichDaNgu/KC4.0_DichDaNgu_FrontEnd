@@ -12,16 +12,15 @@ class KafkaEventProducer(EventProducer):
     def __init__(
         self,
         bootstrap_servers,
-        topic,
-        # group,
+        topics,
         log_service,
     ):
         super().__init__(
             log_service=log_service
         )
+
         self.bootstrap_servers = bootstrap_servers
-        self.topic = topic
-        # self.group = group
+        self.topics = topics
 
         self.is_started = False
 
@@ -111,18 +110,11 @@ class KafkaEventProducer(EventProducer):
             )
 
         await self.wait_for_connect()
-
-        # self.log_service.debug(
-        #     "Kafka event publisher connected to {} @ {}".
-        #     format(
-        #         self.topic,
-        #         self.bootstrap_servers
-        #     )
-        # )
+        
         print(
             "Kafka event publisher connected to {} @ {}".
             format(
-                self.topic,
+                self.topics,
                 self.bootstrap_servers
             )
         )
@@ -145,8 +137,6 @@ class KafkaEventProducer(EventProducer):
                         timeout
                     )
                 )
-
-    # Publishing
 
     async def create_producer(self):
         self.producer = AIOKafkaProducer(
