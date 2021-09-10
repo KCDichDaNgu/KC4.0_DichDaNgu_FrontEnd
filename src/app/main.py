@@ -1,12 +1,14 @@
 from sanic import Sanic
 from infrastructure.configs.main import GlobalConfig
 from infrastructure.database import init_db
+from sanic_openapi import swagger_blueprint
+
 
 from infrastructure.configs import ServerType, get_cnf, GlobalConfig
 
 from infrastructure.interceptors.exeption_interceptor import ExceptionInterceptor
 from infrastructure.adapters.kafka.main import init_kafka
-
+from modules.user_request.use_cases.main import translation_request_bp
 async def listener_before_server_start(*args, **kwargs):
     print("before_server_start")
     
@@ -26,7 +28,8 @@ async def init_app():
     config: GlobalConfig = get_cnf()
 
     app.config.update_config(config.dict())
-    
+
+    app.blueprint([translation_request_bp,swagger_blueprint])
     init_db(config.CASSANDRA_DATABASE)
 
     await init_kafka(config)
