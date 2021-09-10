@@ -132,6 +132,34 @@ class AppConfig(BaseModel):
             'path': '/static',
             'name': 'Static files serving',
             'abstract': False
+        },
+        "system_setting":{
+            'path': '/system-setting',
+            'name': 'System setting',
+            'summary': 'Create text translation request',
+            'desc': 'Create text translation request',
+            'method': 'POST'
+        },
+        "system_setting.create":{
+            'path': '',
+            'name': 'Create system setting',
+            'summary': 'Create system setting',
+            'desc': 'Create system setting',
+            'method': 'POST'
+        },
+        "system_setting.update":{
+            'path': '',
+            'name': 'Update system setting',
+            'summary': 'Update system setting',
+            'desc': 'Update system setting',
+            'method': 'PUT'
+        },
+        "system_setting.get":{
+            'path': '',
+            'name': 'Get system setting',
+            'summary': 'Get system setting',
+            'desc': 'Get system setting',
+            'method': 'GET'
         }
     }
 
