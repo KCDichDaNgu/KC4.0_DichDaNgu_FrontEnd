@@ -8,3 +8,4 @@ python-dotenv
 cassandra-driver
 aiohttp
 aiokafka
+addict

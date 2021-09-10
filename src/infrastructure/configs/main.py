@@ -3,11 +3,12 @@ from pydantic import (
     BaseSettings,
     BaseModel
 )
-
+from addict import Dict as Addict
 from typing import List, Optional
 from enum import Enum, unique
 
 CNF = None
+
 
 @unique
 class EnvState(str, Enum):
@@ -15,11 +16,13 @@ class EnvState(str, Enum):
     dev = 'dev'
     prod = 'prod'
 
+
 @unique
 class ServerType(Enum):
 
     uvicorn = 'uvicorn'
     built_in = 'built_in'
+
 
 class CassandraDatabase(BaseModel):
 
@@ -29,10 +32,12 @@ class CassandraDatabase(BaseModel):
     KEYSPACE: str = Field(None)
     HOST: str = Field(None)
 
+
 class KafkaProducer(BaseModel):
 
     BOOTSTRAP_SERVERS: List[str] = None
     TOPICS: List[str] = None
+
 
 class KafkaConsumer(BaseModel):
 
@@ -40,16 +45,30 @@ class KafkaConsumer(BaseModel):
     TOPICS: List[str] = None
     GROUP: str = Field(None)
 
+@unique
+class StatusCode(Enum):
+
+    success = 1
+    failed = 0
 class AppConfig(BaseModel):
-    """Application configurations."""
-    pass
+
+    ROUTES = Addict({
+        "translation_request": {
+            "child": {
+                "detect_language": {
+                    "path": "detect-language",
+                    "name": "detect-language"
+                }
+            }
+        }
+    })
 
 class GlobalConfig(BaseSettings):
 
     """Global configurations."""
 
     APP_CONFIG: AppConfig = AppConfig()
-    
+
     # define global variables with the Field class
     ENV_STATE: Optional[EnvState] = EnvState.dev.value
 
@@ -72,6 +91,7 @@ class GlobalConfig(BaseSettings):
         env_prefix = 'SANIC_'
         env_file_encoding = 'utf-8'
 
+
 class DevConfig(GlobalConfig):
     """Development configurations."""
 
@@ -93,18 +113,21 @@ class ProdConfig(GlobalConfig):
     class Config:
         env_file = ".env.production"
 
+
 def update_cnf(new_config):
 
     import infrastructure.configs
-    
+
     infrastructure.configs.CNF = new_config
+
 
 def get_cnf() -> GlobalConfig:
 
     import infrastructure.configs
-    
+
     return infrastructure.configs.CNF
-        
+
+
 class FactoryConfig:
     """Returns a config instance dependending on the ENV_STATE variable."""
 
@@ -113,9 +136,9 @@ class FactoryConfig:
         self.override_config = override_config
 
     def __call__(self):
-        
+
         config = None
-        
+
         if self.env_state == EnvState.dev.value:
             config = DevConfig(**self.override_config)
             config.ENV_STATE = EnvState.dev.value
@@ -124,10 +147,10 @@ class FactoryConfig:
             config = ProdConfig(**self.override_config)
             config.ENV_STATE = EnvState.prod.value
 
-        else: 
+        else:
             config = DevConfig(**self.override_config)
             config.ENV_STATE = EnvState.dev.value
 
         update_cnf(config)
-        
+
         return config
