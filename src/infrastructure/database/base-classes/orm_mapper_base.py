@@ -1,56 +1,56 @@
-from _typeshed import Self
 from core.base_classes.entity import BaseEntityProps
-from core.value_objects.date import DateVO
-from core.value_objects.id import ID
+from core.value_objects import DateVO, ID
 from abc import ABC, abstractmethod
-from pydantic import BaseModel
-from typing import TypeVar
-from entity_base import EntityBase
+from typing import Any, Generic, TypeVar
+from infrastructure.database.base_classes.orm_entity_base import OrmEntityBase
 
-Entity = TypeVar('Entity')
+Entity = TypeVar('Entity', BaseEntityProps)
 OrmEntity = TypeVar('OrmEntity')
 Props = TypeVar('Props')
 
-class OrmMapper(ABC, Entity(BaseEntityProps), OrmEntity, BaseModel):
+class OrmMapper(ABC, Generic[Entity, OrmEntity]):
     
     def __init__(self) -> None:
-
-        self.__entityConstructor: Entity
-        self.__ormEntityConstructor: OrmEntity
+        pass
 
     @abstractmethod
-    def _toDomainProps(self, ormEntity: OrmEntity) -> Entity:
+    def to_domain_props(self, orm_entity: OrmEntity) -> Entity:
         return
 
     @abstractmethod
-    def _toOrmEntity(self, entity: Entity) -> OrmEntity:
+    def to_orm_entity(self, entity: Entity) -> OrmEntity:
         return
 
-    def toDomainEntity(self, ormEntity: OrmEntity) -> Entity:
-        props = self._toDomainProps(ormEntity)
-        return self.assignPropsToEntity(props, ormEntity)
+    def to_domain_entity(self, orm_entity: OrmEntity) -> Entity:
 
-    def toOrmEntity(self, entity: Entity) -> OrmEntity:
-        props = self.toOrmEntity(entity)
-        return self.__ormEntityConstructor({
+        props = self.to_domain_props(orm_entity)
+
+        return self.assign_props_to_entity(props, orm_entity)
+
+    def to_orm_entity(self, entity: Entity) -> OrmEntity:
+
+        props = self.to_orm_entity(entity)
+
+        return OrmEntityBase(**{
             **props,
             'id': entity.id.value,
-            'createdAt': entity.createdAt.value,
-            'updatedAt': entity.updatedAt.value
+            'createdAt': entity.created_at.value,
+            'updatedAt': entity.updated_at.value
         })
 
 
-    def assignPropsToEntity(
+    def assign_props_to_entity(
         self, 
-        entityProps: Props,
-        ormEntity: OrmEntity) -> Entity:
+        entity_props: Any,
+        orm_entity: OrmEntity
+    ) -> Entity:
 
-        entityCopy: any = {**self.__entityConstructor}
-        ormEntityBase: EntityBase = ormEntity
+        orm_entity_base: OrmEntityBase = orm_entity
 
-        entityCopy.props = entityProps
-        entityCopy.id = ID(ormEntityBase.id)
-        entityCopy.createAt = DateVO(ormEntityBase.createdAt)
-        entityCopy.updatedAt = DateVO(ormEntityBase.updatedAt)
-
-        return entityCopy
+        return Entity(
+            props=entity_props,
+            id=ID(orm_entity_base.id),
+            created_at=DateVO(orm_entity_base.created_at),
+            updated_at=DateVO(orm_entity_base.updated_at)
+        )
+        
