@@ -31,13 +31,19 @@ class Entity(BaseModel, EntityProps, ABC):
     
     props: EntityProps
 
-    def __init__(self, props: EntityProps) -> None:
+    def __init__(
+        self, 
+        props: EntityProps, 
+        id: ID, 
+        created_at: DateVO,
+        updated_at: DateVO
+    ) -> None:
         self.validate_props(props)
-        self.__id = ID.generate()
+        self.__id = id if id else ID.generate()
 
         now: Final = DateVO.now()
-        self.__created_at = now
-        self.__updated_at = now
+        self.__created_at = created_at if created_at else now
+        self.__updated_at = updated_at if updated_at else now
 
         self.props = props
 

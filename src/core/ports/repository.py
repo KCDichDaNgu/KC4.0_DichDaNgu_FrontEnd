@@ -10,7 +10,7 @@ Entity = TypeVar('Entity')
 EntityProps = TypeVar('EntityProps')
 T = TypeVar('T')
 
-OrderBy = Dict[str, Union[str, Complex]]
+order_by = Dict[str, Union[str, Complex]]
 
 class PaginationMeta(ABC, BaseModel):
 
@@ -22,13 +22,13 @@ class FindManyPaginatedParams(ABC, Generic[EntityProps]):
 
     params: Optional[Dict]
     pagination: Optional[PaginationMeta]
-    orderBy: Optional[OrderBy]
+    order_by: Optional[order_by]
 
-class DataWithPaginationMeta(ABC, Generic[T]):
+class DataWithPaginationMeta(BaseModel, Generic[T]):
 
     data: T
-    count: Complex
-    limit: Optional[int]
+    total_entries: int
+    per_page: Optional[int]
     page: Optional[int]
     
 

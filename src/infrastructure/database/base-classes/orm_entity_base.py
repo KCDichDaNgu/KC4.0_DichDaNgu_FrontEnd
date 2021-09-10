@@ -5,9 +5,9 @@ from cassandra.cqlengine.models import Model
 from cassandra.cqlengine import columns
 
 
-class EntityBase(ABC, Model):
+class OrmEntityBase(ABC, Model):
 
     id: columns.UUID(primary_key=True, default=uuid4)
-    createdAt: columns.datetime
-    updatedAt: columns.datetime
+    created_at: columns.datetime
+    updated_at: columns.datetime
     

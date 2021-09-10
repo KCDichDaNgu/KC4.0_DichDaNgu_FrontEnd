@@ -1,3 +1,4 @@
+from src.core.value_objects.id import ID
 from typing import Generic, List, TypeVar
 
 from pydantic.fields import PrivateAttr
@@ -12,9 +13,9 @@ class AggregateRoot(Entity[EntityProps]):
 
     __domain_events: List[DomainEvent] = PrivateAttr([])
 
-    def __init__(self) -> None:
-        pass
-
+    def __init__(self, props: EntityProps, id: ID, created_at: DateVO, updated_at: DateVO) -> None:
+        super().__init__(props, id, created_at, updated_at)
+    
     @property
     def domain_events(self) -> List[DomainEvent]:
         return self.__domain_events
