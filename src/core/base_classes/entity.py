@@ -12,7 +12,7 @@ from core.value_objects.id import ID
 from abc import ABC
 from pydantic import BaseModel, PrivateAttr
 
-from typing import Any, List, Final, Optional, TypeVar, Union
+from typing import Any, Dict, List, Final, Optional, TypeVar, Union
 
 EntityProps = TypeVar('EntityProps')
 
@@ -33,17 +33,15 @@ class Entity(BaseModel, EntityProps, ABC):
 
     def __init__(
         self, 
-        props: EntityProps, 
-        id: ID, 
-        created_at: DateVO,
-        updated_at: DateVO
+        props: EntityProps
     ) -> None:
         self.validate_props(props)
-        self.__id = id if id else ID.generate()
+
+        self.__id = ID.generate()
 
         now: Final = DateVO.now()
-        self.__created_at = created_at if created_at else now
-        self.__updated_at = updated_at if updated_at else now
+        self.__created_at = now
+        self.__updated_at = now
 
         self.props = props
 
@@ -92,6 +90,25 @@ class Entity(BaseModel, EntityProps, ABC):
         }
 
         return props_copy
+
+    @classmethod
+    def from_orm(cls, props: Dict):
+
+        new_entity = cls(props)
+
+        if "id" in props:
+
+            new_entity.__id = props["id"]
+
+        if "created_at" in props:
+
+            new_entity.__created_at = props["created_at"]
+
+        if "updated_at" in props:
+
+            new_entity.__updated_at = props["updated_at"]
+
+        return new_entity
 
     @staticmethod
     def convert_to_raw(item: Any):

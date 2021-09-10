@@ -13,8 +13,8 @@ class AggregateRoot(Entity[EntityProps]):
 
     __domain_events: List[DomainEvent] = PrivateAttr([])
 
-    def __init__(self, props: EntityProps, id: ID, created_at: DateVO, updated_at: DateVO) -> None:
-        super().__init__(props, id, created_at, updated_at)
+    def __init__(self, props: EntityProps) -> None:
+        super().__init__(props)
     
     @property
     def domain_events(self) -> List[DomainEvent]:
