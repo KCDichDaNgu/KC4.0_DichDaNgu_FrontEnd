@@ -14,7 +14,7 @@ class OrmMapper(ABC, Generic[Entity, OrmEntity]):
         pass
 
     @abstractmethod
-    def to_domain_props(self, orm_entity: OrmEntity) -> Entity:
+    def to_domain_props(self, orm_entity: OrmEntity) -> Any:
         return
 
     @abstractmethod

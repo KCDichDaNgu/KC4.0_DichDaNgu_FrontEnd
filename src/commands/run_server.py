@@ -6,7 +6,7 @@ import typing
 import logging
 import sys
 import os
-from infrastructure.configs import ServerType
+from infrastructure.configs import ServerTypeEnum
 
 from asgiref.typing import ASGIApplication
 
@@ -17,7 +17,7 @@ from uvicorn.config import (
 from uvicorn.server import Server
 from uvicorn.supervisors import ChangeReload, Multiprocess
 
-from infrastructure.configs import FactoryConfig, EnvState, get_cnf
+from infrastructure.configs import FactoryConfig, EnvStateEnum, get_cnf
 
 from commands import cli, click
 
@@ -112,10 +112,10 @@ class SanicBuiltInServer(BaseServer):
 @cli.command('run-server')
 @click.option('-h', '--host', default=None, type=str)
 @click.option('-p', '--port', default=None, type=int)
-@click.option('-e', '--env', default='dev', type=click.Choice(EnvState.__members__))
+@click.option('-e', '--env', default='dev', type=click.Choice(EnvStateEnum.__members__))
 @click.option('-wk', '--workers', default=1, type=int)
 @click.option('-alg', '--access-log', default=False, type=bool)
-@click.option('-st', '--server-type', default='uvicorn', type=click.Choice(ServerType.__members__))
+@click.option('-st', '--server-type', default='uvicorn', type=click.Choice(ServerTypeEnum.__members__))
 @click.option('-lsp', '--lifespan', default='on', type=str)
 def run_server(
     host, 
@@ -165,7 +165,7 @@ def run_server(
     
     app = asyncio.run(init_app())
     
-    if server_type == ServerType.uvicorn.value:
+    if server_type == ServerTypeEnum.uvicorn.value:
         
         UvicornServer.run(app)
     

@@ -9,6 +9,7 @@ from orm_mapper_base import OrmMapper
 from core.base_classes.entity import BaseEntityProps
 from abc import ABC
 from typing import Generic, List, TypeVar, Any, Union
+from cassandra.cqlengine.query import BatchQuery
 
 import asyncio
 
@@ -50,11 +51,13 @@ class OrmRepositoryBase(
 
         asyncio.gather(*[DomainEvents.publish_events(entity.id, self.logger) for entity in entities])
 
-        for entity in entities:
-            orm_entity = self.__mapper.to_orm_entity(entity)
-            new_entity = await self.__repository.create(orm_entity)
+        with BatchQuery() as b:
+            for entity in entities:
 
-            result.append(self.__mapper.to_domain_entity(new_entity))
+                orm_entity = self.__mapper.to_orm_entity(entity)
+                new_entity = await self.__repository.batch(b).create(orm_entity)
+
+                result.append(self.__mapper.to_domain_entity(new_entity))
 
         self.__logger.debug(f'[Multiple entities persisted]: {Entity.__name__} {"".join(list(map(lambda e: e.id, entities)))}')
 

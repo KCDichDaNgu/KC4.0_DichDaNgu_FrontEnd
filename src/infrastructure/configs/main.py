@@ -3,65 +3,41 @@ from pydantic import (
     BaseSettings,
     BaseModel
 )
-from addict import Dict as Addict
-from typing import List, Optional
+
+from typing import Optional
 from enum import Enum, unique
+
+from infrastructure.configs.database import CassandraDatabase
+from infrastructure.configs.event_dispatcher import KafkaConsumer, KafkaProducer
 
 CNF = None
 
-
 @unique
-class EnvState(str, Enum):
+class EnvStateEnum(str, Enum):
 
     dev = 'dev'
     prod = 'prod'
 
-
 @unique
-class ServerType(Enum):
+class ServerTypeEnum(str, Enum):
 
     uvicorn = 'uvicorn'
     built_in = 'built_in'
 
-
-class CassandraDatabase(BaseModel):
-
-    NAME: str = Field(None)
-    PASSWORD: str = Field(None)
-    USER: str = Field(None)
-    KEYSPACE: str = Field(None)
-    HOST: str = Field(None)
-
-
-class KafkaProducer(BaseModel):
-
-    BOOTSTRAP_SERVERS: List[str] = None
-    TOPICS: List[str] = None
-
-
-class KafkaConsumer(BaseModel):
-
-    BOOTSTRAP_SERVERS: List[str] = None
-    TOPICS: List[str] = None
-    GROUP: str = Field(None)
-
 @unique
-class StatusCode(Enum):
+class StatusCodeEnum(int, Enum):
 
     success = 1
     failed = 0
+
 class AppConfig(BaseModel):
 
-    ROUTES = Addict({
-        "translation_request": {
-            "child": {
-                "detect_language": {
-                    "path": "detect-language",
-                    "name": "detect-language"
-                }
-            }
+    ROUTES = {
+        "translation_request.detect_language": {
+            "path": "detect-language",
+            "name": "detect-language"
         }
-    })
+    }
 
 class GlobalConfig(BaseSettings):
 
@@ -70,7 +46,7 @@ class GlobalConfig(BaseSettings):
     APP_CONFIG: AppConfig = AppConfig()
 
     # define global variables with the Field class
-    ENV_STATE: Optional[EnvState] = EnvState.dev.value
+    ENV_STATE: Optional[EnvStateEnum] = EnvStateEnum.dev.value
 
     APP_HOST: str = '0.0.0.0'
     APP_PORT: int = 8000
@@ -139,17 +115,17 @@ class FactoryConfig:
 
         config = None
 
-        if self.env_state == EnvState.dev.value:
+        if self.env_state == EnvStateEnum.dev.value:
             config = DevConfig(**self.override_config)
-            config.ENV_STATE = EnvState.dev.value
+            config.ENV_STATE = EnvStateEnum.dev.value
 
-        elif self.env_state == EnvState.prod.value:
+        elif self.env_state == EnvStateEnum.prod.value:
             config = ProdConfig(**self.override_config)
-            config.ENV_STATE = EnvState.prod.value
+            config.ENV_STATE = EnvStateEnum.prod.value
 
         else:
             config = DevConfig(**self.override_config)
-            config.ENV_STATE = EnvState.dev.value
+            config.ENV_STATE = EnvStateEnum.dev.value
 
         update_cnf(config)
 

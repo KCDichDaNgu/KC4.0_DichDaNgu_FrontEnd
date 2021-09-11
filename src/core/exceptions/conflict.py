@@ -1,6 +1,6 @@
 from pydantic.fields import PrivateAttr
 from core.exceptions.base import ExceptionBase
-from core.exceptions.type import Exceptions
+from core.exceptions.type import ExceptionsEnum
 from sanic.exceptions import SanicException
 
 class SanicConflictException(SanicException):
@@ -13,4 +13,4 @@ class SanicConflictException(SanicException):
 
 class ConfictException(ExceptionBase):
 
-    __name: str = PrivateAttr(Exceptions.conflict.value)
+    __name: str = PrivateAttr(ExceptionsEnum.conflict.value)

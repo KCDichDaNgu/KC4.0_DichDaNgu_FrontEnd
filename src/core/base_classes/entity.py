@@ -12,7 +12,7 @@ from core.value_objects.id import ID
 from abc import ABC
 from pydantic import BaseModel, PrivateAttr
 
-from typing import Any, Dict, List, Final, Optional, TypeVar, Union
+from typing import Any, Dict, Generic, List, Final, NewType, Optional, TypeVar
 
 EntityProps = TypeVar('EntityProps')
 
@@ -22,8 +22,7 @@ class BaseEntityProps(BaseModel, ABC):
     created_at: DateVO
     updated_at: DateVO
 
-
-class Entity(BaseModel, EntityProps, ABC):
+class Entity(BaseModel, Generic[EntityProps], ABC):
 
     __id: ID = PrivateAttr()
     __created_at: DateVO = PrivateAttr()
@@ -44,6 +43,9 @@ class Entity(BaseModel, EntityProps, ABC):
         self.__updated_at = now
 
         self.props = props
+
+    class MergedProps(Generic[EntityProps], BaseEntityProps):
+        pass
 
     @property
     def props(self):
@@ -80,7 +82,7 @@ class Entity(BaseModel, EntityProps, ABC):
 
         return self.__id if self.__id == object.id else False
 
-    def get_props_copy(self) -> Union[EntityProps, BaseEntityProps]:
+    def get_props_copy(self) -> MergedProps:
 
         props_copy = {
             'id': self.__id,
