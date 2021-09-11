@@ -4,11 +4,11 @@ from infrastructure.database import init_db
 from sanic_openapi import swagger_blueprint
 
 
-from infrastructure.configs import ServerType, get_cnf, GlobalConfig
+from infrastructure.configs import ServerTypeEnum, get_cnf, GlobalConfig
 
 from infrastructure.interceptors.exeption_interceptor import ExceptionInterceptor
 from infrastructure.adapters.kafka.main import init_kafka
-from modules.user_request.use_cases.main import translation_request_bp
+
 async def listener_before_server_start(*args, **kwargs):
     print("before_server_start")
     
@@ -29,19 +29,18 @@ async def init_app():
 
     app.config.update_config(config.dict())
 
-    app.blueprint([translation_request_bp,swagger_blueprint])
     init_db(config.CASSANDRA_DATABASE)
 
     await init_kafka(config)
 
     app.error_handler = ExceptionInterceptor()
 
-    if config.SERVER_TYPE == ServerType.uvicorn.value:
+    if config.SERVER_TYPE == ServerTypeEnum.uvicorn.value:
 
         app.register_listener(listener_after_server_start, 'after_server_start')
         app.register_listener(listener_before_server_stop, 'before_server_stop')
 
-    elif config.SERVER_TYPE == ServerType.built_in.value:
+    elif config.SERVER_TYPE == ServerTypeEnum.built_in.value:
 
         app.register_listener(listener_before_server_start, 'before_server_start')
         app.register_listener(listener_after_server_start, 'after_server_start')

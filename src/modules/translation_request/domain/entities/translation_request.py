@@ -1,40 +1,13 @@
+from src.core.base_classes.entity import BaseEntityProps
 from typing import Union
 from pydantic.fields import Field
 from pydantic.main import BaseModel
+from infrastructure.configs.translation_request import (
+    TaskType, CreatorType, Status, TranslationStep, DetectionLanguageStep
+)
+
 from core.base_classes.aggregate_root import AggregateRoot
-from enum import Enum
 from core.value_objects import DateVO, ID
-
-
-class TaskType(Enum):
-
-    file_translation = 'file_translation'
-    text_translation = 'text_translation'
-    language_detection = 'language_detection'
-
-
-class CreatorType(Enum):
-
-    end_user = 'end_user'
-
-
-class Status(Enum):
-
-    not_yet_processed = 'not_yet_processed'
-    in_progress = 'in_progress'
-    completed = 'completed'
-    cancelled = 'cancelled'
-
-
-class TranslationStep(Enum):
-
-    detecting_language = 'detecting_language'
-    translating_language = 'translating_language'
-
-class DetectionLanguageStep(Enum):
-
-    detecting_language = 'detecting_language'
-
 
 class TranslationRequestProps(BaseModel):
 
@@ -45,18 +18,28 @@ class TranslationRequestProps(BaseModel):
     current_step: Union[TranslationStep, DetectionLanguageStep] = Field(...)
     expired_date: DateVO
 
+    class Config:
+        use_enum_values = True
 
-class TranslationRequest(AggregateRoot[TranslationRequestProps]):
+
+class TranslationRequestEntity(AggregateRoot[TranslationRequestProps]):
 
     def __init__(
         self,
-        props: TranslationRequestProps,
-        id: ID = None,
-        created_at: DateVO = None,
-        updated_at: DateVO = None
+        props: TranslationRequestProps
     ) -> None:
-        super().__init__(props, id, created_at, updated_at)
+        super().__init__(props)
 
-    @staticmethod
-    def validate(props: TranslationRequestProps):
+    class MergedProps(TranslationRequestProps, BaseEntityProps):
         pass
+
+    def get_props_copy(self) -> MergedProps:
+
+        props_copy = {
+            'id': self.__id,
+            'created_at': self.__created_at,
+            'updated_at': self.__updated_at,
+            **self.props
+        }
+
+        return props_copy

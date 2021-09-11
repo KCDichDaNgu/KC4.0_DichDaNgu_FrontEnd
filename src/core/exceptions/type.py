@@ -1,6 +1,6 @@
 from enum import Enum
 
-class Exceptions(str, Enum):
+class ExceptionsEnum(str, Enum):
 
     argument_invalid = 'argument_invalid_exception',
     argument_out_of_range = 'argument_out_of_range_exception',

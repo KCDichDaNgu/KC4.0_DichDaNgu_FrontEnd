@@ -1,37 +1,29 @@
-from pydantic.fields import PrivateAttr
+from src.core.base_classes.entity import BaseEntityProps
 from pydantic.main import BaseModel
-from core.base_classes.value_object import ValueObject, ValueObjectProps
-from core.value_objects import DateVO, ID
+from core.base_classes import Entity
+from core.value_objects import ID
 
 class TranslationRequestResultProps(BaseModel):
     
-    id: ID
     task_id: ID
     step: str
     result_url: str
-    created_at: DateVO
-    updated_at: DateVO
 
-class TranslationRequestResult(ValueObject[TranslationRequestResultProps]):
+class TranslationRequestResultEntity(Entity[TranslationRequestResultProps]):
 
-    __id: ID = PrivateAttr()
-    __created_at: DateVO = PrivateAttr()
-    __updated_at: DateVO = PrivateAttr()
-
-    def __init__(self, props: ValueObjectProps[TranslationRequestResultProps]) -> None:
+    def __init__(self, props: TranslationRequestResultProps) -> None:
         super().__init__(props)
 
-    @property
-    def id(self):
+    class MergedProps(TranslationRequestResultProps, BaseEntityProps):
+        pass
 
-        return self.__id
+    def get_props_copy(self) -> MergedProps:
 
-    @property
-    def created_at(self):
+        props_copy = {
+            'id': self.__id,
+            'created_at': self.__created_at,
+            'updated_at': self.__updated_at,
+            **self.props
+        }
 
-        return self.__created_at
-
-    @property
-    def updated_at(self):
-
-        return self.__updated_at
+        return props_copy
