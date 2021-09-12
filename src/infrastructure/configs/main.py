@@ -23,11 +23,13 @@ class EnvStateEnum(str, ExtendedEnum):
     dev = 'dev'
     prod = 'prod'
 
+
 @unique
 class ServerTypeEnum(str, ExtendedEnum):
 
     uvicorn = 'uvicorn'
     built_in = 'built_in'
+
 
 @unique
 class StatusCodeEnum(int, ExtendedEnum):
@@ -161,6 +163,7 @@ class AppConfig(BaseModel):
             'desc': 'Get system setting',
             'method': 'GET'
         }
+
     }
 
     API_BASEPATH: str = '/api'

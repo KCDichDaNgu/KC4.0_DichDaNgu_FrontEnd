@@ -47,6 +47,8 @@ def init_routes(app: Sanic) -> Sanic:
     from modules.language_detection_history.main import language_detection_history_bp
 
     from modules.static_files_server.main import static_files_server_bp
+    from modules.system_setting.main import system_setting_bp
+
 
     app.blueprint(swagger_blueprint)
 
@@ -57,6 +59,8 @@ def init_routes(app: Sanic) -> Sanic:
     app.blueprint(language_detection_history_bp)
 
     app.blueprint(static_files_server_bp)
+
+    # app.blueprint(system_setting_bp)
     
     return app
 

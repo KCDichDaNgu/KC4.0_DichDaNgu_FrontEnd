@@ -1,6 +1,7 @@
 from typing import Any, Dict
 from pydantic import BaseModel, Field
 
+
 class KeySpaceConfig(BaseModel):
 
     NAME: str = Field(None)
@@ -10,8 +11,9 @@ class KeySpaceConfig(BaseModel):
     STRATEGY_OPTIONS: dict = {'replication_factor': 1}
     CONNECTIONS: Any = None
 
+
 class CassandraDatabase(BaseModel):
-    
+
     NAME: str = Field(None)
     PASSWORD: str = Field(None)
     USER: str = Field(None)
@@ -20,15 +22,17 @@ class CassandraDatabase(BaseModel):
     SCHEMA_VERSION = 1
 
     KEYSPACE: KeySpaceConfig
-    
+
     PROTOCOL_VERSION: int = 3
 
     TABLES: dict = {}
+
 
 class MongoDBConnectionOptions(BaseModel):
 
     MIN_POOL_SIZE: int = Field(...)
     MAX_POOL_SIZE: int = Field(...)
+
 
 class MongoDBDatabase(BaseModel):
 
@@ -55,6 +59,9 @@ class MongoDBDatabase(BaseModel):
         },
         "language_detection_history": {
             "name": "language_detection_history"
+        },
+        "system_setting": {
+            "name": "system_setting"
         }
     }
 
@@ -69,6 +76,7 @@ class MongoDBDatabase(BaseModel):
             self.DATABASE_NAME,
             self.REPLICASET
         )
+
 
 ORM_VALID_CLASSNAMES = [
     'OrmEntityBase',
@@ -85,9 +93,11 @@ ORM_VALID_CLASSNAMES = [
     'LanguageDetectionRequestResultOrmEntity'
 ]
 
+
 def validate_orm_class_name(doc_class, class_names=ORM_VALID_CLASSNAMES):
-    
+
     if not doc_class.__name__ in class_names:
-        raise Exception('Orm classname changed!!! Please carefully with Parent - Child class pairs, they use class name for discriminating')
+        raise Exception(
+            'Orm classname changed!!! Please carefully with Parent - Child class pairs, they use class name for discriminating')
 
     return doc_class
