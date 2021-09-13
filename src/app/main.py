@@ -1,8 +1,6 @@
 from sanic import Sanic
 from infrastructure.configs.main import GlobalConfig
-from infrastructure.database import init_db
 from sanic_openapi import swagger_blueprint, openapi2_blueprint
-# from modules.translation_request.main import translation_request_bp
 
 from infrastructure.configs import ServerTypeEnum, get_cnf, GlobalConfig
 
@@ -37,8 +35,10 @@ async def init_app():
         config.APP_CONFIG.APP_NAME, 
         strict_slashes=config.APP_CONFIG.STRICT_SLASHES
     )
-
+    
     app.config.update_config(config.dict())
+    
+    from infrastructure.database import init_db
 
     init_db(config.CASSANDRA_DATABASE)
 

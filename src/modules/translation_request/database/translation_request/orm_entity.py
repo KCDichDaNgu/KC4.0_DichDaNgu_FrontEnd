@@ -26,4 +26,4 @@ class TranslationRequestOrmEntity(OrmEntityBase):
 
             raise ValidationError('Creator cannot be None')
 
-TranslationRequestOrmEntity.sync_table_to_db()
+TranslationRequestOrmEntity.sync_table_to_db([database_config.KEYSPACE.NAME])

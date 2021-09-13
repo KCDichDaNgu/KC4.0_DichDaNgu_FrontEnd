@@ -1,3 +1,6 @@
+import cassandra
+from infrastructure.configs.main import GlobalConfig, get_cnf
+from typing import List
 from uuid import uuid4
 from datetime import datetime
 from cassandra.cqlengine.models import Model
@@ -6,6 +9,9 @@ from cassandra.cqlengine.management import sync_table
 
 from infrastructure.database.base_classes.aiocqlengine.model import AioModel
 
+config: GlobalConfig = get_cnf()
+database_config = config.CASSANDRA_DATABASE
+
 class OrmEntityBase(AioModel):
     
     id = columns.UUID(primary_key=True, default=uuid4)
@@ -13,8 +19,14 @@ class OrmEntityBase(AioModel):
     updated_at = columns.DateTime(required=True, default=datetime.now)
     
     @classmethod
-    def sync_table_to_db(cls):
-        sync_table(cls)
+    def sync_table_to_db(
+        cls, 
+        keyspaces: List[str] = []
+    ):
+
+        __keyspaces = keyspaces if keyspaces else [database_config.KEYSPACE.NAME]
+
+        sync_table(cls, keyspaces=__keyspaces)
 
     @classmethod
     def get_table_name(cls):

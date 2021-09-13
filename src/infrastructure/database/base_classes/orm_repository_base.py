@@ -47,7 +47,7 @@ class OrmRepositoryBase(
         
         await DomainEvents.publish_events(entity.id, self.__logger)
         
-        result = self.__repository.create(**(orm_entity.to_dict()))
+        result = await self.__repository.async_create(**(orm_entity.to_dict()))
 
         self.__logger.debug(f'[Entity persisted]: {type(entity).__name__} {entity.id}')
         
