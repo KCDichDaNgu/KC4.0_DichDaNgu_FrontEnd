@@ -1,4 +1,4 @@
-from src.core.base_classes.entity import BaseEntityProps
+from core.base_classes.entity import BaseEntityProps
 from pydantic.main import BaseModel
 from core.base_classes import Entity
 from core.value_objects import ID

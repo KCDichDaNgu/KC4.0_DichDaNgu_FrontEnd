@@ -3,13 +3,15 @@ from pydantic.fields import Field
 from pydantic import BaseModel
 
 from infrastructure.configs import StatusCodeEnum
+from sanic_openapi import doc
 
-class ResponseBase(BaseModel):
+class ResponseBase:
 
-    code: StatusCodeEnum = Field(...)
+    code: doc.Integer(
+        required=True,
+        choices=StatusCodeEnum.enum_values()
+    )
+
     data: Any
-    message: str = Field(...)
 
-    class Config:
-
-        use_enum_values = True
+    message: doc.String(required=True)

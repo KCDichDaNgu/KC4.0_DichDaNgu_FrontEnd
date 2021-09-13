@@ -1,12 +1,8 @@
 from pydantic import BaseModel
 from infrastructure.configs.language import LanguageEnum
 
-class CreatePlainTextTranslationRequest(BaseModel):
+class CreatePlainTextTranslationRequest():
 
     sourceText: str
-    sourceLang: LanguageEnum
-    translatedLang: LanguageEnum
-
-    class Config:
-
-        use_values_enum = True
+    sourceLang: str
+    targetLang: str

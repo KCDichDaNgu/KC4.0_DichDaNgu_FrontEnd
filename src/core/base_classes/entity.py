@@ -1,3 +1,4 @@
+from pydantic.fields import Field
 from core.base_classes.value_object import ValueObject
 from core.exceptions import (
     ArgumentInvalidException, 
@@ -6,9 +7,8 @@ from core.exceptions import (
 )
 
 from core.guard import Guard
-from core.value_objects.date import DateVO
-from core.value_objects.id import ID
-
+from core.value_objects import DateVO, ID
+from addict import Addict
 from abc import ABC
 from pydantic import BaseModel, PrivateAttr
 
@@ -25,32 +25,28 @@ class BaseEntityProps(BaseModel, ABC):
 class Entity(BaseModel, Generic[EntityProps], ABC):
 
     __id: ID = PrivateAttr()
-    __created_at: DateVO = PrivateAttr()
-    __updated_at: DateVO = PrivateAttr()
+    __created_at: DateVO = PrivateAttr(None)
+    __updated_at: DateVO = PrivateAttr(None)
     
     props: EntityProps
-
+        
     def __init__(
         self, 
-        props: EntityProps
+        props: EntityProps,
+        **data
     ) -> None:
-        self.validate_props(props)
-
+    
+        super().__init__(props=props, **data)
+    
         self.__id = ID.generate()
 
-        now: Final = DateVO.now()
-        self.__created_at = now
-        self.__updated_at = now
+        # now: Final = DateVO.now()
 
-        self.props = props
+        # self.__created_at = now
+        # self.__updated_at = now
 
     class MergedProps(Generic[EntityProps], BaseEntityProps):
         pass
-
-    @property
-    def props(self):
-
-        return self.props
 
     @property
     def id(self) -> ID:
@@ -85,13 +81,32 @@ class Entity(BaseModel, Generic[EntityProps], ABC):
     def get_props_copy(self) -> MergedProps:
 
         props_copy = {
-            'id': self.__id,
-            'created_at': self.__created_at,
-            'updated_at': self.__updated_at,
-            **self.props
+            'id': self.__id.value if self.__id else None,
+            'created_at': self.__created_at.value if self.__created_at else None,
+            'updated_at': self.__updated_at.value if self.__updated_at else None,
         }
 
-        return props_copy
+        props_dict = self.props
+    
+        if isinstance(self.props, BaseModel):
+
+            props_dict = self.props.dict()
+
+        for prop_key in props_dict:
+
+            if isinstance(props_dict[prop_key], ValueObject):
+
+                props_copy[prop_key] = props_dict[prop_key].value
+            
+            elif isinstance(props_dict[prop_key], BaseModel):
+
+                props_copy[prop_key] = props_dict[prop_key].dict()
+
+            else:
+
+                props_copy[prop_key] = props_dict[prop_key]
+                
+        return Addict(props_copy)
 
     @classmethod
     def from_orm(cls, props: Dict):
@@ -148,22 +163,3 @@ class Entity(BaseModel, Generic[EntityProps], ABC):
             'updated_at': self.__updated_at.value,
             **props_copy
         }
-
-    def validate_props(self, props: EntityProps):
-
-        max_props = 50
-
-        if Guard.is_empty(props):
-            raise ArgumentNotProvidedException(
-                'Entity props should not be empty'
-            )
-        
-        if props is not dict:
-            raise ArgumentInvalidException(
-                'Entity props should be an object'
-            ) 
-
-        if len(list(object.keys())) > max_props:
-            raise ArgumentOutOfRangeException(
-                f'Entity props should not have more then {max_props} properties'
-            )

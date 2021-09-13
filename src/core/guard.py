@@ -6,12 +6,12 @@ class Guard:
 
     @staticmethod
     def is_empty(value) -> bool:
-
-        if isinstance(value, Complex) or isinstance(value) == bool:
-            return False
-
-        if isinstance(value, None):
+        
+        if value is None:
             return True
+
+        if isinstance(value, Complex) or isinstance(value, bool):
+            return False
 
         if isinstance(value, (time, timedelta, date, datetime)):
             return False
@@ -22,7 +22,7 @@ class Guard:
         if isinstance(value, Iterable):
             if not value:
                 return True
-
+            
             if all([Guard.is_empty(e) for e in value]):
                 return True
         

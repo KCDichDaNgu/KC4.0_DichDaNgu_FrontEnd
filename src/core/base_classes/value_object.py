@@ -13,7 +13,7 @@ Primitives = Union[str, Complex, bool]
 
 T = TypeVar('T', Primitives, datetime)
 
-class DomainPrimitive(Generic(T)):
+class DomainPrimitive(Generic[T]):
 
     def __init__(self, value: T):
         self.value = value
@@ -25,21 +25,27 @@ class ValueObjectProps(Generic[T]):
 
 class ValueObject(BaseModel, ABC, Generic[T]):
 
-    __props: ValueObjectProps[T] = PrivateAttr()
+    __props: ValueObjectProps[T] = PrivateAttr(...)
 
-    def __init__(self, props: ValueObjectProps[T]) -> None:
+    def __init__(self, props: ValueObjectProps[T], **data) -> None:
+
+        super().__init__(**data)
         
         self.__props = props
-
-        self.check_if_empty(props)
-        self.validate(props)
+        
+        self.__class__.validate(props)
 
     @property
     def props(self):
         return self.__props
 
+    @property
+    def value(self):
+        return self.__props.value
+
+    @classmethod
     @abstractmethod
-    def validate(props: ValueObjectProps[T]):
+    def validate(cls, props: ValueObjectProps[T]):
         ...
     
     @staticmethod
@@ -61,13 +67,7 @@ class ValueObject(BaseModel, ABC, Generic[T]):
 
         return props_copy
 
-    def check_if_empty(self, props: ValueObjectProps[T]):
-
-        if Guard.is_empty(props) or \
-            self.is_domain_primitive(props) and Guard.is_empty(props.value):
-            raise ArgumentNotProvidedException('Property cannot be empty')
-
-    def is_domain_primitive(obj: Any):
+    def is_domain_primitive(self, obj: Any):
 
         if hasattr(obj, 'value') and isinstance(obj.value, Primitives.__args__):
             return True

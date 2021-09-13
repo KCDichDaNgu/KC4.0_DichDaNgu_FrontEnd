@@ -112,10 +112,10 @@ class SanicBuiltInServer(BaseServer):
 @cli.command('run-server')
 @click.option('-h', '--host', default=None, type=str)
 @click.option('-p', '--port', default=None, type=int)
-@click.option('-e', '--env', default='dev', type=click.Choice(EnvStateEnum.__members__))
+@click.option('-e', '--env', default='dev', type=click.Choice(EnvStateEnum.enum_values()))
 @click.option('-wk', '--workers', default=1, type=int)
 @click.option('-alg', '--access-log', default=False, type=bool)
-@click.option('-st', '--server-type', default='uvicorn', type=click.Choice(ServerTypeEnum.__members__))
+@click.option('-st', '--server-type', default='uvicorn', type=click.Choice(ServerTypeEnum.enum_values()))
 @click.option('-lsp', '--lifespan', default='on', type=str)
 def run_server(
     host, 

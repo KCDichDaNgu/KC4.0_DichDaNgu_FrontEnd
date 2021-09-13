@@ -1,5 +1,4 @@
-from core.base_classes.aggregate_root import AggregateRoot
-from core.ports import Logger
+from core.ports import LoggerPort
 from core.domain_events.base import DomainEvent
 from typing import Any, Awaitable, Callable, Dict, List, TypeVar, Union, final
 from core.value_objects.id import ID 
@@ -8,6 +7,7 @@ import asyncio
 from asyncio import Task
 
 from abc import ABC, abstractmethod 
+
 
 class EventHandler(ABC):
 
@@ -27,7 +27,7 @@ T = TypeVar('T', bound=DomainEvent)
 class DomainEvents():
 
     __subscribers: Dict[EventName, List[EventCallback]] = dict()
-    __aggregates: List[AggregateRoot[Any]] = []
+    __aggregates: List[Any] = []
 
     @classmethod
     def subscribe(
@@ -46,7 +46,7 @@ class DomainEvents():
     @classmethod
     def prepare_for_publish(
         cls,
-        aggregate: AggregateRoot[Any]
+        aggregate: Any
     ):
 
         aggregate_found = cls.find_aggregate_by_id(aggregate.id)
@@ -58,7 +58,7 @@ class DomainEvents():
     async def publish_events(
         cls,
         id: ID,
-        logger: Logger
+        logger: LoggerPort
     ) -> Task:
 
         aggregate = cls.find_aggregate_by_id(id)
@@ -83,7 +83,7 @@ class DomainEvents():
             )
 
     @classmethod
-    def find_aggregate_by_id(cls, id: ID) -> Union[AggregateRoot[Any], None]:
+    def find_aggregate_by_id(cls, id: ID) -> Union[Any, None]:
         
         for aggregate in cls.__aggregates:
             if aggregate.id.equals(id):
@@ -92,7 +92,7 @@ class DomainEvents():
     @classmethod
     def remove_aggregate_from_publish_list(
         cls,
-        aggregate: AggregateRoot[Any]
+        aggregate: Any
     ):
 
         cls.__aggregates = [e for e in cls.__aggregates if e.equals(aggregate)]

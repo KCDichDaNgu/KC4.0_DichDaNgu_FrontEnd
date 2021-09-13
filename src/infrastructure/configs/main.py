@@ -1,43 +1,68 @@
+from pathlib import Path
 from pydantic import (
     Field,
     BaseSettings,
     BaseModel
 )
 
-from typing import Optional
-from enum import Enum, unique
+from typing import Any, Dict, Optional, Union
+from enum import unique
+from core.types import ExtendedEnum
 
 from infrastructure.configs.database import CassandraDatabase
 from infrastructure.configs.event_dispatcher import KafkaConsumer, KafkaProducer
 
+import os
+
 CNF = None
 
 @unique
-class EnvStateEnum(str, Enum):
+class EnvStateEnum(str, ExtendedEnum):
 
     dev = 'dev'
     prod = 'prod'
 
 @unique
-class ServerTypeEnum(str, Enum):
+class ServerTypeEnum(str, ExtendedEnum):
 
     uvicorn = 'uvicorn'
     built_in = 'built_in'
 
 @unique
-class StatusCodeEnum(int, Enum):
+class StatusCodeEnum(int, ExtendedEnum):
 
     success = 1
     failed = 0
 
 class AppConfig(BaseModel):
 
-    ROUTES = {
-        "translation_request.detect_language": {
-            "path": "detect-language",
-            "name": "detect-language"
+    APP_NAME: str = 'translation-backend'
+
+    ROUTES: Dict = {
+        'translation_request': {
+            'path': '/',
+            'name': 'Translation request',
+        },
+        'translation_request.text_translation.create': {
+            'path': 'translate',
+            'name': 'Create text translation request',
+            'summary': 'Create text translation request',
+            'desc': 'Create text translation request',
+            'method': 'POST'
+        },
+        'translation_request.doc_translation.create': {
+            'path': 'translate_f',
+            'name': 'Create document translation request',
+            'summary': 'Create document translation request',
+            'desc': 'Create document translation request',
+            'method': 'POST'
         }
     }
+
+    API_BASEPATH: str = '/api'
+    API_VERSION: str = '0.0.1'
+
+    STRICT_SLASHES = False
 
 class GlobalConfig(BaseSettings):
 
@@ -56,6 +81,8 @@ class GlobalConfig(BaseSettings):
     APP_LIFESPAN: str = None
     SERVER_TYPE: str = None
 
+    CQLENG_ALLOW_SCHEMA_MANAGEMENT: Any = Field(env='CQLENG_ALLOW_SCHEMA_MANAGEMENT')
+
     CASSANDRA_DATABASE: CassandraDatabase = CassandraDatabase()
     KAFKA_CONSUMER: KafkaConsumer = KafkaConsumer()
     KAFKA_PRODUCER: KafkaProducer = KafkaProducer()
@@ -66,6 +93,13 @@ class GlobalConfig(BaseSettings):
         env_file = ".env"
         env_prefix = 'SANIC_'
         env_file_encoding = 'utf-8'
+
+    def _build_values(self, init_kwargs: Dict[str, Any], _env_file: Union[Path, str, None], _env_file_encoding: Optional[str], _secrets_dir: Union[Path, str, None]) -> Dict[str, Any]:
+        
+        if os.getenv('CQLENG_ALLOW_SCHEMA_MANAGEMENT') is None:
+            os.environ['CQLENG_ALLOW_SCHEMA_MANAGEMENT'] = '1'
+
+        return super()._build_values(init_kwargs, _env_file=_env_file, _env_file_encoding=_env_file_encoding, _secrets_dir=_secrets_dir)
 
 
 class DevConfig(GlobalConfig):
