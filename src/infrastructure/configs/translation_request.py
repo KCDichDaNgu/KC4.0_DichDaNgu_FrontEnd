@@ -1,5 +1,9 @@
 from core.types import ExtendedEnum
 
+EXPIRED_DURATION = 10
+TRANSLATION_API_ALLOWED_CONCURRENT_REQUEST = 5
+LANGUAGE_DETECTION_API_ALLOWED_CONCURRENT_REQUEST = 5
+
 class TaskTypeEnum(str, ExtendedEnum):
 
     file_translation = 'file_translation'
@@ -10,13 +14,13 @@ class TaskTypeEnum(str, ExtendedEnum):
     public_plain_text_translation = 'public_plain_text_translation'
     public_language_detection = 'public_language_detection'
 
-public_tasks = [
+TRANSLATION_PUBLIC_TASKS = [
     TaskTypeEnum.public_file_translation.value,
     TaskTypeEnum.public_language_detection.value,
     TaskTypeEnum.public_plain_text_translation.value
 ]
 
-private_tasks = [
+TRANSLATION_PRIVATE_TASKS = [
     TaskTypeEnum.file_translation.value,
     TaskTypeEnum.language_detection.value,
     TaskTypeEnum.plain_text_translation.value

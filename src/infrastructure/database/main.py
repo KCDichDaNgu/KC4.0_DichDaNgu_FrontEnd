@@ -31,6 +31,8 @@ def init_db(cassandraDbConfig: CassandraDatabase):
 
     current_session = connection.session
 
-    aiosession_for_cqlengine(current_session, loop=asyncio.get_running_loop())
-
+    current_session.set_keyspace(cassandraDbConfig.KEYSPACE.NAME)
+    
+    aiosession_for_cqlengine(current_session)
+    
     connection.set_session(current_session)

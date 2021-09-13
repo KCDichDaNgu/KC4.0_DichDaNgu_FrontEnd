@@ -10,3 +10,4 @@ aiohttp
 aiokafka
 sanic_openapi
 addict
+schedule

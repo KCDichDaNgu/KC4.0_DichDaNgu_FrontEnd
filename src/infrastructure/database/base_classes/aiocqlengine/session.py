@@ -31,15 +31,14 @@ async def execute_future(self, *args, **kwargs):
         errback=partial(self._asyncio_exception, future)
     )
 
-    return await future
+    return future
 
 
 def aiosession_for_cqlengine(session, *, loop=None):
     if loop is None:
         loop = asyncio.get_event_loop()
-    session._asyncio_loop = loop
+    session._asyncio_loop = asyncio.get_event_loop_policy().get_event_loop()
     session._asyncio_exception = MethodType(_asyncio_exception, session)
     session._asyncio_result = MethodType(_asyncio_result, session)
     session.execute_future = MethodType(execute_future, session)
     return session
-    

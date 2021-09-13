@@ -41,11 +41,11 @@ class RepositoryPort(
         super().__init__()
 
     @abstractmethod
-    def save(entity: Entity) -> Awaitable[Entity]:
+    def create(entity: Entity) -> Awaitable[Entity]:
         ...
 
     @abstractmethod
-    def save_multiple(entity: List[Entity]) -> List[Awaitable[Entity]]:
+    def create_multiple(entity: List[Entity]) -> List[Awaitable[Entity]]:
         ...
 
     @abstractmethod

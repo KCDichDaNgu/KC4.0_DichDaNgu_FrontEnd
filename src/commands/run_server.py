@@ -42,10 +42,6 @@ class UvicornServer(BaseServer):
 
     @classmethod
     def run(cls, app):
-
-        @app.route('/')
-        def test(request):
-            pass
         
         cls.server = cls.__run(
             app=app,

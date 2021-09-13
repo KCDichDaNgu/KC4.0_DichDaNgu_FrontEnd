@@ -14,8 +14,6 @@ from infrastructure.configs.event_dispatcher import KafkaConsumer, KafkaProducer
 
 import os
 
-CNF = None
-
 @unique
 class EnvStateEnum(str, ExtendedEnum):
 
@@ -126,20 +124,17 @@ class ProdConfig(GlobalConfig):
 
 def update_cnf(new_config):
 
-    import infrastructure.configs
-
-    infrastructure.configs.CNF = new_config
+    FactoryConfig.CNF = new_config
 
 
 def get_cnf() -> GlobalConfig:
 
-    import infrastructure.configs
-
-    return infrastructure.configs.CNF
-
+   return FactoryConfig.CNF
 
 class FactoryConfig:
     """Returns a config instance dependending on the ENV_STATE variable."""
+
+    CNF: GlobalConfig = None
 
     def __init__(self, env_state: Optional[str], override_config: Optional[dict]):
         self.env_state = env_state

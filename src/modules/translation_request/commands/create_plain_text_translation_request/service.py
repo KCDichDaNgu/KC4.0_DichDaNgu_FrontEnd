@@ -23,7 +23,7 @@ class CreatePlainTextTranslationRequestService():
             })
         )
         
-        created = await self.__translation_request_repository.save(new_request)
-
+        created = await self.__translation_request_repository.create(new_request)
+        
         return created
 
