@@ -1,8 +1,8 @@
+from datetime import timedelta
 from infrastructure.configs.main import CassandraDatabase, GlobalConfig, get_cnf
 from infrastructure.database.base_classes import OrmEntityBase
-from infrastructure.configs.translation_request import TaskTypeEnum, private_tasks
+from infrastructure.configs.translation_request import TRANSLATION_PRIVATE_TASKS, EXPIRED_DURATION
 from cassandra.cqlengine import ValidationError, columns
-from uuid import uuid4
 
 config: GlobalConfig = get_cnf()
 database_config: CassandraDatabase = config.CASSANDRA_DATABASE
@@ -22,8 +22,12 @@ class TranslationRequestOrmEntity(OrmEntityBase):
         
         super(TranslationRequestOrmEntity, self).validate()
         
-        if self.task_type in private_tasks and not self.creator_id:
+        if self.task_type in TRANSLATION_PRIVATE_TASKS and not self.creator_id:
 
             raise ValidationError('Creator cannot be None')
+
+        if self.created_at is not None and self.expired_date is None:
+
+            self.expired_date = self.created_at + timedelta(seconds=EXPIRED_DURATION)
 
 TranslationRequestOrmEntity.sync_table_to_db([database_config.KEYSPACE.NAME])

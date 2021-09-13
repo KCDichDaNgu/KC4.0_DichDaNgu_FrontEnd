@@ -1,4 +1,4 @@
-from core.value_objects.id import ID
+from core.value_objects import ID, DateVO
 from typing import Any
 from infrastructure.database.base_classes.orm_mapper_base import OrmMapperBase
 
@@ -37,3 +37,17 @@ class TranslationRequestOrmMapper(OrmMapperBase[TranslationRequestEntity, Transl
         }
 
         return props
+
+    def assign_props_to_entity(
+        self, 
+        entity_props: Any,
+        orm_entity: TranslationRequestOrmEntity
+    ) -> TranslationRequestEntity:
+    
+        return TranslationRequestEntity.from_orm({
+            **entity_props,
+            "id": ID(str(orm_entity.id)),
+            "created_at": DateVO(orm_entity.created_at),
+            "updated_at": DateVO(orm_entity.updated_at),
+            "expired_date": DateVO(orm_entity.expired_date) if orm_entity.expired_date else None
+        })

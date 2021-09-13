@@ -41,19 +41,19 @@ class OrmRepositoryBase(
 
         self.__relations: List[str] = []
         
-    async def save(self, entity: Entity):
+    async def create(self, entity: Entity):
         
         orm_entity = self.__mapper.to_orm_entity(entity)
         
         await DomainEvents.publish_events(entity.id, self.__logger)
         
-        result = await self.__repository.async_create(**(orm_entity.to_dict()))
+        result = await self.__repository.async_create_with_trigger(**(orm_entity.to_dict()))
 
         self.__logger.debug(f'[Entity persisted]: {type(entity).__name__} {entity.id}')
         
         return self.__mapper.to_domain_entity(result)
 
-    async def save_multiple(self, entities: List[Entity]):
+    async def create_multiple(self, entities: List[Entity]):
         
         result = []
 
@@ -63,7 +63,7 @@ class OrmRepositoryBase(
             for entity in entities:
 
                 orm_entity = self.__mapper.to_orm_entity(entity)
-                new_entity = self.__repository.batch(b).async_create(**(orm_entity.to_dict()))
+                new_entity = self.__repository.batch(b).async_create_with_trigger(**(orm_entity.to_dict()))
 
                 result.append(self.__mapper.to_domain_entity(new_entity))
 
@@ -140,9 +140,9 @@ class OrmRepositoryBase(
 
     async def delete(self, entity: Entity) -> Entity:
 
-        await DomainEvents.publish_events(entity.id, self.__logger);
+        await DomainEvents.publish_events(entity.id, self.__logger)
 
-        await self.__repository.objects(id=entity.id).delete()
+        await self.__repository.objects(id=entity.id).async_create_with_trigger()
 
         self.__logger.debug(f'[Entity deleted]: {type(entity).__name__} {entity.id}')
 

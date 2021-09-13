@@ -3,7 +3,7 @@ from core.base_classes.entity import BaseEntityProps
 from typing import Union
 from pydantic import Field, BaseModel
 from infrastructure.configs.translation_request import (
-    TaskTypeEnum, CreatorTypeEnum, StatusEnum, TranslationStepEnum, DetectionLanguageStepEnum, private_tasks
+    TaskTypeEnum, CreatorTypeEnum, StatusEnum, TranslationStepEnum, DetectionLanguageStepEnum, TRANSLATION_PRIVATE_TASKS
 )
 
 from addict import Addict
@@ -26,7 +26,7 @@ class TranslationRequestProps(BaseModel):
     @validator('creator_id')
     def validate(cls, v, values, **kwargs):
 
-        if values['task_type'] in private_tasks and not v:
+        if values['task_type'] in TRANSLATION_PRIVATE_TASKS and not v:
             raise ValueError('Creator cannot be None')
             
         return v
