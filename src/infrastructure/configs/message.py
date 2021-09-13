@@ -1,7 +1,7 @@
 
 from typing import Any, Dict
 
-MESSAGES: Dict[str, Any] = {
+MESSAGES = {
     "success": "success",
     "failed": "failed"
 }

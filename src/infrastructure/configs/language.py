@@ -1,6 +1,6 @@
-from enum import Enum
+from core.types import ExtendedEnum
 
-class LanguageEnum(str, Enum):
+class LanguageEnum(str, ExtendedEnum):
 
     zh = 'zh'
     vi = 'vi'

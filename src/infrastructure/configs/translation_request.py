@@ -1,6 +1,6 @@
-from enum import Enum
+from core.types import ExtendedEnum
 
-class TaskType(str, Enum):
+class TaskTypeEnum(str, ExtendedEnum):
 
     file_translation = 'file_translation'
     plain_text_translation = 'plain_text_translation'
@@ -10,22 +10,34 @@ class TaskType(str, Enum):
     public_plain_text_translation = 'public_plain_text_translation'
     public_language_detection = 'public_language_detection'
 
-class CreatorType(str, Enum):
+public_tasks = [
+    TaskTypeEnum.public_file_translation.value,
+    TaskTypeEnum.public_language_detection.value,
+    TaskTypeEnum.public_plain_text_translation.value
+]
+
+private_tasks = [
+    TaskTypeEnum.file_translation.value,
+    TaskTypeEnum.language_detection.value,
+    TaskTypeEnum.plain_text_translation.value
+]
+
+class CreatorTypeEnum(str, ExtendedEnum):
 
     end_user = 'end_user'
 
-class Status(str, Enum):
+class StatusEnum(str, ExtendedEnum):
 
     not_yet_processed = 'not_yet_processed'
     in_progress = 'in_progress'
     completed = 'completed'
     cancelled = 'cancelled'
 
-class TranslationStep(str, Enum):
+class TranslationStepEnum(str, ExtendedEnum):
 
     detecting_language = 'detecting_language'
     translating_language = 'translating_language'
 
-class DetectionLanguageStep(str, Enum):
+class DetectionLanguageStepEnum(str, ExtendedEnum):
 
     detecting_language = 'detecting_language'

@@ -9,3 +9,4 @@ cassandra-driver
 aiohttp
 aiokafka
 sanic_openapi
+addict

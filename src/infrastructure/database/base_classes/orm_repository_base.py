@@ -1,11 +1,11 @@
-from src.infrastructure.database.base_classes.orm_entity_base import OrmEntityBase
-from typing import TypeVar
+from infrastructure.database.base_classes.orm_entity_base import OrmEntityBase
+from typing import NewType, TypeVar
 from core.value_objects.id import ID
 from core.domain_events import DomainEvents
-from core.ports.logger import Logger
+from infrastructure.adapters.logger import Logger
 from core.ports.repository import FindManyPaginatedParams, RepositoryPort, DataWithPaginationMeta
 from core.exceptions import NotFoundException
-from orm_mapper_base import OrmMapper
+from infrastructure.database.base_classes.orm_mapper_base import OrmMapperBase
 from core.base_classes.entity import BaseEntityProps
 from abc import ABC
 from typing import Generic, List, TypeVar, Any, Union
@@ -13,33 +13,41 @@ from cassandra.cqlengine.query import BatchQuery
 
 import asyncio
 
-Entity = TypeVar('Entity', BaseEntityProps)
+Entity = TypeVar('Entity', bound=BaseEntityProps)
 EntityProps = TypeVar('EntityProps')
-OrmEntity = TypeVar('OrmEntity', OrmEntityBase)
+OrmEntity = TypeVar('OrmEntity', bound=OrmEntityBase)
+OrmMapper = TypeVar('OrmMapper', bound=OrmMapperBase)
 
 class OrmRepositoryBase(
-    Generic[Entity, EntityProps, OrmEntity], 
+    Generic[Entity, EntityProps, OrmEntity, OrmMapper], 
     RepositoryPort[Entity, EntityProps],
     ABC
 ):
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        repository: OrmEntityBase = None,
+        mapper: OrmMapperBase = None,
+        table_name: str = None
+    ) -> None:
 
-        self.__repository: OrmEntityBase = OrmEntity
-        self.__mapper: OrmMapper = OrmMapper[Entity, OrmEntity]()
-        self.__logger: Logger = Logger()
+        self.__table_name__ = table_name
+        
+        self.__repository = repository
+
+        self.__mapper: OrmMapperBase = mapper
+
+        self.__logger: Logger = Logger(__name__)
 
         self.__relations: List[str] = []
-
-        self.__table_name__ = OrmEntity.__table_name__
         
     async def save(self, entity: Entity):
-
-        orm_entity = self.__mapper.to_domain_entity(entity)
+        
+        orm_entity = self.__mapper.to_orm_entity(entity)
         
         await DomainEvents.publish_events(entity.id, self.__logger)
-
-        result = await self.__repository.create(orm_entity)
+        
+        result = self.__repository.create(**(orm_entity.to_dict()))
 
         self.__logger.debug(f'[Entity persisted]: {type(entity).__name__} {entity.id}')
         
@@ -55,7 +63,7 @@ class OrmRepositoryBase(
             for entity in entities:
 
                 orm_entity = self.__mapper.to_orm_entity(entity)
-                new_entity = await self.__repository.batch(b).create(orm_entity)
+                new_entity = self.__repository.batch(b).async_create(**(orm_entity.to_dict()))
 
                 result.append(self.__mapper.to_domain_entity(new_entity))
 
@@ -68,7 +76,7 @@ class OrmRepositoryBase(
         **params: EntityProps,
     ):
 
-        found = await self.__repository.filter(params).first()
+        found = await self.__repository.async_filter(params).first()
 
         return self.__mapper.to_domain_entity(found) if found else None
 
@@ -99,7 +107,7 @@ class OrmRepositoryBase(
         
         result = []
 
-        founds = await self.__repository.filter(params)
+        founds = await self.__repository.async_filter(params)
 
         for found in founds:
             result.append(self.__mapper.to_domain_entity(found))
@@ -113,7 +121,7 @@ class OrmRepositoryBase(
         
         result = []
 
-        founds = await self.__repository.filter(options.params)
+        founds = await self.__repository.async_filter(options.params)
         
         count = founds.count()
 

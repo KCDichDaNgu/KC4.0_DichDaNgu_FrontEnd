@@ -12,7 +12,7 @@ class DateVO(ValueObject[datetime]):
 
     def __init__(self, value: Union[datetime, Complex, str]) -> None:
 
-        date = None
+        date = value
         
         if isinstance(value, Complex):
 
@@ -22,7 +22,7 @@ class DateVO(ValueObject[datetime]):
 
             date = datetime.strptime(value)
 
-        super().__init__(ValueObjectProps(date))
+        super().__init__(ValueObjectProps[datetime](date))
 
     @property
     def value(self) -> datetime:
@@ -32,6 +32,7 @@ class DateVO(ValueObject[datetime]):
     def now():
         return DateVO(datetime.now())
 
-    def validate(props: DomainPrimitive[datetime]):
+    @classmethod
+    def validate(cls, props: DomainPrimitive[datetime]):
         if not isinstance(props.value, datetime):
             raise ArgumentInvalidException('Incorrect date')
