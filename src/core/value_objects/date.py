@@ -1,5 +1,5 @@
 from numbers import Complex
-from typing import Union
+from typing import Any, Union
 from core.exceptions import ArgumentInvalidException
 from core.base_classes.value_object import (
     DomainPrimitive,
@@ -10,7 +10,7 @@ from datetime import datetime
 
 class DateVO(ValueObject[datetime]):
 
-    def __init__(self, value: Union[datetime, Complex, str]) -> None:
+    def __init__(self, value: Union[datetime, Complex, str, None]):
 
         date = value
         

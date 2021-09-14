@@ -41,31 +41,31 @@ class RepositoryPort(
         super().__init__()
 
     @abstractmethod
-    def create(entity: Entity) -> Awaitable[Entity]:
+    def create(self) -> Awaitable[Entity]:
         ...
 
     @abstractmethod
-    def create_multiple(entity: List[Entity]) -> List[Awaitable[Entity]]:
+    def create_multiple(self) -> List[Awaitable[Entity]]:
         ...
 
     @abstractmethod
-    def find_one_or_throw(params: Any) -> Awaitable[Entity]:
+    def find_one_or_throw(self) -> Awaitable[Entity]:
         ...
 
     @abstractmethod
-    def find_one_by_id_or_throw(id: Union[ID, str]) -> Awaitable[Entity]:
+    def find_one_by_id_or_throw(self) -> Awaitable[Entity]:
         ...
 
     @abstractmethod
-    def delete(entity: Entity):
+    def delete(self):
         ...
 
     @abstractmethod
-    def find_many(params: Any) -> Awaitable[List[Entity]]:
+    def find_many(self) -> Awaitable[List[Entity]]:
         ...
 
     @abstractmethod
     def find_many_paginated(
-        options: FindManyPaginatedParams[EntityProps]
+        self
     ) -> Awaitable[DataWithPaginationMeta[List[Entity]]]:
         ...

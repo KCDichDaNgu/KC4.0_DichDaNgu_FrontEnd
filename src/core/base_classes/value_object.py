@@ -20,10 +20,13 @@ class DomainPrimitive(Generic[T]):
 
 class ValueObjectProps(Generic[T]):
 
-    def __init__(self, value: T):
+    def __init__(self, value: Union[T, None]):
+
+        if value == str(None): value = None
+
         self.value = value
 
-class ValueObject(BaseModel, ABC, Generic[T]):
+class ValueObject(BaseModel, Generic[T]):
 
     __props: ValueObjectProps[T] = PrivateAttr(...)
 
@@ -33,7 +36,7 @@ class ValueObject(BaseModel, ABC, Generic[T]):
         
         self.__props = props
         
-        self.__class__.validate(props)
+        self.validate(props)
 
     @property
     def props(self):

@@ -1,3 +1,5 @@
+from typing import Any, Union
+from pydantic import BaseModel
 from core.utils.uuid import is_valid_uuid
 from uuid import uuid4
 from core.exceptions.argument_invalid import ArgumentInvalidException
@@ -10,7 +12,8 @@ from core.utils import is_valid_uuid
 
 class ID(ValueObject[str]):
 
-    def __init__(self, value: str) -> None:
+    def __init__(self, value: Union[str, None]):
+
         super().__init__(ValueObjectProps[str](value))
 
     @property
@@ -23,5 +26,5 @@ class ID(ValueObject[str]):
 
     @classmethod
     def validate(cls, args: DomainPrimitive[str]):
-        if not is_valid_uuid(args.value):
+        if not args.value is None and not is_valid_uuid(args.value):
             raise ArgumentInvalidException('Incorrect ID format') 

@@ -1,11 +1,10 @@
 from sanic import Sanic
 from infrastructure.configs.main import GlobalConfig
-from sanic_openapi import swagger_blueprint, openapi2_blueprint
+from sanic_openapi import swagger_blueprint
 
 from infrastructure.configs import ServerTypeEnum, get_cnf, GlobalConfig
 
 from infrastructure.interceptors.exeption_interceptor import ExceptionInterceptor
-from infrastructure.adapters.kafka.main import init_kafka
 
 async def listener_before_server_start(*args, **kwargs):
     print("before_server_start")
@@ -38,13 +37,14 @@ async def init_app():
     
     app.config.update_config(config.dict())
     
-    from infrastructure.database import init_db
+    from infrastructure.adapters.kafka.main import init_kafka
+    from infrastructure.database.main import init_db
 
     init_db(config.CASSANDRA_DATABASE)
 
     await init_kafka(config)
 
-    app = init_routes(app)
+    init_routes(app)
 
     app.error_handler = ExceptionInterceptor()
 

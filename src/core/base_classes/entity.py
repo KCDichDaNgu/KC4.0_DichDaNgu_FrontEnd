@@ -35,7 +35,6 @@ class Entity(BaseModel, Generic[EntityProps], ABC):
         props: EntityProps,
         **data
     ) -> None:
-    
         super().__init__(props=props, **data)
     
         self.__id = ID.generate()
@@ -84,27 +83,8 @@ class Entity(BaseModel, Generic[EntityProps], ABC):
             'id': self.__id.value if self.__id else None,
             'created_at': self.__created_at.value if self.__created_at else None,
             'updated_at': self.__updated_at.value if self.__updated_at else None,
+            **self.props.__dict__
         }
-
-        props_dict = self.props
-    
-        if isinstance(self.props, BaseModel):
-
-            props_dict = self.props.dict()
-
-        for prop_key in props_dict:
-
-            if isinstance(props_dict[prop_key], ValueObject):
-
-                props_copy[prop_key] = props_dict[prop_key].value
-            
-            elif isinstance(props_dict[prop_key], BaseModel):
-
-                props_copy[prop_key] = props_dict[prop_key].dict()
-
-            else:
-
-                props_copy[prop_key] = props_dict[prop_key]
                 
         return Addict(props_copy)
 

@@ -14,16 +14,21 @@ class CreatePlainTextTranslationRequestService():
     async def create_request(self, command: CreatePlainTextTranslationRequestCommand):
 
         new_request = TranslationRequestEntity(
-            TranslationRequestProps(**{
-                'creator_type': CreatorTypeEnum.end_user.value,
-                'task_type': TaskTypeEnum.public_plain_text_translation.value,
-                'status': StatusEnum.not_yet_processed.value,
-                'current_step': TranslationStepEnum.detecting_language.value,
-                'expired_date': DateVO.now()
-            })
+            TranslationRequestProps(
+                creator_type=CreatorTypeEnum.end_user.value,
+                task_type=TaskTypeEnum.public_plain_text_translation.value,
+                status=StatusEnum.not_yet_processed.value,
+                current_step=TranslationStepEnum.detecting_language.value
+            )
         )
         
-        created = await self.__translation_request_repository.create(new_request)
+        request_data={
+            'source_text': command.source_text,
+            'source_lang': command.source_lang,
+            'target_lang': command.target_lang
+        }
+        
+        created = await self.__translation_request_repository.create(new_request, None, request_data=request_data)
         
         return created
 

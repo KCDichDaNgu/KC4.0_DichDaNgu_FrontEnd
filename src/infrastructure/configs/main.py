@@ -7,6 +7,9 @@ from pydantic import (
 
 from typing import Any, Dict, Optional, Union
 from enum import unique
+
+from pydantic.networks import AnyHttpUrl
+from uvicorn.importer import import_from_string
 from core.types import ExtendedEnum
 
 from infrastructure.configs.database import CassandraDatabase
@@ -62,6 +65,18 @@ class AppConfig(BaseModel):
 
     STRICT_SLASHES = False
 
+class TranslationAPI(BaseModel):
+
+    URL: AnyHttpUrl = Field(...)
+    METHOD: str = Field(...)
+    ALLOWED_CONCURRENT_REQUEST: int = Field(...) 
+
+class LanguageDetectionAPI(BaseModel):
+
+    URL: AnyHttpUrl = Field(...)
+    METHOD: str = Field(...)
+    ALLOWED_CONCURRENT_REQUEST: int = Field(...) 
+
 class GlobalConfig(BaseSettings):
 
     """Global configurations."""
@@ -85,6 +100,9 @@ class GlobalConfig(BaseSettings):
     KAFKA_CONSUMER: KafkaConsumer = KafkaConsumer()
     KAFKA_PRODUCER: KafkaProducer = KafkaProducer()
 
+    TRANSLATION_API: TranslationAPI
+    LANGUAGE_DETECTION_API: LanguageDetectionAPI
+
     class Config:
         """Loads the dotenv file."""
 
@@ -92,22 +110,23 @@ class GlobalConfig(BaseSettings):
         env_prefix = 'SANIC_'
         env_file_encoding = 'utf-8'
 
-    def _build_values(self, init_kwargs: Dict[str, Any], _env_file: Union[Path, str, None], _env_file_encoding: Optional[str], _secrets_dir: Union[Path, str, None]) -> Dict[str, Any]:
+    def _build_values(
+        self, 
+        init_kwargs: Dict[str, Any], 
+        _env_file: Union[Path, str, None], 
+        _env_file_encoding: Optional[str], 
+        _secrets_dir: Union[Path, str, None]
+    ) -> Dict[str, Any]:
         
         if os.getenv('CQLENG_ALLOW_SCHEMA_MANAGEMENT') is None:
             os.environ['CQLENG_ALLOW_SCHEMA_MANAGEMENT'] = '1'
 
         return super()._build_values(init_kwargs, _env_file=_env_file, _env_file_encoding=_env_file_encoding, _secrets_dir=_secrets_dir)
 
-
 class DevConfig(GlobalConfig):
     """Development configurations."""
 
     APP_DEBUG = True
-
-    CASSANDRA_DATABASE: CassandraDatabase
-    KAFKA_CONSUMER: KafkaConsumer
-    KAFKA_PRODUCER: KafkaProducer
 
     class Config:
         env_file = ".env.development"
@@ -120,7 +139,6 @@ class ProdConfig(GlobalConfig):
 
     class Config:
         env_file = ".env.production"
-
 
 def update_cnf(new_config):
 

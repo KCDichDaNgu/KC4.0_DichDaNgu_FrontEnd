@@ -40,14 +40,39 @@ class OrmRepositoryBase(
         self.__logger: Logger = Logger(__name__)
 
         self.__relations: List[str] = []
+
+    @property
+    def mapper(self):
+        return self.__mapper
+
+    @property
+    def logger(self):
+        return self.__logger
+
+    @property
+    def repository(self):
+        return self.__repository
+
+    @property
+    def table_name(self):
+        return self.__table_name__
+
+    @property
+    def relations(self):
+        return self.__relations
         
-    async def create(self, entity: Entity):
+    async def create(self, entity: Entity, batch_ins: Any = None, batch_end=True, **extra_data):
         
         orm_entity = self.__mapper.to_orm_entity(entity)
         
         await DomainEvents.publish_events(entity.id, self.__logger)
         
-        result = await self.__repository.async_create_with_trigger(**(orm_entity.to_dict()))
+        result = await self.__repository.async_create_with_trigger(
+            **(orm_entity.to_dict()), 
+            batch_ins=batch_ins, 
+            batch_end=batch_end, 
+            **extra_data
+        )
 
         self.__logger.debug(f'[Entity persisted]: {type(entity).__name__} {entity.id}')
         
@@ -73,10 +98,10 @@ class OrmRepositoryBase(
 
     async def find_one(
         self,
-        **params: EntityProps,
+        **params: Any,
     ):
 
-        found = await self.__repository.async_filter(params).first()
+        found = await self.__repository.async_filter(**params).first()
 
         return self.__mapper.to_domain_entity(found) if found else None
 
@@ -116,7 +141,7 @@ class OrmRepositoryBase(
 
     async def find_many_paginated(
         self,
-        options: FindManyPaginatedParams[EntityProps]
+        options: Any
     ):
         
         result = []

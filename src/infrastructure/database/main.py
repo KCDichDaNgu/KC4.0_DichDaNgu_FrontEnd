@@ -1,11 +1,8 @@
-from infrastructure.configs import GlobalConfig
 from cassandra.cqlengine import connection
 from cassandra.auth import PlainTextAuthProvider
 from cassandra.cqlengine.management import _create_keyspace
 from infrastructure.configs.main import CassandraDatabase
 from infrastructure.database.base_classes.aiocqlengine.session import aiosession_for_cqlengine
-
-import asyncio
 
 def init_db(cassandraDbConfig: CassandraDatabase):
 
