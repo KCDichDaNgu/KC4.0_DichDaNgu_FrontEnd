@@ -67,7 +67,7 @@ async def init_app():
 
     init_db(config.CASSANDRA_DATABASE)
 
-    # await init_kafka(config)
+    await init_kafka(config)
 
     init_routes(app)
 
