@@ -16,7 +16,7 @@ class TranslationRequestProps(BaseModel):
     creator_type: CreatorTypeEnum = Field(...)
     status: StatusEnum = Field(...)
     current_step: Union[TranslationStepEnum, DetectionLanguageStepEnum] = Field(...)
-    expired_date: Optional[DateVO]
+    expired_date: DateVO = DateVO(None)
 
     # result: TranslationRequestResultProps
 
@@ -25,7 +25,6 @@ class TranslationRequestProps(BaseModel):
 
     @validator('creator_id')
     def validate(cls, v, values, **kwargs):
-        print(v)
         if values['task_type'] in TRANSLATION_PRIVATE_TASKS and not v:
             raise ValueError('Creator cannot be None')
             
