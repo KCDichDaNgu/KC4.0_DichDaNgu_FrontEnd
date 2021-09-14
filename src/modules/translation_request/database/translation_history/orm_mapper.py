@@ -17,7 +17,6 @@ class TranslationHistoryOrmMapper(OrmMapperBase[TranslationHistoryEntity, Transl
         orm_props = {
             'creator_id': props.creator_id.value,
             'task_id': props.task_id.value,
-            'task_result_id': props.task_result_id.value,
             'translation_type': props.translation_type,
             'status': props.status,
             'file_path': props.file_path
@@ -30,7 +29,6 @@ class TranslationHistoryOrmMapper(OrmMapperBase[TranslationHistoryEntity, Transl
         props = {
             'creator_id': ID(str(orm_entity.creator_id)),
             'task_id': ID(str(orm_entity.task_id)),
-            'task_result_id': ID(str(orm_entity.task_result_id)),
             'translation_type': orm_entity.translation_type,
             'status': orm_entity.status,
             'file_path': orm_entity.file_path

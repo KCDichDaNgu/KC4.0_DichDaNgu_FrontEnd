@@ -12,7 +12,6 @@ class TranslationHistoryOrmEntity(OrmEntityBase):
 
     creator_id = columns.UUID(default=None)
     task_id = columns.UUID(required=True)
-    task_result_id = columns.UUID(required=True)
     translation_type = columns.Text(required=True)
     status = columns.Text(required=True)
     file_path = columns.Text(required=True)
@@ -21,7 +20,7 @@ class TranslationHistoryOrmEntity(OrmEntityBase):
         
         super(TranslationHistoryOrmEntity, self).validate()
         
-        if not self.task_id or not self.task_result_id:
+        if not self.task_id:
 
             raise ValidationError('Task id and Task result id are invalid')
 

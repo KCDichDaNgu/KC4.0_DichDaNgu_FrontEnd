@@ -10,6 +10,10 @@ from core.value_objects import ID
 import aiofiles
 import json, os
 
+from infrastructure.configs.translation_request import (
+    TASK_RESULT_FOLDER, TASK_RESULT_FILE_PATTERN, TASK_RESULT_FILE_EXTENSION
+)
+
 class TranslationRequestResultProps(BaseModel):
     
     task_id: ID = Field(...)
@@ -18,9 +22,11 @@ class TranslationRequestResultProps(BaseModel):
 
 class TranslationRequestResultEntity(Entity[TranslationRequestResultProps]):
 
-    async def save_request_result_to_file(self, dir_path, file_name, file_extension, content):
+    async def save_request_result_to_file(self, content):
+        
+        file_name = TASK_RESULT_FILE_PATTERN.format(str(self.props.task_id.value), self.props.step)
 
-        async with aiofiles.open(f'{dir_path}/{file_name}.{file_extension}', 'w+') as f:
+        async with aiofiles.open(f'{TASK_RESULT_FOLDER}/{file_name}.{TASK_RESULT_FILE_EXTENSION}', 'w+') as f:
             json.dump(content, f)
 
             f.close()

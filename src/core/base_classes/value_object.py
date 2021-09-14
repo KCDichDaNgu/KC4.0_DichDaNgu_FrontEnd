@@ -36,7 +36,7 @@ class ValueObject(BaseModel, Generic[T]):
         
         self.__props = props
         
-        self.validate(props)
+        self.verify(props)
 
     @property
     def props(self):
@@ -48,7 +48,7 @@ class ValueObject(BaseModel, Generic[T]):
 
     @classmethod
     @abstractmethod
-    def validate(cls, props: ValueObjectProps[T]):
+    def verify(cls, props: ValueObjectProps[T]):
         ...
     
     @staticmethod
@@ -76,3 +76,4 @@ class ValueObject(BaseModel, Generic[T]):
             return True
 
         return False
+        

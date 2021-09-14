@@ -75,7 +75,7 @@ class OrmEntityBase(AioModel):
         pass
     
     @staticmethod
-    async def async_after_create(batch, result, batch_end, *args, **kwargs):
+    async def async_after_create(batch, result, *args, **kwargs):
         pass
 
     @staticmethod
@@ -87,7 +87,7 @@ class OrmEntityBase(AioModel):
         pass
 
     @classmethod
-    async def async_create_with_trigger(cls, batch_ins, batch_end, **kwargs):
+    async def async_create_with_trigger(cls, batch_ins, **kwargs):
 
         b = batch_ins if batch_ins else BatchQuery() 
 
@@ -95,10 +95,7 @@ class OrmEntityBase(AioModel):
 
         result = await cls.batch(b).async_create(**kwargs)  
 
-        await cls.async_after_create(b, result, batch_end, **kwargs)
-
-        if not batch_ins is None and batch_end:
-            b.execute()
+        await cls.async_after_create(b, result, **kwargs)
             
         if batch_ins is None:
             b.execute()
@@ -115,7 +112,8 @@ class OrmEntityBase(AioModel):
 
         await self.async_after_update(batch=b, **values)
 
-        b.execute()
+        if batch_ins is None:
+            b.execute()
 
         return result
 
@@ -129,7 +127,8 @@ class OrmEntityBase(AioModel):
 
         await self.async_after_save(batch=b)
 
-        b.execute()
+        if batch_ins is None:
+            b.execute()
 
         return result
 
@@ -143,7 +142,8 @@ class OrmEntityBase(AioModel):
 
         await self.async_after_delete(batch=b)
 
-        b.execute()
+        if batch_ins is None:
+            b.execute()
 
         return result
 
@@ -158,7 +158,8 @@ class OrmEntityBase(AioModel):
 
         cls.after_create(batch=b, result=result, **kwargs)
 
-        b.execute()
+        if batch_ins is None:
+            b.execute()
 
         return result
 
@@ -172,7 +173,8 @@ class OrmEntityBase(AioModel):
 
         self.after_update(batch=b, **values)
 
-        b.execute()
+        if batch_ins is None:
+            b.execute()
 
         return result
 
@@ -186,7 +188,8 @@ class OrmEntityBase(AioModel):
 
         self.after_save(batch=b)
 
-        b.execute()
+        if batch_ins is None:
+            b.execute()
 
         return result
 
@@ -200,7 +203,8 @@ class OrmEntityBase(AioModel):
 
         self.after_delete(batch=b)
 
-        b.execute()
+        if batch_ins is None:
+            b.execute()
 
         return result
     

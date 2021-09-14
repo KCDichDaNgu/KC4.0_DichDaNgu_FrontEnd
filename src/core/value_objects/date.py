@@ -33,6 +33,6 @@ class DateVO(ValueObject[datetime]):
         return DateVO(datetime.now())
 
     @classmethod
-    def validate(cls, props: DomainPrimitive[datetime]):
+    def verify(cls, props: DomainPrimitive[datetime]):
         if not props.value is None and not isinstance(props.value, datetime):
             raise ArgumentInvalidException('Incorrect date')

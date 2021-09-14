@@ -22,8 +22,10 @@ class TranslationRequestProps(BaseModel):
 
     @root_validator(pre=True)
     def validate(cls, values):
+        
         if values['task_type'] in TRANSLATION_PRIVATE_TASKS and not values['creator_id'].value:
             raise ValueError('Creator cannot be None')
+
         return values
 
 class TranslationRequestEntity(AggregateRoot[TranslationRequestProps]):
