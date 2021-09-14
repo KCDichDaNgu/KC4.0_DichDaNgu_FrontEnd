@@ -6,6 +6,7 @@ from sanic_openapi import swagger_blueprint
 from infrastructure.configs import ServerTypeEnum, get_cnf, GlobalConfig
 from infrastructure.configs.translation_request import TASK_RESULT_FOLDER
 from infrastructure.interceptors.exeption_interceptor import ExceptionInterceptor
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 import os, aiofiles
 
@@ -13,15 +14,18 @@ async def listener_before_server_start(*args, **kwargs):
     print("before_server_start")
     
 async def listener_after_server_start(*args, **kwargs):
+
+    from infrastructure.adapters.background_task_manager.main import BackgroundTaskManager
+
+    BackgroundTaskManager.scheduler.start()
+
     print("after_server_start")
     
 async def listener_before_server_stop(*args, **kwargs): 
 
     from infrastructure.adapters.background_task_manager.main import BackgroundTaskManager
 
-    backgroundTaskManager = BackgroundTaskManager()
-
-    backgroundTaskManager.stop()
+    BackgroundTaskManager.scheduler.stop()
     
 async def listener_after_server_stop(*args, **kwargs):
     print("after_server_stop")
@@ -63,7 +67,7 @@ async def init_app():
 
     init_db(config.CASSANDRA_DATABASE)
 
-    await init_kafka(config)
+    # await init_kafka(config)
 
     init_routes(app)
 
