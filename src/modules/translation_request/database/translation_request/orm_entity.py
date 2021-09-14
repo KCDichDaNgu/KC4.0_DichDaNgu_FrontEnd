@@ -20,7 +20,7 @@ class TranslationRequestOrmEntity(OrmEntityBase):
     creator_type = columns.Text(required=True)
     status = columns.Text(required=True)
     current_step = columns.Text(required=True)
-    expired_date = columns.DateTime(required=True)
+    expired_date = columns.DateTime()
 
     def validate(self):
         
