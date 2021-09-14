@@ -15,7 +15,7 @@ class CreatePlainTextTranslationRequestService():
     async def create_request(self, command: CreatePlainTextTranslationRequestCommand):
 
         new_request = TranslationRequestEntity(
-            TranslationRequestProps.construct(
+            TranslationRequestProps(
                 creator_id=ID(None),
                 creator_type=CreatorTypeEnum.end_user.value,
                 task_type=TaskTypeEnum.public_plain_text_translation.value,

@@ -12,9 +12,9 @@ from core.utils import is_valid_uuid
 
 class ID(ValueObject[str]):
 
-    def __init__(self, value: Union[str, None]):
+    def __init__(self, value: Union[str, None], **data):
 
-        super().__init__(ValueObjectProps[str](value))
+        super().__init__(ValueObjectProps[str](value), **data)
 
     @property
     def value(self) -> str:
