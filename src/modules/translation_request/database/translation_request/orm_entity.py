@@ -1,7 +1,11 @@
 from datetime import timedelta
+from core.value_objects.id import ID
 from infrastructure.configs.main import CassandraDatabase, GlobalConfig, get_cnf
 from infrastructure.database.base_classes import OrmEntityBase
-from infrastructure.configs.translation_request import TRANSLATION_PRIVATE_TASKS, EXPIRED_DURATION
+from infrastructure.configs.translation_request import (
+    TRANSLATION_PRIVATE_TASKS, EXPIRED_DURATION
+)
+
 from cassandra.cqlengine import ValidationError, columns
 
 config: GlobalConfig = get_cnf()

@@ -76,7 +76,7 @@ class OrmEntityBase(AioModel):
         pass
     
     @staticmethod
-    async def async_after_create(batch, *args, **kwargs):
+    async def async_after_create(batch, result, batch_end, *args, **kwargs):
         pass
 
     @staticmethod
@@ -88,102 +88,122 @@ class OrmEntityBase(AioModel):
         pass
 
     @classmethod
-    async def async_create_with_trigger(cls, **kwargs):
+    async def async_create_with_trigger(cls, batch_ins, batch_end, **kwargs):
 
-        with BatchQuery() as b:
+        b = batch_ins if batch_ins else BatchQuery() 
 
-            await cls.async_before_create(batch=b, **kwargs)
+        await cls.async_before_create(batch=b, **kwargs)
 
-            result = await cls.batch(b).async_create(**kwargs)  
+        result = await cls.batch(b).async_create(**kwargs)  
 
-            await cls.async_after_create(batch=b, **kwargs)
+        await cls.async_after_create(b, result, batch_end, **kwargs)
 
-            return result
+        if not batch_ins is None and batch_end:
+            b.execute()
+            
+        if batch_ins is None:
+            b.execute()
 
-    async def async_update_with_trigger(self, **values):
+        return result
 
-        with BatchQuery() as b:
+    async def async_update_with_trigger(self, batch_ins, **values):
 
-            await self.__class__.async_before_update(batch=b, **values)
+        b = batch_ins if batch_ins else BatchQuery() 
 
-            result = await self.batch(b).async_update(**values)
+        await self.async_before_update(batch=b, **values)
 
-            await self.async_after_update(batch=b, **values)
+        result = await self.batch(b).async_update(**values)
 
-            return result
+        await self.async_after_update(batch=b, **values)
 
-    async def async_save_with_trigger(self):
+        b.execute()
 
-        with BatchQuery() as b:
+        return result
 
-            await self.__class__.async_before_save(batch=b)
+    async def async_save_with_trigger(self, batch_ins):
 
-            result = await self.batch(b).async_save()
+        b = batch_ins if batch_ins else BatchQuery() 
 
-            await self.async_after_save(batch=b)
+        await self.async_before_save(batch=b)
 
-            return result
+        result = await self.batch(b).async_save()
 
-    async def async_delete_with_trigger(self):
+        await self.async_after_save(batch=b)
 
-        with BatchQuery() as b:
+        b.execute()
 
-            await self.__class__.async_before_delete(batch=b)
+        return result
 
-            result = await self.batch(b).async_delete()
+    async def async_delete_with_trigger(self, batch_ins):
 
-            await self.async_after_delete(batch=b)
+        b = batch_ins if batch_ins else BatchQuery() 
 
-            return result
+        await self.async_before_delete(batch=b)
+
+        result = await self.batch(b).async_delete()
+
+        await self.async_after_delete(batch=b)
+
+        b.execute()
+
+        return result
 
     @classmethod
-    def create_with_trigger(cls, **kwargs):
+    def create_with_trigger(cls, batch_ins, **kwargs):
 
-        with BatchQuery() as b:
+        b = batch_ins if batch_ins else BatchQuery() 
 
-            cls.before_create(batch=b, **kwargs)
+        cls.before_create(batch=b, **kwargs)
 
-            result = cls.batch(b).create(**kwargs)
+        result = cls.batch(b).create(**kwargs)
 
-            cls.after_create(batch=b, **kwargs)
+        cls.after_create(batch=b, result=result, **kwargs)
 
-            return result
+        b.execute()
 
-    def update_with_trigger(self, **values):
+        return result
 
-        with BatchQuery() as b:
+    def update_with_trigger(self, batch_ins, **values):
 
-            self.__class__.before_update(batch=b, **values)
+        b = batch_ins if batch_ins else BatchQuery() 
 
-            result = self.batch(b).update(**values)
+        self.before_update(batch=b, **values)
 
-            self.after_update(batch=b, **values)
+        result = self.batch(b).update(**values)
 
-            return result
+        self.after_update(batch=b, **values)
 
-    def save_with_trigger(self):
+        b.execute()
 
-        with BatchQuery() as b:
+        return result
 
-            self.__class__.before_save(batch=b)
+    def save_with_trigger(self, batch_ins):
 
-            result = self.batch(b).save()
+        b = batch_ins if batch_ins else BatchQuery() 
 
-            self.after_save(batch=b)
+        self.before_save(batch=b)
 
-            return result
+        result = self.batch(b).save()
 
-    def delete_with_trigger(self):
+        self.after_save(batch=b)
 
-        with BatchQuery() as b:
+        b.execute()
 
-            self.__class__.before_delete(batch=b)
+        return result
 
-            result = self.batch(b).delete()
+    def delete_with_trigger(self, batch_ins):
 
-            self.after_delete(batch=b)
+        b = batch_ins if batch_ins else BatchQuery() 
 
-            return result
+        self.before_delete(batch=b)
+
+        result = self.batch(b).delete()
+
+        self.after_delete(batch=b)
+
+        b.execute()
+
+        return result
     
     @classmethod
     def sync_table_to_db(
@@ -207,4 +227,3 @@ class OrmEntityBase(AioModel):
             values[name] = getattr(self, name, None)
 
         return values
-        

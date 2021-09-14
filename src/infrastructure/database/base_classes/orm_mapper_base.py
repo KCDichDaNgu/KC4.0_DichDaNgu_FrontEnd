@@ -26,7 +26,7 @@ class OrmMapperBase(ABC, Generic[Entity, OrmEntity]):
     def to_domain_entity(self, orm_entity: OrmEntity) -> Entity:
         
         props = self.to_domain_props(orm_entity)
-
+        
         return self.assign_props_to_entity(props, orm_entity)
 
     def to_orm_entity(self, entity: Entity) -> OrmEntity:
@@ -46,7 +46,7 @@ class OrmMapperBase(ABC, Generic[Entity, OrmEntity]):
         entity_props: Any,
         orm_entity: OrmEntity
     ) -> Entity:
-    
+
         return self.__entity_klass.from_orm({
             **entity_props,
             "id": ID(str(orm_entity.id)),

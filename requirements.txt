@@ -11,3 +11,4 @@ aiokafka
 sanic_openapi
 addict
 schedule
+devtools

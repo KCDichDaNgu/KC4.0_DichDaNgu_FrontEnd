@@ -1,12 +1,10 @@
+from modules.translation_request.domain.entities.translation_request_result import TranslationRequestResultProps
 from pydantic.class_validators import validator
-from core.base_classes.entity import BaseEntityProps
-from typing import Union
+from typing import Optional, Union
 from pydantic import Field, BaseModel
 from infrastructure.configs.translation_request import (
     TaskTypeEnum, CreatorTypeEnum, StatusEnum, TranslationStepEnum, DetectionLanguageStepEnum, TRANSLATION_PRIVATE_TASKS
 )
-
-from addict import Addict
 
 from core.base_classes.aggregate_root import AggregateRoot
 from core.value_objects import DateVO, ID
@@ -18,7 +16,9 @@ class TranslationRequestProps(BaseModel):
     creator_type: CreatorTypeEnum = Field(...)
     status: StatusEnum = Field(...)
     current_step: Union[TranslationStepEnum, DetectionLanguageStepEnum] = Field(...)
-    expired_date: DateVO
+    expired_date: Optional[DateVO]
+
+    # result: TranslationRequestResultProps
 
     class Config:
         use_enum_values = True

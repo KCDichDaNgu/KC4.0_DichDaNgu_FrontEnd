@@ -15,12 +15,12 @@ class TranslationRequestOrmMapper(OrmMapperBase[TranslationRequestEntity, Transl
         props = entity.get_props_copy()
         
         orm_props = {
-            'creator_id': props.creator_id,
+            'creator_id': props.creator_id.value if props.creator_id else None,
             'task_type': props.task_type,
             'creator_type': props.creator_type,
             'status': props.status,
             'current_step': props.current_step,
-            'expired_date': props.expired_date,
+            'expired_date': props.expired_date.value if props.expired_date else None,
         }
         
         return TranslationRequestOrmEntity(**orm_props)
@@ -28,26 +28,12 @@ class TranslationRequestOrmMapper(OrmMapperBase[TranslationRequestEntity, Transl
     def to_domain_props(self, orm_entity: TranslationRequestOrmEntity) -> TranslationRequestProps:
 
         props = {
-            'creator_id': orm_entity.id,
+            'creator_id': ID(str(orm_entity.creator_id)),
             'task_type': orm_entity.task_type,
             'creator_type': orm_entity.creator_type,
             'status': orm_entity.status,
             'current_step': orm_entity.current_step,
-            'expired_date': orm_entity.expired_date
+            'expired_date': DateVO(orm_entity.expired_date) 
         }
 
         return props
-
-    def assign_props_to_entity(
-        self, 
-        entity_props: Any,
-        orm_entity: TranslationRequestOrmEntity
-    ) -> TranslationRequestEntity:
-    
-        return TranslationRequestEntity.from_orm({
-            **entity_props,
-            "id": ID(str(orm_entity.id)),
-            "created_at": DateVO(orm_entity.created_at),
-            "updated_at": DateVO(orm_entity.updated_at),
-            "expired_date": DateVO(orm_entity.expired_date) if orm_entity.expired_date else None
-        })

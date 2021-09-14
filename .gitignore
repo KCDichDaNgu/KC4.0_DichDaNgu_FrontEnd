@@ -7,3 +7,4 @@ dump.rdb
 .env.development
 .env.production
 .env.shared
+task_result/*
