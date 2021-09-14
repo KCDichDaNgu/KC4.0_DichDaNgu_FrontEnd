@@ -11,7 +11,7 @@ from core.value_objects import DateVO, ID
 
 class TranslationRequestProps(BaseModel):
 
-    creator_id: Union[ID, None] = None
+    creator_id: ID
     task_type: TaskTypeEnum = Field(...)
     creator_type: CreatorTypeEnum = Field(...)
     status: StatusEnum = Field(...)
@@ -25,7 +25,7 @@ class TranslationRequestProps(BaseModel):
 
     @validator('creator_id')
     def validate(cls, v, values, **kwargs):
-
+        print(v)
         if values['task_type'] in TRANSLATION_PRIVATE_TASKS and not v:
             raise ValueError('Creator cannot be None')
             

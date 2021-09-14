@@ -1,5 +1,4 @@
 from pydantic import Field
-from pydantic.class_validators import root_validator, validator
 from typing import Any, Optional, Union
 
 from pydantic.fields import PrivateAttr
@@ -10,22 +9,25 @@ from core.value_objects import ID
 import aiofiles
 import json, os
 
-class TranslationRequestResultProps(BaseModel):
+from infrastructure.configs.translation_history import TranslationHistoryTypeEnum, TranslationHistoryStatus
+
+class TranslationHistoryProps(BaseModel):
     
+    creator_id: ID
     task_id: ID = Field(...)
-    step: str = Field(...)
+    task_result_id: ID = Field(...)
+    translation_type: TranslationHistoryTypeEnum = Field(...)
+    status: TranslationHistoryStatus = Field(...)
     file_path: Optional[str]
 
-class TranslationRequestResultEntity(Entity[TranslationRequestResultProps]):
+    class Config:
+        use_enum_values = True
 
-    async def save_request_result_to_file(self, dir_path, file_name, file_extension, content):
+class TranslationHistoryEntity(Entity[TranslationHistoryProps]):
 
-        async with aiofiles.open(f'{dir_path}/{file_name}.{file_extension}', 'w+') as f:
-            json.dump(content, f)
+    async def save_request_result_to_file(self, file_path):
 
-            f.close()
-
-        self.props.file_path = file_name
+        self.props.file_path = file_path
 
     async def read_data_from_file(self):
 

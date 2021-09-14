@@ -1,6 +1,6 @@
 from core.types import ExtendedEnum
 
-EXPIRED_DURATION = 10
+EXPIRED_DURATION = 60
 
 TASK_RESULT_FOLDER = 'task_result'
 TASK_RESULT_FILE_PATTERN = '{}__{}'

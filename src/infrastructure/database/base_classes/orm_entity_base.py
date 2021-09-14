@@ -1,4 +1,3 @@
-import cassandra
 from infrastructure.configs.main import GlobalConfig, get_cnf
 from typing import List
 from uuid import uuid4
@@ -208,12 +207,11 @@ class OrmEntityBase(AioModel):
     @classmethod
     def sync_table_to_db(
         cls, 
-        keyspaces: List[str] = []
+        keyspaces: List[str] = [],
+        connections = None
     ):
 
-        __keyspaces = keyspaces if keyspaces else [database_config.KEYSPACE.NAME]
-
-        sync_table(cls, keyspaces=__keyspaces)
+        sync_table(cls, keyspaces=keyspaces, connections=connections)
 
     @classmethod
     def get_table_name(cls):
