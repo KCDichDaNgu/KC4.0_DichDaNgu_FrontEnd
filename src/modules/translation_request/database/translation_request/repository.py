@@ -55,17 +55,6 @@ class TranslationRequestRepository(
             mapper=mapper,
             table_name=table_name
         )
-    
-    @staticmethod
-    def save_request_result_to_file(file_name, file_extension, content):
-
-        if not os.path.exists(TASK_RESULT_FOLDER):
-            os.makedirs(TASK_RESULT_FOLDER)
-
-        with open(f'{TASK_RESULT_FOLDER}/{file_name}.{file_extension}', 'w+') as f:
-            json.dump(content, f)
-
-            f.close()
 
     @staticmethod
     async def create_text_translation_handler(batch, result, *args, **kwargs):
@@ -87,23 +76,24 @@ class TranslationRequestRepository(
         
         file_name = TASK_RESULT_FILE_PATTERN.format(str(result.id), result.current_step)
 
-        __class__.save_request_result_to_file(
+        task_result_props = TranslationRequestResultProps.construct(
+            task_id=ID(str(result.id)),
+            step=result.current_step
+        )
+
+        new_task_result_entity = TranslationRequestResultEntity(task_result_props)
+
+        await new_task_result_entity.save_request_result_to_file(
+            dir_path=TASK_RESULT_FOLDER,
             file_name=file_name, 
             file_extension=TASK_RESULT_FILE_EXTENSION,
             content=request_data
         )
-        
-        task_result_props = TranslationRequestResultProps.construct(
-            task_id=ID(str(result.id)),
-            step=result.current_step,
-            file_path=file_name
-        )
-        
-        new_task_result_entity = TranslationRequestResultEntity(task_result_props)
 
         result_2 = await translationRequestResultRepository.create(
             new_task_result_entity,
-            batch
+            batch,
+            batch_end=False
         )
         
         return result_2

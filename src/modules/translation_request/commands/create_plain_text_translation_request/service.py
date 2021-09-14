@@ -1,7 +1,8 @@
-from core.value_objects import DateVO
+from core.value_objects import DateVO, ID
 from infrastructure.configs.translation_request import CreatorTypeEnum, StatusEnum, TaskTypeEnum, TranslationStepEnum
-from modules.translation_request.database.translation_request.repository import TranslationRequestRepository
-from modules.translation_request.database import TranslationRequestRepositoryPort
+from modules.translation_request.database.translation_request.repository import (
+    TranslationRequestRepository, TranslationRequestRepositoryPort
+)
 from modules.translation_request.commands.create_plain_text_translation_request.command import CreatePlainTextTranslationRequestCommand
 from modules.translation_request.domain.entities.translation_request import TranslationRequestEntity, TranslationRequestProps 
 
@@ -15,6 +16,7 @@ class CreatePlainTextTranslationRequestService():
 
         new_request = TranslationRequestEntity(
             TranslationRequestProps(
+                creator_id=ID(None),
                 creator_type=CreatorTypeEnum.end_user.value,
                 task_type=TaskTypeEnum.public_plain_text_translation.value,
                 status=StatusEnum.not_yet_processed.value,

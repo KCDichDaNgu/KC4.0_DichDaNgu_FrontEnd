@@ -35,6 +35,22 @@ class StatusCodeEnum(int, ExtendedEnum):
     success = 1
     failed = 0
 
+@unique
+class BackgroundTaskTriggerEnum(str, ExtendedEnum):
+
+    interval = 'interval'
+    cron = 'cron'
+    date = 'date'
+
+class BackgroundTask(BaseModel):
+
+    ID: str 
+    TRIGGER: BackgroundTaskTriggerEnum
+    CONFIG: Dict
+
+    class Config:
+        use_enum_values = True
+
 class AppConfig(BaseModel):
 
     APP_NAME: str = 'translation-backend'
@@ -64,6 +80,14 @@ class AppConfig(BaseModel):
     API_VERSION: str = '0.0.1'
 
     STRICT_SLASHES = False
+
+    BACKGROUND_TASKS: Dict[str, BackgroundTask] = {
+        'translate_plain_text_in_public.call_language_detection_service': BackgroundTask(
+            ID='translate_plain_text_in_public.call_language_detection_service',
+            TRIGGER=BackgroundTaskTriggerEnum.interval.value,
+            CONFIG=dict(seconds=30)
+        )
+    }
 
 class TranslationAPI(BaseModel):
 
@@ -100,8 +124,11 @@ class GlobalConfig(BaseSettings):
     KAFKA_CONSUMER: KafkaConsumer = KafkaConsumer()
     KAFKA_PRODUCER: KafkaProducer = KafkaProducer()
 
-    TRANSLATION_API: TranslationAPI
-    LANGUAGE_DETECTION_API: LanguageDetectionAPI
+    PRIVATE_TRANSLATION_API: TranslationAPI
+    PRIVATE_LANGUAGE_DETECTION_API: LanguageDetectionAPI
+
+    PUBLIC_TRANSLATION_API: TranslationAPI
+    PUBLIC_LANGUAGE_DETECTION_API: LanguageDetectionAPI
 
     class Config:
         """Loads the dotenv file."""

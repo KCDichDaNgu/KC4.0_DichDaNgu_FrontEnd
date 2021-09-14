@@ -78,23 +78,22 @@ class OrmRepositoryBase(
         
         return self.__mapper.to_domain_entity(result)
 
-    async def create_multiple(self, entities: List[Entity]):
+    async def update(self, entity: Entity, batch_ins: Any = None, batch_end=True, **extra_data):
+
+        orm_entity = self.__mapper.to_orm_entity(entity)
         
-        result = []
+        await DomainEvents.publish_events(entity.id, self.__logger)
+        
+        result = await self.__repository.async_update_with_trigger(
+            **(orm_entity.to_dict()), 
+            batch_ins=batch_ins, 
+            batch_end=batch_end, 
+            **extra_data
+        )
 
-        asyncio.gather(*[DomainEvents.publish_events(entity.id, self.logger) for entity in entities])
-
-        with BatchQuery() as b:
-            for entity in entities:
-
-                orm_entity = self.__mapper.to_orm_entity(entity)
-                new_entity = self.__repository.batch(b).async_create_with_trigger(**(orm_entity.to_dict()))
-
-                result.append(self.__mapper.to_domain_entity(new_entity))
-
-        self.__logger.debug(f'[Multiple entities persisted]: {Entity.__name__} {"".join(list(map(lambda e: e.id, entities)))}')
-
-        return result
+        self.__logger.debug(f'[Entity persisted]: {type(entity).__name__} {entity.id}')
+        
+        return self.__mapper.to_domain_entity(result)
 
     async def find_one(
         self,
@@ -128,14 +127,21 @@ class OrmRepositoryBase(
 
         return found
 
-    async def find_many(self, params: Any):
+    async def find_many(
+        self, 
+        params: Any, 
+        skip: int = None, 
+        limit: int = None,
+        order_by: Any = None
+    ):
         
         result = []
 
-        founds = await self.__repository.async_filter(params)
+        founds = await self.__repository.async_filter(**params).order_by(order_by)
 
-        for found in founds:
-            result.append(self.__mapper.to_domain_entity(found))
+        founds = founds[skip:limit]
+
+        result = list(map(lambda found: self.__mapper.to_domain_entity(found), founds))
 
         return result  
 
@@ -163,11 +169,11 @@ class OrmRepositoryBase(
             page=options.pagination.page
         )
 
-    async def delete(self, entity: Entity) -> Entity:
+    async def delete(self, entity: Entity, batch_ins: Any = None, batch_end=True, **extra_data) -> Entity:
 
         await DomainEvents.publish_events(entity.id, self.__logger)
 
-        await self.__repository.objects(id=entity.id).async_create_with_trigger()
+        await self.__repository.filter(id=entity.id.value).async_delete_with_trigger()
 
         self.__logger.debug(f'[Entity deleted]: {type(entity).__name__} {entity.id}')
 

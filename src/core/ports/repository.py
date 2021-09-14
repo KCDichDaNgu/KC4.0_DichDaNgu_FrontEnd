@@ -44,9 +44,9 @@ class RepositoryPort(
     def create(self) -> Awaitable[Entity]:
         ...
 
-    @abstractmethod
-    def create_multiple(self) -> List[Awaitable[Entity]]:
-        ...
+    # @abstractmethod
+    # def create_multiple(self) -> List[Awaitable[Entity]]:
+    #     ...
 
     @abstractmethod
     def find_one_or_throw(self) -> Awaitable[Entity]:

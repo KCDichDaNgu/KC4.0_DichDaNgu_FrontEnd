@@ -17,6 +17,8 @@ class CassandraDatabase(BaseModel):
     USER: str = Field(None)
     HOST: str = Field(None)
 
+    SCHEMA_VERSION = 1
+
     KEYSPACE: KeySpaceConfig = KeySpaceConfig()
     
     PROTOCOL_VERSION: int = 3
@@ -27,5 +29,8 @@ class CassandraDatabase(BaseModel):
         },
         "translation_request_result": {
             "name": "translation_request_result"
+        },
+        "translation_history": {
+            "name": "translation_history"
         }
     }

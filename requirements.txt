@@ -11,4 +11,5 @@ aiokafka
 sanic_openapi
 addict
 schedule
-devtools
+aiofiles
+apscheduler

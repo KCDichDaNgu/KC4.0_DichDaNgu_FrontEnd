@@ -25,5 +25,3 @@ class TranslationRequestResultOrmEntity(OrmEntityBase):
         if not self.step in TranslationStepEnum.enum_values():
 
             raise ValidationError('Step is invalid')
-
-TranslationRequestResultOrmEntity.sync_table_to_db([database_config.KEYSPACE.NAME])

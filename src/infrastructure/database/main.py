@@ -3,6 +3,9 @@ from cassandra.auth import PlainTextAuthProvider
 from cassandra.cqlengine.management import _create_keyspace
 from infrastructure.configs.main import CassandraDatabase
 from infrastructure.database.base_classes.aiocqlengine.session import aiosession_for_cqlengine
+from cassandra.cqlengine.connection import set_default_connection
+from modules.translation_request.database.translation_request.orm_entity import TranslationRequestOrmEntity
+from modules.translation_request.database.translation_request_result.orm_entity import TranslationRequestResultOrmEntity
 
 def init_db(cassandraDbConfig: CassandraDatabase):
 
@@ -33,3 +36,11 @@ def init_db(cassandraDbConfig: CassandraDatabase):
     aiosession_for_cqlengine(current_session)
     
     connection.set_session(current_session)
+
+    TranslationRequestOrmEntity.sync_table_to_db(
+        keyspaces=[cassandraDbConfig.KEYSPACE.NAME]
+    )
+    
+    TranslationRequestResultOrmEntity.sync_table_to_db(
+        keyspaces=[cassandraDbConfig.KEYSPACE.NAME]
+    )

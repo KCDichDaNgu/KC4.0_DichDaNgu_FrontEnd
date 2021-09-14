@@ -20,7 +20,7 @@ class TranslationRequestOrmEntity(OrmEntityBase):
     creator_type = columns.Text(required=True)
     status = columns.Text(required=True)
     current_step = columns.Text(required=True)
-    expired_date = columns.DateTime()
+    expired_date = columns.DateTime(required=True)
 
     def validate(self):
         
@@ -33,5 +33,3 @@ class TranslationRequestOrmEntity(OrmEntityBase):
         if self.created_at is not None and self.expired_date is None:
 
             self.expired_date = self.created_at + timedelta(seconds=EXPIRED_DURATION)
-
-TranslationRequestOrmEntity.sync_table_to_db([database_config.KEYSPACE.NAME])
