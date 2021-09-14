@@ -7,29 +7,29 @@ class BackgroundTaskManager(BackgroundTaskManagerPort):
 
     def __init__(self, scheduler: AsyncIOScheduler = None, force_assignment: bool = False) -> None:
         
-        if self.scheduler is None or force_assignment == True:
-            self.scheduler = scheduler
+        if self.__class__.scheduler is None or force_assignment == True:
+            self.__class__.scheduler = scheduler
 
     def start(self):
-
-        self.scheduler.start()
+        
+        self.__class__.scheduler.start()
 
     def stop(self):
 
-        self.scheduler.shutdown()
+        self.__class__.scheduler.shutdown()
 
     def add_job(self, func, **kwargs):
         
-        self.scheduler.add_job(func, **kwargs)
+        self.__class__.scheduler.add_job(func, **kwargs)
 
     def get_job(self, job_id, **kwargs):
 
-        return self.scheduler.get_job(job_id, **kwargs)
+        return self.__class__.scheduler.get_job(job_id, **kwargs)
 
     def get_jobs(self, **kwargs):
         
-        return self.scheduler.get_jobs(**kwargs)
+        return self.__class__.scheduler.get_jobs(**kwargs)
 
     def remove_all_jobs(self, **kwargs):
 
-        return self.scheduler.remove_all_jobs(**kwargs)
+        return self.__class__.scheduler.remove_all_jobs(**kwargs)

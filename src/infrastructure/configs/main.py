@@ -85,7 +85,7 @@ class AppConfig(BaseModel):
         'translate_plain_text_in_public.call_language_detection_service': BackgroundTask(
             ID='translate_plain_text_in_public.call_language_detection_service',
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
-            CONFIG=dict(seconds=30)
+            CONFIG=dict(seconds=3)
         )
     }
 
