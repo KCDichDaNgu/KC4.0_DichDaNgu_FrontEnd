@@ -10,7 +10,7 @@ from datetime import datetime
 
 class DateVO(ValueObject[datetime]):
 
-    def __init__(self, value: Union[datetime, Complex, str, None]):
+    def __init__(self, value: Union[datetime, Complex, str, None], **data):
 
         date = value
         
@@ -22,7 +22,7 @@ class DateVO(ValueObject[datetime]):
 
             date = datetime.strptime(value)
 
-        super().__init__(ValueObjectProps[datetime](date))
+        super().__init__(ValueObjectProps[datetime](date), **data)
 
     @property
     def value(self) -> datetime:
