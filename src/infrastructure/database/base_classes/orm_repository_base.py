@@ -61,7 +61,7 @@ class OrmRepositoryBase(
     def relations(self):
         return self.__relations
         
-    async def create(self, entity: Entity, batch_ins: Any = None, batch_end=True, **extra_data):
+    async def create(self, entity: Entity, batch_ins: Any = None):
         
         orm_entity = self.__mapper.to_orm_entity(entity)
         
@@ -69,16 +69,14 @@ class OrmRepositoryBase(
         
         result = await self.__repository.async_create_with_trigger(
             **(orm_entity.to_dict()), 
-            batch_ins=batch_ins, 
-            batch_end=batch_end, 
-            **extra_data
+            batch_ins=batch_ins
         )
 
         self.__logger.debug(f'[Entity persisted]: {type(entity).__name__} {entity.id}')
         
         return self.__mapper.to_domain_entity(result)
 
-    async def update(self, entity: Entity, batch_ins: Any = None, batch_end=True, **extra_data):
+    async def update(self, entity: Entity, batch_ins: Any = None):
 
         orm_entity = self.__mapper.to_orm_entity(entity)
         
@@ -86,9 +84,7 @@ class OrmRepositoryBase(
         
         result = await self.__repository.async_update_with_trigger(
             **(orm_entity.to_dict()), 
-            batch_ins=batch_ins, 
-            batch_end=batch_end, 
-            **extra_data
+            batch_ins=batch_ins
         )
 
         self.__logger.debug(f'[Entity persisted]: {type(entity).__name__} {entity.id}')

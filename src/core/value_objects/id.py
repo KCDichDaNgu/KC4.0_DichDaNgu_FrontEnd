@@ -25,6 +25,6 @@ class ID(ValueObject[str]):
         return ID(str(uuid4()))
 
     @classmethod
-    def validate(cls, args: DomainPrimitive[str]):
+    def verify(cls, args: DomainPrimitive[str]):
         if not args.value is None and not is_valid_uuid(args.value):
             raise ArgumentInvalidException('Incorrect ID format') 

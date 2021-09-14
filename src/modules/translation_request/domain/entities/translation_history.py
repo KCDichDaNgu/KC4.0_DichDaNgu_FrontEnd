@@ -1,5 +1,5 @@
 from pydantic import Field
-from typing import Any, Optional, Union
+from typing import Optional
 
 from pydantic.fields import PrivateAttr
 from core.base_classes.entity import Entity
@@ -15,7 +15,6 @@ class TranslationHistoryProps(BaseModel):
     
     creator_id: ID
     task_id: ID = Field(...)
-    task_result_id: ID = Field(...)
     translation_type: TranslationHistoryTypeEnum = Field(...)
     status: TranslationHistoryStatus = Field(...)
     file_path: Optional[str]
@@ -25,7 +24,7 @@ class TranslationHistoryProps(BaseModel):
 
 class TranslationHistoryEntity(Entity[TranslationHistoryProps]):
 
-    async def save_request_result_to_file(self, file_path):
+    async def save_result_file_path(self, file_path):
 
         self.props.file_path = file_path
 
