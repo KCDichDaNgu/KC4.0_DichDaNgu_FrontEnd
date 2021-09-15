@@ -33,7 +33,7 @@ async def read_task_result(tasks_result: List[TranslationRequestResultEntity]):
 
     for task_result in tasks_result:
 
-        task_id = task_result.props['task_id'].value
+        task_id = task_result.props.task_id.value
 
         try: 
             data = await task_result.read_data_from_file()
@@ -79,9 +79,9 @@ async def main():
             ),
             limit=ALLOWED_CONCURRENT_REQUEST
         )
-        print(len(tasks_result))
+        
         task_id_task_result_content, invalid_task_ids = await read_task_result(tasks_result)
-        print(invalid_task_ids)
+        
         await mark_invalid_tasks(invalid_task_ids)
 
         api_requests = []
