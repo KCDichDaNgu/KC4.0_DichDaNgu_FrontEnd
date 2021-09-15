@@ -1,6 +1,7 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 from marshmallow.decorators import post_dump, post_load, pre_dump
+from umongo.document import Document
 from core.value_objects.id import ID
 from infrastructure.configs.main import MongoDBDatabase, GlobalConfig, get_cnf
 from infrastructure.database.base_classes.mongodb import OrmEntityBase
@@ -47,6 +48,8 @@ class TranslationRequestOrmEntity(OrmEntityBase):
     
     def pre_insert(self):
 
+        super(self.__class__, self).pre_insert()
+        
         if self.created_at is not None and self.expired_date is None:
 
             self.expired_date = self.created_at + timedelta(seconds=EXPIRED_DURATION)

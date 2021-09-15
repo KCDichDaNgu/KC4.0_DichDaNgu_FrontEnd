@@ -53,7 +53,9 @@ class CreatePlainTextTranslationRequestService():
             )
         )
 
-        await new_task_result_entity.save_request_result_to_file(content=command.json())
+        await new_task_result_entity.save_request_result_to_file(
+            content=command.json()
+        )
 
         new_translation_history_entity = TranslationHistoryEntity(
             TranslationHistoryProps(

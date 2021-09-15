@@ -25,8 +25,8 @@ class BaseEntityProps(BaseModel, ABC):
 class Entity(BaseModel, Generic[EntityProps], ABC):
 
     __id: ID = PrivateAttr()
-    __created_at: DateVO = PrivateAttr(None)
-    __updated_at: DateVO = PrivateAttr(None)
+    __created_at: DateVO = PrivateAttr(DateVO(None))
+    __updated_at: DateVO = PrivateAttr(DateVO(None))
     
     props: EntityProps
         
@@ -80,9 +80,9 @@ class Entity(BaseModel, Generic[EntityProps], ABC):
     def get_props_copy(self) -> MergedProps:
 
         props_copy = {
-            'id': self.__id.value if self.__id else None,
-            'created_at': self.__created_at.value if self.__created_at else None,
-            'updated_at': self.__updated_at.value if self.__updated_at else None,
+            'id': self.__id,
+            'created_at': self.__created_at,
+            'updated_at': self.__updated_at,
             **self.props.__dict__
         }
                 

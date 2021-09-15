@@ -67,15 +67,15 @@ class OrmRepositoryBase(
         
         await DomainEvents.publish_events(entity.id, self.__logger)
         
-        result = await self.__repository(
+        new_data = self.__repository(
             **(orm_entity.dump())
-        ).commit()
-
-        # orm_entity = await self.fine_one()
+        )
+        
+        new_data.commit()
 
         self.__logger.debug(f'[Entity persisted]: {type(entity).__name__} {entity.id}')
         
-        return self.__mapper.to_domain_entity(result)
+        return self.__mapper.to_domain_entity(new_data)
 
     async def update(self, entity: Entity):
 

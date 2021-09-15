@@ -36,7 +36,7 @@ class OrmMapperBase(ABC, Generic[Entity, OrmEntity]):
 
         return OrmEntityBase(**{
             **props,
-            'id': entity.id.value,
+            'uuid': entity.id.value,
             'created_at': entity.created_at.value,
             'updated_at': entity.updated_at.value
         })
@@ -50,7 +50,7 @@ class OrmMapperBase(ABC, Generic[Entity, OrmEntity]):
 
         return self.__entity_klass.from_orm({
             **entity_props,
-            "id": ID(str(orm_entity.id)),
+            "id": ID(str(orm_entity.uuid)),
             "created_at": DateVO(orm_entity.created_at),
             "updated_at": DateVO(orm_entity.updated_at)
         })
