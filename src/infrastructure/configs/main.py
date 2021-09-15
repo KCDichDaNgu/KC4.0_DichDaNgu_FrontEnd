@@ -1,57 +1,115 @@
+from pathlib import Path
 from pydantic import (
     Field,
     BaseSettings,
     BaseModel
 )
 
-from typing import List, Optional
-from enum import Enum, unique
+from typing import Any, Dict, Optional, Union
+from enum import unique
 
-CNF = None
+from pydantic.networks import AnyHttpUrl
+from umongo.frameworks import MotorAsyncIOInstance, PyMongoInstance
+from uvicorn.importer import import_from_string
+from core.types import ExtendedEnum
+
+from infrastructure.configs.database import CassandraDatabase, MongoDBDatabase
+from infrastructure.configs.event_dispatcher import KafkaConsumer, KafkaProducer
+
+import os
 
 @unique
-class EnvState(str, Enum):
+class EnvStateEnum(str, ExtendedEnum):
 
     dev = 'dev'
     prod = 'prod'
 
 @unique
-class ServerType(Enum):
+class ServerTypeEnum(str, ExtendedEnum):
 
     uvicorn = 'uvicorn'
     built_in = 'built_in'
 
-class CassandraDatabase(BaseModel):
+@unique
+class StatusCodeEnum(int, ExtendedEnum):
 
-    NAME: str = Field(None)
-    PASSWORD: str = Field(None)
-    USER: str = Field(None)
-    KEYSPACE: str = Field(None)
-    HOST: str = Field(None)
+    success = 1
+    failed = 0
 
-class KafkaProducer(BaseModel):
+@unique
+class BackgroundTaskTriggerEnum(str, ExtendedEnum):
 
-    BOOTSTRAP_SERVERS: List[str] = None
-    TOPICS: List[str] = None
+    interval = 'interval'
+    cron = 'cron'
+    date = 'date'
 
-class KafkaConsumer(BaseModel):
+class BackgroundTask(BaseModel):
 
-    BOOTSTRAP_SERVERS: List[str] = None
-    TOPICS: List[str] = None
-    GROUP: str = Field(None)
+    ID: str 
+    TRIGGER: BackgroundTaskTriggerEnum
+    CONFIG: Dict
+
+    class Config:
+        use_enum_values = True
 
 class AppConfig(BaseModel):
-    """Application configurations."""
-    pass
+
+    APP_NAME: str = 'translation-backend'
+
+    ROUTES: Dict = {
+        'translation_request': {
+            'path': '/',
+            'name': 'Translation request',
+        },
+        'translation_request.text_translation.create': {
+            'path': 'translate',
+            'name': 'Create text translation request',
+            'summary': 'Create text translation request',
+            'desc': 'Create text translation request',
+            'method': 'POST'
+        },
+        'translation_request.doc_translation.create': {
+            'path': 'translate_f',
+            'name': 'Create document translation request',
+            'summary': 'Create document translation request',
+            'desc': 'Create document translation request',
+            'method': 'POST'
+        }
+    }
+
+    API_BASEPATH: str = '/api'
+    API_VERSION: str = '0.0.1'
+
+    STRICT_SLASHES = False
+
+    BACKGROUND_TASKS: Dict[str, BackgroundTask] = {
+        'translate_plain_text_in_public_request.detect_content_language': BackgroundTask(
+            ID='translate_plain_text_in_public_request.detect_content_language',
+            TRIGGER=BackgroundTaskTriggerEnum.interval.value,
+            CONFIG=dict(seconds=3)
+        )
+    }
+
+class TranslationAPI(BaseModel):
+
+    URL: AnyHttpUrl = Field(...)
+    METHOD: str = Field(...)
+    ALLOWED_CONCURRENT_REQUEST: int = Field(...) 
+
+class LanguageDetectionAPI(BaseModel):
+
+    URL: AnyHttpUrl = Field(...)
+    METHOD: str = Field(...)
+    ALLOWED_CONCURRENT_REQUEST: int = Field(...) 
 
 class GlobalConfig(BaseSettings):
 
     """Global configurations."""
 
     APP_CONFIG: AppConfig = AppConfig()
-    
+
     # define global variables with the Field class
-    ENV_STATE: Optional[EnvState] = EnvState.dev.value
+    ENV_STATE: Optional[EnvStateEnum] = EnvStateEnum.dev.value
 
     APP_HOST: str = '0.0.0.0'
     APP_PORT: int = 8000
@@ -61,9 +119,19 @@ class GlobalConfig(BaseSettings):
     APP_LIFESPAN: str = None
     SERVER_TYPE: str = None
 
-    CASSANDRA_DATABASE: CassandraDatabase = CassandraDatabase()
-    KAFKA_CONSUMER: KafkaConsumer = KafkaConsumer()
-    KAFKA_PRODUCER: KafkaProducer = KafkaProducer()
+    CQLENG_ALLOW_SCHEMA_MANAGEMENT: Any = Field(env='CQLENG_ALLOW_SCHEMA_MANAGEMENT')
+
+    CASSANDRA_DATABASE: CassandraDatabase 
+    MONGODB_DATABASE: MongoDBDatabase
+
+    KAFKA_CONSUMER: KafkaConsumer
+    KAFKA_PRODUCER: KafkaProducer
+
+    PRIVATE_TRANSLATION_API: TranslationAPI
+    PRIVATE_LANGUAGE_DETECTION_API: LanguageDetectionAPI
+
+    PUBLIC_TRANSLATION_API: TranslationAPI
+    PUBLIC_LANGUAGE_DETECTION_API: LanguageDetectionAPI
 
     class Config:
         """Loads the dotenv file."""
@@ -72,14 +140,23 @@ class GlobalConfig(BaseSettings):
         env_prefix = 'SANIC_'
         env_file_encoding = 'utf-8'
 
+    def _build_values(
+        self, 
+        init_kwargs: Dict[str, Any], 
+        _env_file: Union[Path, str, None], 
+        _env_file_encoding: Optional[str], 
+        _secrets_dir: Union[Path, str, None]
+    ) -> Dict[str, Any]:
+        
+        if os.getenv('CQLENG_ALLOW_SCHEMA_MANAGEMENT') is None:
+            os.environ['CQLENG_ALLOW_SCHEMA_MANAGEMENT'] = '1'
+
+        return super()._build_values(init_kwargs, _env_file=_env_file, _env_file_encoding=_env_file_encoding, _secrets_dir=_secrets_dir)
+
 class DevConfig(GlobalConfig):
     """Development configurations."""
 
     APP_DEBUG = True
-
-    CASSANDRA_DATABASE: CassandraDatabase
-    KAFKA_CONSUMER: KafkaConsumer
-    KAFKA_PRODUCER: KafkaProducer
 
     class Config:
         env_file = ".env.development"
@@ -95,16 +172,29 @@ class ProdConfig(GlobalConfig):
 
 def update_cnf(new_config):
 
-    import infrastructure.configs
-    
-    infrastructure.configs.CNF = new_config
+    ConfigStore.GLOBAL_CNF = new_config
+
+    return ConfigStore.GLOBAL_CNF
 
 def get_cnf() -> GlobalConfig:
 
-    import infrastructure.configs
+   return ConfigStore.GLOBAL_CNF
+
+def update_mongodb_instance(ins):
     
-    return infrastructure.configs.CNF
-        
+    ConfigStore.MONGODB_INS = ins
+    
+    return ConfigStore.MONGODB_INS
+
+def get_mongodb_instance():
+
+    return ConfigStore.MONGODB_INS
+
+class ConfigStore:
+
+    GLOBAL_CNF: GlobalConfig = None
+    MONGODB_INS: Union[MotorAsyncIOInstance, PyMongoInstance] = None
+
 class FactoryConfig:
     """Returns a config instance dependending on the ENV_STATE variable."""
 
@@ -113,21 +203,21 @@ class FactoryConfig:
         self.override_config = override_config
 
     def __call__(self):
-        
+
         config = None
-        
-        if self.env_state == EnvState.dev.value:
-            config = DevConfig(**self.override_config)
-            config.ENV_STATE = EnvState.dev.value
 
-        elif self.env_state == EnvState.prod.value:
+        if self.env_state == EnvStateEnum.dev.value:
+            config = DevConfig(**self.override_config)
+            config.ENV_STATE = EnvStateEnum.dev.value
+
+        elif self.env_state == EnvStateEnum.prod.value:
             config = ProdConfig(**self.override_config)
-            config.ENV_STATE = EnvState.prod.value
+            config.ENV_STATE = EnvStateEnum.prod.value
 
-        else: 
+        else:
             config = DevConfig(**self.override_config)
-            config.ENV_STATE = EnvState.dev.value
+            config.ENV_STATE = EnvStateEnum.dev.value
 
         update_cnf(config)
-        
+
         return config

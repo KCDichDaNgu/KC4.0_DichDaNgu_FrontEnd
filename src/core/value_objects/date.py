@@ -1,5 +1,5 @@
 from numbers import Complex
-from typing import Union
+from typing import Any, Union
 from core.exceptions import ArgumentInvalidException
 from core.base_classes.value_object import (
     DomainPrimitive,
@@ -10,9 +10,9 @@ from datetime import datetime
 
 class DateVO(ValueObject[datetime]):
 
-    def __init__(self, value: Union[datetime, Complex, str]) -> None:
+    def __init__(self, value: Union[datetime, Complex, str, None], **data):
 
-        date = None
+        date = value
         
         if isinstance(value, Complex):
 
@@ -22,7 +22,7 @@ class DateVO(ValueObject[datetime]):
 
             date = datetime.strptime(value)
 
-        super().__init__(ValueObjectProps(date))
+        super().__init__(ValueObjectProps[datetime](date), **data)
 
     @property
     def value(self) -> datetime:
@@ -32,6 +32,7 @@ class DateVO(ValueObject[datetime]):
     def now():
         return DateVO(datetime.now())
 
-    def validate(props: DomainPrimitive[datetime]):
-        if not isinstance(props.value, datetime):
+    @classmethod
+    def verify(cls, props: DomainPrimitive[datetime]):
+        if not props.value is None and not isinstance(props.value, datetime):
             raise ArgumentInvalidException('Incorrect date')

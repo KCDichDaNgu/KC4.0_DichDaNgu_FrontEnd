@@ -1,20 +1,20 @@
 from abc import ABC, abstractmethod
 from typing import Optional, Any
 
-class Logger(ABC):
+class LoggerPort(ABC):
 
     @abstractmethod
-    def log(message: str, *args, **kwargs):
+    def log(self):
         ...
     
     @abstractmethod
-    def error(message: str, trace: Optional[Any], *args, **kwargs):
+    def error(self):
         ...
     
     @abstractmethod
-    def warn(message: str, *args, **kwargs):
+    def warn(self):
         ...
 
     @abstractmethod
-    def debug(message: str, *args, **kwargs):
+    def debug(self):
         ...

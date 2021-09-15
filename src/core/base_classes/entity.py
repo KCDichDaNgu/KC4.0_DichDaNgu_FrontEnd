@@ -1,3 +1,4 @@
+from pydantic.fields import Field
 from core.base_classes.value_object import ValueObject
 from core.exceptions import (
     ArgumentInvalidException, 
@@ -6,13 +7,12 @@ from core.exceptions import (
 )
 
 from core.guard import Guard
-from core.value_objects.date import DateVO
-from core.value_objects.id import ID
-
+from core.value_objects import DateVO, ID
+from addict import Addict
 from abc import ABC
 from pydantic import BaseModel, PrivateAttr
 
-from typing import Any, List, Final, Optional, TypeVar, Union
+from typing import Any, Dict, Generic, List, Final, NewType, Optional, TypeVar, get_args, ClassVar
 
 EntityProps = TypeVar('EntityProps')
 
@@ -22,29 +22,42 @@ class BaseEntityProps(BaseModel, ABC):
     created_at: DateVO
     updated_at: DateVO
 
-
-class Entity(BaseModel, EntityProps, ABC):
+class Entity(BaseModel, Generic[EntityProps], ABC):
 
     __id: ID = PrivateAttr()
-    __created_at: DateVO = PrivateAttr()
-    __updated_at: DateVO = PrivateAttr()
+    __created_at: DateVO = PrivateAttr(DateVO(None))
+    __updated_at: DateVO = PrivateAttr(DateVO(None))
     
-    props: EntityProps
+    __props: EntityProps = PrivateAttr(None)
+    __props_klass: ClassVar[Any] = None
+        
+    def __init__(
+        self, 
+        props: EntityProps,
+        **data
+    ) -> None:
 
-    def __init__(self, props: EntityProps) -> None:
-        self.validate_props(props)
         self.__id = ID.generate()
 
-        now: Final = DateVO.now()
-        self.__created_at = now
-        self.__updated_at = now
+        # if self.__class__.__props_klass is None:
+        #     self.__class__.__props_klass = get_args(self.__orig_bases__[0])[0]
 
-        self.props = props
+        props_klass_ins = props
+
+        # if not isinstance(props, self.__class__.__props_klass):
+        #     props_klass_ins = props, self.__class__.__props_klass(**props)
+
+        super().__init__(
+            props=props, 
+            **data
+        )
+
+    class MergedProps(Generic[EntityProps], BaseEntityProps):
+        pass
 
     @property
-    def props(self):
-
-        return self.props
+    def props(self) -> EntityProps:
+        return self.__props
 
     @property
     def id(self) -> ID:
@@ -76,16 +89,35 @@ class Entity(BaseModel, EntityProps, ABC):
 
         return self.__id if self.__id == object.id else False
 
-    def get_props_copy(self) -> Union[EntityProps, BaseEntityProps]:
+    def get_props_copy(self) -> MergedProps:
 
         props_copy = {
             'id': self.__id,
             'created_at': self.__created_at,
             'updated_at': self.__updated_at,
-            **self.props
+            **self.props.__dict__
         }
+                
+        return Addict(props_copy)
 
-        return props_copy
+    @classmethod
+    def from_orm(cls, props: Dict):
+
+        new_entity = cls(props)
+
+        if "id" in props:
+
+            new_entity.__id = props["id"]
+
+        if "created_at" in props:
+
+            new_entity.__created_at = props["created_at"]
+
+        if "updated_at" in props:
+
+            new_entity.__updated_at = props["updated_at"]
+
+        return new_entity
 
     @staticmethod
     def convert_to_raw(item: Any):
@@ -123,22 +155,3 @@ class Entity(BaseModel, EntityProps, ABC):
             'updated_at': self.__updated_at.value,
             **props_copy
         }
-
-    def validate_props(self, props: EntityProps):
-
-        max_props = 50
-
-        if Guard.is_empty(props):
-            raise ArgumentNotProvidedException(
-                'Entity props should not be empty'
-            )
-        
-        if props is not dict:
-            raise ArgumentInvalidException(
-                'Entity props should be an object'
-            ) 
-
-        if len(list(object.keys())) > max_props:
-            raise ArgumentOutOfRangeException(
-                f'Entity props should not have more then {max_props} properties'
-            )

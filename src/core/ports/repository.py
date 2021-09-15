@@ -10,7 +10,7 @@ Entity = TypeVar('Entity')
 EntityProps = TypeVar('EntityProps')
 T = TypeVar('T')
 
-OrderBy = Dict[str, Union[str, Complex]]
+order_by = Dict[str, Union[str, Complex]]
 
 class PaginationMeta(ABC, BaseModel):
 
@@ -22,13 +22,13 @@ class FindManyPaginatedParams(ABC, Generic[EntityProps]):
 
     params: Optional[Dict]
     pagination: Optional[PaginationMeta]
-    orderBy: Optional[OrderBy]
+    order_by: Optional[order_by]
 
-class DataWithPaginationMeta(ABC, Generic[T]):
+class DataWithPaginationMeta(BaseModel, Generic[T]):
 
     data: T
-    count: Complex
-    limit: Optional[int]
+    total_entries: int
+    per_page: Optional[int]
     page: Optional[int]
     
 
@@ -41,31 +41,27 @@ class RepositoryPort(
         super().__init__()
 
     @abstractmethod
-    def save(entity: Entity) -> Awaitable[Entity]:
+    def create(self) -> Awaitable[Entity]:
         ...
 
     @abstractmethod
-    def save_multiple(entity: List[Entity]) -> List[Awaitable[Entity]]:
+    def find_one_or_throw(self) -> Awaitable[Entity]:
         ...
 
     @abstractmethod
-    def find_one_or_throw(params: Any) -> Awaitable[Entity]:
+    def find_one_by_id_or_throw(self) -> Awaitable[Entity]:
         ...
 
     @abstractmethod
-    def find_one_by_id_or_throw(id: Union[ID, str]) -> Awaitable[Entity]:
+    def delete(self):
         ...
 
     @abstractmethod
-    def delete(entity: Entity):
-        ...
-
-    @abstractmethod
-    def find_many(params: Any) -> Awaitable[List[Entity]]:
+    def find_many(self) -> Awaitable[List[Entity]]:
         ...
 
     @abstractmethod
     def find_many_paginated(
-        options: FindManyPaginatedParams[EntityProps]
+        self
     ) -> Awaitable[DataWithPaginationMeta[List[Entity]]]:
         ...

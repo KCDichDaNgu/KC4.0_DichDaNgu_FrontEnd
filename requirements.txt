@@ -8,3 +8,9 @@ python-dotenv
 cassandra-driver
 aiohttp
 aiokafka
+sanic_openapi
+addict
+schedule
+aiofiles
+apscheduler
+umongo[motor]

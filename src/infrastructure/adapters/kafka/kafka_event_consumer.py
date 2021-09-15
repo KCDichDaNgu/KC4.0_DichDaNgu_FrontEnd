@@ -11,7 +11,7 @@ class KafkaEventConsumer(EventConsumer):
     def __init__(
         self,
         bootstrap_servers,
-        topic,
+        topics,
         group,
         log_service,
         service=None,
@@ -24,7 +24,7 @@ class KafkaEventConsumer(EventConsumer):
         )
 
         self.bootstrap_servers = bootstrap_servers
-        self.topic = topic
+        self.topics = topics
         self.group = group
 
         self.consumer_connected = False
@@ -36,6 +36,7 @@ class KafkaEventConsumer(EventConsumer):
         Handle a message.
         """
         message = json.loads(message.value)
+
         await super().handle(message)
 
     async def start(self):
@@ -50,7 +51,7 @@ class KafkaEventConsumer(EventConsumer):
     async def _create_consumer(self):
         self.consumer = \
             AIOKafkaConsumer(
-                self.topic,
+                *self.topics,
                 loop=asyncio.get_event_loop(),
                 bootstrap_servers=self.bootstrap_servers,
                 group_id=self.group,
@@ -101,15 +102,6 @@ class KafkaEventConsumer(EventConsumer):
             )
 
         await self._wait_for_connect()
-
-        # self.log_service.debug(
-        #     "Kafka event adapter listens on {} @ {}, (group: {})".
-        #         format(
-        #         self.topic,
-        #         self.bootstrap_servers,
-        #         self.group
-        #     )
-        # )
 
     async def _wait_for_connect(self, timeout=60):
         
