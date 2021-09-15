@@ -83,8 +83,8 @@ class AppConfig(BaseModel):
     STRICT_SLASHES = False
 
     BACKGROUND_TASKS: Dict[str, BackgroundTask] = {
-        'translate_plain_text_in_public.call_language_detection_service': BackgroundTask(
-            ID='translate_plain_text_in_public.call_language_detection_service',
+        'translate_plain_text_in_public_request.detect_content_language': BackgroundTask(
+            ID='translate_plain_text_in_public_request.detect_content_language',
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
             CONFIG=dict(seconds=3)
         )

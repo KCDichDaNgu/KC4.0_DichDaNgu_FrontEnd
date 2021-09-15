@@ -44,9 +44,12 @@ class MongoDBDatabase(BaseModel):
 
     DATABASE_NAME: str = Field(...)
     PASSWORD: str = Field(...)
+
     USER: str = Field(...)
     HOST: str = Field(...)
     PORT: int = Field(...)
+
+    REPLICASET: str = Field(...)
 
     CONN_OPTS: MongoDBConnectionOptions
 
@@ -65,10 +68,11 @@ class MongoDBDatabase(BaseModel):
     @property
     def MONGODB_URI(self):
 
-        return 'mongodb://{}:{}/{}'.format(
+        return 'mongodb://{}:{}/{}?replicaSet={}'.format(
             # self.USER,
             # self.PASSWORD,
             self.HOST,
             self.PORT,
-            self.DATABASE_NAME
+            self.DATABASE_NAME,
+            self.REPLICASET
         )
