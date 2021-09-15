@@ -47,6 +47,6 @@ class TranslationRequestResultEntity(Entity[TranslationRequestResultProps]):
 
             return data
 
-    async def check_if_file_exists(self):
+    def check_if_file_exists(self):
 
         return os.path.isfile(self.props.file_path)

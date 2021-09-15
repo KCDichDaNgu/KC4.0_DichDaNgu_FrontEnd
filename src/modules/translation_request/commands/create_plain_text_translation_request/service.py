@@ -84,5 +84,5 @@ class CreatePlainTextTranslationRequestService():
                 await self.__translation_history_repository.create(
                     new_translation_history_entity
                 )
-
+                
                 return created

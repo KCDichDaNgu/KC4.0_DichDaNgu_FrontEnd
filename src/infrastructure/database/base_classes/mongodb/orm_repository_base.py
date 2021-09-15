@@ -143,10 +143,10 @@ class OrmRepositoryBase(
 
         if order_by:
             cursor = cursor.sort(limit)
-
-        for a in cursor:
-            print(a)
-        # result = list(map(lambda found: self.__mapper.to_domain_entity(found), founds))
+        
+        result = list(cursor) if cursor else []
+        
+        result = list(map(lambda found: self.__mapper.to_domain_entity(found), result))
 
         return result  
 
