@@ -11,8 +11,8 @@ db_instance = get_mongodb_instance()
 class OrmEntityBase(Document):
     
     id = fields.UUIDField(unique=True, required=True)
-    created_at = fields.DateTimeField(required=True)
-    updated_at = fields.DateTimeField(required=True)
+    created_at = fields.DateTimeField()
+    updated_at = fields.DateTimeField()
 
     def pre_insert(self):
 

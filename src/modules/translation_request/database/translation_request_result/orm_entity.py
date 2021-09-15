@@ -13,10 +13,9 @@ db_instance = get_mongodb_instance()
 class TranslationRequestResultOrmEntity(OrmEntityBase):
 
     task_id = fields.ReferenceField('TranslationRequestOrmEntity', required=True)
-    
+
     step = fields.StringField(
         required=True, 
-        validate=validate.OneOf([TranslationStepEnum.enum_values()])
     )
 
     file_path = fields.StringField(required=True)

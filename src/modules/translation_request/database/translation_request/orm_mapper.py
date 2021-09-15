@@ -18,7 +18,7 @@ class TranslationRequestOrmMapper(OrmMapperBase[TranslationRequestEntity, Transl
             'creator_id': props.creator_id.value if props.creator_id else None,
             'task_type': props.task_type,
             'creator_type': props.creator_type,
-            'status': props.status,
+            'step_status': props.step_status,
             'current_step': props.current_step,
             'expired_date': props.expired_date.value if props.expired_date else None,
         }

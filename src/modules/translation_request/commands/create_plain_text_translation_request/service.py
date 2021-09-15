@@ -1,5 +1,4 @@
 from modules.translation_request.domain.entities.translation_history import TranslationHistoryProps
-from cassandra.cqlengine.query import BatchQuery
 from core.value_objects import ID
 from infrastructure.configs.translation_request import CreatorTypeEnum, StepStatusEnum, TaskTypeEnum, TranslationStepEnum
 from modules.translation_request.database.translation_request.repository import (
@@ -19,6 +18,7 @@ from modules.translation_request.database.translation_history.repository import 
 )
 
 from infrastructure.configs.translation_history import TranslationHistoryTypeEnum, TranslationHistoryStatus
+from infrastructure.configs.main import get_mongodb_instance
 
 TEXT_TRANSLATION_TASKS = [
     TaskTypeEnum.plain_text_translation.value, 
@@ -32,6 +32,7 @@ class CreatePlainTextTranslationRequestService():
         self.__translation_request_repository: TranslationRequestRepositoryPort = TranslationRequestRepository()
         self.__translation_request_result_repository : TranslationRequestRepositoryPort = TranslationRequestResultRepository()
         self.__translation_history_repository: TranslationHistoryRepositoryPort = TranslationHistoryRepository()
+        self.__db_instance = get_mongodb_instance()
 
     async def create_request(self, command: CreatePlainTextTranslationRequestCommand):
 
@@ -63,24 +64,17 @@ class CreatePlainTextTranslationRequestService():
                 file_path=new_task_result_entity.props.file_path
             )
         )
-
-        b = BatchQuery()
-
+        
         created = await self.__translation_request_repository.create(
-            new_request, 
-            b
+            new_request
         )
 
         await self.__translation_request_result_repository.create(
-            new_task_result_entity,
-            b
+            new_task_result_entity
         )
 
         await self.__translation_history_repository.create(
-            new_translation_history_entity,
-            b
+            new_translation_history_entity
         )
-
-        b.execute()
         
         return created
