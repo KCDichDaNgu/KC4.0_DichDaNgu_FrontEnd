@@ -10,22 +10,17 @@ db_instance = get_mongodb_instance()
 @db_instance.register
 class OrmEntityBase(Document):
     
-    id = fields.UUIDField(unique=True, required=True)
+    uuid = fields.UUIDField(unique=True, required=True)
     created_at = fields.DateTimeField(allow_none=True)
     updated_at = fields.DateTimeField(allow_none=True)
-
-    def pre_insert(self):
-
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
-
-    def pre_update(self):
-
-        self.updated_at = datetime.now()
-
     class Meta:
         abstract = True
         indexes = ['-created_at']
+
+    def pre_insert(self):
+        
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
 
     @classmethod
     def get_table_name(cls):
