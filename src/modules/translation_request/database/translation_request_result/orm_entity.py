@@ -1,27 +1,25 @@
 from infrastructure.configs.translation_request import TranslationStepEnum
-from infrastructure.database.base_classes import OrmEntityBase
-from cassandra.cqlengine import columns, ValidationError
-from infrastructure.configs.main import CassandraDatabase, GlobalConfig, get_cnf
+from infrastructure.database.base_classes.mongodb import OrmEntityBase
+from infrastructure.configs.main import MongoDBDatabase, GlobalConfig, get_cnf, get_mongodb_instance
+
+from umongo import validate, fields
 
 config: GlobalConfig = get_cnf()
-database_config: CassandraDatabase = config.CASSANDRA_DATABASE
+database_config: MongoDBDatabase = config.MONGODB_DATABASE
 
+db_instance = get_mongodb_instance()
+
+@db_instance.register
 class TranslationRequestResultOrmEntity(OrmEntityBase):
 
-    __table_name__ = database_config.TABLES['translation_request_result']['name']
+    task_id = fields.ReferenceField('TranslationRequestOrmEntity', required=True)
+    
+    step = fields.StringField(
+        required=True, 
+        validate=validate.OneOf([TranslationStepEnum.enum_values()])
+    )
 
-    task_id = columns.UUID(required=True)
-    step = columns.Text()
-    file_path = columns.Text()
+    file_path = fields.StringField(required=True)
 
-    def validate(self):
-        
-        super(TranslationRequestResultOrmEntity, self).validate()
-        
-        if not self.task_id or not self.step:
-
-            raise ValidationError('Task id and step are invalid')
-
-        if not self.step in TranslationStepEnum.enum_values():
-
-            raise ValidationError('Step is invalid')
+    class Meta:
+        collection_name = database_config.COLLECTIONS['translation_request_result']['name']

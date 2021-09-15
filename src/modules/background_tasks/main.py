@@ -2,9 +2,9 @@ from infrastructure.configs.main import GlobalConfig
 from infrastructure.adapters.background_task_manager.main import BackgroundTaskManager
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
-from modules.background_tasks.tranlate_plain_text_in_public.call_language_detection_service.main import main as tranlate_plain_text_in_public_call_language_detection_service
-
 def init_background_tasks(config: GlobalConfig):
+
+    from modules.background_tasks.tranlate_plain_text_in_public.call_language_detection_service.main import main as tranlate_plain_text_in_public_call_language_detection_service
     
     BACKGROUND_TASKS = config.APP_CONFIG.BACKGROUND_TASKS
 
@@ -20,4 +20,3 @@ def init_background_tasks(config: GlobalConfig):
         trigger=background_task_1_conf.TRIGGER,
         **background_task_1_conf.CONFIG
     )
-    

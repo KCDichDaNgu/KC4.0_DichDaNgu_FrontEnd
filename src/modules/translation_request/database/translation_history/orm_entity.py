@@ -1,33 +1,30 @@
 from infrastructure.configs.translation_history import TranslationHistoryTypeEnum, TranslationHistoryStatus
-from infrastructure.database.base_classes import OrmEntityBase
-from cassandra.cqlengine import columns, ValidationError
-from infrastructure.configs.main import CassandraDatabase, GlobalConfig, get_cnf
+from infrastructure.database.base_classes.mongodb import OrmEntityBase
+from infrastructure.configs.main import MongoDBDatabase, GlobalConfig, get_cnf
+from infrastructure.configs.main import get_mongodb_instance
+from umongo import fields, validate
 
 config: GlobalConfig = get_cnf()
-database_config: CassandraDatabase = config.CASSANDRA_DATABASE
+database_config: MongoDBDatabase = config.MONGODB_DATABASE
+db_instance = get_mongodb_instance()
 
+@db_instance.register
 class TranslationHistoryOrmEntity(OrmEntityBase):
 
-    __table_name__ = database_config.TABLES['translation_history']['name']
+    creator_id = fields.UUIDField(default=None)
+    task_id = fields.ReferenceField('TranslationRequestOrmEntity', required=True)
 
-    creator_id = columns.UUID(default=None)
-    task_id = columns.UUID(required=True)
-    translation_type = columns.Text(required=True)
-    status = columns.Text(required=True)
-    file_path = columns.Text(required=True)
+    translation_type = fields.StringField(
+        required=True, 
+        validate=validate.OneOf([TranslationHistoryTypeEnum.enum_values()])
+    )
 
-    def validate(self):
-        
-        super(TranslationHistoryOrmEntity, self).validate()
-        
-        if not self.task_id:
+    status = fields.StringField(
+        required=True, 
+        validate=validate.OneOf([TranslationHistoryStatus.enum_values()])
+    )
 
-            raise ValidationError('Task id and Task result id are invalid')
+    file_path = fields.StringField(required=True)
 
-        if not self.translation_type in TranslationHistoryTypeEnum.enum_values():
-
-            raise ValidationError('Translation type is invalid')
-
-        if not self.translation_type in TranslationHistoryTypeEnum.enum_values():
-
-            raise ValidationError('Translation History status is invalid')
+    class Meta:
+        collection_name = database_config.COLLECTIONS['translation_history']['name']

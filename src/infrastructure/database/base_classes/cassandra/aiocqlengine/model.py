@@ -3,7 +3,7 @@ from cassandra.cqlengine.query import conn, ValidationError
 from cassandra.cqlengine.statements import SelectStatement
 from cassandra.query import SimpleStatement
 
-from  infrastructure.database.base_classes.aiocqlengine.query import AioDMLQuery, AioQuerySet
+from  infrastructure.database.base_classes.cassandra.aiocqlengine.query import AioDMLQuery, AioQuerySet
 
 
 class AioModel(Model):

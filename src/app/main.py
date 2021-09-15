@@ -51,7 +51,7 @@ async def init_app():
     config: GlobalConfig = get_cnf()
 
     from infrastructure.adapters.kafka.main import init_kafka
-    from infrastructure.database.main import init_cassandra_db
+    from infrastructure.database.main import init_mongodb
     from modules.background_tasks.main import init_background_tasks
     
     app: Sanic = Sanic(
@@ -65,7 +65,7 @@ async def init_app():
         TASK_RESULT_FOLDER
     ])
 
-    init_cassandra_db(config.CASSANDRA_DATABASE)
+    init_mongodb(config.MONGODB_DATABASE)
 
     await init_kafka(config)
 

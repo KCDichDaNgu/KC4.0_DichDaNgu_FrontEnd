@@ -1,7 +1,7 @@
 from modules.translation_request.domain.entities.translation_history import TranslationHistoryProps
 from cassandra.cqlengine.query import BatchQuery
 from core.value_objects import ID
-from infrastructure.configs.translation_request import CreatorTypeEnum, StatusEnum, TaskTypeEnum, TranslationStepEnum
+from infrastructure.configs.translation_request import CreatorTypeEnum, StepStatusEnum, TaskTypeEnum, TranslationStepEnum
 from modules.translation_request.database.translation_request.repository import (
     TranslationRequestRepository, TranslationRequestRepositoryPort
 )
@@ -40,7 +40,7 @@ class CreatePlainTextTranslationRequestService():
                 creator_id=ID(None),
                 creator_type=CreatorTypeEnum.end_user.value,
                 task_type=TaskTypeEnum.public_plain_text_translation.value,
-                status=StatusEnum.not_yet_processed.value,
+                step_status=StepStatusEnum.not_yet_processed.value,
                 current_step=TranslationStepEnum.detecting_language.value
             )
         )

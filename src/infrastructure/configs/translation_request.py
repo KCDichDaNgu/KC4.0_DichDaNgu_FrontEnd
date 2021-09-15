@@ -32,7 +32,7 @@ class CreatorTypeEnum(str, ExtendedEnum):
 
     end_user = 'end_user'
 
-class StatusEnum(str, ExtendedEnum):
+class StepStatusEnum(str, ExtendedEnum):
 
     not_yet_processed = 'not_yet_processed'
     in_progress = 'in_progress'

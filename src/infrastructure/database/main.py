@@ -1,18 +1,20 @@
-from src.infrastructure.configs.database import MongoDBDatabase
+from umongo.frameworks.motor_asyncio import MotorAsyncIOInstance
+from infrastructure.configs.database import MongoDBDatabase
+from infrastructure.configs.main import update_mongodb_instance
 from cassandra.cqlengine import connection
 from cassandra.auth import PlainTextAuthProvider
 from cassandra.cqlengine.management import _create_keyspace
 from infrastructure.configs.main import CassandraDatabase
-from infrastructure.database.base_classes.aiocqlengine.session import aiosession_for_cqlengine
 
-from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
-
-
-from modules.translation_request.database.translation_request.orm_entity import TranslationRequestOrmEntity
-from modules.translation_request.database.translation_request_result.orm_entity import TranslationRequestResultOrmEntity
-from modules.translation_request.database.translation_history.orm_entity import TranslationHistoryOrmEntity
+from motor.motor_asyncio import AsyncIOMotorClient
 
 def init_cassandra_db(cassandraDbConfig: CassandraDatabase):
+
+    from infrastructure.database.base_classes.cassandra.aiocqlengine.session import aiosession_for_cqlengine
+
+    from modules.translation_request.database.translation_request.orm_entity import TranslationRequestOrmEntity
+    from modules.translation_request.database.translation_request_result.orm_entity import TranslationRequestResultOrmEntity
+    from modules.translation_request.database.translation_history.orm_entity import TranslationHistoryOrmEntity
 
     auth_provider = PlainTextAuthProvider(
         username=cassandraDbConfig.USER,
@@ -42,18 +44,35 @@ def init_cassandra_db(cassandraDbConfig: CassandraDatabase):
     
     connection.set_session(current_session)
 
-    TranslationRequestOrmEntity.sync_table_to_db(
-        keyspaces=[cassandraDbConfig.KEYSPACE.NAME]
-    )
+    # TranslationRequestOrmEntity.sync_table_to_db(
+    #     keyspaces=[cassandraDbConfig.KEYSPACE.NAME]
+    # )
     
-    TranslationRequestResultOrmEntity.sync_table_to_db(
-        keyspaces=[cassandraDbConfig.KEYSPACE.NAME]
-    )
+    # TranslationRequestResultOrmEntity.sync_table_to_db(
+    #     keyspaces=[cassandraDbConfig.KEYSPACE.NAME]
+    # )
     
-    TranslationHistoryOrmEntity.sync_table_to_db(
-        keyspaces=[cassandraDbConfig.KEYSPACE.NAME]
-    )
+    # TranslationHistoryOrmEntity.sync_table_to_db(
+    #     keyspaces=[cassandraDbConfig.KEYSPACE.NAME]
+    # )
 
 def init_mongodb(mongodbConfig: MongoDBDatabase):
 
-    pass
+    conn_opts = {}
+
+    if mongodbConfig.CONN_OPTS.MIN_POOL_SIZE:
+
+        conn_opts.update(minPoolSize=mongodbConfig.CONN_OPTS.MIN_POOL_SIZE)
+
+    if mongodbConfig.CONN_OPTS.MAX_POOL_SIZE:
+
+        conn_opts.update(minPoolSize=mongodbConfig.CONN_OPTS.MAX_POOL_SIZE)
+
+    db = AsyncIOMotorClient(
+        mongodbConfig.MONGODB_URI, 
+        **conn_opts
+    )[mongodbConfig.DATABASE_NAME]
+
+    instance = MotorAsyncIOInstance(db)
+    
+    update_mongodb_instance(instance)

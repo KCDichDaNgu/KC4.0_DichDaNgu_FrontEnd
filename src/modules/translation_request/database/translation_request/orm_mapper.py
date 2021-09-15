@@ -1,6 +1,6 @@
 from core.value_objects import ID, DateVO
 from typing import Any
-from infrastructure.database.base_classes.orm_mapper_base import OrmMapperBase
+from infrastructure.database.base_classes.mongodb.orm_mapper_base import OrmMapperBase
 
 from modules.translation_request.database.translation_request.orm_entity import TranslationRequestOrmEntity
 from modules.translation_request.domain.entities.translation_request import TranslationRequestEntity, TranslationRequestProps

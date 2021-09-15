@@ -9,6 +9,7 @@ from typing import Any, Dict, Optional, Union
 from enum import unique
 
 from pydantic.networks import AnyHttpUrl
+from umongo.frameworks.motor_asyncio import MotorAsyncIOInstance
 from uvicorn.importer import import_from_string
 from core.types import ExtendedEnum
 
@@ -120,11 +121,11 @@ class GlobalConfig(BaseSettings):
 
     CQLENG_ALLOW_SCHEMA_MANAGEMENT: Any = Field(env='CQLENG_ALLOW_SCHEMA_MANAGEMENT')
 
-    CASSANDRA_DATABASE: CassandraDatabase = CassandraDatabase()
-    MONGODB_DATABASE: MongoDBDatabase = MongoDBDatabase()
-    
-    KAFKA_CONSUMER: KafkaConsumer = KafkaConsumer()
-    KAFKA_PRODUCER: KafkaProducer = KafkaProducer()
+    CASSANDRA_DATABASE: CassandraDatabase 
+    MONGODB_DATABASE: MongoDBDatabase
+
+    KAFKA_CONSUMER: KafkaConsumer
+    KAFKA_PRODUCER: KafkaProducer
 
     PRIVATE_TRANSLATION_API: TranslationAPI
     PRIVATE_LANGUAGE_DETECTION_API: LanguageDetectionAPI
@@ -171,17 +172,31 @@ class ProdConfig(GlobalConfig):
 
 def update_cnf(new_config):
 
-    FactoryConfig.CNF = new_config
+    ConfigStore.GLOBAL_CNF = new_config
 
+    return ConfigStore.GLOBAL_CNF
 
 def get_cnf() -> GlobalConfig:
 
-   return FactoryConfig.CNF
+   return ConfigStore.GLOBAL_CNF
+
+def update_mongodb_instance(ins):
+    
+    ConfigStore.MONGODB_INS = ins
+    
+    return ConfigStore.MONGODB_INS
+
+def get_mongodb_instance():
+
+    return ConfigStore.MONGODB_INS
+
+class ConfigStore:
+
+    GLOBAL_CNF: GlobalConfig = None
+    MONGODB_INS: MotorAsyncIOInstance = None
 
 class FactoryConfig:
     """Returns a config instance dependending on the ENV_STATE variable."""
-
-    CNF: GlobalConfig = None
 
     def __init__(self, env_state: Optional[str], override_config: Optional[dict]):
         self.env_state = env_state

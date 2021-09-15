@@ -7,7 +7,7 @@ from cassandra.cqlengine.management import sync_table
 
 from cassandra.cqlengine.query import BatchQuery
 
-from infrastructure.database.base_classes.aiocqlengine.model import AioModel
+from infrastructure.database.base_classes.cassandra.aiocqlengine.model import AioModel
 
 config: GlobalConfig = get_cnf()
 database_config = config.CASSANDRA_DATABASE

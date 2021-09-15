@@ -1,6 +1,6 @@
 from typing import Any, Dict
 from pydantic import BaseModel, Field
-from umongo import MotorAsyncIOInstance
+from umongo.frameworks import MotorAsyncIOInstance
 
 class KeySpaceConfig(BaseModel):
 
@@ -20,7 +20,7 @@ class CassandraDatabase(BaseModel):
 
     SCHEMA_VERSION = 1
 
-    KEYSPACE: KeySpaceConfig = KeySpaceConfig()
+    KEYSPACE: KeySpaceConfig
     
     PROTOCOL_VERSION: int = 3
 
@@ -49,9 +49,19 @@ class MongoDBDatabase(BaseModel):
     HOST: str = Field(...)
     PORT: int = Field(...)
 
-    CONNECT_OPTIONS: MongoDBConnectionOptions = MongoDBConnectionOptions()
+    CONN_OPTS: MongoDBConnectionOptions
 
-    LAZY_UMONGO = MotorAsyncIOInstance()
+    COLLECTIONS: dict = {
+        "translation_request": {
+            "name": "translation_request"
+        },
+        "translation_request_result": {
+            "name": "translation_request_result"
+        },
+        "translation_history": {
+            "name": "translation_history"
+        }
+    }
 
     @property
     def MONGODB_URI(self):

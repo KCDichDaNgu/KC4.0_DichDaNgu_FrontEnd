@@ -3,7 +3,7 @@ from typing import List
 from cassandra.cqlengine.query import BatchQuery
 from infrastructure.configs.main import GlobalConfig, get_cnf
 from infrastructure.configs.translation_request import (
-    TaskTypeEnum, TranslationStepEnum, StatusEnum
+    TaskTypeEnum, TranslationStepEnum, StepStatusEnum
 )
 from infrastructure.adapters.language_detector.main import LanguageDetector
 from modules.translation_request.database.translation_request.repository import TranslationRequestRepository
@@ -52,7 +52,7 @@ async def main():
             params=dict(
                 task_type=TaskTypeEnum.public_plain_text_translation.value,
                 current_step=TranslationStepEnum.detecting_language.value,
-                status=StatusEnum.not_yet_processed.value
+                step_status=StepStatusEnum.not_yet_processed.value
             ),
             skip=0,
             limit=ALLOWED_CONCURRENT_REQUEST
@@ -64,7 +64,7 @@ async def main():
             params=dict(
                 task_id__in=tasks_id,
                 current_step=TranslationStepEnum.detecting_language.value,
-                status=StatusEnum.not_yet_processed.value
+                step_status=StepStatusEnum.not_yet_processed.value
             ),
             skip=0,
             limit=ALLOWED_CONCURRENT_REQUEST
