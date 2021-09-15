@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Dict
 from pydantic import BaseModel, Field
 from umongo import MotorAsyncIOInstance
 
@@ -36,13 +36,20 @@ class CassandraDatabase(BaseModel):
         }
     }
 
+class MongoDBConnectionOptions(BaseModel):
+
+    MIN_POOL_SIZE: int = Field(...)
+    MAX_POOL_SIZE: int = Field(...)
+
 class MongoDBDatabase(BaseModel):
 
-    DATABASE_NAME: str = Field(None)
-    PASSWORD: str = Field(None)
-    USER: str = Field(None)
-    HOST: str = Field(None)
-    PORT: int = Field(None)
+    DATABASE_NAME: str = Field(...)
+    PASSWORD: str = Field(...)
+    USER: str = Field(...)
+    HOST: str = Field(...)
+    PORT: int = Field(...)
+
+    CONNECT_OPTIONS: MongoDBConnectionOptions = MongoDBConnectionOptions()
 
     LAZY_UMONGO = MotorAsyncIOInstance()
 

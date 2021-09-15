@@ -4,6 +4,10 @@ from cassandra.auth import PlainTextAuthProvider
 from cassandra.cqlengine.management import _create_keyspace
 from infrastructure.configs.main import CassandraDatabase
 from infrastructure.database.base_classes.aiocqlengine.session import aiosession_for_cqlengine
+
+from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
+
+
 from modules.translation_request.database.translation_request.orm_entity import TranslationRequestOrmEntity
 from modules.translation_request.database.translation_request_result.orm_entity import TranslationRequestResultOrmEntity
 from modules.translation_request.database.translation_history.orm_entity import TranslationHistoryOrmEntity
