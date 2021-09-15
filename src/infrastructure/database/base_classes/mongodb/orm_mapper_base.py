@@ -2,7 +2,8 @@ from core.base_classes.entity import BaseEntityProps
 from core.value_objects import DateVO, ID
 from abc import ABC, abstractmethod
 from typing import Any, Generic, TypeVar
-from infrastructure.database.base_classes.orm_entity_base import OrmEntityBase
+
+from infrastructure.database.base_classes.mongodb import OrmEntityBase
 
 Entity = TypeVar('Entity', bound=BaseEntityProps)
 OrmEntity = TypeVar('OrmEntity')

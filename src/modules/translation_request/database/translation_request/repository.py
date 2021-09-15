@@ -2,7 +2,7 @@ from modules.translation_request.database.translation_request.orm_mapper import 
 from modules.translation_request.database.translation_request.orm_entity import TranslationRequestOrmEntity
 from core.ports.repository import RepositoryPort
 from modules.translation_request.domain.entities.translation_request import TranslationRequestEntity, TranslationRequestProps
-from infrastructure.database.base_classes.orm_repository_base import OrmRepositoryBase
+from infrastructure.database.base_classes.mongodb.orm_repository_base import OrmRepositoryBase
 
 class TranslationRequestRepositoryPort(RepositoryPort[TranslationRequestEntity, TranslationRequestProps]):
 

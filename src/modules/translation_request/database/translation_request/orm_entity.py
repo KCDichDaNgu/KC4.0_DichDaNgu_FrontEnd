@@ -1,35 +1,51 @@
 from datetime import timedelta
 from core.value_objects.id import ID
-from infrastructure.configs.main import CassandraDatabase, GlobalConfig, get_cnf
-from infrastructure.database.base_classes import OrmEntityBase
+from infrastructure.configs.main import MongoDBDatabase, GlobalConfig, get_cnf
+from infrastructure.database.base_classes.mongodb import OrmEntityBase
 from infrastructure.configs.translation_request import (
-    TRANSLATION_PRIVATE_TASKS, EXPIRED_DURATION
+    TRANSLATION_PRIVATE_TASKS, EXPIRED_DURATION, CreatorTypeEnum, StepStatusEnum, TaskTypeEnum
 )
 
-from cassandra.cqlengine import ValidationError, columns
+from infrastructure.configs.main import get_mongodb_instance
+from umongo import fields, validate
 
 config: GlobalConfig = get_cnf()
-database_config: CassandraDatabase = config.CASSANDRA_DATABASE
+database_config: MongoDBDatabase = config.MONGODB_DATABASE
+db_instance = get_mongodb_instance()
 
+@db_instance.register
 class TranslationRequestOrmEntity(OrmEntityBase):
 
-    __table_name__ = database_config.TABLES['translation_request']['name']
+    creator_id = fields.UUIDField(default=None)
 
-    creator_id = columns.UUID(default=None)
-    task_type = columns.Text(required=True, primary_key=True)
-    creator_type = columns.Text(required=True)
-    status = columns.Text(required=True, primary_key=True)
-    current_step = columns.Text(required=True, primary_key=True)
-    expired_date = columns.DateTime(primary_key=True)
+    task_type = fields.StrField(
+        required=True, 
+        validate=validate.OneOf([TaskTypeEnum.enum_values()])
+    )
 
-    def validate(self):
-        
-        super(TranslationRequestOrmEntity, self).validate()
-        
-        if self.task_type in TRANSLATION_PRIVATE_TASKS and not self.creator_id:
+    creator_type = fields.StringField(
+        required=True, 
+        validate=validate.OneOf([CreatorTypeEnum.enum_values()])
+    )
 
-            raise ValidationError('Creator cannot be None')
+    status = fields.StringField(
+        required=True,
+        validate=validate.OneOf([StepStatusEnum.enum_values()])
+    )
+
+    current_step = fields.StringField(required=True, primary_key=True)
+    expired_date = fields.DateTimeField(required=True)
+
+    class Meta:
+        collection_name = database_config.COLLECTIONS['translation_request']['name']
+
+    
+    def pre_insert(self):
 
         if self.created_at is not None and self.expired_date is None:
 
             self.expired_date = self.created_at + timedelta(seconds=EXPIRED_DURATION)
+
+        if self.task_type in TRANSLATION_PRIVATE_TASKS and not self.creator_id:
+
+            raise Exception('Creator cannot be None')

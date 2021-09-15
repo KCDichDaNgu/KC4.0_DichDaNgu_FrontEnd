@@ -1,15 +1,15 @@
-from infrastructure.database.base_classes.orm_entity_base import OrmEntityBase
+from infrastructure.database.base_classes.mongodb import OrmMapperBase, OrmEntityBase
+
 from typing import NewType, TypeVar
 from core.value_objects.id import ID
 from core.domain_events import DomainEvents
 from infrastructure.adapters.logger import Logger
-from core.ports.repository import FindManyPaginatedParams, RepositoryPort, DataWithPaginationMeta
+from core.ports.repository import RepositoryPort, DataWithPaginationMeta
 from core.exceptions import NotFoundException
-from infrastructure.database.base_classes.orm_mapper_base import OrmMapperBase
+
 from core.base_classes.entity import BaseEntityProps
 from abc import ABC
 from typing import Generic, List, TypeVar, Any, Union
-from cassandra.cqlengine.query import BatchQuery
 
 import asyncio
 
@@ -61,31 +61,29 @@ class OrmRepositoryBase(
     def relations(self):
         return self.__relations
         
-    async def create(self, entity: Entity, batch_ins: Any = None):
+    async def create(self, entity: Entity):
         
         orm_entity = self.__mapper.to_orm_entity(entity)
         
         await DomainEvents.publish_events(entity.id, self.__logger)
         
-        result = await self.__repository.async_create_with_trigger(
-            **(orm_entity.to_dict()), 
-            batch_ins=batch_ins
-        )
+        result = await self.__repository(
+            **(orm_entity.dump())
+        ).commit()
 
         self.__logger.debug(f'[Entity persisted]: {type(entity).__name__} {entity.id}')
         
         return self.__mapper.to_domain_entity(result)
 
-    async def update(self, entity: Entity, batch_ins: Any = None):
+    async def update(self, entity: Entity):
 
         orm_entity = self.__mapper.to_orm_entity(entity)
         
         await DomainEvents.publish_events(entity.id, self.__logger)
         
-        result = await self.__repository.async_update_with_trigger(
-            **(orm_entity.to_dict()), 
-            batch_ins=batch_ins
-        )
+        result = await self.__repository.update(
+            **(orm_entity.dump())
+        ).commit()
 
         self.__logger.debug(f'[Entity persisted]: {type(entity).__name__} {entity.id}')
         
@@ -132,13 +130,10 @@ class OrmRepositoryBase(
     ):
         
         result = []
+        
         print(params)
-        if order_by is None:
-            founds = await self.__repository.objects.filter(**params).async_all()
-        else:
-            founds = await self.__repository.objects.filter(**params).order_by(order_by).async_all()
-
-        founds = founds[skip:limit]
+        
+        founds = await self.__repository.find(**params).limit(limit).skip(skip).sort(order_by)
 
         result = list(map(lambda found: self.__mapper.to_domain_entity(found), founds))
 
@@ -168,7 +163,7 @@ class OrmRepositoryBase(
             page=options.pagination.page
         )
 
-    async def delete(self, entity: Entity, batch_ins: Any = None, batch_end=True, **extra_data) -> Entity:
+    async def delete(self, entity: Entity) -> Entity:
 
         await DomainEvents.publish_events(entity.id, self.__logger)
 
