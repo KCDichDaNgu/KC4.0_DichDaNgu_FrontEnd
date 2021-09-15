@@ -20,6 +20,9 @@ from modules.translation_request.database.translation_history.repository import 
 from infrastructure.configs.translation_history import TranslationHistoryTypeEnum, TranslationHistoryStatus
 from infrastructure.configs.main import get_mongodb_instance
 
+from sanic.exceptions import SanicException
+from contextvars import ContextVar
+
 TEXT_TRANSLATION_TASKS = [
     TaskTypeEnum.plain_text_translation.value, 
     TaskTypeEnum.public_plain_text_translation
@@ -66,17 +69,20 @@ class CreatePlainTextTranslationRequestService():
                 file_path=new_task_result_entity.props.file_path
             )
         )
-
-        created = await self.__translation_request_repository.create(
-            new_request
-        )
-
-        await self.__translation_request_result_repository.create(
-            new_task_result_entity
-        )
-
-        await self.__translation_history_repository.create(
-            new_translation_history_entity
-        )
         
-        return created
+        with self.__db_instance.session() as session:
+            with session.start_transaction():
+
+                created = await self.__translation_request_repository.create(
+                    new_request
+                )
+
+                await self.__translation_request_result_repository.create(
+                    new_task_result_entity
+                )
+                
+                await self.__translation_history_repository.create(
+                    new_translation_history_entity
+                )
+
+                return created
