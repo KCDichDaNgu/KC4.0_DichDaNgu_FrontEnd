@@ -1,12 +1,13 @@
-from umongo.frameworks.motor_asyncio import MotorAsyncIOInstance
+import asyncio
 from infrastructure.configs.database import MongoDBDatabase
 from infrastructure.configs.main import update_mongodb_instance
 from cassandra.cqlengine import connection
 from cassandra.auth import PlainTextAuthProvider
 from cassandra.cqlengine.management import _create_keyspace
 from infrastructure.configs.main import CassandraDatabase
-
+from pymongo import MongoClient
 from motor.motor_asyncio import AsyncIOMotorClient
+from umongo.frameworks import PyMongoInstance, MotorAsyncIOInstance
 
 def init_cassandra_db(cassandraDbConfig: CassandraDatabase):
 
@@ -67,6 +68,13 @@ def init_mongodb(mongodbConfig: MongoDBDatabase):
     if mongodbConfig.CONN_OPTS.MAX_POOL_SIZE:
 
         conn_opts.update(minPoolSize=mongodbConfig.CONN_OPTS.MAX_POOL_SIZE)
+
+    # db = MongoClient(
+    #     mongodbConfig.MONGODB_URI, 
+    #     **conn_opts
+    # )[mongodbConfig.DATABASE_NAME]
+
+    # instance = PyMongoInstance(db)
 
     db = AsyncIOMotorClient(
         mongodbConfig.MONGODB_URI, 

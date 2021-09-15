@@ -1,4 +1,6 @@
 from datetime import timedelta
+
+from marshmallow.decorators import post_dump, post_load, pre_dump
 from core.value_objects.id import ID
 from infrastructure.configs.main import MongoDBDatabase, GlobalConfig, get_cnf
 from infrastructure.database.base_classes.mongodb import OrmEntityBase
@@ -7,7 +9,7 @@ from infrastructure.configs.translation_request import (
 )
 
 from infrastructure.configs.main import get_mongodb_instance
-from umongo import fields, validate
+from umongo import fields, validate, pre_load
 
 config: GlobalConfig = get_cnf()
 database_config: MongoDBDatabase = config.MONGODB_DATABASE
@@ -16,7 +18,7 @@ db_instance = get_mongodb_instance()
 @db_instance.register
 class TranslationRequestOrmEntity(OrmEntityBase):
 
-    creator_id = fields.UUIDField(default=None)
+    creator_id = fields.UUIDField(allow_none=True)
 
     task_type = fields.StringField(
         required=True, 

@@ -15,6 +15,9 @@ class TranslationRequestResultOrmMapper(OrmMapperBase[TranslationRequestResultEn
         props = entity.get_props_copy()
         
         orm_props = {
+            'uuid': props.id,
+            'created_at': props.created_at,
+            'updated_at': props.updated_at,
             'task_id': props.task_id.value,
             'step': props.step,
             'file_path': props.file_path

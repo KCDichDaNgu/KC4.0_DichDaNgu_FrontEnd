@@ -71,6 +71,8 @@ class OrmRepositoryBase(
             **(orm_entity.dump())
         ).commit()
 
+        # orm_entity = await self.fine_one()
+
         self.__logger.debug(f'[Entity persisted]: {type(entity).__name__} {entity.id}')
         
         return self.__mapper.to_domain_entity(result)
@@ -94,7 +96,7 @@ class OrmRepositoryBase(
         **params: Any,
     ):
 
-        found = await self.__repository.find_one(**params)
+        found = self.__repository.find_one(**params)
 
         return self.__mapper.to_domain_entity(found) if found else None
 

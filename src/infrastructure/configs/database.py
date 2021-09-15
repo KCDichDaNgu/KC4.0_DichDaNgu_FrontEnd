@@ -1,6 +1,5 @@
 from typing import Any, Dict
 from pydantic import BaseModel, Field
-from umongo.frameworks import MotorAsyncIOInstance
 
 class KeySpaceConfig(BaseModel):
 
@@ -66,9 +65,9 @@ class MongoDBDatabase(BaseModel):
     @property
     def MONGODB_URI(self):
 
-        return 'mongodb://{}:{}@{}:{}/{}'.format(
-            self.USER,
-            self.PASSWORD,
+        return 'mongodb://{}:{}/{}'.format(
+            # self.USER,
+            # self.PASSWORD,
             self.HOST,
             self.PORT,
             self.DATABASE_NAME

@@ -64,7 +64,7 @@ class CreatePlainTextTranslationRequestService():
                 file_path=new_task_result_entity.props.file_path
             )
         )
-        
+
         created = await self.__translation_request_repository.create(
             new_request
         )
