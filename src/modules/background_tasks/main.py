@@ -20,3 +20,4 @@ def init_background_tasks(config: GlobalConfig):
         trigger=background_task_1_conf.TRIGGER,
         **background_task_1_conf.CONFIG
     )
+    

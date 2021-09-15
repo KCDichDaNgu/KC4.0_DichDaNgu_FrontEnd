@@ -36,6 +36,10 @@ class AioModel(Model):
         ).async_delete()
 
     @classmethod
+    def async_filter(cls, *args, **kwargs):
+        return cls.objects.filter(*args, **kwargs)
+
+    @classmethod
     async def async_first(cls):
         """
         This is a pass-through to the model objects().async_first()

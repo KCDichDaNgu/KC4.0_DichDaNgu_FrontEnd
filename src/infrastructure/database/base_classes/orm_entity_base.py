@@ -15,8 +15,8 @@ database_config = config.CASSANDRA_DATABASE
 class OrmEntityBase(AioModel):
     
     id = columns.UUID(primary_key=True, default=uuid4)
-    created_at = columns.DateTime(required=True, default=datetime.now)
-    updated_at = columns.DateTime(required=True, default=datetime.now)
+    created_at = columns.DateTime(primary_key=True, required=True, default=datetime.now)
+    updated_at = columns.DateTime(primary_key=True, required=True, default=datetime.now)
 
     # Before method
     @staticmethod

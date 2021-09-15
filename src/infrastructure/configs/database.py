@@ -1,5 +1,6 @@
 from typing import Any
 from pydantic import BaseModel, Field
+from umongo import MotorAsyncIOInstance
 
 class KeySpaceConfig(BaseModel):
 
@@ -34,3 +35,24 @@ class CassandraDatabase(BaseModel):
             "name": "translation_history"
         }
     }
+
+class MongoDBDatabase(BaseModel):
+
+    DATABASE_NAME: str = Field(None)
+    PASSWORD: str = Field(None)
+    USER: str = Field(None)
+    HOST: str = Field(None)
+    PORT: int = Field(None)
+
+    LAZY_UMONGO = MotorAsyncIOInstance()
+
+    @property
+    def MONGODB_URI(self):
+
+        return 'mongodb://{}:{}@{}:{}/{}'.format(
+            self.USER,
+            self.PASSWORD,
+            self.HOST,
+            self.PORT,
+            self.DATABASE_NAME
+        )
