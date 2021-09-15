@@ -12,7 +12,7 @@ db_instance = get_mongodb_instance()
 class TranslationHistoryOrmEntity(OrmEntityBase):
 
     creator_id = fields.UUIDField(default=None)
-    task_id = fields.ReferenceField('TranslationRequestOrmEntity', required=True)
+    task_id = fields.UUIDField(required=True)
 
     translation_type = fields.StringField(
         required=True, 

@@ -9,7 +9,7 @@ from typing import Any, Dict, Optional, Union
 from enum import unique
 
 from pydantic.networks import AnyHttpUrl
-from umongo.frameworks.motor_asyncio import MotorAsyncIOInstance
+from umongo.frameworks import MotorAsyncIOInstance, PyMongoInstance
 from uvicorn.importer import import_from_string
 from core.types import ExtendedEnum
 
@@ -193,7 +193,7 @@ def get_mongodb_instance():
 class ConfigStore:
 
     GLOBAL_CNF: GlobalConfig = None
-    MONGODB_INS: MotorAsyncIOInstance = None
+    MONGODB_INS: Union[MotorAsyncIOInstance, PyMongoInstance] = None
 
 class FactoryConfig:
     """Returns a config instance dependending on the ENV_STATE variable."""

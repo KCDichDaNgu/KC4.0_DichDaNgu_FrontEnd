@@ -14,7 +14,7 @@ async def listener_before_server_start(*args, **kwargs):
     print("before_server_start")
     
 async def listener_after_server_start(*args, **kwargs):
-
+    
     from infrastructure.adapters.background_task_manager.main import BackgroundTaskManager
 
     BackgroundTaskManager.scheduler.start()

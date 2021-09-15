@@ -12,7 +12,7 @@ db_instance = get_mongodb_instance()
 @db_instance.register
 class TranslationRequestResultOrmEntity(OrmEntityBase):
 
-    task_id = fields.ReferenceField('TranslationRequestOrmEntity', required=True)
+    task_id = fields.UUIDField(required=True)
 
     step = fields.StringField(
         required=True, 
