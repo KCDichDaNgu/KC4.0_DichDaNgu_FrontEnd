@@ -6,7 +6,7 @@ from core.value_objects.id import ID
 from infrastructure.configs.main import MongoDBDatabase, GlobalConfig, get_cnf
 from infrastructure.database.base_classes.mongodb import OrmEntityBase
 from infrastructure.configs.translation_request import (
-    TRANSLATION_PRIVATE_TASKS, EXPIRED_DURATION, CreatorTypeEnum, StepStatusEnum, TaskTypeEnum
+    TRANSLATION_PRIVATE_TASKS, TRANSLATION_REQUEST_EXPIRATION_TIME, CreatorTypeEnum, StepStatusEnum, TaskTypeEnum
 )
 
 from infrastructure.configs.main import get_mongodb_instance
@@ -52,7 +52,7 @@ class TranslationRequestOrmEntity(OrmEntityBase):
         
         if self.created_at is not None and self.expired_date is None:
 
-            self.expired_date = self.created_at + timedelta(seconds=EXPIRED_DURATION)
+            self.expired_date = self.created_at + timedelta(seconds=TRANSLATION_REQUEST_EXPIRATION_TIME)
 
         if self.task_type in TRANSLATION_PRIVATE_TASKS and not self.creator_id:
 
