@@ -18,23 +18,26 @@ class TranslationRequestOrmEntity(OrmEntityBase):
 
     creator_id = fields.UUIDField(default=None)
 
-    task_type = fields.StrField(
+    task_type = fields.StringField(
         required=True, 
-        validate=validate.OneOf([TaskTypeEnum.enum_values()])
+        validate=validate.OneOf(TaskTypeEnum.enum_values())
     )
 
     creator_type = fields.StringField(
         required=True, 
-        validate=validate.OneOf([CreatorTypeEnum.enum_values()])
+        validate=validate.OneOf(CreatorTypeEnum.enum_values())
     )
 
-    status = fields.StringField(
+    step_status = fields.StringField(
         required=True,
-        validate=validate.OneOf([StepStatusEnum.enum_values()])
+        validate=validate.OneOf(StepStatusEnum.enum_values())
     )
 
-    current_step = fields.StringField(required=True, primary_key=True)
-    expired_date = fields.DateTimeField(required=True)
+    current_step = fields.StringField(
+        required=True
+    )
+
+    expired_date = fields.DateTimeField(required=True, allow_none=True)
 
     class Meta:
         collection_name = database_config.COLLECTIONS['translation_request']['name']

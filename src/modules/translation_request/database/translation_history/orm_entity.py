@@ -16,12 +16,12 @@ class TranslationHistoryOrmEntity(OrmEntityBase):
 
     translation_type = fields.StringField(
         required=True, 
-        validate=validate.OneOf([TranslationHistoryTypeEnum.enum_values()])
+        validate=validate.OneOf(TranslationHistoryTypeEnum.enum_values())
     )
 
     status = fields.StringField(
         required=True, 
-        validate=validate.OneOf([TranslationHistoryStatus.enum_values()])
+        validate=validate.OneOf(TranslationHistoryStatus.enum_values())
     )
 
     file_path = fields.StringField(required=True)
