@@ -28,8 +28,8 @@ class Entity(BaseModel, Generic[EntityProps], ABC):
     __created_at: DateVO = PrivateAttr(DateVO(None))
     __updated_at: DateVO = PrivateAttr(DateVO(None))
     
-    __props: EntityProps = PrivateAttr(None)
-    __props_klass: ClassVar[Any] = None
+    props: EntityProps
+    props_klass: ClassVar[Any] = None
         
     def __init__(
         self, 
@@ -38,26 +38,22 @@ class Entity(BaseModel, Generic[EntityProps], ABC):
     ) -> None:
 
         self.__id = ID.generate()
-
-        # if self.__class__.__props_klass is None:
-        #     self.__class__.__props_klass = get_args(self.__orig_bases__[0])[0]
-
+        
+        if self.__class__.props_klass is None:
+            self.__class__.props_klass = get_args(self.__orig_bases__[0])[0]
+            
         props_klass_ins = props
 
-        # if not isinstance(props, self.__class__.__props_klass):
-        #     props_klass_ins = props, self.__class__.__props_klass(**props)
-
+        if not isinstance(props, self.__class__.props_klass):
+            props_klass_ins = self.__class__.props_klass(**props)
+            
         super().__init__(
-            props=props, 
+            props=props_klass_ins, 
             **data
         )
 
     class MergedProps(Generic[EntityProps], BaseEntityProps):
         pass
-
-    @property
-    def props(self) -> EntityProps:
-        return self.__props
 
     @property
     def id(self) -> ID:
