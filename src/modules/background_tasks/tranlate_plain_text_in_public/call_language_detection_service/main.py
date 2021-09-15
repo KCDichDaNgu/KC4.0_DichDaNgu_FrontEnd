@@ -39,58 +39,57 @@ async def read_task_result(tasks_result: List[TranslationRequestResultEntity]):
 
     return task_id_task_result_content, invalid_task_ids
 
-async def mark_invalid_tasks(invalid_task_ids):
-
+async def mark_invalid_tasks(invalid_tasks_id):
     pass
 
 async def main():
-    print('sdsfsfsfsf')
-    # connector = aiohttp.TCPConnector(limit=ALLOWED_CONCURRENT_REQUEST)
+    
+    connector = aiohttp.TCPConnector(limit=ALLOWED_CONCURRENT_REQUEST)
 
-    # async with aiohttp.ClientSession(connector=connector) as session:
+    async with aiohttp.ClientSession(connector=connector) as session:
 
-    #     tasks = await translationRequestRepository.find_many(
-    #         params=dict(
-    #             task_type=TaskTypeEnum.public_plain_text_translation.value,
-    #             current_step=TranslationStepEnum.detecting_language.value,
-    #             status=StatusEnum.not_yet_processed.value
-    #         ),
-    #         skip=0,
-    #         limit=ALLOWED_CONCURRENT_REQUEST
-    #     )
+        tasks = await translationRequestRepository.find_many(
+            params=dict(
+                task_type=TaskTypeEnum.public_plain_text_translation.value,
+                current_step=TranslationStepEnum.detecting_language.value,
+                status=StatusEnum.not_yet_processed.value
+            ),
+            skip=0,
+            limit=ALLOWED_CONCURRENT_REQUEST
+        )
 
-    #     tasks_id = list(map(lambda task: task.id.value, tasks))
+        tasks_id = list(map(lambda task: task.id.value, tasks))
 
-    #     tasks_result = await translationRequestRepository.find_many(
-    #         params=dict(
-    #             task_id__in=tasks_id,
-    #             current_step=TranslationStepEnum.detecting_language.value,
-    #             status=StatusEnum.not_yet_processed.value
-    #         ),
-    #         skip=0,
-    #         limit=ALLOWED_CONCURRENT_REQUEST
-    #     )
+        tasks_result = await translationRequestRepository.find_many(
+            params=dict(
+                task_id__in=tasks_id,
+                current_step=TranslationStepEnum.detecting_language.value,
+                status=StatusEnum.not_yet_processed.value
+            ),
+            skip=0,
+            limit=ALLOWED_CONCURRENT_REQUEST
+        )
 
-    #     task_id_task_result_content, invalid_task_ids = await read_task_result(tasks_result)
+        task_id_task_result_content, invalid_task_ids = await read_task_result(tasks_result)
 
-    #     await mark_invalid_tasks(invalid_task_ids)
+        await mark_invalid_tasks(invalid_task_ids)
 
-    #     api_requests = []
+        api_requests = []
 
-    #     for task_id in task_id_task_result_content.keys():
+        for task_id in task_id_task_result_content.keys():
 
-    #         api_requests.append(
-    #             LanguageDetector.detect(
-    #                 url=LANGUAGE_DETECTION_API_URL, 
-    #                 text=task_id_task_result_content[task_id], 
-    #                 session=session
-    #             )
-    #         )
+            api_requests.append(
+                LanguageDetector.detect(
+                    url=LANGUAGE_DETECTION_API_URL, 
+                    text=task_id_task_result_content[task_id], 
+                    session=session
+                )
+            )
 
-    #     api_results = await asyncio.gather(*api_requests)
-        
-    #     b = BatchQuery()
+        api_results = await asyncio.gather(*api_requests)
+        print(api_results)
+        b = BatchQuery()
 
 
 
-    #     b.execute()
+        b.execute()

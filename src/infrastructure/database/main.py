@@ -1,3 +1,4 @@
+from src.infrastructure.configs.database import MongoDBDatabase
 from cassandra.cqlengine import connection
 from cassandra.auth import PlainTextAuthProvider
 from cassandra.cqlengine.management import _create_keyspace
@@ -7,7 +8,7 @@ from modules.translation_request.database.translation_request.orm_entity import 
 from modules.translation_request.database.translation_request_result.orm_entity import TranslationRequestResultOrmEntity
 from modules.translation_request.database.translation_history.orm_entity import TranslationHistoryOrmEntity
 
-def init_db(cassandraDbConfig: CassandraDatabase):
+def init_cassandra_db(cassandraDbConfig: CassandraDatabase):
 
     auth_provider = PlainTextAuthProvider(
         username=cassandraDbConfig.USER,
@@ -48,3 +49,7 @@ def init_db(cassandraDbConfig: CassandraDatabase):
     TranslationHistoryOrmEntity.sync_table_to_db(
         keyspaces=[cassandraDbConfig.KEYSPACE.NAME]
     )
+
+def init_mongodb(mongodbConfig: MongoDBDatabase):
+
+    pass

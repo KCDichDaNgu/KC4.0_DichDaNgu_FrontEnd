@@ -13,3 +13,4 @@ addict
 schedule
 aiofiles
 apscheduler
+umongo[motor]

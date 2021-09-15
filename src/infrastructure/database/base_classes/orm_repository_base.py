@@ -96,7 +96,7 @@ class OrmRepositoryBase(
         **params: Any,
     ):
 
-        found = await self.__repository.async_filter(**params).first()
+        found = await self.__repository.async_first(**params)
 
         return self.__mapper.to_domain_entity(found) if found else None
 
@@ -132,8 +132,11 @@ class OrmRepositoryBase(
     ):
         
         result = []
-
-        founds = await self.__repository.async_filter(**params).order_by(order_by)
+        print(params)
+        if order_by is None:
+            founds = await self.__repository.objects.filter(**params).async_all()
+        else:
+            founds = await self.__repository.objects.filter(**params).order_by(order_by).async_all()
 
         founds = founds[skip:limit]
 

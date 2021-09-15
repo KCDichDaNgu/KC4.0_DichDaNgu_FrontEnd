@@ -16,11 +16,11 @@ class TranslationRequestOrmEntity(OrmEntityBase):
     __table_name__ = database_config.TABLES['translation_request']['name']
 
     creator_id = columns.UUID(default=None)
-    task_type = columns.Text(required=True)
+    task_type = columns.Text(required=True, primary_key=True)
     creator_type = columns.Text(required=True)
-    status = columns.Text(required=True)
-    current_step = columns.Text(required=True)
-    expired_date = columns.DateTime()
+    status = columns.Text(required=True, primary_key=True)
+    current_step = columns.Text(required=True, primary_key=True)
+    expired_date = columns.DateTime(primary_key=True)
 
     def validate(self):
         

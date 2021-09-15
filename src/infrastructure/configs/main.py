@@ -12,7 +12,7 @@ from pydantic.networks import AnyHttpUrl
 from uvicorn.importer import import_from_string
 from core.types import ExtendedEnum
 
-from infrastructure.configs.database import CassandraDatabase
+from infrastructure.configs.database import CassandraDatabase, MongoDBDatabase
 from infrastructure.configs.event_dispatcher import KafkaConsumer, KafkaProducer
 
 import os
@@ -121,6 +121,8 @@ class GlobalConfig(BaseSettings):
     CQLENG_ALLOW_SCHEMA_MANAGEMENT: Any = Field(env='CQLENG_ALLOW_SCHEMA_MANAGEMENT')
 
     CASSANDRA_DATABASE: CassandraDatabase = CassandraDatabase()
+    MONGODB_DATABASE: MongoDBDatabase = MongoDBDatabase()
+    
     KAFKA_CONSUMER: KafkaConsumer = KafkaConsumer()
     KAFKA_PRODUCER: KafkaProducer = KafkaProducer()
 
