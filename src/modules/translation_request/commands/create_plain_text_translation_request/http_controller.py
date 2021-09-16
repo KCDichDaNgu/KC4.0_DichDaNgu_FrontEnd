@@ -34,7 +34,7 @@ class CreatePlainTextTranslationRequest(HTTPMethodView):
 
         command = CreatePlainTextTranslationRequestCommand(
             source_text=data['sourceText'],
-            source_lang=data['sourceLang'],
+            source_lang=data['sourceLang'] if 'sourceLang' in data else None,
             target_lang=data['targetLang']
         )
 

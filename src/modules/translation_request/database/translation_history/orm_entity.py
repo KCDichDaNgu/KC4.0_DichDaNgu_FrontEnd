@@ -24,7 +24,23 @@ class TranslationHistoryOrmEntity(OrmEntityBase):
         validate=validate.OneOf(TranslationHistoryStatus.enum_values())
     )
 
-    file_path = fields.StringField(required=True)
+    file_path = fields.StringField(allow_none=True)
 
     class Meta:
         collection_name = database_config.COLLECTIONS['translation_history']['name']
+
+    def pre_insert(self):
+
+        super(self.__class__, self).pre_insert()
+        
+        if self.file_path is None:
+
+            raise Exception('File path cannot be None')
+
+    def pre_update(self):
+
+        super(self.__class__, self).pre_insert()
+        
+        if self.file_path is None:
+
+            raise Exception('File path cannot be None')

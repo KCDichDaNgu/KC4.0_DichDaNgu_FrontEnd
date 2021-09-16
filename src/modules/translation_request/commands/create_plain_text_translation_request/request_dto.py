@@ -6,12 +6,12 @@ class CreatePlainTextTranslationRequestDto(CreatePlainTextTranslationRequest):
 
     sourceText: doc.String(
         description='Source text',
-        required=True
+        required=True,
     )
 
     sourceLang: doc.String(
         description='Source text language',
-        required=True,
+        required=False,
         choices=LanguageEnum.enum_values()
     )
 

@@ -1,102 +1,256 @@
 from datetime import datetime
+import logging
+from infrastructure.configs.language import LanguageEnum
+from infrastructure.configs.translation_history import TranslationHistoryStatus
+from core.utils.common import chunk_arr
 
-from modules.translation_request.domain.entities.translation_request_result import TranslationRequestResultEntity
+
 from typing import List
 from uuid import UUID
 
 from infrastructure.configs.main import GlobalConfig, get_cnf, get_mongodb_instance
 from infrastructure.configs.translation_request import (
-    TaskTypeEnum, TranslationStepEnum, StepStatusEnum
+    LanguageNotYetDetectedResultFileSchemaV1, NotYetTranslatedResultFileSchemaV1, TaskTypeEnum, TranslationStepEnum, StepStatusEnum
 )
 
 from infrastructure.adapters.language_detector.main import LanguageDetector
-from modules.translation_request.database.translation_request.repository import TranslationRequestRepository
-from modules.translation_request.database.translation_request_result.repository import TranslationRequestResultRepository
+
+from modules.translation_request.database.translation_request.repository import TranslationRequestRepository, TranslationRequestEntity
+from modules.translation_request.database.translation_request_result.repository import TranslationRequestResultRepository, TranslationRequestResultEntity
+from modules.translation_request.database.translation_history.repository import TranslationHistoryRepository, TranslationHistoryEntity
 
 import asyncio
 import aiohttp
+
+from infrastructure.adapters.logger import Logger
 
 config: GlobalConfig = get_cnf()
 db_instance = get_mongodb_instance()
 
 PUBLIC_LANGUAGE_DETECTION_API_CONF = config.PUBLIC_LANGUAGE_DETECTION_API
 ALLOWED_CONCURRENT_REQUEST = PUBLIC_LANGUAGE_DETECTION_API_CONF.ALLOWED_CONCURRENT_REQUEST
-LANGUAGE_DETECTION_API_URL = PUBLIC_LANGUAGE_DETECTION_API_CONF.URL
 
 translationRequestRepository = TranslationRequestRepository()
 translationRequestResultRepository = TranslationRequestResultRepository()
+transationHistoryRepository = TranslationHistoryRepository()
 
-async def read_task_result(tasks_result: List[TranslationRequestResultEntity]):
+languageDetector = LanguageDetector()
+
+logger = Logger('Task: translate_plain_text_in_public_request.detect_content_language')
+
+async def read_task_result(
+    tasks_result: List[TranslationRequestResultEntity], 
+    tasks: List[TranslationRequestEntity],
+    translations_history: List[TranslationHistoryEntity]
+):
     
-    invalid_task_ids = []
-    task_id_task_result_content = {}
+    valid_tasks_mapper = {}
 
-    for task_result in tasks_result:
+    task_id_1 = list(map(lambda t: t.id.value, tasks))
+    task_id_2 = list(map(lambda ts: ts.props.task_id.value, tasks_result))
+    task_id_3 = list(map(lambda th: th.props.task_id.value, translations_history))
 
-        task_id = task_result.props.task_id.value
+    intersection_tasks_id = list(set(task_id_1) & set(task_id_2) & set(task_id_3))
+    
+    for task_id in intersection_tasks_id:
+
+        task = list(filter(lambda ts: ts.id.value == task_id, tasks))[0]
+        task_result = list(filter(lambda ts: ts.props.task_id.value == task_id, tasks_result))[0]
+        trans_history = list(filter(lambda ts: ts.props.task_id.value == task_id, translations_history))[0]
 
         try: 
             data = await task_result.read_data_from_file()
+            
+            if data['status'] == LanguageNotYetDetectedResultFileSchemaV1(
+                source_text='', 
+                target_lang=LanguageEnum.vi.value
+            ).status:
 
-            task_id_task_result_content[task_id] = data
+                valid_tasks_mapper[task_id] = {
+                    'task_result_content': data,
+                    'task_result': task_result,
+                    'trans_history': trans_history,
+                    'task': task
+                }
+
         except Exception as e:
+            logger.error(e)
+
             print(e)
-            invalid_task_ids.append(task_id)
 
-    return task_id_task_result_content, invalid_task_ids
+    valid_tasks_id = valid_tasks_mapper.keys()
 
-async def mark_invalid_tasks(invalid_tasks_id):
-    pass
+    invalid_tasks = list(filter(lambda t: t.id.value not in valid_tasks_id, tasks))
+
+    return valid_tasks_mapper, invalid_tasks
+
+async def mark_invalid_tasks(invalid_tasks: List[TranslationRequestEntity]):
+
+    result = []
+    
+    with db_instance.session() as session:
+        with session.start_transaction():
+
+            update_request = []
+
+            for task in invalid_tasks:
+
+                update_request.append(
+                    translationRequestRepository.update(
+                        task, 
+                        dict(step_status=StepStatusEnum.cancelled.value),
+                        conditions={}
+                    )
+                )
+
+            result = await asyncio.gather(*update_request)
+
+    return result
 
 async def main():
+
+    logger.log(
+        level=logging.INFO,
+        msg=f'New task translate_plain_text_in_public_request.detect_content_language run in {datetime.now()}'
+    )
+
+    print(f'New task translate_plain_text_in_public_request.detect_content_language run in {datetime.now()}')
     
-    connector = aiohttp.TCPConnector(limit=ALLOWED_CONCURRENT_REQUEST)
+    tasks = await translationRequestRepository.find_many(
+        params=dict(
+            task_type=TaskTypeEnum.public_plain_text_translation.value,
+            current_step=TranslationStepEnum.detecting_language.value,
+            step_status=StepStatusEnum.not_yet_processed.value,
+            expired_date={
+                "$gt": datetime.now()
+            }
+        ),
+        limit=ALLOWED_CONCURRENT_REQUEST * 10
+    )
 
-    now = datetime.now()
-    
-    async with aiohttp.ClientSession(connector=connector) as session:
+    tasks_id = list(map(lambda task: task.id.value, tasks))
 
-        tasks = await translationRequestRepository.find_many(
-            params=dict(
-                task_type=TaskTypeEnum.public_plain_text_translation.value,
-                current_step=TranslationStepEnum.detecting_language.value,
-                step_status=StepStatusEnum.not_yet_processed.value,
-                expired_date={
-                    "$gt": now
-                }
-            ),
-            limit=ALLOWED_CONCURRENT_REQUEST
-        )
-
-        tasks_id = list(map(lambda task: task.id.value, tasks))
-        
-        tasks_result = await translationRequestResultRepository.find_many(
+    tasks_result_and_trans_history_req = [
+        translationRequestResultRepository.find_many(
             params=dict(
                 task_id={
                     '$in': list(map(lambda t: UUID(t), tasks_id))
                 },
                 step=TranslationStepEnum.detecting_language.value
-            ),
-            limit=ALLOWED_CONCURRENT_REQUEST
+            )
+        ),
+        transationHistoryRepository.find_many(
+            params=dict(
+                task_id={
+                    '$in': list(map(lambda t: UUID(t), tasks_id))
+                }
+            )
         )
-        
-        task_id_task_result_content, invalid_task_ids = await read_task_result(tasks_result)
-        
-        await mark_invalid_tasks(invalid_task_ids)
+    ]
+    
+    tasks_result, translations_history = await asyncio.gather(*tasks_result_and_trans_history_req)
+    
+    valid_tasks_mapper, invalid_tasks = await read_task_result(
+        tasks=tasks, 
+        tasks_result=tasks_result,
+        translations_history=translations_history
+    )
+    
+    await mark_invalid_tasks(invalid_tasks)
+
+    try:
+
+        valid_tasks_id = list(map(lambda t: t.id.value, tasks))
+
+        chunked_tasks_id = chunk_arr(valid_tasks_id, ALLOWED_CONCURRENT_REQUEST)
+
+        for chunk in chunked_tasks_id:
+            
+            await execute_in_batch(valid_tasks_mapper, chunk)
+
+    except Exception as e:
+        logger.error(e)
+
+        print(e)
+
+    logger.log(
+        level=logging.INFO,
+        msg=f'An task translate_plain_text_in_public_request.detect_content_language end in {datetime.now()}'
+    )
+
+    print(f'An task translate_plain_text_in_public_request.detect_content_language end in {datetime.now()}')
+            
+
+async def execute_in_batch(valid_tasks_mapper, tasks_id):
+
+    loop = asyncio.get_event_loop()
+
+    connector = aiohttp.TCPConnector(limit=ALLOWED_CONCURRENT_REQUEST)
+
+    async with aiohttp.ClientSession(connector=connector, loop=loop) as session:
 
         api_requests = []
 
-        for task_id in task_id_task_result_content.keys():
+        for task_id in tasks_id:
+            
+            source_text = valid_tasks_mapper[task_id]['task_result_content']['source_text']
 
             api_requests.append(
-                LanguageDetector.detect(
-                    url=LANGUAGE_DETECTION_API_URL, 
-                    text=task_id_task_result_content[task_id], 
+                languageDetector.detect(
+                    text=source_text, 
                     session=session
                 )
             )
 
         api_results = await asyncio.gather(*api_requests)
         
-        # async with db_instance.session() as session:
-        #     print(api_results)
+        with db_instance.session() as session:
+
+            with session.start_transaction():
+    
+                update_request = []
+
+                for task_id, api_result in zip(tasks_id, api_results):
+
+                    task_result = valid_tasks_mapper[task_id]['task_result'],
+                    trans_history = valid_tasks_mapper[task_id]['trans_history'],
+                    task = valid_tasks_mapper[task_id]['task']
+                    task_result_content = valid_tasks_mapper[task_id]['task_result_content']
+                    
+                    new_saved_content = NotYetTranslatedResultFileSchemaV1(
+                        source_text=task_result_content['source_text'],
+                        source_lang=api_result.lang,
+                        target_lang=task_result_content['target_lang']
+                    )
+
+                    if isinstance(task_result, tuple):
+                        task_result = task_result[0]
+
+                    if isinstance(trans_history, tuple):
+                        trans_history = trans_history[0]
+                
+                    await translationRequestRepository.update(
+                        task, 
+                        dict(
+                            step_status=StepStatusEnum.not_yet_processed.value,
+                            current_step=TranslationStepEnum.translating_language.value
+                        )
+                    )
+                
+                    await translationRequestResultRepository.update(
+                        task_result, 
+                        dict(
+                            step=TranslationStepEnum.translating_language.value
+                        )
+                    )
+                    
+                    await transationHistoryRepository.update(
+                        trans_history, 
+                        dict(
+                            status=TranslationHistoryStatus.translating.value
+                        )
+                    )
+
+                    await task_result.save_request_result_to_file(
+                        content=new_saved_content.json()
+                    )
