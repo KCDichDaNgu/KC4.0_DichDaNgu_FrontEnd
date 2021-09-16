@@ -5,8 +5,7 @@ from pydantic.main import BaseModel
 from core.types import ExtendedEnum
 
 TRANSLATION_REQUEST_EXPIRATION_TIME = 60 * 60
-
-TASK_RESULT_FOLDER = 'static/task_result'
+TASK_RESULT_FOLDER = 'task_result'
 TASK_RESULT_FILE_PATTERN = '{}__{}.{}'
 TASK_RESULT_FILE_EXTENSION = 'json'
 
