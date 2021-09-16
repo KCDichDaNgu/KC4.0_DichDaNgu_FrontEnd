@@ -10,10 +10,10 @@ from uuid import UUID
 
 from infrastructure.configs.main import GlobalConfig, get_cnf, get_mongodb_instance
 from infrastructure.configs.translation_request import (
-    LanguageNotYetDetectedResultFileSchemaV1, NotYetTranslatedResultFileSchemaV1, TaskTypeEnum, TranslationStepEnum, StepStatusEnum
+    TranslationCompletedResultFileSchemaV1, NotYetTranslatedResultFileSchemaV1, TaskTypeEnum, TranslationStepEnum, StepStatusEnum
 )
 
-from infrastructure.adapters.language_detector.main import LanguageDetector
+from infrastructure.adapters.content_translator.main import ContentTranslator 
 
 from modules.translation_request.database.translation_request.repository import TranslationRequestRepository, TranslationRequestEntity
 from modules.translation_request.database.translation_request_result.repository import TranslationRequestResultRepository, TranslationRequestResultEntity
@@ -34,9 +34,9 @@ translationRequestRepository = TranslationRequestRepository()
 translationRequestResultRepository = TranslationRequestResultRepository()
 transationHistoryRepository = TranslationHistoryRepository()
 
-languageDetector = LanguageDetector()
+contentTranslator = ContentTranslator()
 
-logger = Logger('Task: translate_plain_text_in_public_request.detect_content_language')
+logger = Logger('Task: translate_plain_text_in_public_request.translate_content')
 
 async def read_task_result(
     tasks_result: List[TranslationRequestResultEntity], 
@@ -61,8 +61,9 @@ async def read_task_result(
         try: 
             data = await task_result.read_data_from_file()
             
-            if data['status'] == LanguageNotYetDetectedResultFileSchemaV1(
+            if data['status'] == NotYetTranslatedResultFileSchemaV1(
                 source_text='', 
+                source_lang=LanguageEnum.vi.value,
                 target_lang=LanguageEnum.vi.value
             ).status:
 
@@ -85,7 +86,7 @@ async def read_task_result(
     invalid_tasks_id = list(map(lambda t: t.id.value, invalid_tasks))
 
     invalid_tasks_mapper = {}
-
+    
     for task_id in invalid_tasks_id:
 
         task = list(filter(lambda ts: ts.id.value == task_id, tasks))[0]
@@ -108,7 +109,7 @@ async def mark_invalid_tasks(invalid_tasks_mapper):
         with session.start_transaction():
 
             update_request = []
-            print(invalid_tasks_mapper)
+            
             for task_id in invalid_tasks_mapper.keys():
 
                 task_result = invalid_tasks_mapper[task_id]['task_result'],
@@ -120,7 +121,7 @@ async def mark_invalid_tasks(invalid_tasks_mapper):
 
                 if isinstance(trans_history, tuple):
                     trans_history = trans_history[0]
-                import pdb; pdb.set_trace()
+                    
                 update_request.append(
                     translationRequestRepository.update(
                         task, 
@@ -146,16 +147,16 @@ async def main():
 
     logger.log(
         level=logging.INFO,
-        msg=f'New task translate_plain_text_in_public_request.detect_content_language run in {datetime.now()}'
+        msg=f'New task translate_plain_text_in_public_request.translate_content run in {datetime.now()}'
     )
 
-    print(f'New task translate_plain_text_in_public_request.detect_content_language run in {datetime.now()}')
+    print(f'New task translate_plain_text_in_public_request.translate_content run in {datetime.now()}')
     
     try:
         tasks = await translationRequestRepository.find_many(
             params=dict(
                 task_type=TaskTypeEnum.public_plain_text_translation.value,
-                current_step=TranslationStepEnum.detecting_language.value,
+                current_step=TranslationStepEnum.translating_language.value,
                 step_status=StepStatusEnum.not_yet_processed.value,
                 expired_date={
                     "$gt": datetime.now()
@@ -172,7 +173,7 @@ async def main():
                     task_id={
                         '$in': list(map(lambda t: UUID(t), tasks_id))
                     },
-                    step=TranslationStepEnum.detecting_language.value
+                    step=TranslationStepEnum.translating_language.value
                 )
             ),
             transationHistoryRepository.find_many(
@@ -204,15 +205,15 @@ async def main():
 
     except Exception as e:
         logger.error(e)
-        print('asdasdasd')
+        
         print(e)
 
     logger.log(
         level=logging.INFO,
-        msg=f'An task translate_plain_text_in_public_request.detect_content_language end in {datetime.now()}'
+        msg=f'An task translate_plain_text_in_public_request.translate_content end in {datetime.now()}'
     )
 
-    print(f'An task translate_plain_text_in_public_request.detect_content_language end in {datetime.now()}')
+    print(f'An task translate_plain_text_in_public_request.translate_content end in {datetime.now()}')
             
 
 async def execute_in_batch(valid_tasks_mapper, tasks_id):
@@ -228,10 +229,14 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
         for task_id in tasks_id:
             
             source_text = valid_tasks_mapper[task_id]['task_result_content']['source_text']
+            source_lang = valid_tasks_mapper[task_id]['task_result_content']['source_lang']
+            target_lang = valid_tasks_mapper[task_id]['task_result_content']['target_lang']
 
             api_requests.append(
-                languageDetector.detect(
-                    text=source_text, 
+                contentTranslator.translate(
+                    source_text=source_text, 
+                    source_lang=source_lang,
+                    target_lang=target_lang,
                     session=session
                 )
             )
@@ -251,10 +256,11 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                     task = valid_tasks_mapper[task_id]['task']
                     task_result_content = valid_tasks_mapper[task_id]['task_result_content']
                     
-                    new_saved_content = NotYetTranslatedResultFileSchemaV1(
+                    new_saved_content = TranslationCompletedResultFileSchemaV1(
                         source_text=task_result_content['source_text'],
-                        source_lang=api_result.lang,
-                        target_lang=task_result_content['target_lang']
+                        source_lang=task_result_content['source_lang'],
+                        target_lang=task_result_content['target_lang'],
+                        target_text=api_result.data
                     )
 
                     if isinstance(task_result, tuple):
@@ -267,17 +273,8 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                         translationRequestRepository.update(
                             task, 
                             dict(
-                                step_status=StepStatusEnum.not_yet_processed.value,
+                                step_status=StepStatusEnum.completed.value,
                                 current_step=TranslationStepEnum.translating_language.value
-                            )
-                        )
-                    )
-                
-                    update_request.append(
-                        translationRequestResultRepository.update(
-                            task_result, 
-                            dict(
-                                step=TranslationStepEnum.translating_language.value
                             )
                         )
                     )
@@ -286,7 +283,7 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                         transationHistoryRepository.update(
                             trans_history, 
                             dict(
-                                status=TranslationHistoryStatus.translating.value
+                                status=TranslationHistoryStatus.translated.value
                             )
                         )
                     )

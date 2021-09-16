@@ -1,24 +1,52 @@
-from pydantic.networks import AnyHttpUrl
+from typing import Any
 from infrastructure.configs.main import GlobalConfig, get_cnf
 
 import aiohttp
-
+from pydantic import BaseModel
 from core.ports.content_translator import ContentTranslatorPort
+from infrastructure.configs.main import GlobalConfig, get_cnf
+
+config: GlobalConfig = get_cnf()
+
+PUBLIC_TRANSLATION_API_CONF = config.PUBLIC_TRANSLATION_API
+PUBLIC_TRANSLATION_API_URL = PUBLIC_TRANSLATION_API_CONF.URL
+
+class ContentTranslationResponse(BaseModel):
+
+    data: Any
 
 class ContentTranslator(ContentTranslatorPort):
 
-    async def translate(self, url: AnyHttpUrl, source_lang, target_lang, source_text):
+    async def translate(
+        self,  
+        source_lang: str, 
+        target_lang: str, 
+        source_text: str, 
+        session: aiohttp.ClientSession = None,
+        public_request: bool = True
+    ):
 
-        direction = f'{source_lang}-{target_lang}'
+        if public_request:
 
-        data = {
-            'direction': direction,
-            'data': source_text
-        }
+            direction = f'{source_lang}-{target_lang}'
 
-        headers = {'Content-Type': 'application/json'}
-        
-        async with aiohttp.ClientSession() as session:
-            async with session.post(url, data=data, headers=headers) as response:
+            data = {
+                'direction': direction,
+                'data': source_text
+            }
 
-                return await response.json()
+            headers = {'Content-Type': 'application/json'}
+
+            if not session:
+
+                async with aiohttp.ClientSession() as session:
+                    async with session.post(PUBLIC_TRANSLATION_API_URL, json=data, headers=headers) as response:
+                        result = (await response.json())['data']
+
+                        return ContentTranslationResponse(**result)
+
+            else:
+                async with session.post(PUBLIC_TRANSLATION_API_URL, json=data, headers=headers) as response:
+                    result = (await response.json())['data']
+
+                    return ContentTranslationResponse(**result)

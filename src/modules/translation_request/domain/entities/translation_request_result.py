@@ -12,8 +12,10 @@ import aiofiles
 import json, os
 
 from infrastructure.configs.translation_request import (
-    TASK_RESULT_FOLDER, TASK_RESULT_FILE_EXTENSION, get_full_task_result_file_path
+    TASK_RESULT_FILE_EXTENSION, gen_task_result_file_path
 )
+
+from core.utils.file import get_task_result_full_file_path
 
 class TranslationRequestResultProps(BaseModel):
     
@@ -26,13 +28,15 @@ class TranslationRequestResultEntity(Entity[TranslationRequestResultProps]):
     async def save_request_result_to_file(self, content):
 
         if not self.props.file_path:
-            self.props.file_path = get_full_task_result_file_path(
+            self.props.file_path = gen_task_result_file_path(
                 created_at=int(round(time() * 1000)), 
                 task_id=str(self.props.task_id.value),
                 file_extension=TASK_RESULT_FILE_EXTENSION
             )
 
-        async with aiofiles.open(f'{TASK_RESULT_FOLDER}/{self.props.file_path}', 'w+') as f:
+        full_file_path = get_task_result_full_file_path(self.props.file_path)
+
+        async with aiofiles.open(full_file_path, 'w+') as f:
 
             if isinstance(content, str):
                 await f.write(json.dumps(json.loads(content)))
@@ -45,16 +49,20 @@ class TranslationRequestResultEntity(Entity[TranslationRequestResultProps]):
 
     async def read_data_from_file(self):
 
+        full_file_path = get_task_result_full_file_path(self.props.file_path)
+
         if not self.check_if_file_exists():
 
             raise FileNotFoundError('File not found')
 
-        async with aiofiles.open(f'{TASK_RESULT_FOLDER}/{self.props.file_path}') as f:
+        async with aiofiles.open(full_file_path) as f:
             
             data = await f.read()
 
             return json.loads(data)
 
     def check_if_file_exists(self):
+
+        full_file_path = get_task_result_full_file_path(self.props.file_path)
         
-        return os.path.isfile(f'{TASK_RESULT_FOLDER}/{self.props.file_path}')
+        return os.path.isfile(full_file_path)

@@ -1,5 +1,4 @@
 from infrastructure.configs.translation_request import TaskTypeEnum
-from pydantic import BaseModel
 from interface_adapters.base_classes.response import ResponseBase
 from sanic_openapi import doc
 
@@ -10,6 +9,10 @@ class DataStructure:
     taskType = doc.String(
         required=True,
         choices=TaskTypeEnum.enum_values()
+    )
+
+    translationHistoryId = doc.String(
+        required=True
     )
 
 class PlainTextTranslationRequestResponse(ResponseBase):
