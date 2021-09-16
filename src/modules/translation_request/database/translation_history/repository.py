@@ -4,6 +4,8 @@ from core.ports.repository import RepositoryPort
 from modules.translation_request.domain.entities.translation_history import TranslationHistoryEntity, TranslationHistoryProps
 from infrastructure.database.base_classes.mongodb.orm_repository_base import OrmRepositoryBase
 
+from typing import get_args
+
 class TranslationHistoryRepositoryPort(RepositoryPort[TranslationHistoryEntity, TranslationHistoryProps]):
 
     pass
@@ -17,15 +19,15 @@ class TranslationHistoryRepository(
     ], 
     TranslationHistoryRepositoryPort
 ):
+    
+    @property
+    def entity_klass(self):
+        return get_args(self.__orig_bases__[0])[0]
 
-    def __init__(self, 
-        repository: TranslationHistoryOrmEntity = TranslationHistoryOrmEntity,
-        mapper: TranslationHistoryOrmMapper = TranslationHistoryOrmMapper(),
-        table_name: str = TranslationHistoryOrmEntity.get_table_name()
-    ) -> None:
+    @property
+    def repository(self):
+        return get_args(self.__orig_bases__[0])[2]
 
-        super().__init__(
-            repository=repository, 
-            mapper=mapper,
-            table_name=table_name
-        )
+    @property
+    def mapper(self):
+        return get_args(self.__orig_bases__[0])[3]

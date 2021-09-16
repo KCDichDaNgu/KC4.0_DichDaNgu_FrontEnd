@@ -1,5 +1,5 @@
 import imp
-from infrastructure.configs.translation_request import TASK_RESULT_FOLDER
+from infrastructure.configs.task import TASK_RESULT_FOLDER
 
 from infrastructure.configs.main import GlobalConfig, get_cnf
 

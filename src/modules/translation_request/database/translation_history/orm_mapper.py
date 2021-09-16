@@ -5,19 +5,23 @@ from infrastructure.database.base_classes.mongodb.orm_mapper_base import OrmMapp
 from modules.translation_request.database.translation_history.orm_entity import TranslationHistoryOrmEntity
 from modules.translation_request.domain.entities.translation_history import TranslationHistoryEntity, TranslationHistoryProps
 
+from typing import get_args
+
 class TranslationHistoryOrmMapper(OrmMapperBase[TranslationHistoryEntity, TranslationHistoryOrmEntity]):
 
-    def __init__(self) -> None:
-        super().__init__(entity_klass=TranslationHistoryEntity)
+    @property
+    def entity_klass(self):
+        return get_args(self.__orig_bases__[0])[0]
 
-    def to_orm_entity(self, entity: TranslationHistoryEntity) -> TranslationHistoryOrmEntity:
+    @property
+    def orm_entity_klass(self):
+        return get_args(self.__orig_bases__[0])[1]
+
+    def to_orm_props(self, entity: TranslationHistoryEntity):
         
         props = entity.get_props_copy()
         
         orm_props = {
-            'id': props.id.value,
-            'created_at': props.created_at.value,
-            'updated_at': props.updated_at.value,
             'creator_id': props.creator_id.value,
             'task_id': props.task_id.value,
             'translation_type': props.translation_type,
@@ -25,9 +29,9 @@ class TranslationHistoryOrmMapper(OrmMapperBase[TranslationHistoryEntity, Transl
             'file_path': props.file_path
         }
         
-        return TranslationHistoryOrmEntity(**orm_props)
+        return orm_props
 
-    def to_domain_props(self, orm_entity: TranslationHistoryOrmEntity) -> TranslationHistoryProps:
+    def to_domain_props(self, orm_entity: TranslationHistoryOrmEntity):
 
         props = {
             'creator_id': ID(str(orm_entity.creator_id)),

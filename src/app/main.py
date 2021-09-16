@@ -4,7 +4,7 @@ from infrastructure.configs.main import GlobalConfig
 from sanic_openapi import swagger_blueprint
 
 from infrastructure.configs import ServerTypeEnum, get_cnf, GlobalConfig
-from infrastructure.configs.translation_request import TASK_RESULT_FOLDER
+from infrastructure.configs.task import TASK_RESULT_FOLDER
 from infrastructure.interceptors.exeption_interceptor import ExceptionInterceptor
 
 import os, aiofiles

@@ -4,7 +4,7 @@ from pydantic.fields import Field
 from pydantic.main import BaseModel
 from core.types import ExtendedEnum
 
-TRANSLATION_REQUEST_EXPIRATION_TIME = 60 * 60
+TASK_EXPIRATION_TIME = 60 * 60
 TASK_RESULT_FOLDER = 'task_result'
 TASK_RESULT_FILE_PATTERN = '{}__{}.{}'
 TASK_RESULT_FILE_EXTENSION = 'json'
@@ -17,27 +17,48 @@ def gen_task_result_file_path(created_at, task_id, file_extension):
         file_extension
     )
 
-class TaskTypeEnum(str, ExtendedEnum):
+class TranslationTaskNameEnum(str, ExtendedEnum):
 
-    file_translation = 'file_translation'
-    plain_text_translation = 'plain_text_translation'
-    language_detection = 'language_detection'
+    private_file_translation = 'private_file_translation'
+    private_plain_text_translation = 'private_plain_text_translation'
 
     public_file_translation = 'public_file_translation'
     public_plain_text_translation = 'public_plain_text_translation'
-    public_language_detection = 'public_language_detection'
+    
+
+class LanguageDetectionTaskNameEnum(str, ExtendedEnum):
+
+    public_plain_text_language_detection = 'public_plain_text_language_detection'
+    public_file_language_detection = 'public_file_language_detection'
+
+    private_plain_text_language_detection = 'private_plain_text_language_detection'
+    private_file_language_detection = 'private_file_language_detection'
 
 TRANSLATION_PUBLIC_TASKS = [
-    TaskTypeEnum.public_file_translation.value,
-    TaskTypeEnum.public_language_detection.value,
-    TaskTypeEnum.public_plain_text_translation.value
+    TranslationTaskNameEnum.public_file_translation.value,
+    TranslationTaskNameEnum.public_plain_text_translation.value
 ]
 
 TRANSLATION_PRIVATE_TASKS = [
-    TaskTypeEnum.file_translation.value,
-    TaskTypeEnum.language_detection.value,
-    TaskTypeEnum.plain_text_translation.value
+    TranslationTaskNameEnum.private_file_translation.value,
+    TranslationTaskNameEnum.private_plain_text_translation.value
 ]
+
+LANGUAGE_DETECTION_PUBLIC_TASKS = [
+    LanguageDetectionTaskNameEnum.public_plain_text_language_detection.value,
+    LanguageDetectionTaskNameEnum.public_file_language_detection.value
+]
+
+LANGUAGE_DETECTION_PRIVATE_TASKS = [
+    LanguageDetectionTaskNameEnum.private_plain_text_language_detection.value,
+    LanguageDetectionTaskNameEnum.private_file_language_detection.value
+]
+
+class TaskTypeEnum(str, ExtendedEnum):
+
+    unclassified = 'unclassified'
+    translation_task = 'translation_task'
+    language_detection = 'language_detection'
 
 class CreatorTypeEnum(str, ExtendedEnum):
 
@@ -50,12 +71,12 @@ class StepStatusEnum(str, ExtendedEnum):
     completed = 'completed'
     cancelled = 'cancelled'
 
-class TranslationStepEnum(str, ExtendedEnum):
+class TranslationTaskStepEnum(str, ExtendedEnum):
 
     detecting_language = 'detecting_language'
     translating_language = 'translating_language'
 
-class DetectionLanguageStepEnum(str, ExtendedEnum):
+class LanguageDetectionTaskStepEnum(str, ExtendedEnum):
 
     detecting_language = 'detecting_language'
 

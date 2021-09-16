@@ -1,8 +1,8 @@
 from infrastructure.configs.language import LanguageEnum
 from modules.translation_request.domain.entities.translation_history import TranslationHistoryProps
 from core.value_objects import ID
-from infrastructure.configs.translation_request import (
-    CreatorTypeEnum, StepStatusEnum, TaskTypeEnum, TranslationStepEnum,
+from infrastructure.configs.task import (
+    CreatorTypeEnum, StepStatusEnum, TranslationTaskNameEnum, TranslationTaskStepEnum,
     TranslationTask_NotYetTranslatedResultFileSchemaV1, TranslationTask_LangUnknownResultFileSchemaV1
 )
 from modules.translation_request.database.translation_request.repository import (
@@ -25,8 +25,8 @@ from infrastructure.configs.translation_history import TranslationHistoryTypeEnu
 from infrastructure.configs.main import get_mongodb_instance
 
 TEXT_TRANSLATION_TASKS = [
-    TaskTypeEnum.plain_text_translation.value, 
-    TaskTypeEnum.public_plain_text_translation
+    TranslationTaskNameEnum.private_plain_text_translation.value, 
+    TranslationTaskNameEnum.public_plain_text_translation
 ]
 
 class TranslationRequestDService():
@@ -42,7 +42,7 @@ class TranslationRequestDService():
 
         if command.source_lang in LanguageEnum.enum_values():
 
-            begin_step = TranslationStepEnum.translating_language.value
+            begin_step = TranslationTaskStepEnum.translating_language.value
 
             saved_content = TranslationTask_NotYetTranslatedResultFileSchemaV1(
                 source_text=command.source_text,
@@ -52,7 +52,7 @@ class TranslationRequestDService():
 
         else:
             
-            begin_step = TranslationStepEnum.detecting_language.value
+            begin_step = TranslationTaskStepEnum.detecting_language.value
 
             saved_content = TranslationTask_LangUnknownResultFileSchemaV1(
                 source_text=command.source_text,
@@ -63,7 +63,7 @@ class TranslationRequestDService():
             TranslationRequestProps(
                 creator_id=ID(None),
                 creator_type=CreatorTypeEnum.end_user.value,
-                task_type=TaskTypeEnum.public_plain_text_translation.value,
+                task_name=TranslationTaskNameEnum.public_plain_text_translation.value,
                 step_status=StepStatusEnum.not_yet_processed.value,
                 current_step=begin_step
             )

@@ -1,7 +1,7 @@
 from uuid import UUID
 from modules.translation_request.domain.entities.translation_history import TranslationHistoryEntity
 from sanic.exceptions import SanicException
-from infrastructure.configs.translation_request import TRANSLATION_PUBLIC_TASKS
+from infrastructure.configs.task import TRANSLATION_PUBLIC_TASKS
 from infrastructure.configs.message import MESSAGES
 from sanic import response
 from modules.translation_history.queries.get_single_translation_history.request_dto import GetSingleTranslationHistoryRequestDto
@@ -68,7 +68,7 @@ class GetSingleTranslationHistory(HTTPMethodView):
         
         task = await self.__translation_request_repository.find_one({'id': UUID(translation_history.props.task_id.value)})
 
-        if task.props.task_type not in TRANSLATION_PUBLIC_TASKS:
+        if task.props.task_name not in TRANSLATION_PUBLIC_TASKS:
             raise SanicException('Server Error')
 
 

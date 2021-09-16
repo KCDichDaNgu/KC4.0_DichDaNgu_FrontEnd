@@ -1,4 +1,4 @@
-from infrastructure.configs.translation_request import TaskTypeEnum
+from infrastructure.configs.task import TranslationTaskNameEnum
 from interface_adapters.base_classes.response import ResponseBase
 from sanic_openapi import doc
 
@@ -6,9 +6,9 @@ class DataStructure:
 
     taskId = doc.String(required=True)
 
-    taskType = doc.String(
+    taskName = doc.String(
         required=True,
-        choices=TaskTypeEnum.enum_values()
+        choices=TranslationTaskNameEnum.enum_values()
     )
 
     translationHistoryId = doc.String(

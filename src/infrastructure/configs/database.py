@@ -23,17 +23,7 @@ class CassandraDatabase(BaseModel):
     
     PROTOCOL_VERSION: int = 3
 
-    TABLES: dict = {
-        "translation_request": {
-            "name": "translation_request"
-        },
-        "translation_request_result": {
-            "name": "translation_request_result"
-        },
-        "translation_history": {
-            "name": "translation_history"
-        }
-    }
+    TABLES: dict = {}
 
 class MongoDBConnectionOptions(BaseModel):
 
@@ -54,11 +44,11 @@ class MongoDBDatabase(BaseModel):
     CONN_OPTS: MongoDBConnectionOptions
 
     COLLECTIONS: dict = {
-        "translation_request": {
-            "name": "translation_request"
+        "task": {
+            "name": "task"
         },
-        "translation_request_result": {
-            "name": "translation_request_result"
+        "task_result": {
+            "name": "task_result"
         },
         "translation_history": {
             "name": "translation_history"
@@ -76,3 +66,19 @@ class MongoDBDatabase(BaseModel):
             self.DATABASE_NAME,
             self.REPLICASET
         )
+
+ORM_VALID_CLASSNAMES = [
+    'OrmEntityBase',
+    'TaskOrmEntity',
+    'TaskResultOrmEntity',
+    'TranslationHistoryOrmEntity',
+    'TranslationRequestOrmEntity',
+    'TranslationRequestResultOrmEntity'
+]
+
+def validate_orm_class_name(doc_class, class_names=ORM_VALID_CLASSNAMES):
+    
+    if not doc_class.__name__ in class_names:
+        raise Exception('Orm classname changed!!! Please carefully with Parent - Child class pairs, they use class name for discriminating')
+
+    return doc_class

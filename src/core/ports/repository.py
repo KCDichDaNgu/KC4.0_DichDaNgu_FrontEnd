@@ -45,11 +45,11 @@ class RepositoryPort(
         ...
 
     @abstractmethod
-    def find_one_or_throw(self) -> Awaitable[Entity]:
+    def update(self) -> Awaitable[Entity]:
         ...
 
     @abstractmethod
-    def find_one_by_id_or_throw(self) -> Awaitable[Entity]:
+    def find_one_or_throw(self) -> Awaitable[Entity]:
         ...
 
     @abstractmethod

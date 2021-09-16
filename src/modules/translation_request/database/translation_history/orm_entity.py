@@ -31,7 +31,7 @@ class TranslationHistoryOrmEntity(OrmEntityBase):
 
     def pre_insert(self):
 
-        super(self.__class__, self).pre_insert()
+        super(TranslationHistoryOrmEntity, self).pre_insert()
         
         if self.file_path is None:
 
@@ -39,7 +39,7 @@ class TranslationHistoryOrmEntity(OrmEntityBase):
 
     def pre_update(self):
 
-        super(self.__class__, self).pre_insert()
+        super(TranslationHistoryOrmEntity, self).pre_update()
         
         if self.file_path is None:
 
