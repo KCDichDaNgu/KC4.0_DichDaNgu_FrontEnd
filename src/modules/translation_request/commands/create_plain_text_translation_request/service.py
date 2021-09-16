@@ -1,6 +1,10 @@
+from infrastructure.configs.language import LanguageEnum
 from modules.translation_request.domain.entities.translation_history import TranslationHistoryProps
 from core.value_objects import ID
-from infrastructure.configs.translation_request import CreatorTypeEnum, StepStatusEnum, TaskTypeEnum, TranslationStepEnum
+from infrastructure.configs.translation_request import (
+    CreatorTypeEnum, StepStatusEnum, TaskTypeEnum, TranslationStepEnum,
+    NotYetTranslatedResultFileSchemaV1, LanguageNotYetDetectedResultFileSchemaV1
+)
 from modules.translation_request.database.translation_request.repository import (
     TranslationRequestRepository, TranslationRequestRepositoryPort
 )
@@ -39,13 +43,32 @@ class CreatePlainTextTranslationRequestService():
 
     async def create_request(self, command: CreatePlainTextTranslationRequestCommand):
 
+        if command.source_lang in LanguageEnum.enum_values():
+
+            begin_step = TranslationStepEnum.translating_language.value
+
+            saved_content = NotYetTranslatedResultFileSchemaV1(
+                source_text=command.source_text,
+                source_lang=command.source_lang,
+                target_lang=command.target_lang,
+            )
+
+        else:
+            
+            begin_step = TranslationStepEnum.detecting_language.value
+
+            saved_content = LanguageNotYetDetectedResultFileSchemaV1(
+                source_text=command.source_text,
+                target_lang=command.target_lang,
+            )
+            
         new_request = TranslationRequestEntity(
             TranslationRequestProps(
                 creator_id=ID(None),
                 creator_type=CreatorTypeEnum.end_user.value,
                 task_type=TaskTypeEnum.public_plain_text_translation.value,
                 step_status=StepStatusEnum.not_yet_processed.value,
-                current_step=TranslationStepEnum.detecting_language.value
+                current_step=begin_step
             )
         )
         
@@ -57,9 +80,9 @@ class CreatePlainTextTranslationRequestService():
         )
 
         await new_task_result_entity.save_request_result_to_file(
-            content=command.json()
+            content=saved_content.json()
         )
-
+        
         new_translation_history_entity = TranslationHistoryEntity(
             TranslationHistoryProps(
                 creator_id=new_request.props.creator_id,

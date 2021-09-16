@@ -1,3 +1,6 @@
+from typing import List
+
+
 def first_elem(iterable, default = None, condition = lambda x: True):
 
     try:
@@ -20,3 +23,8 @@ def first_index(iterable, default = None, condition = lambda x: True):
 
 def convert_props_to_object(self):
     pass
+
+def chunk_arr(input: List, size: int) -> List[List]:
+
+    for i in range(0, len(input), size):
+        yield input[i:i + size]

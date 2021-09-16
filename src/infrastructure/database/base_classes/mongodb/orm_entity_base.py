@@ -10,7 +10,7 @@ db_instance = get_mongodb_instance()
 @db_instance.register
 class OrmEntityBase(Document):
     
-    uuid = fields.UUIDField(unique=True, required=True)
+    id = fields.UUIDField(unique=True, required=True, attribute='_id')
     created_at = fields.DateTimeField(allow_none=True)
     updated_at = fields.DateTimeField(allow_none=True)
     class Meta:

@@ -1,3 +1,4 @@
+from time import time
 from pydantic import Field
 from pydantic.class_validators import root_validator, validator
 from typing import Any, Optional, Union
@@ -11,7 +12,7 @@ import aiofiles
 import json, os
 
 from infrastructure.configs.translation_request import (
-    TASK_RESULT_FOLDER, TASK_RESULT_FILE_PATTERN, TASK_RESULT_FILE_EXTENSION
+    TASK_RESULT_FOLDER, TASK_RESULT_FILE_EXTENSION, get_full_task_result_file_path
 )
 
 class TranslationRequestResultProps(BaseModel):
@@ -23,15 +24,22 @@ class TranslationRequestResultProps(BaseModel):
 class TranslationRequestResultEntity(Entity[TranslationRequestResultProps]):
 
     async def save_request_result_to_file(self, content):
-        
-        file_name = TASK_RESULT_FILE_PATTERN.format(str(self.props.task_id.value), self.props.step)
 
-        async with aiofiles.open(f'{TASK_RESULT_FOLDER}/{file_name}.{TASK_RESULT_FILE_EXTENSION}', 'w+') as f:
-            json.dump(content, f)
+        if not self.props.file_path:
+            self.props.file_path = get_full_task_result_file_path(
+                created_at=int(round(time() * 1000)), 
+                task_id=str(self.props.task_id.value),
+                file_extension=TASK_RESULT_FILE_EXTENSION
+            )
 
-            f.close()
+        async with aiofiles.open(f'{TASK_RESULT_FOLDER}/{self.props.file_path}', 'w+') as f:
 
-        self.props.file_path = file_name
+            if isinstance(content, str):
+                await f.write(json.dumps(json.loads(content)))
+            else:
+                await f.write(content)
+
+            await f.close()
 
     async def read_data_from_file(self):
 
@@ -39,14 +47,12 @@ class TranslationRequestResultEntity(Entity[TranslationRequestResultProps]):
 
             raise FileNotFoundError('File not found')
 
-        async with aiofiles.open(self.props.file_path) as f:
+        async with aiofiles.open(f'{TASK_RESULT_FOLDER}/{self.props.file_path}') as f:
             
-            data = json.load(f)
+            data = await f.read()
 
-            f.close()
-
-            return data
+            return json.loads(data)
 
     def check_if_file_exists(self):
-
-        return os.path.isfile(self.props.file_path)
+        
+        return os.path.isfile(f'{TASK_RESULT_FOLDER}/{self.props.file_path}')

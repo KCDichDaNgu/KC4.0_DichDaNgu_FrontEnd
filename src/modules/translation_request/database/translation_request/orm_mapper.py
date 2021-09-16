@@ -15,7 +15,7 @@ class TranslationRequestOrmMapper(OrmMapperBase[TranslationRequestEntity, Transl
         props = entity.get_props_copy()
         
         orm_props = {
-            'uuid': props.id.value,
+            'id': props.id.value,
             'created_at': props.created_at.value,
             'updated_at': props.updated_at.value,
             'creator_id': props.creator_id.value,

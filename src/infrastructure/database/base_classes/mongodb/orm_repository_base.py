@@ -1,6 +1,6 @@
 from infrastructure.database.base_classes.mongodb import OrmMapperBase, OrmEntityBase
 
-from typing import NewType, TypeVar
+from typing import Dict, NewType, TypeVar
 from core.value_objects.id import ID
 from core.domain_events import DomainEvents
 from infrastructure.adapters.logger import Logger
@@ -10,8 +10,6 @@ from core.exceptions import NotFoundException
 from core.base_classes.entity import BaseEntityProps
 from abc import ABC
 from typing import Generic, List, TypeVar, Any, Union
-
-import asyncio
 
 Entity = TypeVar('Entity', bound=BaseEntityProps)
 EntityProps = TypeVar('EntityProps')
@@ -77,19 +75,39 @@ class OrmRepositoryBase(
         
         return self.__mapper.to_domain_entity(new_data)
 
-    async def update(self, entity: Entity):
+    async def update(self, entity: Entity, changes: Any, conditions: Dict = {}):
+ 
+        orm_entity = self.__mapper.to_orm_entity(entity)
+        
+        await DomainEvents.publish_events(entity.id, self.__logger)
+
+        # orm_entity = orm_entity.build_from_mongo(orm_entity.to_mongo())
+
+        orm_entity.is_created = True
+        
+        orm_entity.update(changes)
+
+        if conditions:
+            orm_entity.commit(conditions=conditions)
+        else:
+            orm_entity.commit()
+
+        self.__logger.debug(f'[Entity persisted]: {type(entity).__name__} {entity.id}')
+        
+        return self.__mapper.to_domain_entity(orm_entity)
+
+
+    async def save(self, entity: Entity, update_conditions: Dict = {}):
 
         orm_entity = self.__mapper.to_orm_entity(entity)
         
         await DomainEvents.publish_events(entity.id, self.__logger)
         
-        result = await self.__repository.update(
-            **(orm_entity.dump())
-        ).commit()
+        orm_entity.commit(conditions=update_conditions)
 
         self.__logger.debug(f'[Entity persisted]: {type(entity).__name__} {entity.id}')
         
-        return self.__mapper.to_domain_entity(result)
+        return self.__mapper.to_domain_entity(orm_entity)
 
     async def find_one(
         self,

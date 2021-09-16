@@ -132,7 +132,7 @@ class OrmRepositoryBase(
     ):
         
         result = []
-        print(params)
+        
         if order_by is None:
             founds = await self.__repository.objects.filter(**params).async_all()
         else:
