@@ -41,6 +41,8 @@ class TranslationRequestResultEntity(Entity[TranslationRequestResultProps]):
 
             await f.close()
 
+        return self.check_if_file_exists()
+
     async def read_data_from_file(self):
 
         if not self.check_if_file_exists():

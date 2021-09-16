@@ -22,3 +22,5 @@ class TranslationHistoryStatus(str, ExtendedEnum):
 
     translating = 'translating'
     translated = 'translated'
+
+    cancelled = 'cancelled'

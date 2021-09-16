@@ -82,9 +82,25 @@ async def read_task_result(
 
     invalid_tasks = list(filter(lambda t: t.id.value not in valid_tasks_id, tasks))
 
-    return valid_tasks_mapper, invalid_tasks
+    invalid_tasks_id = list(map(lambda t: t.id.value, invalid_tasks))
 
-async def mark_invalid_tasks(invalid_tasks: List[TranslationRequestEntity]):
+    invalid_tasks_mapper = {}
+
+    for task_id in invalid_tasks_id:
+
+        task = list(filter(lambda ts: ts.id.value == task_id, tasks))[0]
+        task_result = list(filter(lambda ts: ts.props.task_id.value == task_id, tasks_result))[0]
+        trans_history = list(filter(lambda ts: ts.props.task_id.value == task_id, translations_history))[0]
+
+        invalid_tasks_mapper[task_id] = {
+            'task_result': task_result,
+            'trans_history': trans_history,
+            'task': task
+        }
+
+    return valid_tasks_mapper, invalid_tasks_mapper
+
+async def mark_invalid_tasks(invalid_tasks_mapper):
 
     result = []
     
@@ -92,14 +108,33 @@ async def mark_invalid_tasks(invalid_tasks: List[TranslationRequestEntity]):
         with session.start_transaction():
 
             update_request = []
+            
+            for task_id in invalid_tasks_mapper.keys():
 
-            for task in invalid_tasks:
+                task_result = invalid_tasks_mapper[task_id]['task_result'],
+                trans_history = invalid_tasks_mapper[task_id]['trans_history'],
+                task = invalid_tasks_mapper[task_id]['task']
 
+                if isinstance(task_result, tuple):
+                    task_result = task_result[0]
+
+                if isinstance(trans_history, tuple):
+                    trans_history = trans_history[0]
+                    
                 update_request.append(
                     translationRequestRepository.update(
                         task, 
                         dict(step_status=StepStatusEnum.cancelled.value),
                         conditions={}
+                    )
+                )
+                
+                update_request.append(
+                    transationHistoryRepository.update(
+                        trans_history, 
+                        dict(
+                            status=TranslationHistoryStatus.cancelled.value
+                        )
                     )
                 )
 
@@ -116,53 +151,52 @@ async def main():
 
     print(f'New task translate_plain_text_in_public_request.detect_content_language run in {datetime.now()}')
     
-    tasks = await translationRequestRepository.find_many(
-        params=dict(
-            task_type=TaskTypeEnum.public_plain_text_translation.value,
-            current_step=TranslationStepEnum.detecting_language.value,
-            step_status=StepStatusEnum.not_yet_processed.value,
-            expired_date={
-                "$gt": datetime.now()
-            }
-        ),
-        limit=ALLOWED_CONCURRENT_REQUEST * 10
-    )
-
-    tasks_id = list(map(lambda task: task.id.value, tasks))
-
-    tasks_result_and_trans_history_req = [
-        translationRequestResultRepository.find_many(
-            params=dict(
-                task_id={
-                    '$in': list(map(lambda t: UUID(t), tasks_id))
-                },
-                step=TranslationStepEnum.detecting_language.value
-            )
-        ),
-        transationHistoryRepository.find_many(
-            params=dict(
-                task_id={
-                    '$in': list(map(lambda t: UUID(t), tasks_id))
-                }
-            )
-        )
-    ]
-    
-    tasks_result, translations_history = await asyncio.gather(*tasks_result_and_trans_history_req)
-    
-    valid_tasks_mapper, invalid_tasks = await read_task_result(
-        tasks=tasks, 
-        tasks_result=tasks_result,
-        translations_history=translations_history
-    )
-    
-    await mark_invalid_tasks(invalid_tasks)
-
     try:
+        tasks = await translationRequestRepository.find_many(
+            params=dict(
+                task_type=TaskTypeEnum.public_plain_text_translation.value,
+                current_step=TranslationStepEnum.detecting_language.value,
+                step_status=StepStatusEnum.not_yet_processed.value,
+                expired_date={
+                    "$gt": datetime.now()
+                }
+            ),
+            limit=ALLOWED_CONCURRENT_REQUEST * 10
+        )
+
+        tasks_id = list(map(lambda task: task.id.value, tasks))
+
+        tasks_result_and_trans_history_req = [
+            translationRequestResultRepository.find_many(
+                params=dict(
+                    task_id={
+                        '$in': list(map(lambda t: UUID(t), tasks_id))
+                    },
+                    step=TranslationStepEnum.detecting_language.value
+                )
+            ),
+            transationHistoryRepository.find_many(
+                params=dict(
+                    task_id={
+                        '$in': list(map(lambda t: UUID(t), tasks_id))
+                    }
+                )
+            )
+        ]
+
+        tasks_result, translations_history = await asyncio.gather(*tasks_result_and_trans_history_req)
+    
+        valid_tasks_mapper, invalid_tasks_mapper = await read_task_result(
+            tasks=tasks, 
+            tasks_result=tasks_result,
+            translations_history=translations_history
+        )
+    
+        await mark_invalid_tasks(invalid_tasks_mapper)
 
         valid_tasks_id = list(map(lambda t: t.id.value, tasks))
 
-        chunked_tasks_id = chunk_arr(valid_tasks_id, ALLOWED_CONCURRENT_REQUEST)
+        chunked_tasks_id = list(chunk_arr(valid_tasks_id, ALLOWED_CONCURRENT_REQUEST))
 
         for chunk in chunked_tasks_id:
             
@@ -170,7 +204,7 @@ async def main():
 
     except Exception as e:
         logger.error(e)
-
+        
         print(e)
 
     logger.log(
@@ -258,7 +292,9 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                     )
 
                     update_request.append(
-                        await task_result.save_request_result_to_file(
+                        task_result.save_request_result_to_file(
                             content=new_saved_content.json()
                         )
                     )
+
+                await asyncio.gather(*update_request)
