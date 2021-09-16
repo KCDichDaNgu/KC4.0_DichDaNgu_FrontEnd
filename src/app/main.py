@@ -39,7 +39,8 @@ def init_routes(app: Sanic) -> Sanic:
     app.blueprint(translation_request_bp)
     app.blueprint(translation_history_bp)
     app.blueprint(static_files_server_bp)
-
+    
+    # app.static('static', '/home/minh/projects/translation-backend/static')
     return app
 
 async def mkdir_required_folders(folders_path: List[str]):

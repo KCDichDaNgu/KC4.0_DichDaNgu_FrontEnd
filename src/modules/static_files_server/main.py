@@ -16,7 +16,7 @@ static_files_server_bp = Blueprint(
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-current_dir_path = '/'.join(current_dir.split('/')[:-2])
+current_dir_path = '/'.join(current_dir.split('/')[:-3])
 
 static_dir = os.path.join(current_dir_path, 'static')
 
