@@ -6,7 +6,6 @@ from sanic_openapi import swagger_blueprint
 from infrastructure.configs import ServerTypeEnum, get_cnf, GlobalConfig
 from infrastructure.configs.translation_request import TASK_RESULT_FOLDER
 from infrastructure.interceptors.exeption_interceptor import ExceptionInterceptor
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 import os, aiofiles
 
@@ -33,9 +32,11 @@ async def listener_after_server_stop(*args, **kwargs):
 def init_routes(app: Sanic) -> Sanic:
 
     from modules.translation_request.main import translation_request_bp
+    from modules.translation_history.main import translation_history_bp
 
     app.blueprint(swagger_blueprint)
     app.blueprint(translation_request_bp)
+    app.blueprint(translation_history_bp)
     
     return app
 
@@ -67,11 +68,11 @@ async def init_app():
 
     init_mongodb(config.MONGODB_DATABASE)
 
-    await init_kafka(config)
+    # await init_kafka(config)
 
     init_routes(app)
 
-    init_background_tasks(config)
+    # init_background_tasks(config)
 
     app.error_handler = ExceptionInterceptor()
 

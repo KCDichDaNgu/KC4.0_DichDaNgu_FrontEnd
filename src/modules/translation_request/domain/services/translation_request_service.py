@@ -68,7 +68,7 @@ class TranslationRequestDService():
                 current_step=begin_step
             )
         )
-        print(new_request)
+        
         new_task_result_entity = TranslationRequestResultEntity(
             TranslationRequestResultProps(
                 task_id=new_request.id,
@@ -95,7 +95,7 @@ class TranslationRequestDService():
             with self.__db_instance.session() as session:
                 with session.start_transaction():
 
-                    created = await self.__translation_request_repository.create(
+                    created_request = await self.__translation_request_repository.create(
                         new_request
                     )
 
@@ -103,8 +103,8 @@ class TranslationRequestDService():
                         new_task_result_entity
                     )
                     
-                    await self.__translation_history_repository.create(
+                    created_translation_record = await self.__translation_history_repository.create(
                         new_translation_history_entity
                     )
                     
-                    return created
+                    return created_request, created_translation_record

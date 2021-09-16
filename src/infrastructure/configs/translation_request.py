@@ -6,11 +6,11 @@ from core.types import ExtendedEnum
 
 TRANSLATION_REQUEST_EXPIRATION_TIME = 60 * 60
 
-TASK_RESULT_FOLDER = 'task_result'
+TASK_RESULT_FOLDER = 'static/task_result'
 TASK_RESULT_FILE_PATTERN = '{}__{}.{}'
 TASK_RESULT_FILE_EXTENSION = 'json'
 
-def get_full_task_result_file_path(created_at, task_id, file_extension):
+def gen_task_result_file_path(created_at, task_id, file_extension):
 
     return TASK_RESULT_FILE_PATTERN.format(
         created_at, 

@@ -74,6 +74,17 @@ class AppConfig(BaseModel):
             'summary': 'Create document translation request',
             'desc': 'Create document translation request',
             'method': 'POST'
+        },
+        'translation_history': {
+            'path': '/translation-history',
+            'name': 'Translation History'
+        },
+        'translation_history.get_single': {
+            'path': '/get_single',
+            'name': 'Get single translation history',
+            'summary': 'Get single translation history',
+            'desc': 'Get single translation history',
+            'method': 'GET'
         }
     }
 
@@ -85,6 +96,11 @@ class AppConfig(BaseModel):
     BACKGROUND_TASKS: Dict[str, BackgroundTask] = {
         'translate_plain_text_in_public_request.detect_content_language': BackgroundTask(
             ID='translate_plain_text_in_public_request.detect_content_language',
+            TRIGGER=BackgroundTaskTriggerEnum.interval.value,
+            CONFIG=dict(seconds=3)
+        ),
+        'translate_plain_text_in_public_request.translate_content': BackgroundTask(
+            ID='translate_plain_text_in_public_request.translate_content',
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
             CONFIG=dict(seconds=3)
         )

@@ -12,25 +12,21 @@ from modules.translation_request.dtos.plain_text_translation_response import Pla
 config: GlobalConfig = get_cnf()
 APP_CONFIG = config.APP_CONFIG
 
-class Body:
-    data = doc.Object(CreatePlainTextTranslationRequestDto)
-
-
 class CreatePlainTextTranslationRequest(HTTPMethodView):
 
     def __init__(self) -> None:
         super().__init__()
 
-        self.__createPlainTextTranslationRequestService = CreatePlainTextTranslationRequestService()
+        self.__create_plain_text_translation_request_service = CreatePlainTextTranslationRequestService()
 
     @doc.summary(APP_CONFIG.ROUTES['translation_request.text_translation.create']['summary'])
     @doc.description(APP_CONFIG.ROUTES['translation_request.text_translation.create']['desc'])
-    @doc.consumes(Body, location="body")
+    @doc.consumes(CreatePlainTextTranslationRequestDto, location="body", required=True)
     @doc.produces(PlainTextTranslationRequestResponse)
 
     async def post(self, request):
         
-        data = request.json['data']
+        data = request.json
 
         command = CreatePlainTextTranslationRequestCommand(
             source_text=data['sourceText'],
@@ -38,12 +34,14 @@ class CreatePlainTextTranslationRequest(HTTPMethodView):
             target_lang=data['targetLang']
         )
 
-        new_task = await self.__createPlainTextTranslationRequestService.create_request(command)
+        new_task, new_translation_record = await self.__create_plain_text_translation_request_service.create_request(command)
 
         return response.json(body={
             'code': StatusCodeEnum.success.value,
             'data': {
-                'taskId': new_task.id.value
+                'taskId': new_task.id.value,
+                'taskType': new_task.props.task_type,
+                'translationHitoryId': new_translation_record.id.value
             },
             'message': MESSAGES['success']
         })

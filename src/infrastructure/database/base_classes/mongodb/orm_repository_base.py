@@ -1,3 +1,4 @@
+from uuid import UUID
 from infrastructure.database.base_classes.mongodb import OrmMapperBase, OrmEntityBase
 
 from typing import Dict, NewType, TypeVar
@@ -81,8 +82,6 @@ class OrmRepositoryBase(
         
         await DomainEvents.publish_events(entity.id, self.__logger)
 
-        # orm_entity = orm_entity.build_from_mongo(orm_entity.to_mongo())
-
         orm_entity.is_created = True
         
         orm_entity.update(changes)
@@ -111,11 +110,11 @@ class OrmRepositoryBase(
 
     async def find_one(
         self,
-        **params: Any,
+        params: Any,
     ):
-
-        found = self.__repository.find_one(**params)
-
+    
+        found = self.__repository.find_one(params)
+        
         return self.__mapper.to_domain_entity(found) if found else None
 
     async def find_one_or_throw(self, params: Any = {}):
