@@ -33,11 +33,13 @@ def init_routes(app: Sanic) -> Sanic:
 
     from modules.translation_request.main import translation_request_bp
     from modules.translation_history.main import translation_history_bp
+    from modules.static_files_server.main import static_files_server_bp
 
     app.blueprint(swagger_blueprint)
     app.blueprint(translation_request_bp)
     app.blueprint(translation_history_bp)
-    
+    app.blueprint(static_files_server_bp)
+
     return app
 
 async def mkdir_required_folders(folders_path: List[str]):
@@ -72,7 +74,7 @@ async def init_app():
 
     init_routes(app)
 
-    # init_background_tasks(config)
+    init_background_tasks(config)
 
     app.error_handler = ExceptionInterceptor()
 

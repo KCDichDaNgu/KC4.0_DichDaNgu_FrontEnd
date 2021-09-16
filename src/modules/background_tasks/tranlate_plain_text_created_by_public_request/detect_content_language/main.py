@@ -144,8 +144,7 @@ async def mark_invalid_tasks(invalid_tasks_mapper):
 
 async def main():
 
-    logger.log(
-        level=logging.INFO,
+    logger.debug(
         msg=f'New task translate_plain_text_in_public_request.detect_content_language run in {datetime.now()}'
     )
 
@@ -165,6 +164,14 @@ async def main():
         )
 
         tasks_id = list(map(lambda task: task.id.value, tasks))
+
+        if len(tasks_id) == 0: 
+            logger.debug(
+                msg=f'An task translate_plain_text_in_public_request.detect_content_language end in {datetime.now()}\n'
+            )
+
+            print(f'An task translate_plain_text_in_public_request.detect_content_language end in {datetime.now()}\n')
+            return
 
         tasks_result_and_trans_history_req = [
             translationRequestResultRepository.find_many(
@@ -207,12 +214,11 @@ async def main():
         
         print(e)
 
-    logger.log(
-        level=logging.INFO,
-        msg=f'An task translate_plain_text_in_public_request.detect_content_language end in {datetime.now()}'
+    logger.debug(
+        msg=f'An task translate_plain_text_in_public_request.detect_content_language end in {datetime.now()}\n'
     )
 
-    print(f'An task translate_plain_text_in_public_request.detect_content_language end in {datetime.now()}')
+    print(f'An task translate_plain_text_in_public_request.detect_content_language end in {datetime.now()}\n')
             
 
 async def execute_in_batch(valid_tasks_mapper, tasks_id):
@@ -222,7 +228,7 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
     connector = aiohttp.TCPConnector(limit=ALLOWED_CONCURRENT_REQUEST)
 
     async with aiohttp.ClientSession(connector=connector, loop=loop) as session:
-
+        
         api_requests = []
 
         for task_id in tasks_id:

@@ -19,7 +19,7 @@ def init_background_tasks(config: GlobalConfig):
         detect_content_language_for_plain_text_in_public_request,
         id=background_task_1_conf.ID,
         trigger=background_task_1_conf.TRIGGER,
-        **background_task_1_conf.CONFIG
+        **background_task_1_conf.CONFIG,
     )
 
     background_task_2_conf = BACKGROUND_TASKS['translate_plain_text_in_public_request.translate_content']

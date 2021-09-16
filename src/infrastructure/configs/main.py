@@ -56,6 +56,8 @@ class AppConfig(BaseModel):
 
     APP_NAME: str = 'translation-backend'
 
+    STATIC_FOLDER = 'static'
+
     ROUTES: Dict = {
         'translation_request': {
             'path': '/',
@@ -85,6 +87,10 @@ class AppConfig(BaseModel):
             'summary': 'Get single translation history',
             'desc': 'Get single translation history',
             'method': 'GET'
+        },
+        'static_files': {
+            'path': '/static',
+            'name': 'Static files serving'
         }
     }
 
@@ -97,12 +103,18 @@ class AppConfig(BaseModel):
         'translate_plain_text_in_public_request.detect_content_language': BackgroundTask(
             ID='translate_plain_text_in_public_request.detect_content_language',
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
-            CONFIG=dict(seconds=3)
+            CONFIG=dict(
+                seconds=3,
+                max_instances=3
+            )
         ),
         'translate_plain_text_in_public_request.translate_content': BackgroundTask(
             ID='translate_plain_text_in_public_request.translate_content',
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
-            CONFIG=dict(seconds=3)
+            CONFIG=dict(
+                seconds=3,
+                max_instances=3
+            )
         )
     }
 

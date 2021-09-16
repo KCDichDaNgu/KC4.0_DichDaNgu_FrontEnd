@@ -145,8 +145,7 @@ async def mark_invalid_tasks(invalid_tasks_mapper):
 
 async def main():
 
-    logger.log(
-        level=logging.INFO,
+    logger.debug(
         msg=f'New task translate_plain_text_in_public_request.translate_content run in {datetime.now()}'
     )
 
@@ -167,6 +166,13 @@ async def main():
 
         tasks_id = list(map(lambda task: task.id.value, tasks))
 
+        if len(tasks_id) == 0: 
+            logger.debug(
+                msg=f'An task translate_plain_text_in_public_request.translate_content end in {datetime.now()}\n'
+            )
+            print(f'An task translate_plain_text_in_public_request.translate_content end in {datetime.now()}\n')
+            return
+
         tasks_result_and_trans_history_req = [
             translationRequestResultRepository.find_many(
                 params=dict(
@@ -186,19 +192,19 @@ async def main():
         ]
 
         tasks_result, translations_history = await asyncio.gather(*tasks_result_and_trans_history_req)
-    
+
         valid_tasks_mapper, invalid_tasks_mapper = await read_task_result(
             tasks=tasks, 
             tasks_result=tasks_result,
             translations_history=translations_history
         )
-    
+
         await mark_invalid_tasks(invalid_tasks_mapper)
 
         valid_tasks_id = list(map(lambda t: t.id.value, tasks))
 
         chunked_tasks_id = list(chunk_arr(valid_tasks_id, ALLOWED_CONCURRENT_REQUEST))
-
+        
         for chunk in chunked_tasks_id:
             
             await execute_in_batch(valid_tasks_mapper, chunk)
@@ -208,12 +214,11 @@ async def main():
         
         print(e)
 
-    logger.log(
-        level=logging.INFO,
-        msg=f'An task translate_plain_text_in_public_request.translate_content end in {datetime.now()}'
+    logger.debug(
+        msg=f'An task translate_plain_text_in_public_request.translate_content end in {datetime.now()}\n'
     )
 
-    print(f'An task translate_plain_text_in_public_request.translate_content end in {datetime.now()}')
+    print(f'An task translate_plain_text_in_public_request.translate_content end in {datetime.now()}\n')
             
 
 async def execute_in_batch(valid_tasks_mapper, tasks_id):
@@ -231,7 +236,7 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
             source_text = valid_tasks_mapper[task_id]['task_result_content']['source_text']
             source_lang = valid_tasks_mapper[task_id]['task_result_content']['source_lang']
             target_lang = valid_tasks_mapper[task_id]['task_result_content']['target_lang']
-
+            
             api_requests.append(
                 contentTranslator.translate(
                     source_text=source_text, 

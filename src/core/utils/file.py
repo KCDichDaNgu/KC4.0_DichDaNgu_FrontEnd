@@ -1,6 +1,11 @@
 import imp
 from infrastructure.configs.translation_request import TASK_RESULT_FOLDER
 
+from infrastructure.configs.main import GlobalConfig, get_cnf
+
+config: GlobalConfig = get_cnf()
+STATIC_FOLDER = config.APP_CONFIG.STATIC_FOLDER
+
 def load_module(name):
     """Load module using imp.find_module"""
     names = name.split(".")
@@ -14,4 +19,4 @@ def load_module(name):
 
 def get_task_result_full_file_path(file_path: str):
 
-    return f'{TASK_RESULT_FOLDER}/{file_path}'
+    return f'{STATIC_FOLDER}/{TASK_RESULT_FOLDER}/{file_path}'

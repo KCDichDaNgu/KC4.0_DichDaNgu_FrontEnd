@@ -13,4 +13,5 @@ addict
 schedule
 aiofiles
 apscheduler
-umongo[motor]
+umongo
+sanic-cors
