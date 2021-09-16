@@ -1,7 +1,6 @@
 from modules.system_setting.dtos.system_setting_response import SystemSettingResponse
 from sanic import response
 from modules.system_setting.commands.create_system_setting.command import CreateSystemSettingCommand
-from modules.system_setting.commands.create_system_setting.service import CreateSystemSettingService
 from modules.system_setting.commands.create_system_setting.request_dto import CreateSystemSettingDto
 from infrastructure.configs.message import MESSAGES
 from infrastructure.configs.main import StatusCodeEnum, GlobalConfig, get_cnf
@@ -21,13 +20,16 @@ class CreateSystemSetting(HTTPMethodView):
 
     def __init__(self) -> None:
         super().__init__()
+        from modules.system_setting.commands.create_system_setting.service import CreateSystemSettingService
 
         self.__createSystemSettingService = CreateSystemSettingService()
 
     @doc.summary(APP_CONFIG.ROUTES['system_setting.create']['summary'])
     @doc.description(APP_CONFIG.ROUTES['system_setting.create']['desc'])
     @doc.consumes(Body, location="body")
+    
     @doc.produces(SystemSettingResponse)
+
     async def post(self, request):
 
         data = request.json['data']
@@ -40,7 +42,9 @@ class CreateSystemSetting(HTTPMethodView):
         )
 
         new_task = await self.__createSystemSettingService.create_request(command)
-        new_task = new_task.to_object()
+
+        new_task = json.loads(new_task.json())['props']
+
         return response.json(body={
             'code': StatusCodeEnum.success.value,
             'data': {

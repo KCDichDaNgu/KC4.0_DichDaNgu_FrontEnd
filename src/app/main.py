@@ -45,10 +45,9 @@ def init_routes(app: Sanic) -> Sanic:
 
     from modules.language_detection_request.main import language_detection_request_bp
     from modules.language_detection_history.main import language_detection_history_bp
-
-    from modules.static_files_server.main import static_files_server_bp
     from modules.system_setting.main import system_setting_bp
 
+    from modules.static_files_server.main import static_files_server_bp
 
     app.blueprint(swagger_blueprint)
 
@@ -59,8 +58,7 @@ def init_routes(app: Sanic) -> Sanic:
     app.blueprint(language_detection_history_bp)
 
     app.blueprint(static_files_server_bp)
-
-    # app.blueprint(system_setting_bp)
+    app.blueprint(system_setting_bp)
     
     return app
 
@@ -87,13 +85,12 @@ async def init_app():
     ])
 
     # await init_kafka(config)
-
     init_routes(app)
 
     app.error_handler = ExceptionInterceptor()
 
     if config.SERVER_TYPE == ServerTypeEnum.uvicorn.value:
-
+        
         app.register_listener(listener_after_server_start, 'after_server_start')
         app.register_listener(listener_before_server_stop, 'before_server_stop')
 

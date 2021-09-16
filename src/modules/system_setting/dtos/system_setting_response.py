@@ -1,4 +1,4 @@
-from infrastructure.configs.translation_request import TaskTypeEnum
+from infrastructure.configs.task import TaskTypeEnum
 from pydantic import BaseModel
 from interface_adapters.base_classes.response import ResponseBase
 from sanic_openapi import doc

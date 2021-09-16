@@ -1,4 +1,5 @@
 
+from typing import get_args
 from modules.system_setting.database.orm_mapper import SystemSettingOrmMapper
 from modules.system_setting.domain.entities.system_setting import SystemSettingEntity, SystemSettingProps
 from modules.system_setting.database.orm_entity import SystemSettingOrmEntity
@@ -19,14 +20,14 @@ class SystemSettingRepository(
     SystemSettingRepositoryPort
 ):
 
-    def __init__(self, 
-        repository: SystemSettingOrmEntity = SystemSettingOrmEntity,
-        mapper: SystemSettingOrmMapper = SystemSettingOrmMapper(),
-        table_name: str = SystemSettingOrmEntity.get_table_name()
-    ) -> None:
+    property
+    def entity_klass(self):
+        return get_args(self.__orig_bases__[0])[0]
 
-        super().__init__(
-            repository=repository, 
-            mapper=mapper,
-            table_name=table_name
-        )
+    @property
+    def repository(self):
+        return get_args(self.__orig_bases__[0])[2]
+
+    @property
+    def mapper(self):
+        return get_args(self.__orig_bases__[0])[3]
