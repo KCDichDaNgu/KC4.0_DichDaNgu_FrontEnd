@@ -229,28 +229,36 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                     if isinstance(trans_history, tuple):
                         trans_history = trans_history[0]
                 
-                    await translationRequestRepository.update(
-                        task, 
-                        dict(
-                            step_status=StepStatusEnum.not_yet_processed.value,
-                            current_step=TranslationStepEnum.translating_language.value
+                    update_request.append(
+                        translationRequestRepository.update(
+                            task, 
+                            dict(
+                                step_status=StepStatusEnum.not_yet_processed.value,
+                                current_step=TranslationStepEnum.translating_language.value
+                            )
                         )
                     )
                 
-                    await translationRequestResultRepository.update(
-                        task_result, 
-                        dict(
-                            step=TranslationStepEnum.translating_language.value
+                    update_request.append(
+                        translationRequestResultRepository.update(
+                            task_result, 
+                            dict(
+                                step=TranslationStepEnum.translating_language.value
+                            )
                         )
                     )
                     
-                    await transationHistoryRepository.update(
-                        trans_history, 
-                        dict(
-                            status=TranslationHistoryStatus.translating.value
+                    update_request.append(
+                        transationHistoryRepository.update(
+                            trans_history, 
+                            dict(
+                                status=TranslationHistoryStatus.translating.value
+                            )
                         )
                     )
 
-                    await task_result.save_request_result_to_file(
-                        content=new_saved_content.json()
+                    update_request.append(
+                        await task_result.save_request_result_to_file(
+                            content=new_saved_content.json()
+                        )
                     )
