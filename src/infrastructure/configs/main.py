@@ -105,7 +105,7 @@ class AppConfig(BaseModel):
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
             CONFIG=dict(
                 seconds=3,
-                max_instances=3
+                max_instances=1
             )
         ),
         'translate_plain_text_in_public_request.translate_content': BackgroundTask(
@@ -113,7 +113,7 @@ class AppConfig(BaseModel):
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
             CONFIG=dict(
                 seconds=3,
-                max_instances=3
+                max_instances=1
             )
         )
     }
@@ -179,7 +179,12 @@ class GlobalConfig(BaseSettings):
         if os.getenv('CQLENG_ALLOW_SCHEMA_MANAGEMENT') is None:
             os.environ['CQLENG_ALLOW_SCHEMA_MANAGEMENT'] = '1'
 
-        return super()._build_values(init_kwargs, _env_file=_env_file, _env_file_encoding=_env_file_encoding, _secrets_dir=_secrets_dir)
+        return super()._build_values(
+            init_kwargs, 
+            _env_file=_env_file, 
+            _env_file_encoding=_env_file_encoding, 
+            _secrets_dir=_secrets_dir
+        )
 
 class DevConfig(GlobalConfig):
     """Development configurations."""
