@@ -4,11 +4,23 @@ from core.ports.repository import RepositoryPort
 from modules.translation_request.domain.entities.translation_request_result import TranslationRequestResultEntity, TranslationRequestResultProps
 from infrastructure.database.base_classes.mongodb.orm_repository_base import OrmRepositoryBase
 
-class TranslationRequestResultRepositoryPort(RepositoryPort[TranslationRequestResultEntity, TranslationRequestResultProps]):
+
+from modules.task.database.task_result.repository import TasktResultRepositoryPort, TasktResultRepository
+
+from typing import get_args
+
+class TranslationRequestResultRepositoryPort(
+    TasktResultRepositoryPort,
+    RepositoryPort[
+        TranslationRequestResultEntity, 
+        TranslationRequestResultProps
+    ]
+):
 
     pass
 
 class TranslationRequestResultRepository(
+    TasktResultRepository,
     OrmRepositoryBase[
         TranslationRequestResultEntity, 
         TranslationRequestResultProps, 
@@ -18,14 +30,14 @@ class TranslationRequestResultRepository(
     TranslationRequestResultRepositoryPort
 ):
 
-    def __init__(self, 
-        repository: TranslationRequestResultOrmEntity = TranslationRequestResultOrmEntity,
-        mapper: TranslationRequestResultOrmMapper = TranslationRequestResultOrmMapper(),
-        table_name: str = TranslationRequestResultOrmEntity.get_table_name()
-    ) -> None:
+    @property
+    def entity_klass(self):
+        return get_args(self.__orig_bases__[1])[0]
 
-        super().__init__(
-            repository=repository, 
-            mapper=mapper,
-            table_name=table_name
-        )
+    @property
+    def repository(self):
+        return get_args(self.__orig_bases__[1])[2]
+
+    @property
+    def mapper(self):
+        return get_args(self.__orig_bases__[1])[3]

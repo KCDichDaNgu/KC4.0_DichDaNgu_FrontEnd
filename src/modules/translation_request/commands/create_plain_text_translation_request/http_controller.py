@@ -40,7 +40,7 @@ class CreatePlainTextTranslationRequest(HTTPMethodView):
             'code': StatusCodeEnum.success.value,
             'data': {
                 'taskId': new_task.id.value,
-                'taskType': new_task.props.task_type,
+                'taskName': new_task.props.task_name,
                 'translationHitoryId': new_translation_record.id.value
             },
             'message': MESSAGES['success']

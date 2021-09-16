@@ -1,15 +1,8 @@
-from pydantic.fields import Field
 from core.base_classes.value_object import ValueObject
-from core.exceptions import (
-    ArgumentInvalidException, 
-    ArgumentNotProvidedException, 
-    ArgumentOutOfRangeException
-)
 
-from core.guard import Guard
 from core.value_objects import DateVO, ID
 from addict import Addict
-from abc import ABC
+from abc import ABC, abstractmethod
 from pydantic import BaseModel, PrivateAttr
 
 from typing import Any, Dict, Generic, List, Final, NewType, Optional, TypeVar, get_args, ClassVar
@@ -29,7 +22,6 @@ class Entity(BaseModel, Generic[EntityProps], ABC):
     __updated_at: DateVO = PrivateAttr(DateVO(None))
     
     props: EntityProps
-    props_klass: ClassVar[Any] = None
         
     def __init__(
         self, 
@@ -38,20 +30,22 @@ class Entity(BaseModel, Generic[EntityProps], ABC):
     ) -> None:
 
         self.__id = ID.generate()
-        
-        if self.__class__.props_klass is None:
-            self.__class__.props_klass = get_args(self.__orig_bases__[0])[0]
             
         props_klass_ins = props
 
-        if not isinstance(props, self.__class__.props_klass):
-            props_klass_ins = self.__class__.props_klass(**props)
+        if not isinstance(props, self.props_klass):
+            props_klass_ins = self.props_klass(**props)
             
         super().__init__(
             props=props_klass_ins, 
             **data
         )
 
+    @property
+    @abstractmethod
+    def props_klass(self):
+        raise NotImplementedError()
+        
     class MergedProps(Generic[EntityProps], BaseEntityProps):
         pass
 

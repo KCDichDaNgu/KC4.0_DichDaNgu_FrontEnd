@@ -1,4 +1,4 @@
-from infrastructure.configs.translation_request import TaskTypeEnum
+from infrastructure.configs.task import TranslationTaskNameEnum
 from interface_adapters.base_classes.response import ResponseBase
 from sanic_openapi import doc
 from infrastructure.configs.translation_history import TranslationHistoryStatus
@@ -9,7 +9,7 @@ class DataStructure:
 
     translationType = doc.String(
         required=True,
-        choices=TaskTypeEnum.enum_values()
+        choices=TranslationTaskNameEnum.enum_values()
     )
 
     status = doc.String(
@@ -23,7 +23,7 @@ class DataStructure:
 
     id = doc.String(
         required=True,
-        choices=TaskTypeEnum.enum_values()
+        choices=TranslationTaskNameEnum.enum_values()
     )
 
     updatedAt = doc.DateTime(

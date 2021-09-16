@@ -1,8 +1,10 @@
-from infrastructure.configs.translation_request import TranslationStepEnum
 from infrastructure.database.base_classes.mongodb import OrmEntityBase
 from infrastructure.configs.main import MongoDBDatabase, GlobalConfig, get_cnf, get_mongodb_instance
-
-from umongo import validate, fields
+from infrastructure.configs.task import (
+    TranslationTaskNameEnum
+)
+from infrastructure.configs.database import validate_orm_class_name
+from modules.task.database.task_result.orm_entity import TaskResultOrmEntity
 
 config: GlobalConfig = get_cnf()
 database_config: MongoDBDatabase = config.MONGODB_DATABASE
@@ -10,31 +12,13 @@ database_config: MongoDBDatabase = config.MONGODB_DATABASE
 db_instance = get_mongodb_instance()
 
 @db_instance.register
-class TranslationRequestResultOrmEntity(OrmEntityBase):
-
-    task_id = fields.UUIDField(required=True)
-
-    step = fields.StringField(
-        required=True, 
-    )
-
-    file_path = fields.StringField(allow_none=True)
-
-    class Meta:
-        collection_name = database_config.COLLECTIONS['translation_request_result']['name']
-
+@validate_orm_class_name
+class TranslationRequestResultOrmEntity(TaskResultOrmEntity):
+    
     def pre_insert(self):
 
-        super(self.__class__, self).pre_insert()
-        
-        if self.file_path is None:
-
-            raise Exception('File path cannot be None')
+        super(TranslationRequestResultOrmEntity, self).pre_insert()
 
     def pre_update(self):
 
-        super(self.__class__, self).pre_insert()
-        
-        if self.file_path is None:
-
-            raise Exception('File path cannot be None')
+        super(TranslationRequestResultOrmEntity, self).pre_insert()

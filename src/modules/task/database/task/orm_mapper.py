@@ -2,21 +2,12 @@ from core.value_objects import ID, DateVO
 from typing import Any
 from infrastructure.database.base_classes.mongodb.orm_mapper_base import OrmMapperBase
 
-from modules.translation_request.database.translation_request.orm_entity import TranslationRequestOrmEntity
-from modules.translation_request.domain.entities.translation_request import TranslationRequestEntity, TranslationRequestProps
-
-from modules.task.database.task.orm_mapper import TaskOrmMapper
-
 from typing import get_args
+from modules.task.database.task.orm_entity import TaskOrmEntity
+from modules.task.domain.entities.task import TaskEntity, TaskProps
 
-class TranslationRequestOrmMapper(
-    TaskOrmMapper,
-    OrmMapperBase[
-        TranslationRequestEntity, 
-        TranslationRequestOrmEntity
-    ]
-):
-    
+class TaskOrmMapper(OrmMapperBase[TaskEntity, TaskOrmEntity]):
+
     @property
     def entity_klass(self):
         return get_args(self.__orig_bases__[1])[0]
@@ -25,7 +16,7 @@ class TranslationRequestOrmMapper(
     def orm_entity_klass(self):
         return get_args(self.__orig_bases__[1])[1]
 
-    def to_orm_props(self, entity: TranslationRequestEntity):
+    def to_orm_props(self, entity: TaskEntity):
         
         props = entity.get_props_copy()
         
@@ -40,7 +31,7 @@ class TranslationRequestOrmMapper(
         
         return orm_props
 
-    def to_domain_props(self, orm_entity: TranslationRequestOrmEntity):
+    def to_domain_props(self, orm_entity: TaskOrmEntity):
         
         props = {
             'creator_id': ID(str(orm_entity.creator_id)),

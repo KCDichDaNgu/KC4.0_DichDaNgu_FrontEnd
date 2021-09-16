@@ -9,8 +9,8 @@ from typing import List
 from uuid import UUID
 
 from infrastructure.configs.main import GlobalConfig, get_cnf, get_mongodb_instance
-from infrastructure.configs.translation_request import (
-    TranslationTask_TranslationCompletedResultFileSchemaV1, TranslationTask_NotYetTranslatedResultFileSchemaV1, TaskTypeEnum, TranslationStepEnum, StepStatusEnum
+from infrastructure.configs.task import (
+    TranslationTask_TranslationCompletedResultFileSchemaV1, TranslationTask_NotYetTranslatedResultFileSchemaV1, TranslationTaskNameEnum, TranslationTaskStepEnum, StepStatusEnum
 )
 
 from infrastructure.adapters.content_translator.main import ContentTranslator 
@@ -30,9 +30,9 @@ db_instance = get_mongodb_instance()
 PUBLIC_LANGUAGE_DETECTION_API_CONF = config.PUBLIC_LANGUAGE_DETECTION_API
 ALLOWED_CONCURRENT_REQUEST = PUBLIC_LANGUAGE_DETECTION_API_CONF.ALLOWED_CONCURRENT_REQUEST
 
-translationRequestRepository = TranslationRequestRepository()
-translationRequestResultRepository = TranslationRequestResultRepository()
-transationHistoryRepository = TranslationHistoryRepository()
+translation_request_repository = TranslationRequestRepository()
+translation_request_result_repository = TranslationRequestResultRepository()
+transation_history_repository = TranslationHistoryRepository()
 
 contentTranslator = ContentTranslator()
 
@@ -123,7 +123,7 @@ async def mark_invalid_tasks(invalid_tasks_mapper):
                     trans_history = trans_history[0]
                     
                 update_request.append(
-                    translationRequestRepository.update(
+                    translation_request_repository.update(
                         task, 
                         dict(step_status=StepStatusEnum.cancelled.value),
                         conditions={}
@@ -131,7 +131,7 @@ async def mark_invalid_tasks(invalid_tasks_mapper):
                 )
                 
                 update_request.append(
-                    transationHistoryRepository.update(
+                    transation_history_repository.update(
                         trans_history, 
                         dict(
                             status=TranslationHistoryStatus.cancelled.value
@@ -152,10 +152,10 @@ async def main():
     print(f'New task translate_plain_text_in_public_request.translate_content run in {datetime.now()}')
     
     try:
-        tasks = await translationRequestRepository.find_many(
+        tasks = await translation_request_repository.find_many(
             params=dict(
-                task_type=TaskTypeEnum.public_plain_text_translation.value,
-                current_step=TranslationStepEnum.translating_language.value,
+                task_name=TranslationTaskNameEnum.public_plain_text_translation.value,
+                current_step=TranslationTaskStepEnum.translating_language.value,
                 step_status=StepStatusEnum.not_yet_processed.value,
                 expired_date={
                     "$gt": datetime.now()
@@ -174,15 +174,15 @@ async def main():
             return
 
         tasks_result_and_trans_history_req = [
-            translationRequestResultRepository.find_many(
+            translation_request_result_repository.find_many(
                 params=dict(
                     task_id={
                         '$in': list(map(lambda t: UUID(t), tasks_id))
                     },
-                    step=TranslationStepEnum.translating_language.value
+                    step=TranslationTaskStepEnum.translating_language.value
                 )
             ),
-            transationHistoryRepository.find_many(
+            transation_history_repository.find_many(
                 params=dict(
                     task_id={
                         '$in': list(map(lambda t: UUID(t), tasks_id))
@@ -275,17 +275,17 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                         trans_history = trans_history[0]
                 
                     update_request.append(
-                        translationRequestRepository.update(
+                        translation_request_repository.update(
                             task, 
                             dict(
                                 step_status=StepStatusEnum.completed.value,
-                                current_step=TranslationStepEnum.translating_language.value
+                                current_step=TranslationTaskStepEnum.translating_language.value
                             )
                         )
                     )
                     
                     update_request.append(
-                        transationHistoryRepository.update(
+                        transation_history_repository.update(
                             trans_history, 
                             dict(
                                 status=TranslationHistoryStatus.translated.value

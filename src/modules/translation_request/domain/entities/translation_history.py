@@ -11,6 +11,8 @@ import json, os
 
 from infrastructure.configs.translation_history import TranslationHistoryTypeEnum, TranslationHistoryStatus
 
+from typing import get_args
+
 class TranslationHistoryProps(BaseModel):
     
     creator_id: ID
@@ -23,6 +25,10 @@ class TranslationHistoryProps(BaseModel):
         use_enum_values = True
 
 class TranslationHistoryEntity(Entity[TranslationHistoryProps]):
+
+    @property
+    def props_klass(self):
+        return get_args(self.__orig_bases__[0])[0]
 
     async def save_result_file_path(self, file_path):
 

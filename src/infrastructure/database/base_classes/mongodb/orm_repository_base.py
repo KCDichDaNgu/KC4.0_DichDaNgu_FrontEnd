@@ -1,7 +1,7 @@
 from uuid import UUID
 from infrastructure.database.base_classes.mongodb import OrmMapperBase, OrmEntityBase
 
-from typing import Dict, NewType, TypeVar
+from typing import Dict, TypeVar
 from core.value_objects.id import ID
 from core.domain_events import DomainEvents
 from infrastructure.adapters.logger import Logger
@@ -9,7 +9,7 @@ from core.ports.repository import RepositoryPort, DataWithPaginationMeta
 from core.exceptions import NotFoundException
 
 from core.base_classes.entity import BaseEntityProps
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import Generic, List, TypeVar, Any, Union
 
 Entity = TypeVar('Entity', bound=BaseEntityProps)
@@ -23,62 +23,54 @@ class OrmRepositoryBase(
     ABC
 ):
 
-    def __init__(
-        self,
-        repository: OrmEntityBase = None,
-        mapper: OrmMapperBase = None,
-        table_name: str = None
-    ) -> None:
+    def __init__(self) -> None:
 
-        self.__table_name__ = table_name
-        
-        self.__repository = repository
-
-        self.__mapper: OrmMapperBase = mapper
-
+        super().__init__()
+            
         self.__logger: Logger = Logger(__name__)
-
-        self.__relations: List[str] = []
+        self.__mapper_ins = self.mapper()
+    
+    @property
+    @abstractmethod
+    def entity_klass(self):
+        # return get_args(self.__orig_bases__[0])[0]
+        raise NotImplementedError()
 
     @property
+    @abstractmethod
+    def repository(self):
+        # return get_args(self.__orig_bases__[0])[1]
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
     def mapper(self):
-        return self.__mapper
+        # return get_args(self.__orig_bases__[0])[2]
+        raise NotImplementedError()
 
     @property
     def logger(self):
         return self.__logger
 
     @property
-    def repository(self):
-        return self.__repository
-
-    @property
-    def table_name(self):
-        return self.__table_name__
-
-    @property
-    def relations(self):
-        return self.__relations
+    def mapper_ins(self):
+        return self.__mapper_ins
         
     async def create(self, entity: Entity):
         
-        orm_entity = self.__mapper.to_orm_entity(entity)
+        orm_entity = self.mapper_ins.to_orm_entity(entity)
         
         await DomainEvents.publish_events(entity.id, self.__logger)
         
-        new_data = self.__repository(
-            **(orm_entity.dump())
-        )
-        
-        new_data.commit()
+        orm_entity.commit()
 
         self.__logger.debug(f'[Entity persisted]: {type(entity).__name__} {entity.id}')
         
-        return self.__mapper.to_domain_entity(new_data)
+        return self.mapper_ins.to_domain_entity(orm_entity)
 
     async def update(self, entity: Entity, changes: Any, conditions: Dict = {}):
  
-        orm_entity = self.__mapper.to_orm_entity(entity)
+        orm_entity = self.mapper_ins.to_orm_entity(entity)
         
         await DomainEvents.publish_events(entity.id, self.__logger)
 
@@ -93,12 +85,12 @@ class OrmRepositoryBase(
 
         self.__logger.debug(f'[Entity persisted]: {type(entity).__name__} {entity.id}')
         
-        return self.__mapper.to_domain_entity(orm_entity)
+        return self.mapper_ins.to_domain_entity(orm_entity)
 
 
     async def save(self, entity: Entity, update_conditions: Dict = {}):
 
-        orm_entity = self.__mapper.to_orm_entity(entity)
+        orm_entity = self.mapper_ins.to_orm_entity(entity)
         
         await DomainEvents.publish_events(entity.id, self.__logger)
         
@@ -106,35 +98,24 @@ class OrmRepositoryBase(
 
         self.__logger.debug(f'[Entity persisted]: {type(entity).__name__} {entity.id}')
         
-        return self.__mapper.to_domain_entity(orm_entity)
+        return self.mapper_ins.to_domain_entity(orm_entity)
 
     async def find_one(
         self,
         params: Any,
     ):
     
-        found = self.__repository.find_one(params)
+        found = self.repository.find_one(params)
         
-        return self.__mapper.to_domain_entity(found) if found else None
+        return self.mapper_ins.to_domain_entity(found) if found else None
 
     async def find_one_or_throw(self, params: Any = {}):
         
         found = None
 
         try:
-            found = await self.find_one(**params)
+            found = await self.find_one(params)
         
-        except NotFoundException:
-            print('Not found')
-
-        return found
-            
-
-    async def find_one_by_id_or_throw(self, id: Union[ID, str]):
-
-        try:
-            found = await self.find_one(id=id)
-
         except NotFoundException:
             print('Not found')
 
@@ -150,8 +131,8 @@ class OrmRepositoryBase(
         
         result = []
         
-        cursor = self.__repository.find(params)
-
+        cursor = self.repository.find(params)
+        
         if skip:
             cursor = cursor.skip(limit)
 
@@ -163,41 +144,44 @@ class OrmRepositoryBase(
         
         result = list(cursor) if cursor else []
         
-        result = list(map(lambda found: self.__mapper.to_domain_entity(found), result))
+        result = list(map(lambda found: self.mapper_ins.to_domain_entity(found), result))
 
         return result  
 
     async def find_many_paginated(
         self,
-        options: Any
+        params: Any
     ):
         
         result = []
 
-        founds = await self.__repository.async_filter(options.params)
+        founds = await self.repository.find(params)
         
         count = founds.count()
 
-        founds = founds[options.pagination.skip : options.pagination.limit]
-        founds = founds.order_by(options.order_by)
+        founds = founds[params.pagination.skip : params.pagination.limit]
+        founds = founds.order_by(params.order_by)
 
         for found in founds:
-            result.append(self.__mapper.to_domain_entity(found))
+            result.append(self.mapper_ins.to_domain_entity(found))
 
         return DataWithPaginationMeta[type(result)](
             data=result,
             total_entries=count,
-            per_page=options.pagination.limit,
-            page=options.pagination.page
+            per_page=params.pagination.limit,
+            page=params.pagination.page
         )
 
-    async def delete(self, entity: Entity) -> Entity:
+    async def delete(self, entity: Any) -> Entity:        
 
-        await DomainEvents.publish_events(entity.id, self.__logger)
+        if not self.verify_entity_and_curr_klass_is_the_same(entity):
+            raise Exception(f'Cannot update entity of {entity.__class__}')
 
-        await self.__repository.filter(id=entity.id.value).async_delete_with_trigger()
+        await DomainEvents.publish_events(entity.id.value, self.__logger)
 
-        self.__logger.debug(f'[Entity deleted]: {type(entity).__name__} {entity.id}')
+        await self.repository.find(UUID(entity.id.value)).delete()
 
-        return entity
+        self.__logger.debug(f'[Entity deleted]: {entity.id.value}')
+
+        return entity.id.value
         
