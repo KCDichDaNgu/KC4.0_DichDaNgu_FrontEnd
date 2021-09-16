@@ -10,7 +10,7 @@ from uuid import UUID
 
 from infrastructure.configs.main import GlobalConfig, get_cnf, get_mongodb_instance
 from infrastructure.configs.translation_request import (
-    LanguageNotYetDetectedResultFileSchemaV1, NotYetTranslatedResultFileSchemaV1, TaskTypeEnum, TranslationStepEnum, StepStatusEnum
+    TranslationTask_LangUnknownResultFileSchemaV1, TranslationTask_NotYetTranslatedResultFileSchemaV1, TaskTypeEnum, TranslationStepEnum, StepStatusEnum
 )
 
 from infrastructure.adapters.language_detector.main import LanguageDetector
@@ -61,7 +61,7 @@ async def read_task_result(
         try: 
             data = await task_result.read_data_from_file()
             
-            if data['status'] == LanguageNotYetDetectedResultFileSchemaV1(
+            if data['status'] == TranslationTask_LangUnknownResultFileSchemaV1(
                 source_text='', 
                 target_lang=LanguageEnum.vi.value
             ).status:
@@ -257,7 +257,7 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                     task = valid_tasks_mapper[task_id]['task']
                     task_result_content = valid_tasks_mapper[task_id]['task_result_content']
                     
-                    new_saved_content = NotYetTranslatedResultFileSchemaV1(
+                    new_saved_content = TranslationTask_NotYetTranslatedResultFileSchemaV1(
                         source_text=task_result_content['source_text'],
                         source_lang=api_result.lang,
                         target_lang=task_result_content['target_lang']

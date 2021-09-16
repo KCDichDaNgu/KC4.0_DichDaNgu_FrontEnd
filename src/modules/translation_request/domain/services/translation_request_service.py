@@ -3,7 +3,7 @@ from modules.translation_request.domain.entities.translation_history import Tran
 from core.value_objects import ID
 from infrastructure.configs.translation_request import (
     CreatorTypeEnum, StepStatusEnum, TaskTypeEnum, TranslationStepEnum,
-    NotYetTranslatedResultFileSchemaV1, LanguageNotYetDetectedResultFileSchemaV1
+    TranslationTask_NotYetTranslatedResultFileSchemaV1, TranslationTask_LangUnknownResultFileSchemaV1
 )
 from modules.translation_request.database.translation_request.repository import (
     TranslationRequestRepository, TranslationRequestRepositoryPort
@@ -44,7 +44,7 @@ class TranslationRequestDService():
 
             begin_step = TranslationStepEnum.translating_language.value
 
-            saved_content = NotYetTranslatedResultFileSchemaV1(
+            saved_content = TranslationTask_NotYetTranslatedResultFileSchemaV1(
                 source_text=command.source_text,
                 source_lang=command.source_lang,
                 target_lang=command.target_lang,
@@ -54,7 +54,7 @@ class TranslationRequestDService():
             
             begin_step = TranslationStepEnum.detecting_language.value
 
-            saved_content = LanguageNotYetDetectedResultFileSchemaV1(
+            saved_content = TranslationTask_LangUnknownResultFileSchemaV1(
                 source_text=command.source_text,
                 target_lang=command.target_lang,
             )

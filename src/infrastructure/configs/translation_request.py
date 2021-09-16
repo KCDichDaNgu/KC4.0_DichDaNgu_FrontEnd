@@ -46,7 +46,7 @@ class CreatorTypeEnum(str, ExtendedEnum):
 class StepStatusEnum(str, ExtendedEnum):
 
     not_yet_processed = 'not_yet_processed'
-    in_progress = 'in_progress'
+    in_progress = 'in_progress' # Trong trường hợp task bị kéo dài, k rõ bao h xong 
     completed = 'completed'
     cancelled = 'cancelled'
 
@@ -59,7 +59,7 @@ class DetectionLanguageStepEnum(str, ExtendedEnum):
 
     detecting_language = 'detecting_language'
 
-class LanguageNotYetDetectedResultFileSchemaV1(BaseModel):
+class TranslationTask_LangUnknownResultFileSchemaV1(BaseModel):
 
     source_text: str 
     source_lang: Union[LanguageEnum, None] = Field(None, allow_mutation=False)
@@ -75,7 +75,7 @@ class LanguageNotYetDetectedResultFileSchemaV1(BaseModel):
         use_enum_values = True
         validate_assignment = True
 
-class NotYetTranslatedResultFileSchemaV1(BaseModel):
+class TranslationTask_NotYetTranslatedResultFileSchemaV1(BaseModel):
 
     source_text: str
     source_lang: LanguageEnum 
@@ -91,7 +91,7 @@ class NotYetTranslatedResultFileSchemaV1(BaseModel):
         use_enum_values = True
         validate_assignment = True
 
-class TranslationCompletedResultFileSchemaV1(BaseModel):
+class TranslationTask_TranslationCompletedResultFileSchemaV1(BaseModel):
 
     source_text: str
     source_lang: LanguageEnum
