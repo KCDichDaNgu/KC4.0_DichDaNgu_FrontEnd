@@ -10,7 +10,6 @@ from enum import unique
 
 from pydantic.networks import AnyHttpUrl
 from umongo.frameworks import MotorAsyncIOInstance, PyMongoInstance
-from uvicorn.importer import import_from_string
 from core.types import ExtendedEnum
 
 from infrastructure.configs.database import CassandraDatabase, MongoDBDatabase
@@ -62,35 +61,41 @@ class AppConfig(BaseModel):
         'translation_request': {
             'path': '/',
             'name': 'Translation request',
+            'abstract': True
         },
         'translation_request.text_translation.create': {
             'path': 'translate',
             'name': 'Create text translation request',
             'summary': 'Create text translation request',
             'desc': 'Create text translation request',
-            'method': 'POST'
+            'method': 'POST',
+            'abstract': False
         },
         'translation_request.doc_translation.create': {
             'path': 'translate_f',
             'name': 'Create document translation request',
             'summary': 'Create document translation request',
             'desc': 'Create document translation request',
-            'method': 'POST'
+            'method': 'POST',
+            'abstract': False
         },
         'translation_history': {
             'path': '/translation-history',
-            'name': 'Translation History'
+            'name': 'Translation History',
+            'abstract': True
         },
         'translation_history.get_single': {
             'path': '/get_single',
             'name': 'Get single translation history',
             'summary': 'Get single translation history',
             'desc': 'Get single translation history',
-            'method': 'GET'
+            'method': 'GET',
+            'abstract': False
         },
         'static_files': {
             'path': '/static',
-            'name': 'Static files serving'
+            'name': 'Static files serving',
+            'abstract': False
         }
     }
 
