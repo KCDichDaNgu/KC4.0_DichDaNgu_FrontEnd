@@ -17,7 +17,7 @@ class DataStructure:
         choices=TranslationHistoryStatus.enum_values()
     )
 
-    result_url = doc.String(
+    resultUrl = doc.String(
         required=True
     )
 

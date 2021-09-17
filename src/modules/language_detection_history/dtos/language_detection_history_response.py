@@ -7,7 +7,7 @@ class DataStructure:
 
     taskId = doc.String(required=True)
 
-    language_detectionType = doc.String(
+    languageDetectionType = doc.String(
         required=True,
         choices=LanguageDetectionTaskNameEnum.enum_values()
     )
@@ -17,7 +17,7 @@ class DataStructure:
         choices=LanguageDetectionHistoryStatus.enum_values()
     )
 
-    result_url = doc.String(
+    resultUrl = doc.String(
         required=True
     )
 
