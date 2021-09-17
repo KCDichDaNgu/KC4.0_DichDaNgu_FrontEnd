@@ -245,15 +245,15 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                     session=session
                 )
             )
-
+            
         api_results = await asyncio.gather(*api_requests)
-        
-        with db_instance.session() as session:
 
-            with session.start_transaction():
-    
+        async with db_instance.session() as session:
+
+            async with session.start_transaction():
+                
                 update_request = []
-
+                
                 for task_id, api_result in zip(tasks_id, api_results):
 
                     task_result = valid_tasks_mapper[task_id]['task_result'],
@@ -273,7 +273,7 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
 
                     if isinstance(trans_history, tuple):
                         trans_history = trans_history[0]
-                
+
                     update_request.append(
                         translation_request_repository.update(
                             task, 
@@ -298,5 +298,5 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                             content=new_saved_content.json()
                         )
                     )
-
+                
                 await asyncio.gather(*update_request)
