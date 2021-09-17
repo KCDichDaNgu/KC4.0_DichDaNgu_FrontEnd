@@ -69,18 +69,18 @@ def init_mongodb(mongodbConfig: MongoDBDatabase):
 
         conn_opts.update(minPoolSize=mongodbConfig.CONN_OPTS.MAX_POOL_SIZE)
 
-    db = MongoClient(
-        mongodbConfig.MONGODB_URI, 
-        **conn_opts
-    )[mongodbConfig.DATABASE_NAME]
-
-    instance = PyMongoInstance(db)
-
-    # db = AsyncIOMotorClient(
+    # db = MongoClient(
     #     mongodbConfig.MONGODB_URI, 
     #     **conn_opts
     # )[mongodbConfig.DATABASE_NAME]
 
-    # instance = MotorAsyncIOInstance(db)
+    # instance = PyMongoInstance(db)
+
+    db = AsyncIOMotorClient(
+        mongodbConfig.MONGODB_URI, 
+        **conn_opts
+    )[mongodbConfig.DATABASE_NAME]
+
+    instance = MotorAsyncIOInstance(db)
     
     update_mongodb_instance(instance)

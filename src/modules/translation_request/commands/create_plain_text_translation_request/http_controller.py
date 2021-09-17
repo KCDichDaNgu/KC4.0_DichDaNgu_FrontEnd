@@ -1,6 +1,6 @@
 from infrastructure.configs.message import MESSAGES
 from modules.translation_request.commands.create_plain_text_translation_request.command import CreatePlainTextTranslationRequestCommand
-from modules.translation_request.commands.create_plain_text_translation_request.service import CreatePlainTextTranslationRequestService
+
 from sanic import response
 from modules.translation_request.commands.create_plain_text_translation_request.request_dto import CreatePlainTextTranslationRequestDto
 from infrastructure.configs.main import StatusCodeEnum, GlobalConfig, get_cnf
@@ -16,6 +16,8 @@ class CreatePlainTextTranslationRequest(HTTPMethodView):
 
     def __init__(self) -> None:
         super().__init__()
+
+        from modules.translation_request.commands.create_plain_text_translation_request.service import CreatePlainTextTranslationRequestService
 
         self.__create_plain_text_translation_request_service = CreatePlainTextTranslationRequestService()
 

@@ -62,7 +62,7 @@ class OrmRepositoryBase(
         
         await DomainEvents.publish_events(entity.id, self.__logger)
         
-        orm_entity.commit()
+        await orm_entity.commit()
 
         self.__logger.debug(f'[Entity persisted]: {type(entity).__name__} {entity.id}')
         
@@ -76,12 +76,12 @@ class OrmRepositoryBase(
 
         orm_entity.is_created = True
         
-        orm_entity.update(changes)
+        await orm_entity.update(changes)
 
         if conditions:
-            orm_entity.commit(conditions=conditions)
+            await orm_entity.commit(conditions=conditions)
         else:
-            orm_entity.commit()
+            await orm_entity.commit()
 
         self.__logger.debug(f'[Entity persisted]: {type(entity).__name__} {entity.id}')
         
@@ -94,7 +94,7 @@ class OrmRepositoryBase(
         
         await DomainEvents.publish_events(entity.id, self.__logger)
         
-        orm_entity.commit(conditions=update_conditions)
+        await orm_entity.commit(conditions=update_conditions)
 
         self.__logger.debug(f'[Entity persisted]: {type(entity).__name__} {entity.id}')
         
@@ -105,7 +105,7 @@ class OrmRepositoryBase(
         params: Any,
     ):
     
-        found = self.repository.find_one(params)
+        found = await self.repository.find_one(params)
         
         return self.mapper_ins.to_domain_entity(found) if found else None
 
