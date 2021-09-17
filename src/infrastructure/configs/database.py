@@ -52,6 +52,9 @@ class MongoDBDatabase(BaseModel):
         },
         "translation_history": {
             "name": "translation_history"
+        },
+        "language_detection_history": {
+            "name": "language_detection_history"
         }
     }
 
@@ -69,11 +72,17 @@ class MongoDBDatabase(BaseModel):
 
 ORM_VALID_CLASSNAMES = [
     'OrmEntityBase',
+
     'TaskOrmEntity',
     'TaskResultOrmEntity',
+
     'TranslationHistoryOrmEntity',
     'TranslationRequestOrmEntity',
-    'TranslationRequestResultOrmEntity'
+    'TranslationRequestResultOrmEntity',
+
+    'LanguageDetectionHistoryOrmEntity',
+    'LanguageDetectionRequestOrmEntity',
+    'LanguageDetectionRequestResultOrmEntity'
 ]
 
 def validate_orm_class_name(doc_class, class_names=ORM_VALID_CLASSNAMES):

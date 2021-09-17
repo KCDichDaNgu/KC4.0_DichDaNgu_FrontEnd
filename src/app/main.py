@@ -16,16 +16,14 @@ async def listener_after_server_start(*args, **kwargs):
 
     from infrastructure.configs.main import get_cnf
     from infrastructure.database.main import init_mongodb
+    from modules.background_tasks.main import init_background_tasks
+    from infrastructure.adapters.background_task_manager.main import BackgroundTaskManager
 
     config = get_cnf()
 
     init_mongodb(config.MONGODB_DATABASE)
 
-    from modules.background_tasks.main import init_background_tasks
-
     init_background_tasks(config)
-    
-    from infrastructure.adapters.background_task_manager.main import BackgroundTaskManager
 
     BackgroundTaskManager.scheduler.start()
 
@@ -44,14 +42,22 @@ def init_routes(app: Sanic) -> Sanic:
 
     from modules.translation_request.main import translation_request_bp
     from modules.translation_history.main import translation_history_bp
+
+    from modules.language_detection_request.main import language_detection_request_bp
+    from modules.language_detection_history.main import language_detection_history_bp
+
     from modules.static_files_server.main import static_files_server_bp
 
     app.blueprint(swagger_blueprint)
+
     app.blueprint(translation_request_bp)
     app.blueprint(translation_history_bp)
+
+    app.blueprint(language_detection_request_bp)
+    app.blueprint(language_detection_history_bp)
+
     app.blueprint(static_files_server_bp)
     
-    # app.static('static', '/home/minh/projects/translation-backend/static')
     return app
 
 async def mkdir_required_folders(folders_path: List[str]):
@@ -64,10 +70,6 @@ async def mkdir_required_folders(folders_path: List[str]):
 async def init_app():
 
     config: GlobalConfig = get_cnf()
-
-    from infrastructure.adapters.kafka.main import init_kafka
-    from infrastructure.database.main import init_mongodb
-    from modules.background_tasks.main import init_background_tasks
     
     app: Sanic = Sanic(
         config.APP_CONFIG.APP_NAME, 

@@ -2,8 +2,8 @@ from core.types import ExtendedEnum
 
 class TranslationHistoryTypeEnum(str, ExtendedEnum):
 
-    file_translation = 'file_translation'
-    plain_text_translation = 'plain_text_translation'
+    private_file_translation = 'private_file_translation'
+    private_plain_text_translation = 'private_plain_text_translation'
 
     public_file_translation = 'public_file_translation'
     public_plain_text_translation = 'public_plain_text_translation'
@@ -14,8 +14,8 @@ TRANSLATION_HISTORY_PUBLIC_TYPES = [
 ]
 
 TRANSLATION_HISTORY_PRIVATE_TYPES = [
-    TranslationHistoryTypeEnum.file_translation.value,
-    TranslationHistoryTypeEnum.plain_text_translation.value
+    TranslationHistoryTypeEnum.private_file_translation.value,
+    TranslationHistoryTypeEnum.private_plain_text_translation.value
 ]
 
 class TranslationHistoryStatus(str, ExtendedEnum):
