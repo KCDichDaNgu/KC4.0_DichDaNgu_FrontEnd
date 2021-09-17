@@ -104,8 +104,8 @@ async def mark_invalid_tasks(invalid_tasks_mapper):
 
     result = []
     
-    with db_instance.session() as session:
-        with session.start_transaction():
+    async with db_instance.session() as session:
+        async with session.start_transaction():
 
             update_request = []
             
@@ -245,9 +245,9 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
 
         api_results = await asyncio.gather(*api_requests)
         
-        with db_instance.session() as session:
+        async with db_instance.session() as session:
 
-            with session.start_transaction():
+            async with session.start_transaction():
     
                 update_request = []
 

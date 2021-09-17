@@ -105,8 +105,8 @@ async def mark_invalid_tasks(invalid_tasks_mapper):
 
     result = []
     
-    with db_instance.session() as session:
-        with session.start_transaction():
+    async with db_instance.session() as session:
+        async with session.start_transaction():
 
             update_request = []
             

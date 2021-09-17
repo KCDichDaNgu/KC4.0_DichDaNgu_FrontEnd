@@ -10,8 +10,6 @@ from infrastructure.configs.main import StatusCodeEnum, GlobalConfig, get_cnf
 from sanic_openapi import doc
 from sanic.views import HTTPMethodView
 from modules.translation_history.dtos.translation_history_response import SingleTranslationHistoryResponse
-from modules.translation_request.database.translation_history.repository import TranslationHistoryRepository
-from modules.translation_request.database.translation_request.repository import TranslationRequestRepository
 
 from core.utils.file import get_task_result_full_file_path
 
@@ -24,6 +22,9 @@ class GetSingleTranslationHistory(HTTPMethodView):
 
     def __init__(self) -> None:
         super().__init__()
+
+        from modules.translation_request.database.translation_history.repository import TranslationHistoryRepository
+        from modules.translation_request.database.translation_request.repository import TranslationRequestRepository
 
         self.__translation_history_repository = TranslationHistoryRepository()
         self.__translation_request_repository = TranslationRequestRepository()

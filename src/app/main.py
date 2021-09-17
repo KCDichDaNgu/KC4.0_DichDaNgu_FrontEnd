@@ -1,5 +1,5 @@
 from typing import List
-from sanic import Sanic
+from sanic import Sanic, config
 from infrastructure.configs.main import GlobalConfig
 from sanic_openapi import swagger_blueprint
 
@@ -13,6 +13,17 @@ async def listener_before_server_start(*args, **kwargs):
     print("before_server_start")
     
 async def listener_after_server_start(*args, **kwargs):
+
+    from infrastructure.configs.main import get_cnf
+    from infrastructure.database.main import init_mongodb
+
+    config = get_cnf()
+
+    init_mongodb(config.MONGODB_DATABASE)
+
+    from modules.background_tasks.main import init_background_tasks
+
+    init_background_tasks(config)
     
     from infrastructure.adapters.background_task_manager.main import BackgroundTaskManager
 
@@ -69,13 +80,9 @@ async def init_app():
         TASK_RESULT_FOLDER
     ])
 
-    init_mongodb(config.MONGODB_DATABASE)
-
     # await init_kafka(config)
 
     init_routes(app)
-
-    init_background_tasks(config)
 
     app.error_handler = ExceptionInterceptor()
 
