@@ -2,9 +2,9 @@ from pydantic.class_validators import root_validator
 from typing import Union
 from pydantic import Field
 from infrastructure.configs.task import (
-    TranslationTaskStepEnum, 
-    TranslationTaskNameEnum,
-    TRANSLATION_PRIVATE_TASKS
+    LanguageDetectionTaskStepEnum, 
+    LanguageDetectionTaskNameEnum,
+    LANGUAGE_DETECTION_PRIVATE_TASKS
 )
 
 from core.base_classes.aggregate_root import AggregateRoot
@@ -13,20 +13,20 @@ from modules.task.domain.entities.task import TaskEntity, TaskProps
 
 from typing import get_args
 
-class TranslationRequestProps(TaskProps):
+class LanguageDetectionRequestProps(TaskProps):
 
-    current_step: Union[TranslationTaskStepEnum] = Field(...)
-    task_name: Union[TranslationTaskNameEnum] = Field(...)
+    current_step: Union[LanguageDetectionTaskStepEnum] = Field(...)
+    task_name: Union[LanguageDetectionTaskNameEnum] = Field(...)
 
     @root_validator(pre=True)
     def validate(cls, values):
         
-        if values['task_name'] in TRANSLATION_PRIVATE_TASKS and not values['creator_id'].value:
+        if values['task_name'] in LANGUAGE_DETECTION_PRIVATE_TASKS and not values['creator_id'].value:
             raise ValueError('Creator cannot be None')
 
         return values
 
-class TranslationRequestEntity(TaskEntity, AggregateRoot[TranslationRequestProps]):
+class LanguageDetectionRequestEntity(TaskEntity, AggregateRoot[LanguageDetectionRequestProps]):
 
     @property
     def props_klass(self):

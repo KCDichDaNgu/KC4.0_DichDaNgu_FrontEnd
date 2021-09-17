@@ -2,8 +2,12 @@ from infrastructure.configs.language import LanguageEnum
 from modules.translation_request.domain.entities.translation_history import TranslationHistoryProps
 from core.value_objects import ID
 from infrastructure.configs.task import (
-    CreatorTypeEnum, StepStatusEnum, TranslationTaskNameEnum, TranslationTaskStepEnum,
-    TranslationTask_NotYetTranslatedResultFileSchemaV1, TranslationTask_LangUnknownResultFileSchemaV1
+    CreatorTypeEnum, 
+    StepStatusEnum, 
+    TranslationTaskNameEnum, 
+    TranslationTaskStepEnum,
+    TranslationTask_NotYetTranslatedResultFileSchemaV1, 
+    TranslationTask_LangUnknownResultFileSchemaV1
 )
 from modules.translation_request.database.translation_request.repository import (
     TranslationRequestRepository, TranslationRequestRepositoryPort
@@ -48,6 +52,7 @@ class TranslationRequestDService():
                 source_text=command.source_text,
                 source_lang=command.source_lang,
                 target_lang=command.target_lang,
+                task_name=TranslationTaskNameEnum.private_plain_text_translation.value
             )
 
         else:
@@ -57,6 +62,7 @@ class TranslationRequestDService():
             saved_content = TranslationTask_LangUnknownResultFileSchemaV1(
                 source_text=command.source_text,
                 target_lang=command.target_lang,
+                task_name=TranslationTaskNameEnum.public_plain_text_translation.value
             )
             
         new_request = TranslationRequestEntity(

@@ -10,12 +10,12 @@ db_instance = get_mongodb_instance()
 
 @db_instance.register
 @validate_orm_class_name
-class TranslationRequestResultOrmEntity(TaskResultOrmEntity):
+class LanguageDetectionRequestResultOrmEntity(TaskResultOrmEntity):
     
     def pre_insert(self):
 
-        super(TranslationRequestResultOrmEntity, self).pre_insert()
+        super(LanguageDetectionRequestResultOrmEntity, self).pre_insert()
 
     def pre_update(self):
 
-        super(TranslationRequestResultOrmEntity, self).pre_insert()
+        super(LanguageDetectionRequestResultOrmEntity, self).pre_insert()

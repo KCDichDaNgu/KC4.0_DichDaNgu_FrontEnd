@@ -3,7 +3,11 @@ from datetime import timedelta
 from infrastructure.configs.main import MongoDBDatabase, GlobalConfig, get_cnf
 from infrastructure.database.base_classes.mongodb import OrmEntityBase
 from infrastructure.configs.task import (
-    TASK_EXPIRATION_TIME, CreatorTypeEnum, LanguageDetectionTaskNameEnum, StepStatusEnum, TranslationTaskNameEnum, TaskTypeEnum
+    TASK_EXPIRATION_TIME, 
+    CreatorTypeEnum, 
+    LanguageDetectionTaskNameEnum, 
+    StepStatusEnum, 
+    TranslationTaskNameEnum
 )
 from infrastructure.configs.database import validate_orm_class_name
 from infrastructure.configs.main import get_mongodb_instance

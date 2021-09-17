@@ -7,7 +7,7 @@ from cassandra.cqlengine.management import _create_keyspace
 from infrastructure.configs.main import CassandraDatabase
 from pymongo import MongoClient
 from motor.motor_asyncio import AsyncIOMotorClient
-from umongo.frameworks import PyMongoInstance, MotorAsyncIOInstance
+from umongo.frameworks.motor_asyncio import MotorAsyncIOInstance
 
 def init_cassandra_db(cassandraDbConfig: CassandraDatabase):
 

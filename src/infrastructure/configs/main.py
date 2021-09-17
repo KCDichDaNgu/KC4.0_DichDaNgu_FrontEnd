@@ -85,10 +85,46 @@ class AppConfig(BaseModel):
             'abstract': True
         },
         'translation_history.get_single': {
-            'path': '/get_single',
+            'path': '/get-single',
             'name': 'Get single translation history',
             'summary': 'Get single translation history',
             'desc': 'Get single translation history',
+            'method': 'GET',
+            'abstract': False
+        },
+
+
+        'language_detection_request': {
+            'path': '/',
+            'name': 'Language detection request',
+            'abstract': True
+        },
+        'language_detection_request.text_language_detection.create': {
+            'path': 'detect-lang',
+            'name': 'Create text language detection request',
+            'summary': 'Create text language detection request',
+            'desc': 'Create text language detection request',
+            'method': 'POST',
+            'abstract': False
+        },
+        'language_detection_request.doc_language_detection.create': {
+            'path': 'detect-f-lang',
+            'name': 'Create document language detection request',
+            'summary': 'Create document language detection request',
+            'desc': 'Create document language detection request',
+            'method': 'POST',
+            'abstract': False
+        },
+        'language_detection_history': {
+            'path': '/lang-detection-history',
+            'name': 'Language detection history',
+            'abstract': True
+        },
+        'language_detection_history.get_single': {
+            'path': '/get-single',
+            'name': 'Get single language detection history',
+            'summary': 'Get single language detection history',
+            'desc': 'Get single language detection history',
             'method': 'GET',
             'abstract': False
         },
@@ -115,6 +151,14 @@ class AppConfig(BaseModel):
         ),
         'translate_plain_text_in_public_request.translate_content': BackgroundTask(
             ID='translate_plain_text_in_public_request.translate_content',
+            TRIGGER=BackgroundTaskTriggerEnum.interval.value,
+            CONFIG=dict(
+                seconds=3,
+                max_instances=1
+            )
+        ),
+        'detect_plain_text_language_in_public_request': BackgroundTask(
+            ID='detect_plain_text_language_in_public_request',
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
             CONFIG=dict(
                 seconds=3,

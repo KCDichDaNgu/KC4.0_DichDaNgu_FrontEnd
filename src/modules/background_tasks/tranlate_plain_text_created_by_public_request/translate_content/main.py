@@ -10,7 +10,11 @@ from uuid import UUID
 
 from infrastructure.configs.main import GlobalConfig, get_cnf, get_mongodb_instance
 from infrastructure.configs.task import (
-    TranslationTask_TranslationCompletedResultFileSchemaV1, TranslationTask_NotYetTranslatedResultFileSchemaV1, TranslationTaskNameEnum, TranslationTaskStepEnum, StepStatusEnum
+    TranslationTask_TranslationCompletedResultFileSchemaV1, 
+    TranslationTask_NotYetTranslatedResultFileSchemaV1, 
+    TranslationTaskNameEnum, 
+    TranslationTaskStepEnum, 
+    StepStatusEnum
 )
 
 from infrastructure.adapters.content_translator.main import ContentTranslator 
@@ -64,7 +68,8 @@ async def read_task_result(
             if data['status'] == TranslationTask_NotYetTranslatedResultFileSchemaV1(
                 source_text='', 
                 source_lang=LanguageEnum.vi.value,
-                target_lang=LanguageEnum.vi.value
+                target_lang=LanguageEnum.vi.value,
+                task_name=TranslationTaskNameEnum.private_plain_text_translation.value
             ).status:
 
                 valid_tasks_mapper[task_id] = {
@@ -265,7 +270,8 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                         source_text=task_result_content['source_text'],
                         source_lang=task_result_content['source_lang'],
                         target_lang=task_result_content['target_lang'],
-                        target_text=api_result.data
+                        target_text=api_result.data,
+                        task_name=TranslationTaskNameEnum.public_plain_text_translation.value
                     )
 
                     if isinstance(task_result, tuple):
