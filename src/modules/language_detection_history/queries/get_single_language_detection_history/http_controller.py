@@ -82,7 +82,7 @@ class GetSingleLanguageDetectionHistory(HTTPMethodView):
                 'status': language_detection_history.props.status,
                 'updatedAt': str(language_detection_history.updated_at.value),
                 'createdAt': str(language_detection_history.created_at.value),
-                'result_url': get_task_result_full_file_path(language_detection_history.props.file_path)
+                'resultUrl': get_task_result_full_file_path(language_detection_history.props.file_path)
             },
             'message': MESSAGES['success']
         })

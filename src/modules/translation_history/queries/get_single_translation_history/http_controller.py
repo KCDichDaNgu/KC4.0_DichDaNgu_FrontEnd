@@ -82,7 +82,7 @@ class GetSingleTranslationHistory(HTTPMethodView):
                 'status': translation_history.props.status,
                 'updatedAt': str(translation_history.updated_at.value),
                 'createdAt': str(translation_history.created_at.value),
-                'result_url': get_task_result_full_file_path(translation_history.props.file_path)
+                'resultUrl': get_task_result_full_file_path(translation_history.props.file_path)
             },
             'message': MESSAGES['success']
         })
