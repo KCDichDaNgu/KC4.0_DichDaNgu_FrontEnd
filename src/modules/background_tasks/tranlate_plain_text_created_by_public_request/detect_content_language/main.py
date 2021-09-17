@@ -75,7 +75,7 @@ async def read_task_result(
 
         except Exception as e:
             logger.error(e)
-
+            
             print(e)
 
     valid_tasks_id = valid_tasks_mapper.keys()
@@ -137,7 +137,7 @@ async def mark_invalid_tasks(invalid_tasks_mapper):
                         )
                     )
                 )
-
+                
             result = await asyncio.gather(*update_request)
 
     return result
@@ -165,7 +165,7 @@ async def main():
         )
 
         tasks_id = list(map(lambda task: task.id.value, tasks))
-        
+
         if len(tasks_id) == 0: 
             logger.debug(
                 msg=f'An task translate_plain_text_in_public_request.detect_content_language end in {datetime.now()}\n'
@@ -199,9 +199,9 @@ async def main():
             tasks_result=tasks_result,
             translations_history=translations_history
         )
-    
-        await mark_invalid_tasks(invalid_tasks_mapper)
 
+        await mark_invalid_tasks(invalid_tasks_mapper)
+        
         valid_tasks_id = list(map(lambda t: t.id.value, tasks))
 
         chunked_tasks_id = list(chunk_arr(valid_tasks_id, ALLOWED_CONCURRENT_REQUEST))

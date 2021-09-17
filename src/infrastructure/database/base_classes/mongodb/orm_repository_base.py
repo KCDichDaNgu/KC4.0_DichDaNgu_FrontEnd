@@ -76,13 +76,13 @@ class OrmRepositoryBase(
 
         orm_entity.is_created = True
         
-        await orm_entity.update(changes)
+        orm_entity.update(changes)
 
         if conditions:
             await orm_entity.commit(conditions=conditions)
         else:
             await orm_entity.commit()
-
+            
         self.__logger.debug(f'[Entity persisted]: {type(entity).__name__} {entity.id}')
         
         return self.mapper_ins.to_domain_entity(orm_entity)
@@ -141,8 +141,8 @@ class OrmRepositoryBase(
 
         if order_by:
             cursor = cursor.sort(limit)
-        
-        result = list(cursor) if cursor else []
+            
+        result = list((await cursor.to_list(length=None))) if not cursor is None else []
         
         result = list(map(lambda found: self.mapper_ins.to_domain_entity(found), result))
 
