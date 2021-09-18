@@ -17,13 +17,11 @@ from infrastructure.configs.event_dispatcher import KafkaConsumer, KafkaProducer
 
 import os
 
-
 @unique
 class EnvStateEnum(str, ExtendedEnum):
 
     dev = 'dev'
     prod = 'prod'
-
 
 @unique
 class ServerTypeEnum(str, ExtendedEnum):
@@ -31,13 +29,11 @@ class ServerTypeEnum(str, ExtendedEnum):
     uvicorn = 'uvicorn'
     built_in = 'built_in'
 
-
 @unique
 class StatusCodeEnum(int, ExtendedEnum):
 
     success = 1
     failed = 0
-
 
 @unique
 class BackgroundTaskTriggerEnum(str, ExtendedEnum):
@@ -45,7 +41,6 @@ class BackgroundTaskTriggerEnum(str, ExtendedEnum):
     interval = 'interval'
     cron = 'cron'
     date = 'date'
-
 
 class BackgroundTask(BaseModel):
 
@@ -55,7 +50,6 @@ class BackgroundTask(BaseModel):
 
     class Config:
         use_enum_values = True
-
 
 class AppConfig(BaseModel):
 
@@ -99,16 +93,14 @@ class AppConfig(BaseModel):
             'abstract': False
         },
 
-        'translation_history.get_many': {
-            'path': '/get-many',
+        'translation_history.list': {
+            'path': '/list',
             'name': 'Get many translation history',
             'summary': 'Get many translation history',
             'desc': 'Get many translation history',
             'method': 'GET',
             'abstract': False
         },
-
-
         'language_detection_request': {
             'path': '/',
             'name': 'Language detection request',
@@ -148,40 +140,26 @@ class AppConfig(BaseModel):
             'name': 'Static files serving',
             'abstract': False
         },
-        'translation_history.get': {
-            'path': '/get-by-id',
-            'name': 'Get document translation request',
-            'summary': 'Get document translation request',
-            'desc': 'Get document translation request',
-            'method': 'GET'
-        },
         "system_setting": {
             'path': '/system-setting',
             'name': 'System setting',
-            'summary': 'Create text translation request',
-            'desc': 'Create text translation request',
-            'method': 'POST'
-        },
-        "system_setting.create": {
-            'path': '',
-            'name': 'Create system setting',
-            'summary': 'Create system setting',
-            'desc': 'Create system setting',
-            'method': 'POST'
+            'abstract': True,
         },
         "system_setting.update": {
             'path': '',
             'name': 'Update system setting',
             'summary': 'Update system setting',
             'desc': 'Update system setting',
-            'method': 'PUT'
+            'method': 'PUT',
+            'abstract': False,
         },
         "system_setting.get": {
             'path': '',
             'name': 'Get system setting',
             'summary': 'Get system setting',
             'desc': 'Get system setting',
-            'method': 'GET'
+            'method': 'GET',
+            'abstract': False,
         }
 
     }
@@ -220,12 +198,11 @@ class AppConfig(BaseModel):
             ID='delete_invalid_task',
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
             CONFIG=dict(
-                seconds=1,
+                seconds=3,
                 max_instances=1
             )
         )
     }
-
 
 class TranslationAPI(BaseModel):
 
@@ -233,13 +210,11 @@ class TranslationAPI(BaseModel):
     METHOD: str = Field(...)
     ALLOWED_CONCURRENT_REQUEST: int = Field(...)
 
-
 class LanguageDetectionAPI(BaseModel):
 
     URL: AnyHttpUrl = Field(...)
     METHOD: str = Field(...)
     ALLOWED_CONCURRENT_REQUEST: int = Field(...)
-
 
 class GlobalConfig(BaseSettings):
 
@@ -258,8 +233,7 @@ class GlobalConfig(BaseSettings):
     APP_LIFESPAN: str = None
     SERVER_TYPE: str = None
 
-    CQLENG_ALLOW_SCHEMA_MANAGEMENT: Any = Field(
-        env='CQLENG_ALLOW_SCHEMA_MANAGEMENT')
+    CQLENG_ALLOW_SCHEMA_MANAGEMENT: Any = Field(env='CQLENG_ALLOW_SCHEMA_MANAGEMENT')
 
     CASSANDRA_DATABASE: CassandraDatabase
     MONGODB_DATABASE: MongoDBDatabase
@@ -298,7 +272,6 @@ class GlobalConfig(BaseSettings):
             _secrets_dir=_secrets_dir
         )
 
-
 class DevConfig(GlobalConfig):
     """Development configurations."""
 
@@ -306,7 +279,6 @@ class DevConfig(GlobalConfig):
 
     class Config:
         env_file = ".env.development"
-
 
 class ProdConfig(GlobalConfig):
     """Production configurations."""
@@ -316,18 +288,15 @@ class ProdConfig(GlobalConfig):
     class Config:
         env_file = ".env.production"
 
-
 def update_cnf(new_config):
 
     ConfigStore.GLOBAL_CNF = new_config
 
     return ConfigStore.GLOBAL_CNF
 
-
 def get_cnf() -> GlobalConfig:
 
     return ConfigStore.GLOBAL_CNF
-
 
 def update_mongodb_instance(ins):
 
@@ -335,17 +304,14 @@ def update_mongodb_instance(ins):
 
     return ConfigStore.MONGODB_INS
 
-
 def get_mongodb_instance():
 
     return ConfigStore.MONGODB_INS
-
 
 class ConfigStore:
 
     GLOBAL_CNF: GlobalConfig = None
     MONGODB_INS: Union[MotorAsyncIOInstance, PyMongoInstance] = None
-
 
 class FactoryConfig:
     """Returns a config instance dependending on the ENV_STATE variable."""

@@ -3,7 +3,7 @@ from typing import NewType, TypeVar
 from core.value_objects.id import ID
 from core.domain_events import DomainEvents
 from infrastructure.adapters.logger import Logger
-from core.ports.repository import FindManyPaginatedParams, RepositoryPort, DataWithPaginationMeta
+from core.ports.repository import FindManyPaginatedParams, RepositoryPort, DataWithPagination
 from core.exceptions import NotFoundException
 from infrastructure.database.base_classes.cassandra.orm_mapper_base import OrmMapperBase
 from core.base_classes.entity import BaseEntityProps
@@ -161,7 +161,7 @@ class OrmRepositoryBase(
         for found in founds:
             result.append(self.__mapper.to_domain_entity(found))
 
-        return DataWithPaginationMeta[type(result)](
+        return DataWithPagination[type(result)](
             data=result,
             total_entries=count,
             per_page=options.pagination.limit,

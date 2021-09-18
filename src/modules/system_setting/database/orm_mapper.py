@@ -4,7 +4,6 @@ from core.value_objects.id import ID
 from typing import Any, get_args
 from infrastructure.database.base_classes.mongodb.orm_mapper_base import OrmMapperBase
 
-
 class SystemSettingOrmMapper(OrmMapperBase[SystemSettingEntity, SystemSettingOrmEntity]):
 
     @property
@@ -19,22 +18,20 @@ class SystemSettingOrmMapper(OrmMapperBase[SystemSettingEntity, SystemSettingOrm
         props = entity.get_props_copy()
 
         orm_props = {
-            'uuid': props.id.value,
-            'editor_id': props.editor_id,
-            'max_translate_doc_per_day': props.max_translate_doc_per_day,
-            'max_translate_text_per_day': props.max_translate_text_per_day,
-            'translation_history_expire_duration': props.translation_history_expire_duration,
+            'editor_id': props.editor_id.value,
+            'max_user_doc_translation_per_day': props.max_user_doc_translation_per_day,
+            'max_user_text_translation_per_day': props.max_user_text_translation_per_day,
+            'task_expired_duration': props.task_expired_duration,
         }
 
         return orm_props
 
     def to_domain_props(self, orm_entity: SystemSettingOrmEntity):
-
         props = {
             'editor_id':  ID(str(orm_entity.editor_id)),
-            'max_translate_doc_per_day': orm_entity.max_translate_doc_per_day,
-            'max_translate_text_per_day': orm_entity.max_translate_text_per_day,
-            'translation_history_expire_duration': orm_entity.translation_history_expire_duration,
+            'max_user_doc_translation_per_day': orm_entity.max_user_doc_translation_per_day,
+            'max_user_text_translation_per_day': orm_entity.max_user_text_translation_per_day,
+            'task_expired_duration': orm_entity.task_expired_duration,
         }
 
         return props

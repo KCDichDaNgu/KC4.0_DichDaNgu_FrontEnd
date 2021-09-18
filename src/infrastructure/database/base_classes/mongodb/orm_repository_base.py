@@ -1,11 +1,12 @@
 from uuid import UUID
 from infrastructure.database.base_classes.mongodb import OrmMapperBase, OrmEntityBase
+import math
 
 from typing import Dict, TypeVar
 from core.value_objects.id import ID
 from core.domain_events import DomainEvents
 from infrastructure.adapters.logger import Logger
-from core.ports.repository import RepositoryPort, DataWithPaginationMeta
+from core.ports.repository import Pagination, RepositoryPort, DataWithPagination
 from core.exceptions import NotFoundException
 
 from core.base_classes.entity import BaseEntityProps
@@ -132,7 +133,7 @@ class OrmRepositoryBase(
         result = []
         
         cursor = self.repository.find(params)
-        
+
         if skip:
             cursor = cursor.skip(limit)
 
@@ -148,28 +149,36 @@ class OrmRepositoryBase(
 
         return result  
 
-    async def find_many_paginated(
+    async def find_many_paginated                                  (
         self,
-        params: Any
+        params: Any,
+        pagination: Pagination,
+        order_by: Any,
     ):
         
         result = []
 
-        founds = await self.repository.find(params)
+        founds = self.repository.find(params)
+        total_entries = await self.repository.count_documents(params)
+
+        if pagination['page']:
+            founds = founds.skip(pagination['page'])
+
+        if pagination['per_page']:
+            founds = founds.limit(pagination['per_page'])
+
+        if order_by:
+            founds = founds.sort(order_by)      
+
+        result = list((await founds.to_list(length=None))) if not founds is None else []
         
-        count = founds.count()
+        result = list(map(lambda found: self.mapper_ins.to_domain_entity(found), result))
 
-        founds = founds[params.pagination.skip : params.pagination.limit]
-        founds = founds.order_by(params.order_by)
-
-        for found in founds:
-            result.append(self.mapper_ins.to_domain_entity(found))
-
-        return DataWithPaginationMeta[type(result)](
+        return DataWithPagination(
             data=result,
-            total_entries=count,
-            per_page=params.pagination.limit,
-            page=params.pagination.page
+            total_entries=total_entries,
+            per_page=pagination['per_page'],
+            page=pagination['page']
         )
 
     async def delete(self, entity: Any) -> Entity:        

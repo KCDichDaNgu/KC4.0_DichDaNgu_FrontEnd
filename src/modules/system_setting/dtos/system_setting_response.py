@@ -1,26 +1,22 @@
-from infrastructure.configs.task import TaskTypeEnum
-from pydantic import BaseModel
 from interface_adapters.base_classes.response import ResponseBase
 from sanic_openapi import doc
 
-
 class DataStructure:
 
-    maxTranslateTextPerDay: doc.Integer(
-        description='Max translate text per day',
+    maxUserTextTranslationPerDay: doc.Integer(
+        description='Max user text translate per day',
         required=True,
     )
 
-    maxTranslateDcPerDay: doc.Integer(
-        description='Max translate documents per day',
+    maxUserDocTranslationPerDay: doc.Integer(
+        description='Max user doc translate per day',
         required=True,
     )
 
-    translationHistoryExpireDuration: doc.Integer(
-        description='Translation history expire duration',
+    taskExpiredDuration: doc.Integer(
+        description='Task expire duration',
         required=True,
     )
-
 
 class SystemSettingResponse(ResponseBase):
 

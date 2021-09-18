@@ -9,13 +9,12 @@ from core.value_objects import DateVO, ID
 
 from typing import get_args
 
-
 class SystemSettingProps(BaseModel):
 
-    editor_id: ID
-    max_translate_text_per_day: int = Field(...)
-    max_translate_doc_per_day: int = Field(...)
-    translation_history_expire_duration: int = Field(...)
+    editor_id: ID = Field(...)
+    max_user_text_translation_per_day: int = Field(...)
+    max_user_doc_translation_per_day: int = Field(...)
+    task_expired_duration: int = Field(...)
 
     class Config:
         use_enum_values = True
@@ -24,10 +23,7 @@ class SystemSettingProps(BaseModel):
     def validate(cls, values):
         return values
 
-
 class SystemSettingEntity(Entity[SystemSettingProps]):
     @property
     def props_klass(self):
         return get_args(self.__orig_bases__[0])[0]
-
-    pass

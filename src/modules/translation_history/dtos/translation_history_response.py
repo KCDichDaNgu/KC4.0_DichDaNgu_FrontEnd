@@ -42,5 +42,3 @@ class SingleTranslationHistoryResponse(ResponseBase):
 class ManyTranslationHistoryResponse(ResponseBase):
     
     data: List[DataStructure]
-
-

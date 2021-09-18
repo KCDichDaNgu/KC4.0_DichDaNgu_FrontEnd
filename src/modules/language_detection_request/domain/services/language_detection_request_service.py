@@ -84,7 +84,7 @@ class LanguageDetectionRequestDService():
             
             async with self.__db_instance.session() as session:
                 async with session.start_transaction():
-
+                    
                     created_request = await self.__language_detection_request_repository.create(
                         new_request
                     )

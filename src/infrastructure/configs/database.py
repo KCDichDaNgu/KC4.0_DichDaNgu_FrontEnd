@@ -1,7 +1,6 @@
 from typing import Any, Dict
 from pydantic import BaseModel, Field
 
-
 class KeySpaceConfig(BaseModel):
 
     NAME: str = Field(None)
@@ -10,7 +9,6 @@ class KeySpaceConfig(BaseModel):
     STRATEGY_CLASS: str = 'SimpleStrategy'
     STRATEGY_OPTIONS: dict = {'replication_factor': 1}
     CONNECTIONS: Any = None
-
 
 class CassandraDatabase(BaseModel):
 
@@ -27,12 +25,10 @@ class CassandraDatabase(BaseModel):
 
     TABLES: dict = {}
 
-
 class MongoDBConnectionOptions(BaseModel):
 
     MIN_POOL_SIZE: int = Field(...)
     MAX_POOL_SIZE: int = Field(...)
-
 
 class MongoDBDatabase(BaseModel):
 
@@ -77,7 +73,6 @@ class MongoDBDatabase(BaseModel):
             self.REPLICASET
         )
 
-
 ORM_VALID_CLASSNAMES = [
     'OrmEntityBase',
 
@@ -97,7 +92,6 @@ ORM_VALID_CLASSNAMES = [
 def validate_orm_class_name(doc_class, class_names=ORM_VALID_CLASSNAMES):
 
     if not doc_class.__name__ in class_names:
-        raise Exception(
-            'Orm classname changed!!! Please carefully with Parent - Child class pairs, they use class name for discriminating')
+        raise Exception('Orm classname changed!!! Please carefully with Parent - Child class pairs, they use class name for discriminating')
 
     return doc_class

@@ -5,9 +5,7 @@ from datetime import datetime
 from umongo.frameworks.tools import cook_find_filter
 
 from umongo import Document, fields
-
 db_instance = get_mongodb_instance()
-
 
 @db_instance.register
 class OrmEntityBase(Document):

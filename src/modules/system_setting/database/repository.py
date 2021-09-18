@@ -1,4 +1,3 @@
-
 from typing import get_args
 from modules.system_setting.database.orm_mapper import SystemSettingOrmMapper
 from modules.system_setting.domain.entities.system_setting import SystemSettingEntity, SystemSettingProps

@@ -1,3 +1,4 @@
+from interface_adapters.dtos.base_response import BaseResponse
 from infrastructure.configs.message import MESSAGES
 from modules.language_detection_request.commands.create_plain_text_language_detection_request.command import CreatePlainTextLanguageDetectionRequestCommand
 
@@ -36,7 +37,7 @@ class CreatePlainTextLanguageDetectionRequest(HTTPMethodView):
 
         new_task, new_language_detection_record = await self.__create_plain_text_language_detection_request_service.create_request(command)
 
-        return response.json(body={
+        return response.json(BaseResponse(**{
             'code': StatusCodeEnum.success.value,
             'data': {
                 'taskId': new_task.id.value,
@@ -44,4 +45,4 @@ class CreatePlainTextLanguageDetectionRequest(HTTPMethodView):
                 'languageDetectionHistoryId': new_language_detection_record.id.value
             },
             'message': MESSAGES['success']
-        })
+        }).dict())
