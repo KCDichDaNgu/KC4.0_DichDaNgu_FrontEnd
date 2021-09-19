@@ -55,7 +55,7 @@ class AppConfig(BaseModel):
 
     APP_NAME: str = 'translation-backend'
 
-    STATIC_FOLDER = 'static'
+    STATIC_FOLDER: str = 'static'
 
     ROUTES: Dict = {
         'translation_request': {

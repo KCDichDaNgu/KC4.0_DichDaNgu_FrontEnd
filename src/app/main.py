@@ -7,6 +7,8 @@ from infrastructure.configs import ServerTypeEnum, get_cnf, GlobalConfig
 from infrastructure.configs.task import TASK_RESULT_FOLDER
 from infrastructure.interceptors.exeption_interceptor import ExceptionInterceptor
 
+from sanic_cors import CORS
+
 import os, aiofiles
 
 async def listener_before_server_start(*args, **kwargs):
@@ -79,8 +81,10 @@ async def init_app():
     app.config.update_config(config.dict())
     
     await mkdir_required_folders([
-        TASK_RESULT_FOLDER
+        f'{config.APP_CONFIG.STATIC_FOLDER}/{TASK_RESULT_FOLDER}'
     ])
+
+    CORS(app)
 
     # await init_kafka(config)
 
