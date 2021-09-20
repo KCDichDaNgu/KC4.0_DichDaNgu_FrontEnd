@@ -1,3 +1,4 @@
+from infrastructure.configs.main import GlobalConfig, get_cnf
 from uuid import UUID
 from infrastructure.database.base_classes.mongodb import OrmMapperBase, OrmEntityBase
 import math
@@ -12,6 +13,9 @@ from core.exceptions import NotFoundException
 from core.base_classes.entity import BaseEntityProps
 from abc import ABC, abstractmethod
 from typing import Generic, List, TypeVar, Any, Union
+
+config: GlobalConfig = get_cnf()
+APP_CONFIG = config.APP_CONFIG
 
 Entity = TypeVar('Entity', bound=BaseEntityProps)
 EntityProps = TypeVar('EntityProps')
@@ -149,35 +153,36 @@ class OrmRepositoryBase(
 
         return result  
 
-    async def find_many_paginated                                  (
+    async def find_many_paginated(
         self,
         params: Any,
         pagination: Pagination,
         order_by: Any,
     ):
-        
+        max_query_size = APP_CONFIG.MAX_QUERY_SIZE
         result = []
 
         founds = self.repository.find(params)
         total_entries = await self.repository.count_documents(params)
 
         if pagination['page']:
-            founds = founds.skip(pagination['page'])
+            founds = founds.skip((pagination['page']-1)*pagination['per_page'])
 
         if pagination['per_page']:
-            founds = founds.limit(pagination['per_page'])
+            founds = founds.limit(min(max_query_size, pagination['per_page']))
 
         if order_by:
-            founds = founds.sort(order_by)      
+            founds = founds.sort(order_by)
 
         result = list((await founds.to_list(length=None))) if not founds is None else []
-        
-        result = list(map(lambda found: self.mapper_ins.to_domain_entity(found), result))
+
+        result = list(
+            map(lambda found: self.mapper_ins.to_domain_entity(found), result))
 
         return DataWithPagination(
             data=result,
             total_entries=total_entries,
-            per_page=pagination['per_page'],
+            per_page=min(max_query_size, pagination['per_page']),
             page=pagination['page']
         )
 
