@@ -166,7 +166,7 @@ class OrmRepositoryBase(
         total_entries = await self.repository.count_documents(params)
 
         if pagination['page']:
-            founds = founds.skip((pagination['page']-1)*pagination['per_page'])
+            founds = founds.skip((pagination['page'] - 1) * pagination['per_page'])
 
         if pagination['per_page']:
             founds = founds.limit(min(max_query_size, pagination['per_page']))
@@ -182,7 +182,7 @@ class OrmRepositoryBase(
         return DataWithPagination(
             data=result,
             total_entries=total_entries,
-            per_page=min(max_query_size, pagination['per_page']),
+            per_page=pagination['per_page'],
             page=pagination['page']
         )
 
