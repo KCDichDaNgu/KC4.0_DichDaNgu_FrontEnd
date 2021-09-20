@@ -94,7 +94,7 @@ class AppConfig(BaseModel):
         },
 
         'translation_history.list': {
-            'path': '/list',
+            'path': '',
             'name': 'Get many translation history',
             'summary': 'Get many translation history',
             'desc': 'Get many translation history',
@@ -203,6 +203,8 @@ class AppConfig(BaseModel):
             )
         )
     }
+
+    MAX_QUERY_SIZE = 10
 
 class TranslationAPI(BaseModel):
 
