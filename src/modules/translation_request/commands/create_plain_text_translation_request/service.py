@@ -3,7 +3,6 @@ from modules.translation_request.domain.entities.translation_history import Tran
 from modules.translation_request.commands.create_plain_text_translation_request.command import CreatePlainTextTranslationRequestCommand
 from modules.translation_request.domain.services.translation_request_service import TranslationRequestDService
 
-
 class CreatePlainTextTranslationRequestService():
 
     def __init__(self) -> None:

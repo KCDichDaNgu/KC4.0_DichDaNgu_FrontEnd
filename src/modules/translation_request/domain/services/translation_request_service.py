@@ -17,7 +17,8 @@ from modules.translation_request.domain.entities.translation_request import Tran
 from modules.translation_request.domain.entities.translation_request_result import TranslationRequestResultProps
 from modules.translation_request.database.translation_request_result.repository import (
     TranslationRequestResultRepository, 
-    TranslationRequestResultEntity
+    TranslationRequestResultEntity,
+    TranslationRequestResultRepositoryPort
 )
 from modules.translation_request.database.translation_history.repository import (
     TranslationHistoryEntity,
@@ -38,7 +39,7 @@ class TranslationRequestDService():
     def __init__(self) -> None:
         
         self.__translation_request_repository: TranslationRequestRepositoryPort = TranslationRequestRepository()
-        self.__translation_request_result_repository : TranslationRequestRepositoryPort = TranslationRequestResultRepository()
+        self.__translation_request_result_repository : TranslationRequestResultRepositoryPort = TranslationRequestResultRepository()
         self.__translation_history_repository: TranslationHistoryRepositoryPort = TranslationHistoryRepository()
         self.__db_instance = get_mongodb_instance()
 

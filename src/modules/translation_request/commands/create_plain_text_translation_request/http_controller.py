@@ -1,3 +1,4 @@
+from interface_adapters.dtos.base_response import BaseResponse
 from infrastructure.configs.message import MESSAGES
 from modules.translation_request.commands.create_plain_text_translation_request.command import CreatePlainTextTranslationRequestCommand
 
@@ -38,7 +39,7 @@ class CreatePlainTextTranslationRequest(HTTPMethodView):
 
         new_task, new_translation_record = await self.__create_plain_text_translation_request_service.create_request(command)
 
-        return response.json(body={
+        return response.json(BaseResponse(**{
             'code': StatusCodeEnum.success.value,
             'data': {
                 'taskId': new_task.id.value,
@@ -46,4 +47,4 @@ class CreatePlainTextTranslationRequest(HTTPMethodView):
                 'translationHitoryId': new_translation_record.id.value
             },
             'message': MESSAGES['success']
-        })
+        }).dict())

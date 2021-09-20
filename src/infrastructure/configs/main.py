@@ -44,7 +44,7 @@ class BackgroundTaskTriggerEnum(str, ExtendedEnum):
 
 class BackgroundTask(BaseModel):
 
-    ID: str 
+    ID: str
     TRIGGER: BackgroundTaskTriggerEnum
     CONFIG: Dict
 
@@ -93,7 +93,14 @@ class AppConfig(BaseModel):
             'abstract': False
         },
 
-
+        'translation_history.list': {
+            'path': '/list',
+            'name': 'Get many translation history',
+            'summary': 'Get many translation history',
+            'desc': 'Get many translation history',
+            'method': 'GET',
+            'abstract': False
+        },
         'language_detection_request': {
             'path': '/',
             'name': 'Language detection request',
@@ -132,7 +139,29 @@ class AppConfig(BaseModel):
             'path': '/static',
             'name': 'Static files serving',
             'abstract': False
+        },
+        "system_setting": {
+            'path': '/system-setting',
+            'name': 'System setting',
+            'abstract': True,
+        },
+        "system_setting.update": {
+            'path': '',
+            'name': 'Update system setting',
+            'summary': 'Update system setting',
+            'desc': 'Update system setting',
+            'method': 'PUT',
+            'abstract': False,
+        },
+        "system_setting.get": {
+            'path': '',
+            'name': 'Get system setting',
+            'summary': 'Get system setting',
+            'desc': 'Get system setting',
+            'method': 'GET',
+            'abstract': False,
         }
+
     }
 
     API_BASEPATH: str = '/api'
@@ -164,6 +193,14 @@ class AppConfig(BaseModel):
                 seconds=3,
                 max_instances=1
             )
+        ),
+        'delete_invalid_task': BackgroundTask(
+            ID='delete_invalid_task',
+            TRIGGER=BackgroundTaskTriggerEnum.interval.value,
+            CONFIG=dict(
+                seconds=3,
+                max_instances=1
+            )
         )
     }
 
@@ -171,13 +208,13 @@ class TranslationAPI(BaseModel):
 
     URL: AnyHttpUrl = Field(...)
     METHOD: str = Field(...)
-    ALLOWED_CONCURRENT_REQUEST: int = Field(...) 
+    ALLOWED_CONCURRENT_REQUEST: int = Field(...)
 
 class LanguageDetectionAPI(BaseModel):
 
     URL: AnyHttpUrl = Field(...)
     METHOD: str = Field(...)
-    ALLOWED_CONCURRENT_REQUEST: int = Field(...) 
+    ALLOWED_CONCURRENT_REQUEST: int = Field(...)
 
 class GlobalConfig(BaseSettings):
 
@@ -198,7 +235,7 @@ class GlobalConfig(BaseSettings):
 
     CQLENG_ALLOW_SCHEMA_MANAGEMENT: Any = Field(env='CQLENG_ALLOW_SCHEMA_MANAGEMENT')
 
-    CASSANDRA_DATABASE: CassandraDatabase 
+    CASSANDRA_DATABASE: CassandraDatabase
     MONGODB_DATABASE: MongoDBDatabase
 
     KAFKA_CONSUMER: KafkaConsumer
@@ -218,20 +255,20 @@ class GlobalConfig(BaseSettings):
         env_file_encoding = 'utf-8'
 
     def _build_values(
-        self, 
-        init_kwargs: Dict[str, Any], 
-        _env_file: Union[Path, str, None], 
-        _env_file_encoding: Optional[str], 
+        self,
+        init_kwargs: Dict[str, Any],
+        _env_file: Union[Path, str, None],
+        _env_file_encoding: Optional[str],
         _secrets_dir: Union[Path, str, None]
     ) -> Dict[str, Any]:
-        
+
         if os.getenv('CQLENG_ALLOW_SCHEMA_MANAGEMENT') is None:
             os.environ['CQLENG_ALLOW_SCHEMA_MANAGEMENT'] = '1'
 
         return super()._build_values(
-            init_kwargs, 
-            _env_file=_env_file, 
-            _env_file_encoding=_env_file_encoding, 
+            init_kwargs,
+            _env_file=_env_file,
+            _env_file_encoding=_env_file_encoding,
             _secrets_dir=_secrets_dir
         )
 
@@ -242,7 +279,6 @@ class DevConfig(GlobalConfig):
 
     class Config:
         env_file = ".env.development"
-
 
 class ProdConfig(GlobalConfig):
     """Production configurations."""
@@ -260,12 +296,12 @@ def update_cnf(new_config):
 
 def get_cnf() -> GlobalConfig:
 
-   return ConfigStore.GLOBAL_CNF
+    return ConfigStore.GLOBAL_CNF
 
 def update_mongodb_instance(ins):
-    
+
     ConfigStore.MONGODB_INS = ins
-    
+
     return ConfigStore.MONGODB_INS
 
 def get_mongodb_instance():

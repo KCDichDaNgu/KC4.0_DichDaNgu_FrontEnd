@@ -1,3 +1,4 @@
+from interface_adapters.dtos.base_response import BaseResponse
 from uuid import UUID
 from modules.translation_request.domain.entities.translation_history import TranslationHistoryEntity
 from sanic.exceptions import SanicException
@@ -49,15 +50,13 @@ class GetSingleTranslationHistory(HTTPMethodView):
 
     async def get(self, request):
         
-        task_id = request.args.get('taskId')
-        
+        task_id = request.args.get('taskId')        
         translation_history_id = request.args.get('translationHistoryId')
 
         query = {}
         
         if not task_id is None:
             query['task_id'] = UUID(task_id)
-
         if not translation_history_id is None:
             query['id'] = UUID(translation_history_id)
             
@@ -66,14 +65,12 @@ class GetSingleTranslationHistory(HTTPMethodView):
         if not translation_history:
             raise NotFoundException('Translation not found')
         
-        
         task = await self.__translation_request_repository.find_one({'id': UUID(translation_history.props.task_id.value)})
 
         if task.props.task_name not in TRANSLATION_PUBLIC_TASKS:
             raise SanicException('Server Error')
 
-
-        return response.json(body={
+        return response.json(BaseResponse(**{
             'code': StatusCodeEnum.success.value,
             'data': {
                 'taskId': task.id.value,
@@ -85,4 +82,4 @@ class GetSingleTranslationHistory(HTTPMethodView):
                 'resultUrl': get_task_result_full_file_path(translation_history.props.file_path)
             },
             'message': MESSAGES['success']
-        })
+        }).dict())

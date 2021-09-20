@@ -12,7 +12,7 @@ T = TypeVar('T')
 
 order_by = Dict[str, Union[str, Complex]]
 
-class PaginationMeta(ABC, BaseModel):
+class Pagination(BaseModel):
 
     skip: Optional[int]
     limit: Optional[int]
@@ -21,12 +21,12 @@ class PaginationMeta(ABC, BaseModel):
 class FindManyPaginatedParams(ABC, Generic[EntityProps]):
 
     params: Optional[Dict]
-    pagination: Optional[PaginationMeta]
+    pagination: Optional[Pagination]
     order_by: Optional[order_by]
 
-class DataWithPaginationMeta(BaseModel, Generic[T]):
+class DataWithPagination(BaseModel):
 
-    data: T
+    data: Any
     total_entries: int
     per_page: Optional[int]
     page: Optional[int]
@@ -63,5 +63,5 @@ class RepositoryPort(
     @abstractmethod
     def find_many_paginated(
         self
-    ) -> Awaitable[DataWithPaginationMeta[List[Entity]]]:
+    ) -> Awaitable[DataWithPagination]:
         ...
