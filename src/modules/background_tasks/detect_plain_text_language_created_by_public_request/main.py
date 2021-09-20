@@ -34,7 +34,7 @@ ALLOWED_CONCURRENT_REQUEST = PUBLIC_LANGUAGE_DETECTION_API_CONF.ALLOWED_CONCURRE
 
 language_detection_request_repository = LanguageDetectionRequestRepository()
 language_detection_request_result_repository = LanguageDetectionRequestResultRepository()
-transation_history_repository = LanguageDetectionHistoryRepository()
+language_detection_history = LanguageDetectionHistoryRepository()
 
 languageDetector = LanguageDetector()
 
@@ -79,7 +79,7 @@ async def read_task_result(
             logger.error(e)
             
             print(e)
-
+            
     valid_tasks_id = valid_tasks_mapper.keys()
 
     invalid_tasks = list(filter(lambda t: t.id.value not in valid_tasks_id, tasks))
@@ -132,7 +132,7 @@ async def mark_invalid_tasks(invalid_tasks_mapper):
                 )
                 
                 update_request.append(
-                    transation_history_repository.update(
+                    language_detection_history.update(
                         trans_history, 
                         dict(
                             status=LanguageDetectionHistoryStatus.cancelled.value
@@ -185,7 +185,7 @@ async def main():
                     step=LanguageDetectionTaskStepEnum.detecting_language.value
                 )
             ),
-            transation_history_repository.find_many(
+            language_detection_history.find_many(
                 params=dict(
                     task_id={
                         '$in': list(map(lambda t: UUID(t), tasks_id))
@@ -276,26 +276,16 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                         language_detection_request_repository.update(
                             task, 
                             dict(
-                                step_status=StepStatusEnum.not_yet_processed.value,
-                                current_step=LanguageDetectionTaskStepEnum.detecting_language.value
-                            )
-                        )
-                    )
-                
-                    update_request.append(
-                        language_detection_request_result_repository.update(
-                            task_result, 
-                            dict(
-                                step=LanguageDetectionTaskStepEnum.detecting_language.value
+                                step_status=StepStatusEnum.completed.value
                             )
                         )
                     )
                     
                     update_request.append(
-                        transation_history_repository.update(
+                        language_detection_history.update(
                             trans_history, 
                             dict(
-                                status=LanguageDetectionHistoryStatus.detecting.value
+                                status=LanguageDetectionHistoryStatus.detected.value
                             )
                         )
                     )
