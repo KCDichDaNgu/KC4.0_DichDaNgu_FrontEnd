@@ -212,8 +212,15 @@ async def main():
         chunked_tasks_id = list(chunk_arr(valid_tasks_id, ALLOWED_CONCURRENT_REQUEST))
 
         for chunk in chunked_tasks_id:
+
+            try:
             
-            await execute_in_batch(valid_tasks_mapper, chunk)
+                await execute_in_batch(valid_tasks_mapper, chunk)
+
+            except Exception as e:
+                logger.error(e)
+                
+                print(e)
 
     except Exception as e:
         logger.error(e)
@@ -262,7 +269,7 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                     trans_history = valid_tasks_mapper[task_id]['trans_history'],
                     task = valid_tasks_mapper[task_id]['task']
                     task_result_content = valid_tasks_mapper[task_id]['task_result_content']
-                    
+                   
                     new_saved_content = TranslationTask_NotYetTranslatedResultFileSchemaV1(
                         source_text=task_result_content['source_text'],
                         source_lang=api_result.lang,

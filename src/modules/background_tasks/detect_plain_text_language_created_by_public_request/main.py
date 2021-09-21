@@ -209,8 +209,15 @@ async def main():
         chunked_tasks_id = list(chunk_arr(valid_tasks_id, ALLOWED_CONCURRENT_REQUEST))
 
         for chunk in chunked_tasks_id:
+
+            try:
             
-            await execute_in_batch(valid_tasks_mapper, chunk)
+                await execute_in_batch(valid_tasks_mapper, chunk)
+                
+            except Exception as e:
+                logger.error(e)
+                
+                print(e)
 
     except Exception as e:
         logger.error(e)
