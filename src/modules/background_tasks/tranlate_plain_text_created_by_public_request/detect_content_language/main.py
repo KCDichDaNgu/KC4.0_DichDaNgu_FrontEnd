@@ -1,5 +1,7 @@
 from datetime import datetime
-import logging
+
+from infrastructure.configs.message import MESSAGES
+from infrastructure.configs.translation_task import TranslationTask_TranslationClosedResultFileSchemaV1
 from infrastructure.configs.language import LanguageEnum
 from infrastructure.configs.translation_history import TranslationHistoryStatus
 from core.utils.common import chunk_arr
@@ -269,52 +271,93 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                     trans_history = valid_tasks_mapper[task_id]['trans_history'],
                     task = valid_tasks_mapper[task_id]['task']
                     task_result_content = valid_tasks_mapper[task_id]['task_result_content']
-                   
-                    new_saved_content = TranslationTask_NotYetTranslatedResultFileSchemaV1(
-                        source_text=task_result_content['source_text'],
-                        source_lang=api_result.lang,
-                        target_lang=task_result_content['target_lang'],
-                        task_name=TranslationTaskNameEnum.private_plain_text_translation.value
-                    )
 
-                    if isinstance(task_result, tuple):
-                        task_result = task_result[0]
+                    if api_result.lang == LanguageEnum.unknown.value:
 
-                    if isinstance(trans_history, tuple):
-                        trans_history = trans_history[0]
-                
-                    update_request.append(
-                        translation_request_repository.update(
-                            task, 
-                            dict(
-                                step_status=StepStatusEnum.not_yet_processed.value,
-                                current_step=TranslationTaskStepEnum.translating_language.value
-                            )
+                        new_saved_content = TranslationTask_TranslationClosedResultFileSchemaV1(
+                            source_text=task_result_content['source_text'],
+                            source_lang=api_result.lang,
+                            target_lang=task_result_content['target_lang'],
+                            message=MESSAGES['content_language_is_not_supported'],
+                            task_name=TranslationTaskNameEnum.public_plain_text_translation.value
                         )
-                    )
-                
-                    update_request.append(
-                        translation_request_result_repository.update(
-                            task_result, 
-                            dict(
-                                step=TranslationTaskStepEnum.translating_language.value
-                            )
-                        )
-                    )
+
+                        if isinstance(task_result, tuple):
+                            task_result = task_result[0]
+
+                        if isinstance(trans_history, tuple):
+                            trans_history = trans_history[0]
                     
-                    update_request.append(
-                        transation_history_repository.update(
-                            trans_history, 
-                            dict(
-                                status=TranslationHistoryStatus.translating.value
+                        update_request.append(
+                            translation_request_repository.update(
+                                task, 
+                                dict(
+                                    step_status=StepStatusEnum.closed.value
+                                )
                             )
                         )
-                    )
-
-                    update_request.append(
-                        task_result.save_request_result_to_file(
-                            content=new_saved_content.json()
+                        
+                        update_request.append(
+                            transation_history_repository.update(
+                                trans_history, 
+                                dict(
+                                    status=TranslationHistoryStatus.closed.value
+                                )
+                            )
                         )
-                    )
+
+                        update_request.append(
+                            task_result.save_request_result_to_file(
+                                content=new_saved_content.json()
+                            )
+                        )
+                    else:
+                   
+                        new_saved_content = TranslationTask_NotYetTranslatedResultFileSchemaV1(
+                            source_text=task_result_content['source_text'],
+                            source_lang=api_result.lang,
+                            target_lang=task_result_content['target_lang'],
+                            task_name=TranslationTaskNameEnum.public_plain_text_translation.value
+                        )
+
+                        if isinstance(task_result, tuple):
+                            task_result = task_result[0]
+
+                        if isinstance(trans_history, tuple):
+                            trans_history = trans_history[0]
+                    
+                        update_request.append(
+                            translation_request_repository.update(
+                                task, 
+                                dict(
+                                    step_status=StepStatusEnum.not_yet_processed.value,
+                                    current_step=TranslationTaskStepEnum.translating_language.value
+                                )
+                            )
+                        )
+                    
+                        update_request.append(
+                            translation_request_result_repository.update(
+                                task_result, 
+                                dict(
+                                    step=TranslationTaskStepEnum.translating_language.value
+                                )
+                            )
+                        )
+                        
+                        update_request.append(
+                            transation_history_repository.update(
+                                trans_history, 
+                                dict(
+                                    status=TranslationHistoryStatus.translating.value
+                                )
+                            )
+                        )
+
+                        update_request.append(
+                            task_result.save_request_result_to_file(
+                                content=new_saved_content.json()
+                            )
+                        )
 
                 await asyncio.gather(*update_request)

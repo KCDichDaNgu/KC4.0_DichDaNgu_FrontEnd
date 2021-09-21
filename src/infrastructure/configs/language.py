@@ -7,3 +7,5 @@ class LanguageEnum(str, ExtendedEnum):
     km = 'km'
     lo = 'lo'
     en = 'en'
+
+    unknown = 'unknown'

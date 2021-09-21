@@ -1,4 +1,7 @@
 from datetime import datetime
+from infrastructure.configs.message import MESSAGES
+from infrastructure.configs.language_detection_task import LanguageDetectionTask_LanguageDetectionClosedResultFileSchemaV1
+from infrastructure.configs.language import LanguageEnum
 from infrastructure.configs.language_detection_history import LanguageDetectionHistoryStatus
 from core.utils.common import chunk_arr
 
@@ -266,41 +269,82 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                     trans_history = valid_tasks_mapper[task_id]['trans_history'],
                     task = valid_tasks_mapper[task_id]['task']
                     task_result_content = valid_tasks_mapper[task_id]['task_result_content']
+
+                    if api_result.lang == LanguageEnum.unknown.value:
+
+                        new_saved_content = LanguageDetectionTask_LanguageDetectionClosedResultFileSchemaV1(
+                            source_text=task_result_content['source_text'],
+                            source_lang=api_result.lang,
+                            message=MESSAGES['content_language_is_not_supported'],
+                            task_name=LanguageDetectionTaskNameEnum.public_plain_text_language_detection.value
+                        )
+
+                        if isinstance(task_result, tuple):
+                            task_result = task_result[0]
+
+                        if isinstance(trans_history, tuple):
+                            trans_history = trans_history[0]
                     
-                    new_saved_content = LanguageDetectionTask_LanguageDetectionCompletedResultFileSchemaV1(
-                        source_text=task_result_content['source_text'],
-                        source_lang=api_result.lang,
-                        task_name=LanguageDetectionTaskNameEnum.public_plain_text_language_detection.value
-                    )
-
-                    if isinstance(task_result, tuple):
-                        task_result = task_result[0]
-
-                    if isinstance(trans_history, tuple):
-                        trans_history = trans_history[0]
-                
-                    update_request.append(
-                        language_detection_request_repository.update(
-                            task, 
-                            dict(
-                                step_status=StepStatusEnum.completed.value
+                        update_request.append(
+                            language_detection_request_repository.update(
+                                task, 
+                                dict(
+                                    step_status=StepStatusEnum.closed.value
+                                )
                             )
                         )
-                    )
-                    
-                    update_request.append(
-                        language_detection_history.update(
-                            trans_history, 
-                            dict(
-                                status=LanguageDetectionHistoryStatus.detected.value
+                        
+                        update_request.append(
+                            language_detection_history.update(
+                                trans_history, 
+                                dict(
+                                    status=LanguageDetectionHistoryStatus.closed.value
+                                )
                             )
                         )
-                    )
 
-                    update_request.append(
-                        task_result.save_request_result_to_file(
-                            content=new_saved_content.json()
+                        update_request.append(
+                            task_result.save_request_result_to_file(
+                                content=new_saved_content.json()
+                            )
                         )
-                    )
+
+                    else:
+
+                        new_saved_content = LanguageDetectionTask_LanguageDetectionCompletedResultFileSchemaV1(
+                            source_text=task_result_content['source_text'],
+                            source_lang=api_result.lang,
+                            task_name=LanguageDetectionTaskNameEnum.public_plain_text_language_detection.value
+                        )
+
+                        if isinstance(task_result, tuple):
+                            task_result = task_result[0]
+
+                        if isinstance(trans_history, tuple):
+                            trans_history = trans_history[0]
+                    
+                        update_request.append(
+                            language_detection_request_repository.update(
+                                task, 
+                                dict(
+                                    step_status=StepStatusEnum.completed.value
+                                )
+                            )
+                        )
+                        
+                        update_request.append(
+                            language_detection_history.update(
+                                trans_history, 
+                                dict(
+                                    status=LanguageDetectionHistoryStatus.detected.value
+                                )
+                            )
+                        )
+
+                        update_request.append(
+                            task_result.save_request_result_to_file(
+                                content=new_saved_content.json()
+                            )
+                        )
 
                 await asyncio.gather(*update_request)

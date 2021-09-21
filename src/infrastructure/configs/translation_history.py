@@ -23,4 +23,5 @@ class TranslationHistoryStatus(str, ExtendedEnum):
     translating = 'translating'
     translated = 'translated'
 
+    closed = 'closed'
     cancelled = 'cancelled'
