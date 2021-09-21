@@ -3,6 +3,7 @@ from typing import Optional, Union
 from pydantic.fields import Field
 from pydantic.main import BaseModel
 from core.types import ExtendedEnum
+from infrastructure.configs.message import MESSAGES
 
 class TranslationTaskNameEnum(str, ExtendedEnum):
 
@@ -26,6 +27,13 @@ class TranslationTaskStepEnum(str, ExtendedEnum):
     
     detecting_language = 'detecting_language'
     translating_language = 'translating_language'
+
+RESULT_FILE_STATUS = {
+    'language_not_yet_detected': 'language_not_yet_detected',
+    'not_yet_translated': 'not_yet_translated',
+    'closed': 'closed',
+    'translated': 'translated'
+}
     
 class TranslationTask_LangUnknownResultFileSchemaV1(BaseModel):
 
@@ -37,7 +45,8 @@ class TranslationTask_LangUnknownResultFileSchemaV1(BaseModel):
 
     task_name: TranslationTaskNameEnum
 
-    status: str = Field('language_not_yet_detected', allow_mutation=False) 
+    status: str = Field(RESULT_FILE_STATUS['language_not_yet_detected'], allow_mutation=False) 
+    message: str = ''
 
     schema_version: int = Field(1, allow_mutation=False) 
 
@@ -55,9 +64,30 @@ class TranslationTask_NotYetTranslatedResultFileSchemaV1(BaseModel):
 
     task_name: TranslationTaskNameEnum
 
-    status: str = Field('not_yet_translated', allow_mutation=False) 
+    status: str = Field(RESULT_FILE_STATUS['not_yet_translated'], allow_mutation=False) 
+    message: str = ''
 
     schema_version: int = Field(1, allow_mutation=False) 
+
+    class Config:
+        use_enum_values = True
+        validate_assignment = True
+
+
+class TranslationTask_TranslationClosedResultFileSchemaV1(BaseModel):
+
+    source_text: str
+    source_lang: LanguageEnum
+
+    target_text: Union[str, None] = Field(None, allow_mutation=False)
+    target_lang: LanguageEnum
+
+    task_name: TranslationTaskNameEnum
+
+    status: str = Field(RESULT_FILE_STATUS['closed'], allow_mutation=False) 
+    message: str = ''
+
+    schema_version: int = Field(1, allow_mutation=False)  
 
     class Config:
         use_enum_values = True
@@ -73,7 +103,8 @@ class TranslationTask_TranslationCompletedResultFileSchemaV1(BaseModel):
 
     task_name: TranslationTaskNameEnum
 
-    status: str = Field('translated', allow_mutation=False) 
+    status: str = Field(RESULT_FILE_STATUS['translated'], allow_mutation=False) 
+    message: str = ''
 
     schema_version: int = Field(1, allow_mutation=False)  
 

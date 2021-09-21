@@ -26,6 +26,12 @@ class LanguageDetectionTaskStepEnum(str, ExtendedEnum):
 
     detecting_language = 'detecting_language'
 
+RESULT_FILE_STATUS = {
+    'language_not_yet_detected': 'language_not_yet_detected',
+    'closed': 'closed',
+    'language_detected': 'language_detected'
+}
+
 class LanguageDetectionTask_LangUnknownResultFileSchemaV1(BaseModel):
 
     source_text: str 
@@ -33,9 +39,26 @@ class LanguageDetectionTask_LangUnknownResultFileSchemaV1(BaseModel):
 
     task_name: LanguageDetectionTaskNameEnum
 
-    status: str = Field('language_not_yet_detected', allow_mutation=False) 
+    status: str = Field(RESULT_FILE_STATUS['language_not_yet_detected'], allow_mutation=False) 
+    message: str = ''
 
     schema_version: int = Field(1, allow_mutation=False) 
+
+    class Config:
+        use_enum_values = True
+        validate_assignment = True
+
+class LanguageDetectionTask_LanguageDetectionClosedResultFileSchemaV1(BaseModel):
+
+    source_text: str
+    source_lang: LanguageEnum
+
+    task_name: LanguageDetectionTaskNameEnum
+
+    status: str = Field(RESULT_FILE_STATUS['closed'], allow_mutation=False) 
+    message: str = ''
+
+    schema_version: int = Field(1, allow_mutation=False)  
 
     class Config:
         use_enum_values = True
@@ -48,7 +71,8 @@ class LanguageDetectionTask_LanguageDetectionCompletedResultFileSchemaV1(BaseMod
 
     task_name: LanguageDetectionTaskNameEnum 
     
-    status: str = Field('language_detected', allow_mutation=False) 
+    status: str = Field(RESULT_FILE_STATUS['language_detected'], allow_mutation=False) 
+    message: str = ''
 
     schema_version: int = Field(1, allow_mutation=False)  
 

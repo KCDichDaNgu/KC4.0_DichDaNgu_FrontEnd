@@ -38,10 +38,14 @@ class LanguageDetector(LanguageDetectorPort):
                     async with session.post(PUBLIC_LANGUAGE_DETECTION_API_URL, json={"data": text}, headers=headers) as response:
                         result = (await response.json())['data']
 
+                        result['lang'] = result['lang'] if result['lang'] in LanguageEnum.enum_values() else LanguageEnum.unknown.value
+
                         return LanguageDetectionResponse(**result)
 
             else:
                 async with session.post(PUBLIC_LANGUAGE_DETECTION_API_URL, json={"data": text}, headers=headers) as response:
                     result = (await response.json())['data']
+
+                    result['lang'] = result['lang'] if result['lang'] in LanguageEnum.enum_values() else LanguageEnum.unknown.value
 
                     return LanguageDetectionResponse(**result)
