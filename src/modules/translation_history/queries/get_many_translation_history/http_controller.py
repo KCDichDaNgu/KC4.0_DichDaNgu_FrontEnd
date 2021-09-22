@@ -112,7 +112,7 @@ class GetManyTranslationHistory(HTTPMethodView):
  
         translation_history: TranslationHistoryEntity = query_result.data
  
-        datas = list(
+        tasks = list(
             map(lambda item: {
                 'taskId': item.id.value,
                 'translationType': item.props.translation_type,
@@ -121,7 +121,7 @@ class GetManyTranslationHistory(HTTPMethodView):
                 'updatedAt': str(item.updated_at.value),
                 'createdAt': str(item.created_at.value),
                 'resultUrl': get_task_result_full_file_path(item.props.file_path)
-            }, translation_history )
+            }, translation_history)
         )
  
         return response.json(BaseResponse(**{
@@ -130,7 +130,7 @@ class GetManyTranslationHistory(HTTPMethodView):
                 "per_page": query_result.per_page,
                 "page": query_result.page,
                 "total_entries": query_result.total_entries,
-                "tasks": datas
+                "list": tasks
             },
             'message': MESSAGES['success']
         }).dict())
