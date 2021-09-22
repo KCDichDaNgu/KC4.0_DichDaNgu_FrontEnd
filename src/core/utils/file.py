@@ -1,6 +1,8 @@
 import imp
+import os
+import aiofiles
 from infrastructure.configs.task import TASK_RESULT_FOLDER
-
+import asyncio
 from infrastructure.configs.main import GlobalConfig, get_cnf
 
 config: GlobalConfig = get_cnf()
@@ -20,3 +22,16 @@ def load_module(name):
 def get_task_result_full_file_path(file_path: str):
 
     return f'{STATIC_FOLDER}/{TASK_RESULT_FOLDER}/{file_path}'
+
+async def delete_files(invalid_file_paths):
+
+    delete_request = []
+
+    for file_path in invalid_file_paths:
+
+        full_file_path = get_task_result_full_file_path(file_path)
+
+        if os.path.exists(full_file_path):
+            delete_request.append(aiofiles.os.remove(full_file_path))
+    
+    await asyncio.gather(*delete_request)

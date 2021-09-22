@@ -2,9 +2,7 @@ from datetime import datetime
 from infrastructure.configs.main import GlobalConfig, get_cnf
 from uuid import UUID
 from infrastructure.database.base_classes.mongodb import OrmMapperBase, OrmEntityBase
-import math
-
-from typing import Dict, TypeVar
+from typing import Dict, TypeVar, List
 from core.value_objects.id import ID
 from core.domain_events import DomainEvents
 from infrastructure.adapters.logger import Logger
@@ -13,11 +11,10 @@ from core.exceptions import NotFoundException
 
 from core.base_classes.entity import BaseEntityProps
 from abc import ABC, abstractmethod
-from typing import Generic, List, TypeVar, Any, Union
-from infrastructure.database.base_classes.mongodb.motor_async_extend import insert_many, delete_many
+from typing import Generic, List, TypeVar, Any
 
 config: GlobalConfig = get_cnf()
-APP_CONFIG = config.APP_CONFIG
+PAGINATION_CONFIG = config.PAGINATION
 
 Entity = TypeVar('Entity', bound=BaseEntityProps)
 EntityProps = TypeVar('EntityProps')
@@ -29,7 +26,7 @@ class OrmRepositoryBase(
     RepositoryPort[Entity, EntityProps],
     ABC
 ):
-
+    
     def __init__(self) -> None:
 
         super().__init__()
@@ -61,7 +58,7 @@ class OrmRepositoryBase(
 
     @property
     def mapper_ins(self):
-        return self.__mapper_ins
+        return self.__mapper_ins    
         
     async def create(self, entity: Entity):
         
@@ -85,7 +82,7 @@ class OrmRepositoryBase(
 
             await DomainEvents.publish_events(id, self.__logger)
 
-        await insert_many(orm_entities)
+        await self.insert_many(orm_entities)
 
         self.__logger.debug(f'[Entity persisted]: {type(entities[0]).__name__} {entities_ids}')
 
@@ -183,17 +180,17 @@ class OrmRepositoryBase(
         pagination: Pagination,
         order_by: Any,
     ):
-        max_query_size = APP_CONFIG.MAX_QUERY_SIZE
+        max_per_page = PAGINATION_CONFIG.MAX_PER_PAGE
         result = []
 
         founds = self.repository.find(params)
         total_entries = await self.repository.count_documents(params)
-
+        
         if pagination['page']:
             founds = founds.skip((pagination['page'] - 1) * pagination['per_page'])
 
         if pagination['per_page']:
-            founds = founds.limit(min(max_query_size, pagination['per_page']))
+            founds = founds.limit(min(max_per_page, pagination['per_page']))
 
         if order_by:
             founds = founds.sort(order_by)
@@ -228,23 +225,36 @@ class OrmRepositoryBase(
         
 
     async def delete_many(self, entities: List[Any]):
-        
-        for entity in entities:
+        orm_entities = [self.mapper_ins.to_orm_entity(entity) for entity in entities]
 
-            await DomainEvents.publish_events(entity.id.value, self.__logger)
+        entities_ids = [entity.id for entity in entities]
 
-        query = {
-            '_id': {
-                '$in': [UUID(entity.id.value) for entity in entities]
-            }
-        }
+        for id in entities_ids:
 
-        cursor = self.repository.find(query)
+            await DomainEvents.publish_events(id, self.__logger)
 
-        result = list((await cursor.to_list(length=None))) if not cursor is None else []
-
-        await delete_many(result)
+        await self.repository.delete_many(orm_entities)
 
         self.__logger.debug(f'[Entity deleted]: {[UUID(entity.id.value) for entity in entities]}')
 
         return [UUID(entity.id.value) for entity in entities]
+
+    async def delete_many_by_condition(self, conditions: Any):
+        
+        query = {}
+
+        for condition in conditions:
+            for key in condition:
+                query[key] = {
+                    '$in': [UUID(value) for value in condition[key]]
+                }
+    
+        cursor = self.repository.find(query)
+
+        result = list((await cursor.to_list(length=None)))
+
+        await self.repository.delete_many(result)
+
+        self.__logger.debug(f'[Entity deleted]: {[(entity.id) for entity in result]}')
+
+        return [(entity.id) for entity in result]

@@ -62,6 +62,10 @@ class RepositoryPort(
 
     @abstractmethod
     def delete(self):
+        ...    
+    
+    @abstractmethod
+    def delete_many(self):
         ...
 
     @abstractmethod

@@ -10,11 +10,11 @@ class TaskOrmMapper(OrmMapperBase[TaskEntity, TaskOrmEntity]):
 
     @property
     def entity_klass(self):
-        return get_args(self.__orig_bases__[1])[0]
+        return get_args(self.__orig_bases__[0])[0]
 
     @property
     def orm_entity_klass(self):
-        return get_args(self.__orig_bases__[1])[1]
+        return get_args(self.__orig_bases__[0])[1]
 
     def to_orm_props(self, entity: TaskEntity):
         

@@ -8,7 +8,8 @@ def init_background_tasks(config: GlobalConfig):
     from modules.background_tasks.tranlate_plain_text_created_by_public_request.translate_content.main import main as translate_content_for_plain_text_in_public_request
 
     from modules.background_tasks.detect_plain_text_language_created_by_public_request.main import main as detect_plain_text_language_created_by_public_request
-    # from modules.background_tasks.delete_invalid_task.main import main as delete_invalid_task
+    from modules.background_tasks.delete_invalid_task.main import main as delete_invalid_task
+    from modules.background_tasks.delete_invalid_file.main import main as delete_invalid_file
 
     BACKGROUND_TASKS = config.APP_CONFIG.BACKGROUND_TASKS
 
@@ -43,11 +44,20 @@ def init_background_tasks(config: GlobalConfig):
         **background_task_3_conf.CONFIG
     )
     
-    # background_task_4_conf = BACKGROUND_TASKS['delete_invalid_task']
+    background_task_4_conf = BACKGROUND_TASKS['delete_invalid_task']
  
-    # new_background_task_scheduler.add_job(
-    #     delete_invalid_task,
-    #     id=background_task_4_conf.ID,
-    #     trigger=background_task_4_conf.TRIGGER,
-    #     **background_task_4_conf.CONFIG
-    # )
+    new_background_task_scheduler.add_job(
+        delete_invalid_task,
+        id=background_task_4_conf.ID,
+        trigger=background_task_4_conf.TRIGGER,
+        **background_task_4_conf.CONFIG
+    )
+    
+    background_task_5_conf = BACKGROUND_TASKS['delete_invalid_file']
+ 
+    new_background_task_scheduler.add_job(
+        delete_invalid_file,
+        id=background_task_5_conf.ID,
+        trigger=background_task_5_conf.TRIGGER,
+        **background_task_5_conf.CONFIG
+    )
