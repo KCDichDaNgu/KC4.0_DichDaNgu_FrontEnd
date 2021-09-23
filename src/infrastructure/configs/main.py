@@ -132,6 +132,35 @@ class AppConfig(BaseModel):
             'path': '/static',
             'name': 'Static files serving',
             'abstract': False
+        },
+        'user': {
+            'path': '/user',
+            'name': 'User routes',
+            'abstract': True
+        },
+        'user.auth': {
+            'path': '/auth',
+            'name': 'Authentication',
+            'summary': 'Provider access token via Google access code or refresh token',
+            'desc': 'Provider access token via Google access code or refresh token',
+            'method': 'POST',
+            'abstract': False
+        },
+        'user.logout': {
+            'path': '/logout',
+            'name': 'Logout',
+            'summary': 'Logout from system',
+            'desc': 'Logout from system',
+            'method': 'POST',
+            'abstract': False
+        },
+        'user.me' : {
+            'path': '/me',
+            'name': 'User information',
+            'summary': 'Users get information of themselves',
+            'desc': 'Users get information of themselves',
+            'method': 'GET',
+            'abstract': False
         }
     }
 
@@ -179,6 +208,13 @@ class LanguageDetectionAPI(BaseModel):
     METHOD: str = Field(...)
     ALLOWED_CONCURRENT_REQUEST: int = Field(...) 
 
+class Oauth2ProviderAPI(BaseModel):
+    NAME: str = Field(...)
+    URL: AnyHttpUrl = Field(...)
+    METHOD: str = Field(...)    
+
+class Oauth2Provider(BaseModel):
+    GOOGLE: Oauth2ProviderAPI = Field(...)
 class GlobalConfig(BaseSettings):
 
     """Global configurations."""
@@ -209,6 +245,9 @@ class GlobalConfig(BaseSettings):
 
     PUBLIC_TRANSLATION_API: TranslationAPI
     PUBLIC_LANGUAGE_DETECTION_API: LanguageDetectionAPI
+
+    OAUTH2_PROVIDER: Oauth2Provider
+    TOKEN_TTL: int
 
     class Config:
         """Loads the dotenv file."""

@@ -55,7 +55,16 @@ class MongoDBDatabase(BaseModel):
         },
         "language_detection_history": {
             "name": "language_detection_history"
-        }
+        },
+        "user": {
+            "name": "user"
+        },
+        "access_token": {
+            "name": "access_token"
+        },
+        "deny_token": {
+            "name": "deny_token"
+        },
     }
 
     @property
@@ -82,7 +91,8 @@ ORM_VALID_CLASSNAMES = [
 
     'LanguageDetectionHistoryOrmEntity',
     'LanguageDetectionRequestOrmEntity',
-    'LanguageDetectionRequestResultOrmEntity'
+    'LanguageDetectionRequestResultOrmEntity',
+    'UserOrmEntity'
 ]
 
 def validate_orm_class_name(doc_class, class_names=ORM_VALID_CLASSNAMES):

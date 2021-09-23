@@ -9,6 +9,8 @@ from infrastructure.interceptors.exeption_interceptor import ExceptionIntercepto
 
 from sanic_cors import CORS
 
+from infrastructure.authentication.core import init_auth
+
 import os, aiofiles
 
 async def listener_before_server_start(*args, **kwargs):
@@ -50,6 +52,8 @@ def init_routes(app: Sanic) -> Sanic:
 
     from modules.static_files_server.main import static_files_server_bp
 
+    from modules.user.main import user_bp
+
     app.blueprint(swagger_blueprint)
 
     app.blueprint(translation_request_bp)
@@ -59,6 +63,7 @@ def init_routes(app: Sanic) -> Sanic:
     app.blueprint(language_detection_history_bp)
 
     app.blueprint(static_files_server_bp)
+    app.blueprint(user_bp)
     
     return app
 
@@ -89,6 +94,7 @@ async def init_app():
     # await init_kafka(config)
 
     init_routes(app)
+    init_auth(app, config)
 
     app.error_handler = ExceptionInterceptor()
 
