@@ -11,7 +11,7 @@ class KeySpaceConfig(BaseModel):
     CONNECTIONS: Any = None
 
 class CassandraDatabase(BaseModel):
-    
+
     NAME: str = Field(None)
     PASSWORD: str = Field(None)
     USER: str = Field(None)
@@ -20,7 +20,7 @@ class CassandraDatabase(BaseModel):
     SCHEMA_VERSION = 1
 
     KEYSPACE: KeySpaceConfig
-    
+
     PROTOCOL_VERSION: int = 3
 
     TABLES: dict = {}
@@ -65,6 +65,9 @@ class MongoDBDatabase(BaseModel):
         "deny_token": {
             "name": "deny_token"
         },
+        "system_setting": {
+            "name": "system_setting"
+        }
     }
 
     @property
@@ -95,8 +98,9 @@ ORM_VALID_CLASSNAMES = [
     'UserOrmEntity'
 ]
 
+
 def validate_orm_class_name(doc_class, class_names=ORM_VALID_CLASSNAMES):
-    
+
     if not doc_class.__name__ in class_names:
         raise Exception('Orm classname changed!!! Please carefully with Parent - Child class pairs, they use class name for discriminating')
 

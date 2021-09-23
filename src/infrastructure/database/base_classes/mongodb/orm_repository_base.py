@@ -1,16 +1,21 @@
+from infrastructure.configs.main import GlobalConfig, get_cnf
 from uuid import UUID
 from infrastructure.database.base_classes.mongodb import OrmMapperBase, OrmEntityBase
+import math
 
 from typing import Dict, TypeVar
 from core.value_objects.id import ID
 from core.domain_events import DomainEvents
 from infrastructure.adapters.logger import Logger
-from core.ports.repository import RepositoryPort, DataWithPaginationMeta
+from core.ports.repository import Pagination, RepositoryPort, DataWithPagination
 from core.exceptions import NotFoundException
 
 from core.base_classes.entity import BaseEntityProps
 from abc import ABC, abstractmethod
 from typing import Generic, List, TypeVar, Any, Union
+
+config: GlobalConfig = get_cnf()
+APP_CONFIG = config.APP_CONFIG
 
 Entity = TypeVar('Entity', bound=BaseEntityProps)
 EntityProps = TypeVar('EntityProps')
@@ -132,7 +137,7 @@ class OrmRepositoryBase(
         result = []
         
         cursor = self.repository.find(params)
-        
+
         if skip:
             cursor = cursor.skip(limit)
 
@@ -150,26 +155,35 @@ class OrmRepositoryBase(
 
     async def find_many_paginated(
         self,
-        params: Any
+        params: Any,
+        pagination: Pagination,
+        order_by: Any,
     ):
-        
+        max_query_size = APP_CONFIG.MAX_QUERY_SIZE
         result = []
 
-        founds = await self.repository.find(params)
-        
-        count = founds.count()
+        founds = self.repository.find(params)
+        total_entries = await self.repository.count_documents(params)
 
-        founds = founds[params.pagination.skip : params.pagination.limit]
-        founds = founds.order_by(params.order_by)
+        if pagination['page']:
+            founds = founds.skip((pagination['page'] - 1) * pagination['per_page'])
 
-        for found in founds:
-            result.append(self.mapper_ins.to_domain_entity(found))
+        if pagination['per_page']:
+            founds = founds.limit(min(max_query_size, pagination['per_page']))
 
-        return DataWithPaginationMeta[type(result)](
+        if order_by:
+            founds = founds.sort(order_by)
+
+        result = list((await founds.to_list(length=None))) if not founds is None else []
+
+        result = list(
+            map(lambda found: self.mapper_ins.to_domain_entity(found), result))
+
+        return DataWithPagination(
             data=result,
-            total_entries=count,
-            per_page=params.pagination.limit,
-            page=params.pagination.page
+            total_entries=total_entries,
+            per_page=pagination['per_page'],
+            page=pagination['page']
         )
 
     async def delete(self, entity: Any) -> Entity:        

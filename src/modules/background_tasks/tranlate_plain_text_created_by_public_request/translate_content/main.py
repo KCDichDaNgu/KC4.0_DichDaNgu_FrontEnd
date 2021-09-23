@@ -69,7 +69,7 @@ async def read_task_result(
                 source_text='', 
                 source_lang=LanguageEnum.vi.value,
                 target_lang=LanguageEnum.vi.value,
-                task_name=TranslationTaskNameEnum.private_plain_text_translation.value
+                task_name=TranslationTaskNameEnum.public_plain_text_translation.value
             ).status:
 
                 valid_tasks_mapper[task_id] = {

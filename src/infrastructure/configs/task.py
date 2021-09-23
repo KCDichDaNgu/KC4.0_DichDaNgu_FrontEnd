@@ -28,7 +28,10 @@ class CreatorTypeEnum(str, ExtendedEnum):
 
 class StepStatusEnum(str, ExtendedEnum):
 
-    not_yet_processed = 'not_yet_processed'
+    not_yet_processed = 'not_yet_processed' # Chưa chạy
     in_progress = 'in_progress' # Trong trường hợp task bị kéo dài, k rõ bao h xong 
-    completed = 'completed'
-    cancelled = 'cancelled'
+    
+    completed = 'completed' # Hoàn thành
+
+    closed = 'closed' # Bị đóng do nguyên nhân end user
+    cancelled = 'cancelled' # Bị đóng do lỗi bên phía server

@@ -1,3 +1,4 @@
+from interface_adapters.dtos.base_response import BaseResponse
 from uuid import UUID
 from modules.language_detection_request.domain.entities.language_detection_history import LanguageDetectionHistoryEntity
 from sanic.exceptions import SanicException
@@ -73,7 +74,7 @@ class GetSingleLanguageDetectionHistory(HTTPMethodView):
             raise SanicException('Server Error')
 
 
-        return response.json(body={
+        return response.json(BaseResponse(**{
             'code': StatusCodeEnum.success.value,
             'data': {
                 'taskId': task.id.value,
@@ -85,4 +86,4 @@ class GetSingleLanguageDetectionHistory(HTTPMethodView):
                 'resultUrl': get_task_result_full_file_path(language_detection_history.props.file_path)
             },
             'message': MESSAGES['success']
-        })
+        }).dict())

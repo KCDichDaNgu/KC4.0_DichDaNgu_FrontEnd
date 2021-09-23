@@ -23,4 +23,5 @@ class LanguageDetectionHistoryStatus(str, ExtendedEnum):
     detecting = 'detecting'
     detected = 'detected'
 
+    closed ='closed'
     cancelled = 'cancelled'
