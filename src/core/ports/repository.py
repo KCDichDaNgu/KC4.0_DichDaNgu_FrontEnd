@@ -45,7 +45,15 @@ class RepositoryPort(
         ...
 
     @abstractmethod
+    def create_many(self) -> Awaitable[List[Entity]]:
+        ...
+
+    @abstractmethod
     def update(self) -> Awaitable[Entity]:
+        ...
+
+    @abstractmethod
+    def update_many(self) -> Awaitable[List[Entity]]:
         ...
 
     @abstractmethod
@@ -54,6 +62,10 @@ class RepositoryPort(
 
     @abstractmethod
     def delete(self):
+        ...
+
+    @abstractmethod
+    def delete_many(self):
         ...
 
     @abstractmethod
