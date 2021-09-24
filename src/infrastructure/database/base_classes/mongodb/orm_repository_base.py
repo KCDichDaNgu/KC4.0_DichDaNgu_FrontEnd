@@ -13,6 +13,7 @@ from core.exceptions import NotFoundException
 from core.base_classes.entity import BaseEntityProps
 from abc import ABC, abstractmethod
 from typing import Generic, List, TypeVar, Any, Union
+from infrastructure.database.base_classes.mongodb.motor_async_extend import insert_many, delete_many
 
 config: GlobalConfig = get_cnf()
 APP_CONFIG = config.APP_CONFIG
@@ -73,6 +74,23 @@ class OrmRepositoryBase(
         
         return self.mapper_ins.to_domain_entity(orm_entity)
 
+    async def create_many(self, entities: List[Entity]):
+
+        orm_entities = [self.mapper_ins.to_orm_entity(entity) for entity in entities]
+
+        entities_ids = [entity.id for entity in entities]
+
+        for id in entities_ids:
+
+            await DomainEvents.publish_events(id, self.__logger)
+
+        await insert_many(orm_entities)
+
+        self.__logger.debug(f'[Entity persisted]: {type(entities[0]).__name__} {entities_ids}')
+
+        return [self.mapper_ins.to_domain_entity(orm_entity) for orm_entity in orm_entities]
+
+
     async def update(self, entity: Entity, changes: Any, conditions: Dict = {}):
  
         orm_entity = self.mapper_ins.to_orm_entity(entity)
@@ -92,6 +110,10 @@ class OrmRepositoryBase(
         
         return self.mapper_ins.to_domain_entity(orm_entity)
 
+    
+    async def update_many(self, entities: List[Entity], changes: Any, conditions: Dict = {}):
+
+        ...
 
     async def save(self, entity: Entity, update_conditions: Dict = {}):
 
@@ -139,13 +161,13 @@ class OrmRepositoryBase(
         cursor = self.repository.find(params)
 
         if skip:
-            cursor = cursor.skip(limit)
+            cursor = cursor.skip(skip)
 
         if limit:
             cursor = cursor.limit(limit)
 
         if order_by:
-            cursor = cursor.sort(limit)
+            cursor = cursor.sort(order_by)
             
         result = list((await cursor.to_list(length=None))) if not cursor is None else []
         
@@ -188,14 +210,39 @@ class OrmRepositoryBase(
 
     async def delete(self, entity: Any) -> Entity:        
 
-        if not self.verify_entity_and_curr_klass_is_the_same(entity):
-            raise Exception(f'Cannot update entity of {entity.__class__}')
-
         await DomainEvents.publish_events(entity.id.value, self.__logger)
 
-        await self.repository.find(UUID(entity.id.value)).delete()
+        query = {
+            '_id': UUID(entity.id.value)
+        }
+
+        result = await self.repository.find_one(query)
+
+        await result.delete()
 
         self.__logger.debug(f'[Entity deleted]: {entity.id.value}')
 
         return entity.id.value
         
+
+    async def delete_many(self, entities: List[Any]):
+        
+        for entity in entities:
+
+            await DomainEvents.publish_events(entity.id.value, self.__logger)
+
+        query = {
+            '_id': {
+                '$in': [UUID(entity.id.value) for entity in entities]
+            }
+        }
+
+        cursor = self.repository.find(query)
+
+        result = list((await cursor.to_list(length=None))) if not cursor is None else []
+
+        await delete_many(result)
+
+        self.__logger.debug(f'[Entity deleted]: {[UUID(entity.id.value) for entity in entities]}')
+
+        return [UUID(entity.id.value) for entity in entities]
