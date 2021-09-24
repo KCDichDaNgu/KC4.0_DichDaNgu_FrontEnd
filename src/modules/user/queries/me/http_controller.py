@@ -14,7 +14,7 @@ class GetMe(HTTPMethodView):
     def __init__(self) -> None:
         super().__init__()
 
-    # @login_required
+    @login_required
     @doc.summary("test")
     @doc.description("test's description")
     async def get(self, request):

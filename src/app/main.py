@@ -9,8 +9,6 @@ from infrastructure.interceptors.exeption_interceptor import ExceptionIntercepto
 
 from sanic_cors import CORS
 
-from infrastructure.authentication.core import init_auth
-
 import os, aiofiles
 
 async def listener_before_server_start(*args, **kwargs):
@@ -22,10 +20,16 @@ async def listener_after_server_start(*args, **kwargs):
     from infrastructure.database.main import init_mongodb
     from modules.background_tasks.main import init_background_tasks
     from infrastructure.adapters.background_task_manager.main import BackgroundTaskManager
+    from infrastructure.authentication.core import init_auth
 
     config = get_cnf()
 
     init_mongodb(config.MONGODB_DATABASE)
+
+    from infrastructure.authentication.auth_injection import AuthInjection
+    auth_injection = AuthInjection()
+
+    init_auth(config.OAUTH2_PROVIDER, auth_injection)
 
     init_background_tasks(config)
 
@@ -95,7 +99,6 @@ async def init_app():
 
     # await init_kafka(config)
     init_routes(app)
-    init_auth(app, config)
 
     app.error_handler = ExceptionInterceptor()
 
