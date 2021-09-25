@@ -18,7 +18,7 @@ def login_required(async_handler=None, roles=['member']):
         return partial(login_required, roles=roles)
 
     async def wrapped(route, request: Request, **kwargs):
-        token = request.headers.get('Authorization')
+        access_token = request.headers.get('Authorization')
         failed_response = response.json(
             status=403,
             body={
@@ -27,18 +27,21 @@ def login_required(async_handler=None, roles=['member']):
             }
         )
         
-        if token is None:
-            return failed_response
-
-        access_token = await auth_injection.get_token(token)
         if access_token is None:
             return failed_response
 
-        if datetime.now() > access_token.created_at.value + timedelta(seconds=access_token.props.expires_in) or access_token.props.revoked:
+        token = await auth_injection.get_token(access_token)
+        if token is None:
             return failed_response
 
-        user = await auth_injection.get_user(token)
-        print(user.props.role, roles)
+        if datetime.now() > token.updated_at.value + timedelta(seconds=token.props.access_expires_in):
+            return failed_response
+
+        if token.props.revoked:
+            await auth_injection.delete_token(access_token)
+            return failed_response
+
+        user = await auth_injection.get_user(access_token)
         if user.props.role not in roles:
             return failed_response
 

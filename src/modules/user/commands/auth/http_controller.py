@@ -65,16 +65,18 @@ class Auth(HTTPMethodView):
 
             # refresh access token
             if 'refresh_token' in data:
-                return response.json(body={
-                    'code': StatusCodeEnum.success.value,
-                    'data': {
-                        'accessToken': 'test',
-                        'refreshToken': 'test',
-                        'tokenType': 'test',
-                        'scope': 'test'
-                    },
-                    'message': MESSAGES['success']
-                })
+                result = await self.__auth_service.refresh_token(data['refresh_token'])
+                if result:
+                    return response.json(body={
+                        'code': StatusCodeEnum.success.value,
+                        'data': {
+                            'accessToken': result.props.access_token.value,
+                            'refreshToken': result.props.refresh_token.value,
+                            'tokenType': result.props.token_type,
+                            'scope': result.props.scope
+                        },
+                        'message': MESSAGES['success']
+                    })
 
             return response.json(
                 status=400,

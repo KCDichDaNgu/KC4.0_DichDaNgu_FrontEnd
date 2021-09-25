@@ -286,7 +286,8 @@ class GlobalConfig(BaseSettings):
     PUBLIC_LANGUAGE_DETECTION_API: LanguageDetectionAPI
 
     OAUTH2_PROVIDER: Oauth2Provider
-    TOKEN_TTL: int
+    ACCESS_TOKEN_TTL: int
+    REFRESH_TOKEN_TTL: int
 
     class Config:
         """Loads the dotenv file."""

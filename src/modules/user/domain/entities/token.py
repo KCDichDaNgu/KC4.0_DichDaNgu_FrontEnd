@@ -14,7 +14,8 @@ class TokenProps(BaseModel):
     refresh_token: ID = Field()
     scope: list = Field(...)
     platform: Platform = Field(...)
-    expires_in: int = Field(...)
+    access_expires_in: int = Field(...)
+    refresh_expires_in: int = Field(...)
     revoked: bool = Field(...)
 
     class Config:

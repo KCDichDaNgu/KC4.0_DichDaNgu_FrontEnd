@@ -25,7 +25,8 @@ class TokenOrmMapper(OrmMapperBase[TokenEntity, TokenOrmEntity]):
             'access_token': props.access_token.value,
             'refresh_token': props.refresh_token.value,
             'scope': props.scope,
-            'expires_in': props.expires_in,
+            'access_expires_in': props.access_expires_in,
+            'refresh_expires_in': props.refresh_expires_in,
             'platform': props.platform,
             'revoked': props.revoked
         }
@@ -40,7 +41,8 @@ class TokenOrmMapper(OrmMapperBase[TokenEntity, TokenOrmEntity]):
             'access_token': ID(str(orm_entity.access_token)),
             'refresh_token': ID(str(orm_entity.refresh_token)),
             'scope': orm_entity.scope,
-            'expires_in': orm_entity.expires_in,
+            'access_expires_in': orm_entity.access_expires_in,
+            'refresh_expires_in': orm_entity.refresh_expires_in,
             'platform': orm_entity.platform,
             'revoked': orm_entity.revoked
         }

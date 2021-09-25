@@ -16,7 +16,8 @@ class TokenOrmEntity(OrmEntityBase):
     access_token = fields.UUIDField(required=True, unique=True)
     refresh_token = fields.UUIDField(required=True, unique=True)
     scope = fields.ListField(fields.StringField(validate=validate.OneOf(Scope.enum_values())))
-    expires_in = fields.IntegerField(required=True)
+    access_expires_in = fields.IntegerField(required=True)
+    refresh_expires_in = fields.IntegerField(required=True)
     revoked = fields.BooleanField(default=False)
     
     class Meta:
