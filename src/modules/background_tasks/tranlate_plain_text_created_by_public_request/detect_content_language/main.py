@@ -311,6 +311,47 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                                 content=new_saved_content.json()
                             )
                         )
+
+                    elif api_result.lang == task_result_content['target_lang']:
+
+                        new_saved_content = TranslationTask_TranslationClosedResultFileSchemaV1(
+                            source_text=task_result_content['source_text'],
+                            source_lang=api_result.lang,
+                            target_lang=task_result_content['target_lang'],
+                            message=MESSAGES['source_lang_and_target_lang_are_the_same'],
+                            task_name=TranslationTaskNameEnum.public_plain_text_translation.value
+                        )
+
+                        if isinstance(task_result, tuple):
+                            task_result = task_result[0]
+
+                        if isinstance(trans_history, tuple):
+                            trans_history = trans_history[0]
+                    
+                        update_request.append(
+                            translation_request_repository.update(
+                                task, 
+                                dict(
+                                    step_status=StepStatusEnum.closed.value
+                                )
+                            )
+                        )
+                        
+                        update_request.append(
+                            transation_history_repository.update(
+                                trans_history, 
+                                dict(
+                                    status=TranslationHistoryStatus.closed.value
+                                )
+                            )
+                        )
+
+                        update_request.append(
+                            task_result.save_request_result_to_file(
+                                content=new_saved_content.json()
+                            )
+                        )
+
                     else:
                    
                         new_saved_content = TranslationTask_NotYetTranslatedResultFileSchemaV1(
