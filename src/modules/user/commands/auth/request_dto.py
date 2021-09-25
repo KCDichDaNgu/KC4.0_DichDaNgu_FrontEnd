@@ -17,3 +17,4 @@ class AuthUserRequestDto(AuthUser):
         description='Token for getting new access_token of translate system. Note: Ignored when access_token is provided',
         name='refresh_token',
     )
+    

@@ -11,7 +11,7 @@ from sanic_openapi import doc
 from sanic.views import HTTPMethodView
 from modules.user.dtos.auth_user_response import AuthUserResponse
 
-from infrastructure.authentication.core import get_user_from_provider
+from core.middlewares.authentication.core import get_user_from_provider
 
 config: GlobalConfig = get_cnf()
 APP_CONFIG = config.APP_CONFIG

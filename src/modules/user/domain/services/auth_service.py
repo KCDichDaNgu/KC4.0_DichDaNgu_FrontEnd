@@ -6,15 +6,13 @@ from infrastructure.configs.user import UserRole, UserStatus
 from infrastructure.configs.main import get_mongodb_instance, get_cnf, GlobalConfig
 
 from modules.user.database.user.repository import UserRepositoryPort, UserRepository
-from modules.user.database.access_token.repository import AccessTokenRepositoryPort, AccessTokenRepository
-from modules.user.database.deny_token.repository import DenyTokenRepositoryPort, DenyTokenRepository
+from modules.user.database.token.repository import TokenRepositoryPort, TokenRepository
 
 from modules.user.domain.entities.user import UserEntity, UserProps 
-from modules.user.domain.entities.access_token import AccessTokenEntity, AccessTokenProps
-from modules.user.domain.entities.deny_token import DenyTokenEntity, DenyTokenProps
+from modules.user.domain.entities.token import TokenEntity, TokenProps
 
 from modules.user.commands.auth.command import AuthCommand
-from infrastructure.configs.access_token import Scope, TokenType, Platform
+from infrastructure.configs.token import Scope, TokenType, Platform
 
 config: GlobalConfig = get_cnf()
 APP_CONFIG = config.APP_CONFIG
@@ -23,8 +21,7 @@ class AuthDService():
 
     def __init__(self) -> None:
         self.__user_repository: UserRepository = UserRepository()
-        self.__access_token_repository : AccessTokenRepository = AccessTokenRepository()
-        self.__deny_token_repository: DenyTokenRepository = DenyTokenRepository()
+        self.__token_repository : TokenRepository = TokenRepository()
         self.__db_instance = get_mongodb_instance()    
 
     async def create_token(self, command: AuthCommand):
@@ -43,8 +40,8 @@ class AuthDService():
             )
             user = await self.__user_repository.create(new_user)
 
-        access_token = AccessTokenEntity(
-            AccessTokenProps(
+        token = TokenEntity(
+            TokenProps(
                 access_token=ID.generate(),
                 refresh_token=ID.generate(),
                 token_type=TokenType.bearer.value,
@@ -55,5 +52,5 @@ class AuthDService():
                 revoked=False
             )
         )
-        result = await self.__access_token_repository.create(access_token)
+        result = await self.__token_repository.create(token)
         return result

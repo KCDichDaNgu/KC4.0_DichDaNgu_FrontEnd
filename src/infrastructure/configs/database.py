@@ -59,11 +59,8 @@ class MongoDBDatabase(BaseModel):
         "user": {
             "name": "user"
         },
-        "access_token": {
-            "name": "access_token"
-        },
-        "deny_token": {
-            "name": "deny_token"
+        "token": {
+            "name": "token"
         },
         "system_setting": {
             "name": "system_setting"

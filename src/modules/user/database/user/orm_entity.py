@@ -11,6 +11,7 @@ db_instance = get_mongodb_instance()
 @db_instance.register
 @validate_orm_class_name
 class UserOrmEntity(OrmEntityBase):
+    
     username = fields.StringField(required=True)
     first_name = fields.StringField(required=True)
     last_name = fields.StringField(required=False)

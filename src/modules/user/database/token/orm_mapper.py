@@ -2,10 +2,10 @@ from core.value_objects import ID
 from typing import Any, get_args
 from infrastructure.database.base_classes.mongodb.orm_mapper_base import OrmMapperBase
 
-from modules.user.database.access_token.orm_entity import AccessTokenOrmEntity
-from modules.user.domain.entities.access_token import AccessTokenEntity, AccessTokenProps
+from modules.user.database.token.orm_entity import TokenOrmEntity
+from modules.user.domain.entities.token import TokenEntity, TokenProps
 
-class AccessTokenOrmMapper(OrmMapperBase[AccessTokenEntity, AccessTokenOrmEntity]):
+class TokenOrmMapper(OrmMapperBase[TokenEntity, TokenOrmEntity]):
 
     @property
     def entity_klass(self):
@@ -15,7 +15,7 @@ class AccessTokenOrmMapper(OrmMapperBase[AccessTokenEntity, AccessTokenOrmEntity
     def orm_entity_klass(self):
         return get_args(self.__orig_bases__[0])[1]
 
-    def to_orm_props(self, entity: AccessTokenEntity) -> Any:
+    def to_orm_props(self, entity: TokenEntity) -> Any:
         
         props = entity.get_props_copy()
 
@@ -32,7 +32,7 @@ class AccessTokenOrmMapper(OrmMapperBase[AccessTokenEntity, AccessTokenOrmEntity
 
         return orm_props
 
-    def to_domain_props(self, orm_entity: AccessTokenOrmEntity) -> AccessTokenProps:
+    def to_domain_props(self, orm_entity: TokenOrmEntity) -> TokenProps:
         
         props = {
             'user_id': ID(str(orm_entity.user_id)),

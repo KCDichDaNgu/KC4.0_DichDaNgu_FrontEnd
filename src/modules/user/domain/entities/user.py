@@ -11,6 +11,7 @@ from infrastructure.configs.user import (
 )
 
 class UserProps(BaseModel):
+
     username: str = Field(...)
     first_name: str = Field(...)
     last_name: str = Field(...)
@@ -19,7 +20,7 @@ class UserProps(BaseModel):
     role: UserRole = Field(...)
     status: UserStatus = Field(...)
 
-    class Config:
+    class Config: 
         use_enum_values = True
 
 class UserEntity(Entity[UserProps]):

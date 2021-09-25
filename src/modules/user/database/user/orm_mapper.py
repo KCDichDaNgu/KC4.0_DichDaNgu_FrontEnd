@@ -44,3 +44,4 @@ class UserOrmMapper(OrmMapperBase[UserEntity, UserOrmEntity]):
         }
 
         return props
+        

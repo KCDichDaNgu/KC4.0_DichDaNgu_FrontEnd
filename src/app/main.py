@@ -20,13 +20,13 @@ async def listener_after_server_start(*args, **kwargs):
     from infrastructure.database.main import init_mongodb
     from modules.background_tasks.main import init_background_tasks
     from infrastructure.adapters.background_task_manager.main import BackgroundTaskManager
-    from infrastructure.authentication.core import init_auth
+    from core.middlewares.authentication.core import init_auth
 
     config = get_cnf()
 
     init_mongodb(config.MONGODB_DATABASE)
 
-    from infrastructure.authentication.auth_injection import AuthInjection
+    from modules.user.authentication.auth_injection import AuthInjection
     auth_injection = AuthInjection()
 
     init_auth(config.OAUTH2_PROVIDER, auth_injection)

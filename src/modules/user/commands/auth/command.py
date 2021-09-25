@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 
 class AuthCommand(BaseModel):
+
     username: str
     first_name: str
     last_name: str
@@ -9,3 +10,4 @@ class AuthCommand(BaseModel):
     role: str
     status: str
     platform: str
+    

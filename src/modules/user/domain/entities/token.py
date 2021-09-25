@@ -4,9 +4,10 @@ from core.base_classes.entity import BaseEntityProps
 from pydantic.main import BaseModel
 from core.base_classes import Entity
 from core.value_objects import ID
-from infrastructure.configs.access_token import Scope, TokenType, Platform
+from infrastructure.configs.token import Scope, TokenType, Platform
 
-class AccessTokenProps(BaseModel):
+class TokenProps(BaseModel):
+
     user_id: ID = Field()
     token_type: TokenType = Field()
     access_token: ID = Field()
@@ -19,9 +20,9 @@ class AccessTokenProps(BaseModel):
     class Config:
         use_enum_values = True
 
-class AccessTokenEntity(Entity[AccessTokenProps]):
+class TokenEntity(Entity[TokenProps]):
 
-    def __init__(self, props: AccessTokenProps) -> None:
+    def __init__(self, props: TokenProps) -> None:
         super().__init__(props)
 
     @property

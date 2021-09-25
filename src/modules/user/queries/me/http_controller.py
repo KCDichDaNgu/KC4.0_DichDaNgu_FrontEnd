@@ -1,7 +1,7 @@
 from infrastructure.configs.message import MESSAGES
 from sanic import response
 from infrastructure.configs.main import StatusCodeEnum, GlobalConfig, get_cnf
-from infrastructure.authentication.core import login_required
+from core.middlewares.authentication.core import login_required
 
 from sanic_openapi import doc
 from sanic.views import HTTPMethodView
