@@ -1,5 +1,5 @@
 from infrastructure.configs.user import UserRole, UserStatus
-from modules.user.commands.auth.command import AuthCommand
+from modules.user.commands.auth.command import UserCommand
 from sanic.request import Request
 from infrastructure.configs.message import MESSAGES
 
@@ -11,7 +11,7 @@ from sanic_openapi import doc
 from sanic.views import HTTPMethodView
 from modules.user.dtos.auth_user_response import AuthUserResponse
 
-from core.middlewares.authentication.core import get_user_from_provider
+from core.middlewares.authentication.core import get_user_from_provider, create_token, refresh_token
 
 config: GlobalConfig = get_cnf()
 APP_CONFIG = config.APP_CONFIG
@@ -20,8 +20,8 @@ class Auth(HTTPMethodView):
 
     def __init__(self) -> None:
         super().__init__()
-        from modules.user.commands.auth.service import AuthService
-        self.__auth_service = AuthService()
+        from modules.user.commands.auth.service import UserService
+        self.__user_service = UserService()
 
     @doc.summary(APP_CONFIG.ROUTES['user.auth']['summary'])
     @doc.description(APP_CONFIG.ROUTES['user.auth']['desc'])
@@ -41,7 +41,7 @@ class Auth(HTTPMethodView):
                             'message': MESSAGES['failed']
                         }
                     )
-                command = AuthCommand(
+                command = UserCommand(
                     username=user['email'],
                     first_name=user['given_name'],
                     last_name=user['family_name'],
@@ -49,9 +49,10 @@ class Auth(HTTPMethodView):
                     avatar=user['picture'],
                     role=UserRole.member.value,
                     status=UserStatus.active.value,
-                    platform=data['platform']
                 )
-                result = await self.__auth_service.create_token(command)
+                user = await self.__user_service.create_user(command)
+                result = await create_token(user, data['platform'])
+
                 return response.json(body={
                     'code': StatusCodeEnum.success.value,
                     'data': {
@@ -65,7 +66,7 @@ class Auth(HTTPMethodView):
 
             # refresh access token
             if 'refresh_token' in data:
-                result = await self.__auth_service.refresh_token(data['refresh_token'])
+                result = await refresh_token(data['refresh_token'])
                 if result:
                     return response.json(body={
                         'code': StatusCodeEnum.success.value,

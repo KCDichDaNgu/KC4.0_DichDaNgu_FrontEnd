@@ -2,6 +2,7 @@ from sanic import Blueprint
 from infrastructure.configs import GlobalConfig, get_cnf
 from modules.user.queries.me.http_controller import GetMe
 from modules.user.commands.auth.http_controller import Auth
+from modules.user.commands.logout.http_controller import Logout
 
 config: GlobalConfig = get_cnf()
 
@@ -23,3 +24,10 @@ user_bp.add_route(
     uri=APP_CONFIG.ROUTES['user.auth']['path'],
     methods=[APP_CONFIG.ROUTES['user.auth']['method']]
 )
+
+user_bp.add_route(
+    Logout.as_view(), 
+    uri=APP_CONFIG.ROUTES['user.logout']['path'],
+    methods=[APP_CONFIG.ROUTES['user.logout']['method']]
+)
+

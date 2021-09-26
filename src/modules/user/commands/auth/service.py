@@ -1,17 +1,12 @@
-from modules.user.commands.auth.command import AuthCommand
-from modules.user.domain.services.auth_service import AuthDService
+from modules.user.commands.auth.command import UserCommand
+from modules.user.domain.services.user_service import UserDService
 
 
-class AuthService():
+class UserService():
 
     def __init__(self) -> None:
-        
-        self.__authDService = AuthDService()
+        self.__userDService = UserDService()
 
-    async def create_token(self, command: AuthCommand):
+    async def create_user(self, command: UserCommand):
+        return await self.__userDService.create_user(command=command)
 
-        return await self.__authDService.create_token(command=command)
-
-    async def refresh_token(self, refresh_token):
-        
-        return await self.__authDService.refresh_token(refresh_token)

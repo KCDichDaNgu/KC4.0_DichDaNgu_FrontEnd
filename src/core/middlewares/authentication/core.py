@@ -34,11 +34,10 @@ def login_required(async_handler=None, roles=['member']):
         if token is None:
             return failed_response
 
-        if datetime.now() > token.updated_at.value + timedelta(seconds=token.props.access_expires_in):
+        if token.props.revoked:
             return failed_response
 
-        if token.props.revoked:
-            await auth_injection.delete_token(access_token)
+        if datetime.now() > token.updated_at.value + timedelta(seconds=token.props.access_expires_in):
             return failed_response
 
         user = await auth_injection.get_user(access_token)
@@ -50,13 +49,38 @@ def login_required(async_handler=None, roles=['member']):
 
     return wrapped
 
+async def create_token(user, platform):
+    return await auth_injection.create_token(user, platform)
+
+async def refresh_token(refresh_token):
+    return await auth_injection.refresh_token(refresh_token)
+
+async def revoke_token(request):
+    access_token = request.headers.get('Authorization')
+    
+    if access_token is None:
+        return None
+
+    return await auth_injection.revoke_token(access_token)
+
 async def get_me(request):
     access_token = request.headers.get('Authorization')
     
     if access_token is None:
         return None
 
-    user = await auth_injection.get_user(access_token)
+    token = await auth_injection.get_token(access_token)
+
+    if token is None:
+        return None
+
+    if token.props.revoked:
+        return None
+
+    if datetime.now() > token.updated_at.value + timedelta(seconds=token.props.access_expires_in):
+        return None
+
+    user = await auth_injection.get_user(token)
     if user is None:
         return None
 
