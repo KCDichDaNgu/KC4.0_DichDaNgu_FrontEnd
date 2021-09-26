@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from core.middlewares.authentication.user import User
 
 
 class AuthInjectionInterface:
@@ -12,6 +13,6 @@ class AuthInjectionInterface:
         raise NotImplementedError()
 
     @abstractmethod
-    def get_user(self, access_token):
+    def get_user(self, access_token) -> User:
         raise NotImplementedError()
     

@@ -42,12 +42,25 @@ def login_required(async_handler=None, roles=['member']):
             return failed_response
 
         user = await auth_injection.get_user(access_token)
-        if user.props.role not in roles:
+
+        if user.role not in roles:
             return failed_response
 
         return await async_handler(route, request, **kwargs)
 
     return wrapped
+
+async def get_me(request):
+    access_token = request.headers.get('Authorization')
+    
+    if access_token is None:
+        return None
+
+    user = await auth_injection.get_user(access_token)
+    if user is None:
+        return None
+
+    return user
 
 async def get_user_from_provider(provider = "GOOGLE", **kwargs):
     providerAPI = getattr(AUTH_CONFIG, provider)

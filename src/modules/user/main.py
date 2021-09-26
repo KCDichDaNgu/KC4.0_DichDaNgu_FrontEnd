@@ -14,8 +14,8 @@ user_bp = Blueprint(
 
 user_bp.add_route(
     GetMe.as_view(), 
-    uri="/test",
-    methods="GET"
+    uri=APP_CONFIG.ROUTES['user.me']['path'],
+    methods=[APP_CONFIG.ROUTES['user.me']['method']]
 )
 
 user_bp.add_route(
