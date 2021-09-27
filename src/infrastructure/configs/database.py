@@ -59,6 +59,9 @@ class MongoDBDatabase(BaseModel):
         "user": {
             "name": "user"
         },
+        "user_statistic": {
+            "name": "user_statistic"
+        },
         "token": {
             "name": "token"
         },
