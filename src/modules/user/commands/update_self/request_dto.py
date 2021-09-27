@@ -3,11 +3,6 @@ from sanic_openapi import doc
 
 class UpdateUserRequestDto(UpdateUser):
 
-    id: doc.String(
-        description='Id of user to update',
-        name='id'
-    )
-
     first_name: doc.String(
         description='First name of user to update',
         name='first_name'

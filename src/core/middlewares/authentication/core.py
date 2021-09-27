@@ -13,7 +13,7 @@ def init_auth(config, injection: AuthInjectionInterface):
     AUTH_CONFIG = config
     auth_injection = injection
 
-def login_required(async_handler=None, roles=['member']):
+def login_required(async_handler=None, roles=['admin', 'member']):
     if async_handler is None:
         return partial(login_required, roles=roles)
 

@@ -9,9 +9,8 @@ from infrastructure.configs.main import StatusCodeEnum, GlobalConfig, get_cnf
 
 from sanic_openapi import doc
 from sanic.views import HTTPMethodView
-from modules.user.dtos.auth_user_response import AuthUserResponse
 
-from core.middlewares.authentication.core import login_required
+from core.middlewares.authentication.core import login_required, get_me
 
 config: GlobalConfig = get_cnf()
 APP_CONFIG = config.APP_CONFIG
@@ -31,10 +30,17 @@ class UpdateSelf(HTTPMethodView):
     async def put(self, request: Request):
         try:
             data = request.json
-            # create new user
-            
+            me = await get_me(request)
+            if me is None:
+                return response.json(
+                    status=404,
+                    body={
+                        'code': StatusCodeEnum.failed.value,
+                        'message': MESSAGES['failed']
+                    }
+                )
             command = UpdateUserCommand(
-                id=data['id'],
+                id=me.id,
                 first_name=data['first_name'],
                 last_name=data['last_name'],
                 avatar=data['avatar'],
