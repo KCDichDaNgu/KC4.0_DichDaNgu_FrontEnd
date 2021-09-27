@@ -169,6 +169,14 @@ class AppConfig(BaseModel):
             'method': 'GET',
             'abstract': False
         },
+        'user.update_self' : {
+            'path': '/',
+            'name': 'User self updating',
+            'summary': 'Users update their information',
+            'desc': 'Users update their information',
+            'method': 'PUT',
+            'abstract': False
+        },
         "system_setting": {
             'path': '/system-setting',
             'name': 'System setting',

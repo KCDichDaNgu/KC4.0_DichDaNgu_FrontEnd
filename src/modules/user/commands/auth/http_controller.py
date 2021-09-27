@@ -1,5 +1,5 @@
 from infrastructure.configs.user import UserRole, UserStatus
-from modules.user.commands.auth.command import UserCommand
+from modules.user.commands.auth.command import CreateUserCommand
 from sanic.request import Request
 from infrastructure.configs.message import MESSAGES
 
@@ -41,7 +41,7 @@ class Auth(HTTPMethodView):
                             'message': MESSAGES['failed']
                         }
                     )
-                command = UserCommand(
+                command = CreateUserCommand(
                     username=user['email'],
                     first_name=user['given_name'],
                     last_name=user['family_name'],

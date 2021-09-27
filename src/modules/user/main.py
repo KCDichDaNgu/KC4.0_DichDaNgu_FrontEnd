@@ -3,6 +3,7 @@ from infrastructure.configs import GlobalConfig, get_cnf
 from modules.user.queries.me.http_controller import GetMe
 from modules.user.commands.auth.http_controller import Auth
 from modules.user.commands.logout.http_controller import Logout
+from modules.user.commands.update_self.http_controller import UpdateSelf
 
 config: GlobalConfig = get_cnf()
 
@@ -31,3 +32,8 @@ user_bp.add_route(
     methods=[APP_CONFIG.ROUTES['user.logout']['method']]
 )
 
+user_bp.add_route(
+    UpdateSelf.as_view(), 
+    uri=APP_CONFIG.ROUTES['user.update_self']['path'],
+    methods=[APP_CONFIG.ROUTES['user.update_self']['method']]
+)

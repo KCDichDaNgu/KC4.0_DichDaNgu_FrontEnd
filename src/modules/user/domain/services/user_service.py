@@ -1,7 +1,9 @@
+from uuid import UUID
+from modules.user.commands.update_self.command import UpdateUserCommand
 from core.value_objects.id import ID
 from modules.user.database.user.repository import UserRepositoryPort, UserRepository
 from modules.user.domain.entities.user import UserEntity, UserProps 
-from modules.user.commands.auth.command import UserCommand
+from modules.user.commands.auth.command import CreateUserCommand
 
 from modules.user.database.user_statistic.repository import UserStatisticRepositoryPort, UserStatisticRepository
 from modules.user.domain.entities.user_statistic import UserStatisticEntity, UserStatisticProps 
@@ -15,11 +17,12 @@ class UserDService():
         self.__user_statistic_repository: UserStatisticRepositoryPort = UserStatisticRepository()
         self.__db_instance = get_mongodb_instance()
 
-    async def create_user(self, command: UserCommand):
-        user = await self.__user_repository.find_one({'email': command.email})
-        if user is None:
-            async with self.__db_instance.session() as session:
-                async with session.start_transaction():
+    async def create_user(self, command: CreateUserCommand):
+        async with self.__db_instance.session() as session:
+             async with session.start_transaction():
+                user = await self.__user_repository.find_one({'email': command.email})
+                if user is None:
+            
                     new_user = UserEntity(
                         UserProps(
                             username=command.username,
@@ -40,8 +43,25 @@ class UserDService():
                             total_translated_doc={}
                         )
                     )
-                    user_statistic = await self.__user_statistic_repository.create(new_user_statistic)
-                    print(user_statistic)
+                    await self.__user_statistic_repository.create(new_user_statistic)
 
-                    return user
+                return user
+
+    async def update_user(self, command: UpdateUserCommand):
+        async with self.__db_instance.session() as session:
+            async with session.start_transaction():
+                user = await self.__user_repository.find_one({'id': UUID(command.id)})
+                if user is None:
+                    return None
+
+                updated_user = await self.__user_repository.update(
+                    user, 
+                    {
+                        'first_name': command.first_name,
+                        'last_name': command.last_name,
+                        'avatar': command.avatar
+                    }
+                )
+
+                return updated_user
 

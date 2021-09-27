@@ -40,7 +40,7 @@ def login_required(async_handler=None, roles=['member']):
         if datetime.now() > token.updated_at.value + timedelta(seconds=token.props.access_expires_in):
             return failed_response
 
-        user = await auth_injection.get_user(access_token)
+        user = await auth_injection.get_user(token)
 
         if user.role not in roles:
             return failed_response

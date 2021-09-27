@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-class UserCommand(BaseModel):
+class CreateUserCommand(BaseModel):
 
     username: str
     first_name: str
