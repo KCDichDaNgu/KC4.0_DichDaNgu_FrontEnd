@@ -20,10 +20,16 @@ async def listener_after_server_start(*args, **kwargs):
     from infrastructure.database.main import init_mongodb
     from modules.background_tasks.main import init_background_tasks
     from infrastructure.adapters.background_task_manager.main import BackgroundTaskManager
+    from core.middlewares.authentication.core import init_auth
 
     config = get_cnf()
 
     init_mongodb(config.MONGODB_DATABASE)
+
+    from modules.user.authentication.auth_injection import AuthInjection
+    auth_injection = AuthInjection()
+
+    init_auth(config.OAUTH2_PROVIDER, auth_injection)
 
     init_background_tasks(config)
 
@@ -51,6 +57,8 @@ def init_routes(app: Sanic) -> Sanic:
 
     from modules.static_files_server.main import static_files_server_bp
 
+    from modules.user.main import user_bp
+
     app.blueprint(swagger_blueprint)
 
     app.blueprint(translation_request_bp)
@@ -60,6 +68,7 @@ def init_routes(app: Sanic) -> Sanic:
     app.blueprint(language_detection_history_bp)
 
     app.blueprint(static_files_server_bp)
+    app.blueprint(user_bp)
     app.blueprint(system_setting_bp)
     
     return app

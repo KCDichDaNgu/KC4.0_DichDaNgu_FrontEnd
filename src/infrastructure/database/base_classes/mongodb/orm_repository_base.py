@@ -1,3 +1,4 @@
+from datetime import datetime
 from infrastructure.configs.main import GlobalConfig, get_cnf
 from uuid import UUID
 from infrastructure.database.base_classes.mongodb import OrmMapperBase, OrmEntityBase
@@ -99,6 +100,7 @@ class OrmRepositoryBase(
 
         orm_entity.is_created = True
         
+        changes['updated_at'] = datetime.now()
         orm_entity.update(changes)
 
         if conditions:
