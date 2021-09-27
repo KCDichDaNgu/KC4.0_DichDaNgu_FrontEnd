@@ -177,6 +177,14 @@ class AppConfig(BaseModel):
             'method': 'PUT',
             'abstract': False
         },
+        'user.update_other' : {
+            'path': '/other',
+            'name': 'Updating other user',
+            'summary': 'Users update other information',
+            'desc': 'Users update other information',
+            'method': 'PUT',
+            'abstract': False
+        },
         "system_setting": {
             'path': '/system-setting',
             'name': 'System setting',

@@ -1,5 +1,4 @@
 from uuid import UUID
-from modules.user.commands.update_self.command import UpdateUserCommand
 from core.value_objects.id import ID
 from modules.user.database.user.repository import UserRepositoryPort, UserRepository
 from modules.user.domain.entities.user import UserEntity, UserProps 
@@ -47,21 +46,15 @@ class UserDService():
 
                 return user
 
-    async def update_user(self, command: UpdateUserCommand):
+    async def update_user(self, command):
         async with self.__db_instance.session() as session:
             async with session.start_transaction():
                 user = await self.__user_repository.find_one({'id': UUID(command.id)})
                 if user is None:
                     return None
-
-                updated_user = await self.__user_repository.update(
-                    user, 
-                    {
-                        'first_name': command.first_name,
-                        'last_name': command.last_name,
-                        'avatar': command.avatar
-                    }
-                )
+                changes = dict(command)
+                del changes["id"]
+                updated_user = await self.__user_repository.update(user, changes)
 
                 return updated_user
 

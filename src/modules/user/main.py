@@ -4,6 +4,7 @@ from modules.user.queries.me.http_controller import GetMe
 from modules.user.commands.auth.http_controller import Auth
 from modules.user.commands.logout.http_controller import Logout
 from modules.user.commands.update_self.http_controller import UpdateSelf
+from modules.user.commands.update_other.http_controller import UpdateOther
 
 config: GlobalConfig = get_cnf()
 
@@ -36,4 +37,10 @@ user_bp.add_route(
     UpdateSelf.as_view(), 
     uri=APP_CONFIG.ROUTES['user.update_self']['path'],
     methods=[APP_CONFIG.ROUTES['user.update_self']['method']]
+)
+
+user_bp.add_route(
+    UpdateOther.as_view(), 
+    uri=APP_CONFIG.ROUTES['user.update_other']['path'],
+    methods=[APP_CONFIG.ROUTES['user.update_other']['method']]
 )
