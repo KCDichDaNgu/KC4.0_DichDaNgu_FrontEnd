@@ -169,6 +169,30 @@ class AppConfig(BaseModel):
             'method': 'GET',
             'abstract': False
         },
+        'user.update_self' : {
+            'path': '/',
+            'name': 'User self updating',
+            'summary': 'Users update their information',
+            'desc': 'Users update their information',
+            'method': 'PUT',
+            'abstract': False
+        },
+        'user.update_other' : {
+            'path': '/other',
+            'name': 'Updating other user',
+            'summary': 'Users update other information',
+            'desc': 'Users update other information',
+            'method': 'PUT',
+            'abstract': False
+        },
+        'user.get_list' : {
+            'path': '/search',
+            'name': 'Seaching user',
+            'summary': 'Get users by conditions',
+            'desc': 'Get users by conditions',
+            'method': 'GET',
+            'abstract': False
+        },
         "system_setting": {
             'path': '/system-setting',
             'name': 'System setting',

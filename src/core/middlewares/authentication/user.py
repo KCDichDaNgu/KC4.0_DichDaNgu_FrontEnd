@@ -2,7 +2,7 @@ import datetime
 
 class User:
     id: str
-    user_name: str
+    username: str
     first_name: str
     last_name: str
     avatar: str
@@ -12,9 +12,9 @@ class User:
     created_at: datetime
     updated_at: datetime
 
-    def __init__(self, id, user_name, first_name, last_name, avatar, email, role, status, created_at, updated_at):
+    def __init__(self, id, username, first_name, last_name, avatar, email, role, status, created_at, updated_at):
         self.id = id
-        self.user_name = user_name
+        self.username = username
         self.first_name = first_name
         self.last_name = last_name
         self.avatar = avatar
@@ -27,7 +27,7 @@ class User:
     def toJson(self):
         return {
             "id": self.id,
-            "user_name": self.user_name,
+            "user_name": self.username,
             "first_name": self.first_name,
             "last_name": self.last_name,
             "avatar": self.avatar,
