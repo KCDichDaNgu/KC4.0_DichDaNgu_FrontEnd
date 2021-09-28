@@ -1,4 +1,3 @@
-from infrastructure.configs.task import LanguageDetectionTaskNameEnum
 from interface_adapters.base_classes.response import ResponseBase
 from sanic_openapi import doc
 

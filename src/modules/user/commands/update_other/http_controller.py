@@ -25,6 +25,12 @@ class UpdateOther(HTTPMethodView):
 
     @doc.summary(APP_CONFIG.ROUTES['user.update_other']['summary'])
     @doc.description(APP_CONFIG.ROUTES['user.update_other']['desc'])
+    @doc.consumes(
+        doc.String(
+            description="Access token",
+            name='Authorization'
+        ),
+        location='header')
     @doc.consumes(UpdateOtherUserRequestDto, location="body", required=True)
     @doc.produces(ResponseBase)
     @login_required(roles=[UserRole.admin.value])

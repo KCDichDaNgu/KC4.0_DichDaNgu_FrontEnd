@@ -15,6 +15,12 @@ class Logout(HTTPMethodView):
 
     @doc.summary(APP_CONFIG.ROUTES['user.logout']['summary'])
     @doc.description(APP_CONFIG.ROUTES['user.logout']['desc'])
+    @doc.consumes(
+        doc.String(
+            description="Access token",
+            name='Authorization'
+        ),
+        location='header')
     async def post(self, request: Request):
         result = await revoke_token(request)
         if result is None:

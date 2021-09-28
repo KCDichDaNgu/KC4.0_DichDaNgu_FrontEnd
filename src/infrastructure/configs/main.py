@@ -185,6 +185,14 @@ class AppConfig(BaseModel):
             'method': 'PUT',
             'abstract': False
         },
+        'user.get_list' : {
+            'path': '/search',
+            'name': 'Seaching user',
+            'summary': 'Get users by conditions',
+            'desc': 'Get users by conditions',
+            'method': 'GET',
+            'abstract': False
+        },
         "system_setting": {
             'path': '/system-setting',
             'name': 'System setting',

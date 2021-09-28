@@ -80,7 +80,7 @@ class AuthInjection(AuthInjectionInterface):
                 return None
             return User(
                 id=user_entity.id.value,
-                user_name=user_entity.props.username,
+                username=user_entity.props.username,
                 first_name=user_entity.props.first_name,
                 last_name=user_entity.props.last_name,
                 avatar=user_entity.props.avatar,

@@ -17,6 +17,12 @@ class GetMe(HTTPMethodView):
 
     @doc.summary(APP_CONFIG.ROUTES['user.me']['summary'])
     @doc.description(APP_CONFIG.ROUTES['user.me']['desc'])
+    @doc.consumes(
+        doc.String(
+            description="Access token",
+            name='Authorization'
+        ),
+        location='header')
     async def get(self, request):
         user = await get_me(request)
         if user is None:
@@ -30,7 +36,18 @@ class GetMe(HTTPMethodView):
         return response.json(
             body={
                 'code': StatusCodeEnum.success.value,
-                'data': user.toJson(),
+                'data': {
+                    'id': user.id,
+                    'username': user.username,
+                    'firstName': user.first_name,
+                    'lastName': user.last_name,
+                    'avatar': user.avatar,
+                    'email': user.email,
+                    'role': user.role,
+                    'status': user.status,
+                    'createdAt': user.created_at,
+                    'updatedAt': user.updated_at
+                },
                 'message': MESSAGES['success']
             }
         )

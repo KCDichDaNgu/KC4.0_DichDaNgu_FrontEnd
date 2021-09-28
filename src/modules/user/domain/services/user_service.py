@@ -57,4 +57,3 @@ class UserDService():
                 updated_user = await self.__user_repository.update(user, changes)
 
                 return updated_user
-

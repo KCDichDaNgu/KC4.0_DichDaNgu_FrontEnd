@@ -24,6 +24,12 @@ class UpdateSelf(HTTPMethodView):
 
     @doc.summary(APP_CONFIG.ROUTES['user.update_self']['summary'])
     @doc.description(APP_CONFIG.ROUTES['user.update_self']['desc'])
+    @doc.consumes(
+        doc.String(
+            description="Access token",
+            name='Authorization'
+        ),
+        location='header')
     @doc.consumes(UpdateUserRequestDto, location="body", required=True)
     @doc.produces(ResponseBase)
     @login_required
