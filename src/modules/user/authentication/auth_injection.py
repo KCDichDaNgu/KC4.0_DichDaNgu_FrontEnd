@@ -87,8 +87,8 @@ class AuthInjection(AuthInjectionInterface):
                 email=user_entity.props.email,
                 role=user_entity.props.role,
                 status=user_entity.props.status,
-                created_at=user_entity.created_at.value,
-                updated_at=user_entity.updated_at.value
+                created_at=str(user_entity.created_at.value),
+                updated_at=str(user_entity.updated_at.value)
             )
         except Exception:
             return None
