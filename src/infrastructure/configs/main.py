@@ -282,6 +282,7 @@ class LanguageDetectionAPI(BaseModel):
 class Pagination(BaseModel):
 
     MAX_PER_PAGE = 10
+    DEFAULT_PAGE = 1
     DEFAULT_PER_PAGE = 5
 
 class Oauth2ProviderAPI(BaseModel):
