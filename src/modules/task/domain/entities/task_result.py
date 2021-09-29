@@ -1,7 +1,7 @@
 from time import time
 from pydantic import Field
 from pydantic.class_validators import root_validator, validator
-from typing import Any, Optional, Union
+from typing import Any, Optional, Union, get_args
 
 from pydantic.fields import PrivateAttr
 from core.base_classes.entity import Entity
@@ -24,6 +24,12 @@ class TaskResultProps(BaseModel):
     file_path: Optional[str]
 
 class TaskResultEntity(Entity[TaskResultProps]):
+    
+    @property
+    def props_klass(self):
+        return get_args(self.__orig_bases__[0])[0]
+
+    pass
 
     async def save_request_result_to_file(self, content):
 

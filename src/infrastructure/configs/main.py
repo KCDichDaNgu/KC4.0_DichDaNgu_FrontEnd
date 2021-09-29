@@ -254,6 +254,14 @@ class AppConfig(BaseModel):
                 seconds=3,
                 max_instances=1
             )
+        ),
+        'delete_invalid_file': BackgroundTask(
+            ID='delete_invalid_file',
+            TRIGGER=BackgroundTaskTriggerEnum.interval.value,
+            CONFIG=dict(
+                seconds=3,
+                max_instances=1
+            )
         )
     }
 
@@ -270,6 +278,11 @@ class LanguageDetectionAPI(BaseModel):
     URL: AnyHttpUrl = Field(...)
     METHOD: str = Field(...)
     ALLOWED_CONCURRENT_REQUEST: int = Field(...)
+    
+class Pagination(BaseModel):
+
+    MAX_PER_PAGE = 10
+    DEFAULT_PER_PAGE = 5
 
 class Oauth2ProviderAPI(BaseModel):
     NAME: str = Field(...)
@@ -312,6 +325,7 @@ class GlobalConfig(BaseSettings):
     OAUTH2_PROVIDER: Oauth2Provider
     ACCESS_TOKEN_TTL: int
     REFRESH_TOKEN_TTL: int
+    PAGINATION: Pagination = Pagination()
 
     class Config:
         """Loads the dotenv file."""

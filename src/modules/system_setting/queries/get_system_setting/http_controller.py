@@ -1,3 +1,4 @@
+from modules.system_setting.dtos.system_setting_response import SystemSettingResponse
 from infrastructure.configs.message import MESSAGES
 from interface_adapters.dtos.base_response import BaseResponse
 from sanic_openapi import doc
@@ -18,6 +19,7 @@ class GetSystemSetting(HTTPMethodView):
 
     @doc.summary(APP_CONFIG.ROUTES['system_setting.get']['summary'])
     @doc.description(APP_CONFIG.ROUTES['system_setting.get']['desc'])
+    @doc.produces(SystemSettingResponse)
     
     async def get(self, request):
         saved_setting = await self.__system_setting_repository.find_one({})

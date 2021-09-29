@@ -21,16 +21,16 @@ class TaskRepository(
 ):
 
     @property
-    @abstractmethod
+    # @abstractmethod
     def entity_klass(self):
         return get_args(self.__orig_bases__[0])[0]
 
     @property
-    @abstractmethod
+    # @abstractmethod
     def repository(self):
         return get_args(self.__orig_bases__[0])[2]
 
     @property
-    @abstractmethod
+    # @abstractmethod
     def mapper(self):
         return get_args(self.__orig_bases__[0])[3]

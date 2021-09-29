@@ -1,6 +1,6 @@
 from infrastructure.configs.language_detection_task import LanguageDetectionTaskNameEnum
 from pydantic.class_validators import root_validator
-from typing import Union
+from typing import Union, get_args
 from pydantic import Field, BaseModel
 from infrastructure.configs.task import (
     TranslationTaskNameEnum, 
@@ -35,5 +35,9 @@ class TaskProps(BaseModel):
         return values
 
 class TaskEntity(AggregateRoot[TaskProps]):
+    
+    @property
+    def props_klass(self):
+        return get_args(self.__orig_bases__[0])[0]
 
     pass

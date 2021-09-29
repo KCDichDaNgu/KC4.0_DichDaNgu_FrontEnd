@@ -17,6 +17,7 @@ from core.exceptions import NotFoundException
  
 config: GlobalConfig = get_cnf()
 APP_CONFIG = config.APP_CONFIG
+PAGINATION_CONFIG = config.PAGINATION
  
  
 class GetManyTranslationHistory(HTTPMethodView):
@@ -83,8 +84,8 @@ class GetManyTranslationHistory(HTTPMethodView):
         order_by = request.args.get('orderBy')
 
         pagination = {
-            'page': 0,
-            'per_page': 0
+            'page': PAGINATION_CONFIG.DEFAULT_PAGE,
+            'per_page': PAGINATION_CONFIG.DEFAULT_PER_PAGE
         }
  
         query = {}
@@ -99,10 +100,10 @@ class GetManyTranslationHistory(HTTPMethodView):
             query['translation_type'] = translation_type
 
         if not page is None:
-            pagination['page'] = int(page)
+            pagination['page'] = abs(int(page))
 
         if not per_page is None:
-            pagination['per_page'] = int(per_page)
+            pagination['per_page'] = abs(int(per_page))
  
         query_result = await self.__translation_history_repository.find_many_paginated(
             query,
