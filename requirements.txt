@@ -15,3 +15,4 @@ aiofiles
 apscheduler
 umongo
 sanic-cors
+numpy
