@@ -1,17 +1,21 @@
-from core.value_objects.id import ID
-from modules.system_setting.domain.entities.system_setting import SystemSettingEntity, SystemSettingProps
-from modules.system_setting.commands.update_system_setting.command import UpdateSystemSettingCommand
 from infrastructure.configs.main import get_mongodb_instance
+from modules.system_setting.commands.update_system_setting.command import UpdateSystemSettingCommand
 
-class UpdateSystemSettingService():
+class SystemSettingDService():
+
     def __init__(self) -> None:
-
-        from modules.system_setting.database.repository import SystemSettingRepositoryPort, SystemSettingRepository
-
-        self.__db_instance = get_mongodb_instance()
+        from modules.system_setting.database.repository import SystemSettingRepository, SystemSettingRepositoryPort
         self.__system_setting_repository: SystemSettingRepositoryPort = SystemSettingRepository()
+        self.__db_instance = get_mongodb_instance()
+    
+    async def get(self):
+        async with self.__db_instance.session() as session:
+            async with session.start_transaction():
+                system_setting = await self.__system_setting_repository.find_one({})
+                
+                return system_setting
 
-    async def update_system_setting(self, command: UpdateSystemSettingCommand):
+    async def update(self, command: UpdateSystemSettingCommand):
         async with self.__db_instance.session() as session:
             async with session.start_transaction():
                 

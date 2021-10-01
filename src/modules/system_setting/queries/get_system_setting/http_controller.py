@@ -13,16 +13,15 @@ class GetSystemSetting(HTTPMethodView):
 
     def __init__(self) -> None:
 
-        from modules.system_setting.database.repository import SystemSettingRepository, SystemSettingRepositoryPort
-
-        self.__system_setting_repository: SystemSettingRepositoryPort = SystemSettingRepository()
+        from modules.system_setting.domain.service.system_setting_service import SystemSettingDService
+        self.__system_setting_service = SystemSettingDService()
 
     @doc.summary(APP_CONFIG.ROUTES['system_setting.get']['summary'])
     @doc.description(APP_CONFIG.ROUTES['system_setting.get']['desc'])
     @doc.produces(SystemSettingResponse)
     
     async def get(self, request):
-        saved_setting = await self.__system_setting_repository.find_one({})
+        saved_setting = await self.__system_setting_service.get()
         
         return response.json(BaseResponse(**{
             'code': StatusCodeEnum.success.value,
