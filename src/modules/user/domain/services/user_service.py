@@ -57,3 +57,29 @@ class UserDService():
                 updated_user = await self.__user_repository.update(user, changes)
 
                 return updated_user
+    
+    async def get_user_statistic(self,user_id):
+        async with self.__db_instance.session() as session:
+            async with session.start_transaction():
+                user = await self.__user_statistic_repository.find_one({'user_id': UUID(user_id)})
+                
+                if user is None:
+                    return None
+
+                return user
+
+    async def update_user_statistic(self,command):
+        async with self.__db_instance.session() as session:
+            async with session.start_transaction():
+                user = await self.__user_statistic_repository.find_one({'user_id': UUID(command.user_id)})
+                
+                if user is None:
+                    return None
+
+                changes = dict(command)
+
+                del changes["user_id"]
+
+                updated_user_statistic = await self.__user_statistic_repository.update(user, changes)
+
+                return updated_user_statistic

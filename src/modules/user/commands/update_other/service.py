@@ -5,7 +5,7 @@ from modules.user.domain.services.user_service import UserDService
 class UserService():
 
     def __init__(self) -> None:
-        self.__userDService = UserDService()
+        self.__user_domain_service = UserDService()
 
     async def update_user(self, command: UpdateOtherUserCommand):
-        return await self.__userDService.update_user(command=command)
+        return await self.__user_domain_service.update_user(command=command)

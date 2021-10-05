@@ -1,4 +1,3 @@
-from modules.system_setting.commands.update_system_setting.service import UpdateSystemSettingService
 from modules.system_setting.dtos.system_setting_response import SystemSettingResponse
 from sanic import response
 from modules.system_setting.commands.update_system_setting.command import UpdateSystemSettingCommand
@@ -9,7 +8,6 @@ from interface_adapters.dtos.base_response import BaseResponse
 
 from sanic_openapi import doc
 from sanic.views import HTTPMethodView
-import json
 
 config: GlobalConfig = get_cnf()
 APP_CONFIG = config.APP_CONFIG
@@ -21,8 +19,10 @@ class UpdateSystemSetting(HTTPMethodView):
 
     def __init__(self) -> None:
         super().__init__()
+        
+        from modules.system_setting.domain.service.system_setting_service import SystemSettingDService
 
-        self.__system_setting_service = UpdateSystemSettingService()
+        self.__system_setting_service = SystemSettingDService()
 
     @doc.summary(APP_CONFIG.ROUTES['system_setting.update']['summary'])
     @doc.description(APP_CONFIG.ROUTES['system_setting.update']['desc'])
