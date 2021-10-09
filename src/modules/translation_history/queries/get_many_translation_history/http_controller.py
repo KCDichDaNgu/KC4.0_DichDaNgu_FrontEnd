@@ -11,7 +11,7 @@ from sanic_openapi import doc
 from sanic.views import HTTPMethodView
 from modules.translation_history.dtos.translation_history_response import ManyTranslationHistoryResponse
 import json
-from core.utils.file import get_task_result_full_file_path
+from core.utils.file import get_full_path
  
 from core.exceptions import NotFoundException
  
@@ -121,7 +121,7 @@ class GetManyTranslationHistory(HTTPMethodView):
                 'status': item.props.status,
                 'updatedAt': str(item.updated_at.value),
                 'createdAt': str(item.created_at.value),
-                'resultUrl': get_task_result_full_file_path(item.props.file_path)
+                'resultUrl': get_full_path(item.props.file_path)
             }, translation_history)
         )
  

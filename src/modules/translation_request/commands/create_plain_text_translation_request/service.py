@@ -7,8 +7,8 @@ class CreatePlainTextTranslationRequestService():
 
     def __init__(self) -> None:
         
-        self.__translationRequestDService = TranslationRequestDService()
+        self.__translation_request_d_service = TranslationRequestDService()
 
     async def create_request(self, command: CreatePlainTextTranslationRequestCommand):
 
-        return await self.__translationRequestDService.create(command=command)
+        return await self.__translation_request_d_service.create(command=command)

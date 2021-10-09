@@ -8,14 +8,14 @@ import numpy as np
 
 from infrastructure.configs.main import GlobalConfig, get_cnf, get_mongodb_instance
 from modules.task.database.task_result.repository import TasktResultRepository
-from core.utils.file import delete_files, get_task_result_full_file_path
+from core.utils.file import delete_files, get_full_path
 from infrastructure.adapters.logger import Logger
-from infrastructure.configs.task import TASK_EXPIRATION_TIME
+from infrastructure.configs.task import TASK_EXPIRATION_TIME, get_task_result_file_path
 
 
 config: GlobalConfig = get_cnf()
 db_instance = get_mongodb_instance()
-static_folder_dir = get_task_result_full_file_path('')
+static_folder_dir = get_full_path('')
 
 task_result_repository = TasktResultRepository()
 
@@ -30,7 +30,7 @@ async def main():
         msg=f'New task delete_invalid_file run in {datetime.now()}'
     )
 
-    print(f'New task delete_invalid_file  run in {datetime.now()}')
+    print(f'New task delete_invalid_file run in {datetime.now()}')
 
     try:
 
@@ -56,7 +56,9 @@ async def main():
 
             invalid_file_paths = np.setxor1d(to_be_check_file_paths, task_results_file_paths)
 
-            await delete_files(invalid_file_paths)
+            task_results_full_file_path = list(map(lambda f_path: get_task_result_file_path(f_path), invalid_file_paths))
+
+            await delete_files(task_results_full_file_path)
 
         logger.debug(
             msg=f'An task delete_invalid_file end in {datetime.now()}\n')
@@ -75,4 +77,4 @@ async def main():
 
 def get_file_created_time(file):
 
-    return datetime.utcfromtimestamp(getctime(get_task_result_full_file_path(file)))
+    return datetime.utcfromtimestamp(getctime(get_full_path(file)))

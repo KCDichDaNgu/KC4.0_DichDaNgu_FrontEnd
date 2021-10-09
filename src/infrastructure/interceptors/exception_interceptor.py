@@ -16,8 +16,10 @@ class ExceptionInterceptor(ErrorHandler):
         
         if isinstance(exception, DomainException):
             raise Forbidden()
+            
         if isinstance(exception, NotFoundException):
             raise NotFound()
+
         if isinstance(exception, ConfictException):
             raise SanicConflictException()
 
