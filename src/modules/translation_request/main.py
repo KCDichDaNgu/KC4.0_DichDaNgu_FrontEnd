@@ -1,6 +1,7 @@
 from sanic import Blueprint
 from infrastructure.configs import GlobalConfig, get_cnf
 from modules.translation_request.commands.create_plain_text_translation_request.http_controller import CreatePlainTextTranslationRequest
+from modules.translation_request.commands.create_file_translation_request.http_controller import CreateFileTranslationRequest
 
 config: GlobalConfig = get_cnf()
 
@@ -15,4 +16,10 @@ translation_request_bp.add_route(
     CreatePlainTextTranslationRequest.as_view(), 
     uri=APP_CONFIG.ROUTES['translation_request.text_translation.create']['path'],
     methods=[APP_CONFIG.ROUTES['translation_request.text_translation.create']['method']]
+)
+
+translation_request_bp.add_route(
+    CreateFileTranslationRequest.as_view(), 
+    uri=APP_CONFIG.ROUTES['translation_request.doc_translation.create']['path'],
+    methods=[APP_CONFIG.ROUTES['translation_request.doc_translation.create']['method']]
 )
