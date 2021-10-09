@@ -8,7 +8,12 @@ TASK_RESULT_FOLDER = 'task_result'
 TASK_RESULT_FILE_PATTERN = '{}__{}.{}'
 TASK_RESULT_FILE_EXTENSION = 'json'
 
-def gen_task_result_file_path(created_at, task_id, file_extension):
+
+def get_task_result_file_path(file_name):
+
+    return f'{TASK_RESULT_FOLDER}/{file_name}'
+
+def get_task_result_file_name(created_at, task_id, file_extension):
 
     return TASK_RESULT_FILE_PATTERN.format(
         created_at, 

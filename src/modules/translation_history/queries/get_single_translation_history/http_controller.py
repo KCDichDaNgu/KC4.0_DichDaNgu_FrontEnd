@@ -2,17 +2,17 @@ from interface_adapters.dtos.base_response import BaseResponse
 from uuid import UUID
 from modules.translation_request.domain.entities.translation_history import TranslationHistoryEntity
 from sanic.exceptions import SanicException
-from infrastructure.configs.task import TRANSLATION_PUBLIC_TASKS
+from infrastructure.configs.task import TRANSLATION_PUBLIC_TASKS, get_task_result_file_path
 from infrastructure.configs.message import MESSAGES
 from sanic import response
-from modules.translation_history.queries.get_single_translation_history.request_dto import GetSingleTranslationHistoryRequestDto
 from infrastructure.configs.main import StatusCodeEnum, GlobalConfig, get_cnf
 
 from sanic_openapi import doc
 from sanic.views import HTTPMethodView
+
 from modules.translation_history.dtos.translation_history_response import SingleTranslationHistoryResponse
 
-from core.utils.file import get_task_result_full_file_path
+from core.utils.file import get_full_path
 
 from core.exceptions import NotFoundException
 
@@ -79,7 +79,7 @@ class GetSingleTranslationHistory(HTTPMethodView):
                 'status': translation_history.props.status,
                 'updatedAt': str(translation_history.updated_at.value),
                 'createdAt': str(translation_history.created_at.value),
-                'resultUrl': get_task_result_full_file_path(translation_history.props.file_path)
+                'resultUrl': translation_history.props.real_file_path
             },
             'message': MESSAGES['success']
         }).dict())

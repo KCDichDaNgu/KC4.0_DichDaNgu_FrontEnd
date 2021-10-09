@@ -1,17 +1,19 @@
 from pydantic.class_validators import root_validator
-from typing import Union
+from typing import Union, IO
 from pydantic import Field
-from infrastructure.configs.task import (
-    TranslationTaskStepEnum, 
-    TranslationTaskNameEnum,
-    TRANSLATION_PRIVATE_TASKS
-)
 
 from core.base_classes.aggregate_root import AggregateRoot
 
 from modules.task.domain.entities.task import TaskEntity, TaskProps
 
 from typing import get_args
+
+
+from infrastructure.configs.task import (
+    TranslationTaskStepEnum, 
+    TranslationTaskNameEnum,
+    TRANSLATION_PRIVATE_TASKS,
+)
 
 class TranslationRequestProps(TaskProps):
 

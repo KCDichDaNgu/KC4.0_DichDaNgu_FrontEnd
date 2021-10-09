@@ -13,6 +13,9 @@ from infrastructure.configs.translation_history import TranslationHistoryTypeEnu
 
 from typing import get_args
 
+from core.utils.file import get_full_path
+from infrastructure.configs.task import get_task_result_file_path
+
 class TranslationHistoryProps(BaseModel):
     
     creator_id: ID
@@ -24,6 +27,11 @@ class TranslationHistoryProps(BaseModel):
     class Config:
         use_enum_values = True
 
+    @property
+    def real_file_path(self):
+
+        return get_full_path(get_task_result_file_path(self.file_path))
+        
 class TranslationHistoryEntity(Entity[TranslationHistoryProps]):
 
     @property

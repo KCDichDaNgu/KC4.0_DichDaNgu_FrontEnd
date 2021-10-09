@@ -14,5 +14,7 @@ schedule
 aiofiles
 apscheduler
 umongo
+umongo[mopyttor]
 sanic-cors
 numpy
+python-docx

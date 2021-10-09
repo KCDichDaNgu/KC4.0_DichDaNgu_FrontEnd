@@ -14,6 +14,9 @@ from typing import get_args
 import aiofiles
 import json, os
 
+from core.utils.file import get_full_path
+from infrastructure.configs.task import get_task_result_file_path
+
 class LanguageDetectionHistoryProps(BaseModel):
     
     creator_id: ID
@@ -24,6 +27,11 @@ class LanguageDetectionHistoryProps(BaseModel):
 
     class Config:
         use_enum_values = True
+
+    @property
+    def real_file_path(self):
+
+        return get_full_path(get_task_result_file_path(self.file_path))
 
 class LanguageDetectionHistoryEntity(Entity[LanguageDetectionHistoryProps]):
 

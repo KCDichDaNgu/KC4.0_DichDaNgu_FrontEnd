@@ -1,9 +1,50 @@
 from infrastructure.configs.language import LanguageEnum
-from typing import Optional, Union
+from typing import Union
 from pydantic.fields import Field
 from pydantic.main import BaseModel
 from core.types import ExtendedEnum
-from infrastructure.configs.message import MESSAGES
+
+from core.utils.file import extract_file_extension
+
+FILE_TRANSLATION_FOLDER_PATH = 'file_translation'
+
+FILE_TRANSLATION_SOURCE_FILE_NAME = 'source_file'
+FILE_TRANSLATION_SAVED_PROCESS_FILE_NAME = 'saved_process_file'
+FILE_TRANSLATION_TARGET_FILE_NAME = 'target_file'
+
+RESULT_FILE_STATUS = {
+    'language_not_yet_detected': 'language_not_yet_detected',
+    'not_yet_translated': 'not_yet_translated',
+    'closed': 'closed',
+    'translated': 'translated'
+}
+
+class AllowedFileTranslationExtension(str, ExtendedEnum):
+
+    doc = 'doc'
+    docx = 'docx'
+
+def is_allowed_file_extension(self, file_name):
+
+    file_ext = extract_file_extension(file_name)
+
+    return file_ext in AllowedFileTranslationExtension.enum_values()
+
+def get_file_translation_file_path(task_id, file_name: str):
+
+    return f'{FILE_TRANSLATION_FOLDER_PATH}/{task_id}/{file_name}'
+
+def get_file_translation_source_file_name():
+
+    return FILE_TRANSLATION_SOURCE_FILE_NAME
+
+def get_file_translation_target_file_name():
+
+    return FILE_TRANSLATION_TARGET_FILE_NAME
+
+def get_file_translation_saved_process_file_name():
+
+    return FILE_TRANSLATION_SAVED_PROCESS_FILE_NAME
 
 class TranslationTaskNameEnum(str, ExtendedEnum):
 
@@ -23,17 +64,20 @@ TRANSLATION_PRIVATE_TASKS = [
     TranslationTaskNameEnum.private_plain_text_translation.value
 ]
 
+PLAIN_TEXT_TRANSLATION_TASKS = [
+    TranslationTaskNameEnum.public_plain_text_translation.value,
+    TranslationTaskNameEnum.private_plain_text_translation.value
+]
+
+FILE_TRANSLATION_TASKS = [
+    TranslationTaskNameEnum.private_file_translation.value,
+    TranslationTaskNameEnum.public_file_translation.value
+]
+
 class TranslationTaskStepEnum(str, ExtendedEnum):
     
     detecting_language = 'detecting_language'
     translating_language = 'translating_language'
-
-RESULT_FILE_STATUS = {
-    'language_not_yet_detected': 'language_not_yet_detected',
-    'not_yet_translated': 'not_yet_translated',
-    'closed': 'closed',
-    'translated': 'translated'
-}
     
 class TranslationTask_LangUnknownResultFileSchemaV1(BaseModel):
 
@@ -111,17 +155,6 @@ class TranslationTask_TranslationCompletedResultFileSchemaV1(BaseModel):
     class Config:
         use_enum_values = True
         validate_assignment = True
-
-SOURCE_FILE_FOLDER = 'source_file'
-TARGET_FILE_FOLDER = 'target_file'
-
-def gen_source_file_file_path(task_id):
-
-    return '{}_{}'.format('source_file', task_id)
-
-def gen_target_file_file_path(task_id):
-
-    return '{}_{}'.format('target_file', task_id)
 
 class FileTranslationTask_LangUnknownResultFileSchemaV1(BaseModel):
 

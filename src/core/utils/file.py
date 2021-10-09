@@ -1,48 +1,24 @@
 import imp
 import os
-import pickle
-from typing import IO
-import aiofiles
+import aiofiles, asyncio
+
 from infrastructure.configs.task import TASK_RESULT_FOLDER
-import asyncio
 from infrastructure.configs.main import GlobalConfig, get_cnf
-from infrastructure.configs.translation_task import SOURCE_FILE_FOLDER
 
 config: GlobalConfig = get_cnf()
 STATIC_FOLDER = config.APP_CONFIG.STATIC_FOLDER
 
-def load_module(name):
-    """Load module using imp.find_module"""
-    names = name.split(".")
-    path = None
-    
-    for name in names:
-        f, path, info = imp.find_module(name, path)
-        path = [path]
+def get_full_path(path: str):
 
-    return imp.load_module(name, f, path[0], info)
+    return f'{STATIC_FOLDER}/{path}'
 
-def get_task_result_full_file_path(file_path: str):
+def extract_file_extension(file_name: str):
 
-    return f'{STATIC_FOLDER}/{TASK_RESULT_FOLDER}/{file_path}'
+    file_name_els = file_name.split('.')
 
-def get_source_file_full_file_path(file_path: str):
+    if len(file_name_els) < 2: return ''
 
-    return f'{STATIC_FOLDER}/{SOURCE_FILE_FOLDER}/{file_path}'
-
-def pickle_to_file(file_path: str, data: IO):
-    
-    full_file_path = get_source_file_full_file_path(file_path)
-
-    try:
-        with open(full_file_path, 'wb') as outp:
-            
-            pickle.dump(data, outp, pickle.HIGHEST_PROTOCOL)
-
-    except Exception as e:
-        return None
-    
-    return full_file_path
+    return file_name.split('.')[-1]
 
 async def delete_files(invalid_file_paths):
 
@@ -50,7 +26,7 @@ async def delete_files(invalid_file_paths):
 
     for file_path in invalid_file_paths:
 
-        full_file_path = get_task_result_full_file_path(file_path)
+        full_file_path = get_full_path(file_path)
 
         if os.path.exists(full_file_path):
             delete_request.append(aiofiles.os.remove(full_file_path))

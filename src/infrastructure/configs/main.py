@@ -56,8 +56,6 @@ class AppConfig(BaseModel):
     APP_NAME: str = 'translation-backend'
 
     STATIC_FOLDER: str = 'static'
-    SOURCE_FILE_FOLDER: str = 'source_file'
-    TARGET_FILE_FOLDER: str = 'target_file'
 
     ROUTES: Dict = {
         'translation_request': {
@@ -288,12 +286,15 @@ class Pagination(BaseModel):
     DEFAULT_PER_PAGE = 5
 
 class Oauth2ProviderAPI(BaseModel):
+    
     NAME: str = Field(...)
     URL: AnyHttpUrl = Field(...)
     METHOD: str = Field(...)    
 
 class Oauth2Provider(BaseModel):
+
     GOOGLE: Oauth2ProviderAPI = Field(...)
+
 class GlobalConfig(BaseSettings):
 
     """Global configurations."""

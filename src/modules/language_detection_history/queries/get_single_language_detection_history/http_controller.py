@@ -12,7 +12,7 @@ from sanic_openapi import doc
 from sanic.views import HTTPMethodView
 from modules.language_detection_history.dtos.language_detection_history_response import SingleLanguageDetectionHistoryResponse
 
-from core.utils.file import get_task_result_full_file_path
+from core.utils.file import get_full_path
 
 from core.exceptions import NotFoundException
 
@@ -83,7 +83,7 @@ class GetSingleLanguageDetectionHistory(HTTPMethodView):
                 'status': language_detection_history.props.status,
                 'updatedAt': str(language_detection_history.updated_at.value),
                 'createdAt': str(language_detection_history.created_at.value),
-                'resultUrl': get_task_result_full_file_path(language_detection_history.props.file_path)
+                'resultUrl': language_detection_history.props.real_file_path
             },
             'message': MESSAGES['success']
         }).dict())

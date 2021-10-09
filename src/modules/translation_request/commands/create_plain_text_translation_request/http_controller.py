@@ -62,15 +62,16 @@ class CreatePlainTextTranslationRequest(HTTPMethodView):
 
         new_task, new_translation_record = await self.__create_plain_text_translation_request_service.create_request(command)
 
-        return response.json(BaseResponse(**{
-            'code': StatusCodeEnum.success.value,
-            'data': {
+        return response.json(BaseResponse(
+            code=StatusCodeEnum.success.value,
+            data={
                 'taskId': new_task.id.value, 
                 'taskName': new_task.props.task_name,
                 'translationHitoryId': new_translation_record.id.value
             },
-            'message': MESSAGES['success']
-        }).dict())
+            message=MESSAGES['success']
+        ).dict())
+
 
     async def create_private_plain_text_translation_request(self, data, user) -> response:
 
@@ -84,6 +85,7 @@ class CreatePlainTextTranslationRequest(HTTPMethodView):
                     'message': MESSAGES['unauthorized']
                 }
             )   
+            
         user_statistic_result =  await self.__update_user_statistic.update_plaintext_translate_statistic(user.id, pair)
 
         if user_statistic_result['code'] == StatusCodeEnum.failed.value:
@@ -104,12 +106,12 @@ class CreatePlainTextTranslationRequest(HTTPMethodView):
 
             new_task, new_translation_record = await self.__create_plain_text_translation_request_service.create_request(command)
 
-            return response.json(BaseResponse(**{
-                'code': StatusCodeEnum.success.value,
-                'data': {
+            return response.json(BaseResponse(
+                code=StatusCodeEnum.success.value,
+                data={
                     'taskId': new_task.id.value, 
                     'taskName': new_task.props.task_name,
                     'translationHitoryId': new_translation_record.id.value
                 },
-                'message': MESSAGES['success']
-            }).dict())
+                message=MESSAGES['success']
+            ).dict())
