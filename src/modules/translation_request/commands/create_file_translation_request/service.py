@@ -10,5 +10,4 @@ class CreateFileTranslationRequestService():
         self.__translation_request_d_service = TranslationRequestDService()
 
     async def create_request(self, command: CreateFileTranslationRequestCommand):
-
         return await self.__translation_request_d_service.create_file_translation_request(command=command)

@@ -8,5 +8,5 @@ dump.rdb
 .env.production
 .env.shared
 static/task_result/*
-static/source_file/*
-static/target_file/*
+static/file_translation/*
+.vscode

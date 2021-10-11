@@ -1,5 +1,5 @@
 from infrastructure.configs.language import LanguageEnum
-from typing import Union
+from typing import Dict, Union
 from pydantic.fields import Field
 from pydantic.main import BaseModel
 from core.types import ExtendedEnum
@@ -9,14 +9,15 @@ from core.utils.file import extract_file_extension
 FILE_TRANSLATION_FOLDER_PATH = 'file_translation'
 
 FILE_TRANSLATION_SOURCE_FILE_NAME = 'source_file'
-FILE_TRANSLATION_SAVED_PROCESS_FILE_NAME = 'saved_process_file'
+FILE_TRANSLATION_BINARY_PROGRESS_FILE_NAME = 'binary_progress_file'
 FILE_TRANSLATION_TARGET_FILE_NAME = 'target_file'
 
 RESULT_FILE_STATUS = {
     'language_not_yet_detected': 'language_not_yet_detected',
     'not_yet_translated': 'not_yet_translated',
     'closed': 'closed',
-    'translated': 'translated'
+    'translated': 'translated',
+    'translating': 'translating'
 }
 
 class AllowedFileTranslationExtension(str, ExtendedEnum):
@@ -24,7 +25,7 @@ class AllowedFileTranslationExtension(str, ExtendedEnum):
     doc = 'doc'
     docx = 'docx'
 
-def is_allowed_file_extension(self, file_name):
+def is_allowed_file_extension(file_name):
 
     file_ext = extract_file_extension(file_name)
 
@@ -42,9 +43,9 @@ def get_file_translation_target_file_name():
 
     return FILE_TRANSLATION_TARGET_FILE_NAME
 
-def get_file_translation_saved_process_file_name():
+def get_file_translation_binary_progress_file_name():
 
-    return FILE_TRANSLATION_SAVED_PROCESS_FILE_NAME
+    return FILE_TRANSLATION_BINARY_PROGRESS_FILE_NAME
 
 class TranslationTaskNameEnum(str, ExtendedEnum):
 
@@ -78,7 +79,13 @@ class TranslationTaskStepEnum(str, ExtendedEnum):
     
     detecting_language = 'detecting_language'
     translating_language = 'translating_language'
-    
+
+class DocumentStatistic(BaseModel):
+    total_paragraphs: int
+
+class DocumentCurrentProgress(BaseModel):
+    processed_paragraph_index: int
+
 class TranslationTask_LangUnknownResultFileSchemaV1(BaseModel):
 
     source_text: str 
@@ -117,6 +124,24 @@ class TranslationTask_NotYetTranslatedResultFileSchemaV1(BaseModel):
         use_enum_values = True
         validate_assignment = True
 
+class TranslationTask_NotYetTranslatedResultFileSchemaV1(BaseModel):
+
+    source_text: str
+    source_lang: LanguageEnum 
+
+    target_text: Union[str, None] = Field(None, allow_mutation=False)
+    target_lang: LanguageEnum 
+
+    task_name: TranslationTaskNameEnum
+
+    status: str = Field(RESULT_FILE_STATUS['not_yet_translated'], allow_mutation=False) 
+    message: str = ''
+
+    schema_version: int = Field(1, allow_mutation=False) 
+
+    class Config:
+        use_enum_values = True
+        validate_assignment = True
 
 class TranslationTask_TranslationClosedResultFileSchemaV1(BaseModel):
 
@@ -161,7 +186,7 @@ class FileTranslationTask_LangUnknownResultFileSchemaV1(BaseModel):
     source_file_path: str 
     source_lang: Union[LanguageEnum, None] = Field(None, allow_mutation=False)
 
-    target_file_path: Union[str, None] = Field(None, allow_mutation=False)
+    target_file_full_path: Union[str, None] = Field(None, allow_mutation=False)
     target_lang: LanguageEnum 
 
     task_name: TranslationTaskNameEnum
@@ -177,10 +202,14 @@ class FileTranslationTask_LangUnknownResultFileSchemaV1(BaseModel):
 
 class FileTranslationTask_NotYetTranslatedResultFileSchemaV1(BaseModel):
 
-    source_file_path: str
+    original_file_full_path: str
+    binary_progress_file_full_path: str
+    statistic: DocumentStatistic
+    current_progress: DocumentCurrentProgress
+
     source_lang: LanguageEnum 
 
-    target_file_path: Union[str, None] = Field(None, allow_mutation=False)
+    target_file_full_path: Union[str, None] = Field(None, allow_mutation=False)
     target_lang: LanguageEnum 
 
     task_name: TranslationTaskNameEnum
@@ -197,10 +226,14 @@ class FileTranslationTask_NotYetTranslatedResultFileSchemaV1(BaseModel):
 
 class FileTranslationTask_TranslationClosedResultFileSchemaV1(BaseModel):
 
-    source_file_path: str
+    original_file_full_path: str
+    binary_progress_file_full_path: str
+    statistic: DocumentStatistic
+    current_progress: DocumentCurrentProgress
+
     source_lang: LanguageEnum
 
-    target_file_path: Union[str, None] = Field(None, allow_mutation=False)
+    target_file_full_path: Union[str, None] = Field(None, allow_mutation=False)
     target_lang: LanguageEnum
 
     task_name: TranslationTaskNameEnum
@@ -213,13 +246,38 @@ class FileTranslationTask_TranslationClosedResultFileSchemaV1(BaseModel):
     class Config:
         use_enum_values = True
         validate_assignment = True
+class FileTranslationTask_TranslatingResultFileSchemaV1(BaseModel):
+
+    original_file_full_path: str
+    binary_progress_file_full_path: str
+    statistic: DocumentStatistic
+    current_progress: DocumentCurrentProgress
+
+    source_lang: LanguageEnum
+
+    target_file_full_path: Union[str, None] = Field(None, allow_mutation=False)
+    target_lang: LanguageEnum
+
+    task_name: TranslationTaskNameEnum
+
+    status: str = Field(RESULT_FILE_STATUS['translating'], allow_mutation=False) 
+    message: str = ''
+
+    schema_version: int = Field(1, allow_mutation=False)  
+
+    class Config:
+        use_enum_values = True
+        validate_assignment = True
 
 class FileTranslationTask_TranslationCompletedResultFileSchemaV1(BaseModel):
 
-    source_file_path: str
-    source_lang: LanguageEnum
+    original_file_full_path: str
+    binary_progress_file_full_path: str
+    statistic: DocumentStatistic
+    current_progress: DocumentCurrentProgress
 
-    target_file_path: str
+    source_lang: LanguageEnum
+    target_file_full_path: str
     target_lang: LanguageEnum
 
     task_name: TranslationTaskNameEnum

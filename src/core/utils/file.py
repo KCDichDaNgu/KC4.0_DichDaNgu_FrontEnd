@@ -1,8 +1,11 @@
 import imp
+import io
 import os
 import aiofiles, asyncio
+from docx import Document
 
-from infrastructure.configs.task import TASK_RESULT_FOLDER
+from sanic.request import File
+
 from infrastructure.configs.main import GlobalConfig, get_cnf
 
 config: GlobalConfig = get_cnf()
@@ -19,6 +22,19 @@ def extract_file_extension(file_name: str):
     if len(file_name_els) < 2: return ''
 
     return file_name.split('.')[-1]
+
+def get_doc_file_meta(doc_file: File):
+
+    binary_doc = io.BytesIO(doc_file.body)
+
+    file_extension = extract_file_extension(doc_file.name)
+
+    doc = Document(binary_doc)
+
+    total_doc_paragraphs = len(doc.paragraphs)
+
+    return binary_doc, file_extension, total_doc_paragraphs
+
 
 async def delete_files(invalid_file_paths):
 
