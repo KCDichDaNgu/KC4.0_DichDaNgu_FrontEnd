@@ -11,7 +11,7 @@ from modules.translation_request.commands.create_file_translation_request.comman
 from infrastructure.configs.message import MESSAGES
 from infrastructure.configs.language import LanguageEnum
 from infrastructure.configs.translation_task import is_allowed_file_extension
-from src.core.exceptions.argument_invalid import ArgumentInvalidException
+from core.exceptions.argument_invalid import ArgumentInvalidException
 
 
 config: GlobalConfig = get_cnf()
@@ -62,8 +62,8 @@ class CreateFileTranslationRequest(HTTPMethodView):
 
         file = request.files.get("file")
         data = request.form
-        
-        if is_allowed_file_extension(file.name):
+
+        if not is_allowed_file_extension(file.name):
             return ArgumentInvalidException(
                 message=MESSAGES['failed'],
                 metadata=dict(
@@ -79,9 +79,9 @@ class CreateFileTranslationRequest(HTTPMethodView):
         )
         
         new_task, new_translation_record = await self.__create_file_translation_request_service.create_request(command)
-       
+
         return response.json(BaseResponse(
-            code=StatusCodeEnum.succes.value,
+            code=StatusCodeEnum.success.value,
             data={
                 'taskId': new_task.id.value, 
                 'taskName': new_task.props.task_name,

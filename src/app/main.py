@@ -4,8 +4,7 @@ from infrastructure.configs.main import GlobalConfig
 from sanic_openapi import swagger_blueprint
 
 from infrastructure.configs import ServerTypeEnum, get_cnf, GlobalConfig
-from infrastructure.configs.task import TASK_RESULT_FOLDER
-from infrastructure.interceptors.exeption_interceptor import ExceptionInterceptor
+from infrastructure.interceptors.exception_interceptor import ExceptionInterceptor
 
 from sanic_cors import CORS
 
@@ -90,6 +89,8 @@ async def init_app():
     )
     
     app.config.update_config(config.dict())
+    
+    from infrastructure.configs.task import TASK_RESULT_FOLDER
     
     await mkdir_required_folders([
         f'{config.APP_CONFIG.STATIC_FOLDER}/{TASK_RESULT_FOLDER}'

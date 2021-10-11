@@ -6,6 +6,7 @@ def init_background_tasks(config: GlobalConfig):
 
     from modules.background_tasks.tranlate_plain_text_created_by_public_request.detect_content_language.main import main as detect_content_language_for_plain_text_in_public_request
     from modules.background_tasks.tranlate_plain_text_created_by_public_request.translate_content.main import main as translate_content_for_plain_text_in_public_request
+    from modules.background_tasks.tranlate_file_created_by_public_request.translate_content.main import main as translate_content_for_file_in_public_request
 
     from modules.background_tasks.detect_plain_text_language_created_by_public_request.main import main as detect_plain_text_language_created_by_public_request
     from modules.background_tasks.delete_invalid_task.main import main as delete_invalid_task
@@ -60,4 +61,13 @@ def init_background_tasks(config: GlobalConfig):
         id=background_task_5_conf.ID,
         trigger=background_task_5_conf.TRIGGER,
         **background_task_5_conf.CONFIG
+    )
+
+    background_task_6_conf = BACKGROUND_TASKS['translate_content_for_file_in_public_request.translate_content']
+ 
+    new_background_task_scheduler.add_job(
+        translate_content_for_file_in_public_request,
+        id=background_task_6_conf.ID,
+        trigger=background_task_6_conf.TRIGGER,
+        **background_task_6_conf.CONFIG
     )

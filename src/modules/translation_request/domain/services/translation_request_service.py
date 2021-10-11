@@ -27,11 +27,11 @@ from modules.translation_request.database.translation_history.repository import 
 )
 
 from infrastructure.configs.translation_history import TranslationHistoryTypeEnum, TranslationHistoryStatus
-from infrastructure.configs.main import get_mongodb_instance
+from infrastructure.configs.main import StatusCodeEnum, get_mongodb_instance
 from modules.translation_request.commands.create_file_translation_request.command import CreateFileTranslationRequestCommand
 from infrastructure.configs.translation_task import FileTranslationTask_LangUnknownResultFileSchemaV1, FileTranslationTask_NotYetTranslatedResultFileSchemaV1
 
-import io
+from core.utils.file import get_doc_file_meta
 
 TEXT_TRANSLATION_TASKS = [
     TranslationTaskNameEnum.private_plain_text_translation.value, 
@@ -140,60 +140,76 @@ class TranslationRequestDService():
         new_task_result_entity = TranslationRequestResultEntity(
             TranslationRequestResultProps(
                 task_id=new_request.id,
-                step=new_request.props.current_step
+                step=new_request.props.current_step,
             )
         )  
 
-        # source_file_name = gen_file_translation_source_file_path(new_task_result_entity.props.task_id.value)
+        binary_doc, original_file_ext, total_paragraphs = get_doc_file_meta(command.source_file)
 
-        # saved_file_path = save_object_to_binary_file(source_file_name, command.source_file)
+        create_files_result = await new_task_result_entity.create_required_files_for_file_translation_task(binary_doc, original_file_ext)
 
-        # if command.source_lang in LanguageEnum.enum_values():
+        if command.source_lang in LanguageEnum.enum_values():
 
-        #     saved_content = FileTranslationTask_NotYetTranslatedResultFileSchemaV1(
-        #         source_file_path=saved_file_path,
-        #         source_lang=command.source_lang,
-        #         target_lang=command.target_lang,
-        #         task_name=TranslationTaskNameEnum.private_file_translation.value
-        #     )
+            saved_content = FileTranslationTask_NotYetTranslatedResultFileSchemaV1(
+                original_file_full_path=create_files_result.data['original_file_full_path'],
+                binary_progress_file_full_path=create_files_result.data['binary_progress_file_full_path'],
+                target_file_path=None,
+                statistic=dict(
+                    total_paragraphs=total_paragraphs,
+                ),
+                current_progress=dict(
+                    processed_paragraph_index=-1
+                ),
+                source_lang=command.source_lang,
+                target_lang=command.target_lang,
+                task_name=TranslationTaskNameEnum.private_file_translation.value
+            )
 
-        # else:
+        else:
 
-        #     saved_content = FileTranslationTask_LangUnknownResultFileSchemaV1(
-        #         source_file_path=saved_file_path,
-        #         target_lang=command.target_lang,
-        #         task_name=TranslationTaskNameEnum.public_file_translation.value
-        #     )
+            saved_content = FileTranslationTask_LangUnknownResultFileSchemaV1(
+                original_file_full_path=create_files_result.data['original_file_full_path'],
+                binary_progress_file_full_path=create_files_result.data['binary_progress_file_full_path'],
+                target_file_path=None,
+                statistic=dict(
+                    total_paragraphs=total_paragraphs,
+                ),
+                current_progress=dict(
+                    processed_paragraph_index=-1
+                ),
+                target_lang=command.target_lang,
+                task_name=TranslationTaskNameEnum.public_file_translation.value
+            )
 
-        # saving_content_result = await new_task_result_entity.save_request_result_to_file(
-        #     content=saved_content.json()
-        # )
+        saving_content_result = await new_task_result_entity.save_request_result_to_file(
+            content=saved_content.json()
+        )
 
-        # if saving_content_result:
+        if saving_content_result:
         
-        #     new_translation_history_entity = TranslationHistoryEntity(
-        #         TranslationHistoryProps(
-        #             creator_id=new_request.props.creator_id,
-        #             task_id=new_request.id,
-        #             translation_type=TranslationHistoryTypeEnum.public_file_translation.value,
-        #             status=TranslationHistoryStatus.translating.value,
-        #             file_path=new_task_result_entity.props.file_path
-        #         )
-        #     )
+            new_translation_history_entity = TranslationHistoryEntity(
+                TranslationHistoryProps(
+                    creator_id=new_request.props.creator_id,
+                    task_id=new_request.id,
+                    translation_type=TranslationHistoryTypeEnum.public_file_translation.value,
+                    status=TranslationHistoryStatus.translating.value,
+                    file_path=new_task_result_entity.props.file_path
+                )
+            )
             
-        #     async with self.__db_instance.session() as session:
-        #         async with session.start_transaction():
+            async with self.__db_instance.session() as session:
+                async with session.start_transaction():
 
-        #             created_request = await self.__translation_request_repository.create(
-        #                 new_request
-        #             )
+                    created_request = await self.__translation_request_repository.create(
+                        new_request
+                    )
 
-        #             await self.__translation_request_result_repository.create(
-        #                 new_task_result_entity
-        #             )
+                    await self.__translation_request_result_repository.create(
+                        new_task_result_entity
+                    )
                     
-        #             created_translation_record = await self.__translation_history_repository.create(
-        #                 new_translation_history_entity
-        #             )
+                    created_translation_record = await self.__translation_history_repository.create(
+                        new_translation_history_entity
+                    )
                     
-        #             return created_request, created_translation_record
+                    return created_request, created_translation_record
