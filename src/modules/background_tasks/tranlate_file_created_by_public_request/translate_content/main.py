@@ -28,7 +28,7 @@ import aiohttp
 
 from infrastructure.adapters.logger import Logger
 
-from core.utils.file import get_full_path
+from core.utils.file import get_doc_paragraphs, get_full_path
 from infrastructure.configs.translation_task import RESULT_FILE_STATUS, FileTranslationTask_NotYetTranslatedResultFileSchemaV1, FileTranslationTask_TranslatingResultFileSchemaV1, FileTranslationTask_TranslationCompletedResultFileSchemaV1, get_file_translation_file_path, get_file_translation_target_file_name
 from core.utils.document import get_common_style
 
@@ -37,7 +37,7 @@ db_instance = get_mongodb_instance()
 
 PUBLIC_LANGUAGE_DETECTION_API_CONF = config.PUBLIC_LANGUAGE_DETECTION_API
 ALLOWED_CONCURRENT_REQUEST = PUBLIC_LANGUAGE_DETECTION_API_CONF.ALLOWED_CONCURRENT_REQUEST
-LIMIT_TEXT_TRANSLATE_REQUEST = 1000
+LIMIT_TEXT_TRANSLATE_REQUEST = 3000
 
 translation_request_repository = TranslationRequestRepository()
 translation_request_result_repository = TranslationRequestResultRepository()
@@ -251,7 +251,8 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
 
                 doc = Document(pickle.load(openfile))
 
-            doc_paragraphs = doc.paragraphs
+            doc_paragraphs = list(get_doc_paragraphs(doc))
+
             concat_paragraphs = []
 
             for i in range(processed_paragraph_index + 1, total_paragraphs):
@@ -301,19 +302,13 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
 
                         doc = Document(pickle.load(openfile))
 
-                    doc_paragraphs = doc.paragraphs
+                    doc_paragraphs = list(get_doc_paragraphs(doc))
 
                     for i in range(len(concat_translated_text)):
 
                         paragraph = doc_paragraphs[processed_paragraph_index + 1 + i]    
 
-                        print('test1')
-
-                        print(paragraph.text)
-                        
-                        print(get_common_style(paragraph))
-                        font_size, font_name, bold, font_color, underline = get_common_style(paragraph)
-                        print('test2')
+                        font_size, font_name, bold, font_color, underline, italic = get_common_style(paragraph)
 
                         paragraph.text = concat_translated_text[i]
 
@@ -323,6 +318,7 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                             run.bold = bold
                             run.font.color.rgb = font_color
                             run.underline = underline
+                            run.italic = italic
 
 
                     with open(binary_progress_file_full_path, 'r+b') as outp:

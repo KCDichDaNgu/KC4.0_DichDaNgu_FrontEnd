@@ -33,6 +33,7 @@ class Auth(HTTPMethodView):
             # create new user
             if 'access_token' in data:
                 user = await get_user_from_provider(config.OAUTH2_PROVIDER.GOOGLE.NAME, access_token = data['access_token'])
+
                 if 'error' in user:
                     return response.json(
                         status=404,
@@ -50,6 +51,8 @@ class Auth(HTTPMethodView):
                     role=UserRole.member.value,
                     status=UserStatus.active.value,
                 )
+
+                print(command)
                 user = await self.__user_service.create_user(command)
                 result = await create_token(user, data['platform'])
 

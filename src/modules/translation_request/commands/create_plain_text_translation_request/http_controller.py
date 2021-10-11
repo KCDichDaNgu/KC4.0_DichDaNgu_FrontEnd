@@ -11,6 +11,7 @@ from sanic.views import HTTPMethodView
 from modules.translation_request.dtos.plain_text_translation_response import PlainTextTranslationRequestResponse
 from core.middlewares.authentication.core import get_me
 from modules.user.commands.update_user_statistic.command import UpdateUserStatisticCommand
+from core.value_objects.id import ID
 
 config: GlobalConfig = get_cnf()
 APP_CONFIG = config.APP_CONFIG
@@ -55,6 +56,7 @@ class CreatePlainTextTranslationRequest(HTTPMethodView):
     async def create_public_plain_text_translation_request(self, data):
 
         command = CreatePlainTextTranslationRequestCommand(
+            creator_id=ID(None),
             source_text=data['sourceText'],
             source_lang=data['sourceLang'] if 'sourceLang' in data else None,
             target_lang=data['targetLang']
@@ -72,11 +74,10 @@ class CreatePlainTextTranslationRequest(HTTPMethodView):
             message=MESSAGES['success']
         ).dict())
 
-
     async def create_private_plain_text_translation_request(self, data, user) -> response:
 
         pair = "{}-{}".format(data['sourceLang'], data['targetLang'])
-        
+
         if user is None:
             return response.json(
                 status=401,
@@ -97,8 +98,9 @@ class CreatePlainTextTranslationRequest(HTTPMethodView):
                     }
                 )
         else:
-
+            print(user.id)
             command = CreatePlainTextTranslationRequestCommand(
+                creator_id=ID(user.id),
                 source_text=data['sourceText'],
                 source_lang=data['sourceLang'] if 'sourceLang' in data else None,
                 target_lang=data['targetLang']

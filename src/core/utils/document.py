@@ -46,4 +46,5 @@ def get_common_style(paragraph):
         list(bold.keys())[0],
         list(font_color.keys())[0],
         list(underline.keys())[0],
+        list(italic.keys())[0],
     )

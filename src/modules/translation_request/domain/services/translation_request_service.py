@@ -72,7 +72,7 @@ class TranslationRequestDService():
             
         new_request = TranslationRequestEntity(
             TranslationRequestProps(
-                creator_id=ID(None),
+                creator_id=command.creator_id,
                 creator_type=CreatorTypeEnum.end_user.value,
                 task_name=TranslationTaskNameEnum.public_plain_text_translation.value,
                 step_status=StepStatusEnum.not_yet_processed.value,

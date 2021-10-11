@@ -5,8 +5,14 @@ import aiofiles, asyncio
 from docx import Document
 
 from sanic.request import File
+from docx import Document
+from docx.document import Document as _Document
 
 from infrastructure.configs.main import GlobalConfig, get_cnf
+from docx.table import _Cell, Table
+from docx.oxml.text.paragraph import CT_P
+from docx.oxml.table import CT_Tbl
+from docx.text.paragraph import Paragraph
 
 config: GlobalConfig = get_cnf()
 STATIC_FOLDER = config.APP_CONFIG.STATIC_FOLDER
@@ -23,6 +29,27 @@ def extract_file_extension(file_name: str):
 
     return file_name.split('.')[-1]
 
+def get_doc_paragraphs(parent):
+    if isinstance(parent, _Document):
+        parent_elm = parent.element.body
+        # print(parent_elm.xml)
+    elif isinstance(parent, _Cell):
+        parent_elm = parent._tc
+    else:
+        raise ValueError("something's not right")
+
+    for child in parent_elm.iterchildren():
+        if isinstance(child, CT_P):
+            yield Paragraph(child, parent)
+        elif isinstance(child, CT_Tbl):
+            
+            table = Table(child, parent)
+
+            for row in table.rows:
+                for cell in row.cells:
+                    for paragraph in cell.paragraphs:
+                        yield paragraph
+
 def get_doc_file_meta(doc_file: File):
 
     binary_doc = io.BytesIO(doc_file.body)
@@ -31,10 +58,11 @@ def get_doc_file_meta(doc_file: File):
 
     doc = Document(binary_doc)
 
-    total_doc_paragraphs = len(doc.paragraphs)
+    doc_paragraphs = list(get_doc_paragraphs(doc))
+
+    total_doc_paragraphs = len(doc_paragraphs)
 
     return binary_doc, file_extension, total_doc_paragraphs
-
 
 async def delete_files(invalid_file_paths):
 

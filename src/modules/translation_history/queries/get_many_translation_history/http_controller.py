@@ -12,6 +12,7 @@ from sanic.views import HTTPMethodView
 from modules.translation_history.dtos.translation_history_response import ManyTranslationHistoryResponse
 import json
 from core.utils.file import get_full_path
+from core.middlewares.authentication.core import get_me
  
 from core.exceptions import NotFoundException
  
@@ -73,9 +74,19 @@ class GetManyTranslationHistory(HTTPMethodView):
         ),
         location="query"
     )
+    @doc.consumes(
+        doc.String(
+            description="Access token",
+            name='Authorization'
+        ),
+        location='header'
+    )
     @doc.produces(ManyTranslationHistoryResponse)
+
     async def get(self, request):
- 
+
+        user = await get_me(request)
+
         task_id = request.args.get('taskId')
         status = request.args.get('status')
         translation_type = request.args.get('translationType')
@@ -89,6 +100,10 @@ class GetManyTranslationHistory(HTTPMethodView):
         }
  
         query = {}
+        print(user.id)
+        
+        if user:
+            query['creator_id'] = UUID(user.id)
  
         if not task_id is None:
             query['task_id'] = UUID(task_id)

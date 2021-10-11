@@ -1,4 +1,5 @@
 from functools import partial
+import re
 from core.middlewares.authentication.auth_injection_interface import AuthInjectionInterface
 from sanic.request import Request
 from sanic import response

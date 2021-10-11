@@ -256,6 +256,8 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
             )
 
         api_results = await asyncio.gather(*api_requests)
+
+        print(api_results)
         
         async with db_instance.session() as session:
 
