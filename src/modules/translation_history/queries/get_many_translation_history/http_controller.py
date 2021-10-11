@@ -100,7 +100,6 @@ class GetManyTranslationHistory(HTTPMethodView):
         }
  
         query = {}
-        print(user.id)
         
         if user:
             query['creator_id'] = UUID(user.id)
