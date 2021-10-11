@@ -15,6 +15,7 @@ from modules.task.database.task.repository import TaskRepository
 from core.utils.file import delete_files
 import asyncio
 from infrastructure.adapters.logger import Logger
+from infrastructure.configs.translation_task import PLAIN_TEXT_TRANSLATION_TASKS
 
 config: GlobalConfig = get_cnf()
 db_instance = get_mongodb_instance()
@@ -37,17 +38,25 @@ async def main():
     try:
 
         invalid_tasks = await task_repository.find_many(
-            params={
-                '$or': [
+           params={
+                "$and": [
                     {
-                        "step_status": {
-                            "$in": [StepStatusEnum.cancelled.value,  StepStatusEnum.closed.value]
-                        }
+                        "$or": [
+                            {
+                                "step_status": {
+                                    "$in": [
+                                        StepStatusEnum.cancelled.value,
+                                        StepStatusEnum.closed.value,
+                                    ]
+                                }
+                            },
+                            {"expired_date": {"$lt": datetime.now()}},
+                        ],
                     },
                     {
-                        "expired_date": {
-                            "$lt": datetime.now()
-                        }
+                       "task_name": {
+                           "$in": PLAIN_TEXT_TRANSLATION_TASKS
+                       } 
                     }
                 ]
             }

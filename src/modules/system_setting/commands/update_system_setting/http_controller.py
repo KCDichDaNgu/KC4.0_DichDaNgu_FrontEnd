@@ -38,7 +38,7 @@ class UpdateSystemSetting(HTTPMethodView):
             task_expired_duration=data['taskExpiredDuration'],
         )
 
-        saved_setting = await self.__system_setting_service.update_system_setting(command)
+        saved_setting = await self.__system_setting_service.update(command)
 
         return response.json(BaseResponse(**{
             'code': StatusCodeEnum.success.value,
