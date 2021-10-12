@@ -12,6 +12,7 @@ def get_common_style(paragraph):
             False,
             None,
             False,
+            False,
         )
 
     font_size = defaultdict()
