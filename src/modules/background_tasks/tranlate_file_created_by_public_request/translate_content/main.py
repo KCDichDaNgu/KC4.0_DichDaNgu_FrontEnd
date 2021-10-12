@@ -312,13 +312,14 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                         paragraph = doc_paragraphs[current_paragraph_index]
 
                         while paragraph.text == '':
+                            if current_paragraph_index >= total_paragraphs - 1:
+                                break
+
                             current_paragraph_index = current_paragraph_index + 1
 
-                            if current_paragraph_index == total_paragraphs:
-                                break
                             paragraph = doc_paragraphs[current_paragraph_index]
-                            
-                        if current_paragraph_index == total_paragraphs:
+
+                        if current_paragraph_index >= total_paragraphs - 1:
                                 break
 
                         if check_if_paragraph_has_text(paragraph):
