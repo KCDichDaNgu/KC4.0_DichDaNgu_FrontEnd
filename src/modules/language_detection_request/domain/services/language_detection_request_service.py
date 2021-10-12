@@ -65,7 +65,7 @@ class LanguageDetectionRequestDService():
                 step=new_request.props.current_step
             )
         )
-        print(saved_content)
+        
         saving_content_result = await new_task_result_entity.save_request_result_to_file(
             content=saved_content.json()
         )

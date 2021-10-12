@@ -51,8 +51,7 @@ class Auth(HTTPMethodView):
                     role=UserRole.member.value,
                     status=UserStatus.active.value,
                 )
-
-                print(command)
+                
                 user = await self.__user_service.create_user(command)
                 result = await create_token(user, data['platform'])
 

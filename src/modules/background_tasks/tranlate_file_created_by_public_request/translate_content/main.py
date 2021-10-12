@@ -30,7 +30,7 @@ from infrastructure.adapters.logger import Logger
 
 from core.utils.file import get_doc_paragraphs, get_full_path
 from infrastructure.configs.translation_task import RESULT_FILE_STATUS, FileTranslationTask_NotYetTranslatedResultFileSchemaV1, FileTranslationTask_TranslatingResultFileSchemaV1, FileTranslationTask_TranslationCompletedResultFileSchemaV1, get_file_translation_file_path, get_file_translation_target_file_name
-from core.utils.document import get_common_style
+from core.utils.document import check_if_paragraph_has_text, get_common_style
 
 config: GlobalConfig = get_cnf()
 db_instance = get_mongodb_instance()
@@ -257,9 +257,10 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
 
             for i in range(processed_paragraph_index + 1, total_paragraphs):
                 text = doc_paragraphs[i].text
-                                
-                concat_paragraphs.append(text)
-                char_count = char_count + len(text)
+
+                if text != '':
+                    concat_paragraphs.append(text)
+                    char_count = char_count + len(text)
 
                 if ((char_count + len(text)) > LIMIT_TEXT_TRANSLATE_REQUEST):
                     break            
@@ -288,7 +289,7 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                         concat_translated_text = ['']
                     else:
                         concat_translated_text = api_result.data.split("\n")[:-1]
-
+                    
                     task_result = valid_tasks_mapper[task_id]['task_result'],
                     trans_history = valid_tasks_mapper[task_id]['trans_history'],
                     task = valid_tasks_mapper[task_id]['task']
@@ -303,22 +304,38 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                         doc = Document(pickle.load(openfile))
 
                     doc_paragraphs = list(get_doc_paragraphs(doc))
+                    
+                    current_paragraph_index = processed_paragraph_index + 1
 
                     for i in range(len(concat_translated_text)):
+                        
+                        paragraph = doc_paragraphs[current_paragraph_index]
 
-                        paragraph = doc_paragraphs[processed_paragraph_index + 1 + i]    
+                        while paragraph.text == '':
+                            current_paragraph_index = current_paragraph_index + 1
 
-                        font_size, font_name, bold, font_color, underline, italic = get_common_style(paragraph)
+                            if current_paragraph_index == total_paragraphs:
+                                break
+                            paragraph = doc_paragraphs[current_paragraph_index]
+                            
+                        if current_paragraph_index == total_paragraphs:
+                                break
 
-                        paragraph.text = concat_translated_text[i]
+                        if check_if_paragraph_has_text(paragraph):
 
-                        for run in paragraph.runs:
-                            run.font.size = font_size
-                            run.font.name = font_name
-                            run.bold = bold
-                            run.font.color.rgb = font_color
-                            run.underline = underline
-                            run.italic = italic
+                            font_size, font_name, bold, font_color, underline, italic = get_common_style(paragraph)
+
+                            paragraph.text = concat_translated_text[i]
+
+                            for run in paragraph.runs:
+                                run.font.size = font_size
+                                run.font.name = font_name
+                                run.bold = bold
+                                run.font.color.rgb = font_color
+                                run.underline = underline
+                                run.italic = italic
+                            
+                            current_paragraph_index = current_paragraph_index + 1
 
 
                     with open(binary_progress_file_full_path, 'r+b') as outp:
@@ -326,9 +343,9 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                         doc.save(new_file)                        
                         pickle.dump(new_file, outp, pickle.HIGHEST_PROTOCOL)
 
-                    new_processed_paragraph_index = processed_paragraph_index + len(concat_translated_text)      
+                    # new_processed_paragraph_index = processed_paragraph_index + len(concat_translated_text)      
 
-                    if new_processed_paragraph_index < total_paragraphs - 1:                        
+                    if current_paragraph_index < total_paragraphs - 1:                        
 
                         new_saved_content = FileTranslationTask_TranslatingResultFileSchemaV1(
                             original_file_full_path=original_file_full_path,
@@ -337,7 +354,7 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                                 total_paragraphs=total_paragraphs,
                             ),
                             current_progress=dict(
-                                processed_paragraph_index=new_processed_paragraph_index
+                                processed_paragraph_index=current_paragraph_index
                             ),
                             source_lang=task_result_content['source_lang'],
                             target_lang=task_result_content['target_lang'],
@@ -391,7 +408,7 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                                 total_paragraphs=total_paragraphs,
                             ),
                             current_progress=dict(
-                                processed_paragraph_index=new_processed_paragraph_index
+                                processed_paragraph_index=current_paragraph_index
                             ),
                             target_file_full_path=target_file_full_path,
                             source_lang=task_result_content['source_lang'],

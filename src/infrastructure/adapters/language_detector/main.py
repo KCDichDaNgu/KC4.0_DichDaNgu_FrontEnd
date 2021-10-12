@@ -31,7 +31,7 @@ class LanguageDetector(LanguageDetectorPort):
         if public_request:
 
             headers = {'Content-Type': 'application/json'}
-            print(text)
+
             if not session:
 
                 async with aiohttp.ClientSession() as session:
