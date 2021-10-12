@@ -1,7 +1,8 @@
 from docx import Document
 from docx.shared import RGBColor
 from collections import defaultdict
-
+import xml.etree.ElementTree as ET
+nsmap = {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
 
 def get_common_style(paragraph):
 
@@ -49,3 +50,19 @@ def get_common_style(paragraph):
         list(underline.keys())[0],
         list(italic.keys())[0],
     )
+
+
+def qn(tag):
+    prefix, tagroot = tag.split(':')
+    uri = nsmap[prefix]
+    return '{{{}}}{}'.format(uri, tagroot)
+
+def check_if_paragraph_has_text(paragraph):
+    # root = ET.fromstring(paragraph._p.xml)
+
+    # for child in root.iter():
+    #     if child.tag == qn('w:t') and child.text != '':
+    #         return True
+
+    if paragraph.text != '':
+        return True

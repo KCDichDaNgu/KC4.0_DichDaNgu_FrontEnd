@@ -98,7 +98,6 @@ class CreatePlainTextTranslationRequest(HTTPMethodView):
                     }
                 )
         else:
-            print(user.id)
             command = CreatePlainTextTranslationRequestCommand(
                 creator_id=ID(user.id),
                 source_text=data['sourceText'],
