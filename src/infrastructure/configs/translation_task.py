@@ -7,7 +7,6 @@ from core.types import ExtendedEnum
 from core.utils.file import extract_file_extension
 
 FILE_TRANSLATION_FOLDER_PATH = 'file_translation'
-
 FILE_TRANSLATION_SOURCE_FILE_NAME = 'source_file'
 FILE_TRANSLATION_BINARY_PROGRESS_FILE_NAME = 'binary_progress_file'
 FILE_TRANSLATION_TARGET_FILE_NAME = 'target_file'
@@ -183,7 +182,11 @@ class TranslationTask_TranslationCompletedResultFileSchemaV1(BaseModel):
 
 class FileTranslationTask_LangUnknownResultFileSchemaV1(BaseModel):
 
-    source_file_path: str 
+    original_file_full_path: str
+    binary_progress_file_full_path: str
+    statistic: DocumentStatistic
+    current_progress: DocumentCurrentProgress
+    
     source_lang: Union[LanguageEnum, None] = Field(None, allow_mutation=False)
 
     target_file_full_path: Union[str, None] = Field(None, allow_mutation=False)

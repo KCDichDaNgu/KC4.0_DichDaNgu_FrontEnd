@@ -6,6 +6,8 @@ from docx import Document
 import pickle
 import os
 
+from sanic.request import File
+
 from core.base_classes.entity import Entity
 from core.value_objects import ID
 

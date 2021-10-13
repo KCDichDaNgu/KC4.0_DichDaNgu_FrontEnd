@@ -71,7 +71,7 @@ class CreateFileTranslationRequest(HTTPMethodView):
                     data={}
                 )
             )
-        
+
         command = CreateFileTranslationRequestCommand(
             source_file=file,
             source_lang=data['sourceLang'][0] if 'sourceLang' in data else None,
