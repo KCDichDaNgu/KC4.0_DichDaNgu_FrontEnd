@@ -18,3 +18,6 @@ class DataStructure:
 class PlainTextLanguageDetectionRequestResponse(ResponseBase):
     
     data: DataStructure
+class FileLanguageDetectionRequestResponse(ResponseBase):
+    
+    data: DataStructure

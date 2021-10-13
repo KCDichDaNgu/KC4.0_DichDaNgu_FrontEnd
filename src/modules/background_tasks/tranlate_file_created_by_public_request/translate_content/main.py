@@ -305,13 +305,15 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
 
                     doc_paragraphs = list(get_doc_paragraphs(doc))
                     
-                    current_paragraph_index = processed_paragraph_index + 1
+                    current_paragraph_index = processed_paragraph_index
 
                     for i in range(len(concat_translated_text)):
-                        
-                        paragraph = doc_paragraphs[current_paragraph_index]
+                        current_paragraph_index = current_paragraph_index + 1
 
+                        paragraph = doc_paragraphs[current_paragraph_index]
+                        
                         while paragraph.text == '':
+                            
                             if current_paragraph_index >= total_paragraphs - 1:
                                 break
 
@@ -327,7 +329,7 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                             font_size, font_name, bold, font_color, underline, italic = get_common_style(paragraph)
 
                             paragraph.text = concat_translated_text[i]
-
+                            
                             for run in paragraph.runs:
                                 run.font.size = font_size
                                 run.font.name = font_name
@@ -336,7 +338,7 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                                 run.underline = underline
                                 run.italic = italic
                             
-                            current_paragraph_index = current_paragraph_index + 1
+                            
 
 
                     with open(binary_progress_file_full_path, 'r+b') as outp:

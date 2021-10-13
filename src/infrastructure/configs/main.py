@@ -255,6 +255,14 @@ class AppConfig(BaseModel):
                 max_instances=1
             )
         ),
+        'detect_file_language_created_by_public_request': BackgroundTask(
+            ID='detect_file_language_created_by_public_request',
+            TRIGGER=BackgroundTaskTriggerEnum.interval.value,
+            CONFIG=dict(
+                seconds=3,
+                max_instances=1
+            )
+        ),
         'delete_invalid_task': BackgroundTask(
             ID='delete_invalid_task',
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,

@@ -9,4 +9,5 @@ dump.rdb
 .env.shared
 static/task_result/*
 static/file_translation/*
+static/*
 .vscode
