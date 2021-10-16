@@ -2,7 +2,7 @@ from interface_adapters.dtos.base_response import BaseResponse
 from uuid import UUID
 from modules.translation_request.domain.entities.translation_history import TranslationHistoryEntity
 from sanic.exceptions import SanicException
-from infrastructure.configs.task import TRANSLATION_PUBLIC_TASKS
+from infrastructure.configs.task import TRANSLATION_PUBLIC_TASKS, get_task_result_file_path
 from infrastructure.configs.message import MESSAGES
 from sanic import response
 from infrastructure.configs.main import StatusCodeEnum, GlobalConfig, get_cnf
@@ -128,16 +128,16 @@ class GetManyTranslationHistory(HTTPMethodView):
         )
  
         translation_history: TranslationHistoryEntity = query_result.data
- 
+
         tasks = list(
             map(lambda item: {
-                'taskId': item.id.value,
+                'taskId': item.props.task_id.value,
                 'translationType': item.props.translation_type,
                 'id': item.id.value,
                 'status': item.props.status,
                 'updatedAt': str(item.updated_at.value),
                 'createdAt': str(item.created_at.value),
-                'resultUrl': get_full_path(item.props.file_path)
+                'resultUrl': get_full_path(get_task_result_file_path(item.props.file_path))
             }, translation_history)
         )
  
