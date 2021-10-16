@@ -3,7 +3,7 @@ import io
 import os
 import aiofiles, asyncio
 from docx import Document
-
+import shutil
 from sanic.request import File
 from docx import Document
 from docx.document import Document as _Document
@@ -76,3 +76,11 @@ async def delete_files(invalid_file_paths):
             delete_request.append(aiofiles.os.remove(full_file_path))
     
     await asyncio.gather(*delete_request)
+
+async def delete_folders(invalid_folders):
+    for folder in invalid_folders:
+
+        full_file_path = get_full_path(folder)
+
+        if os.path.exists(full_file_path):
+            shutil.rmtree(full_file_path)

@@ -49,3 +49,4 @@ class UpdateSystemSetting(HTTPMethodView):
             },
             'message': MESSAGES['success']
         }).dict())
+ 

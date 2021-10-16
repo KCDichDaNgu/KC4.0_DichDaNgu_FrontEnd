@@ -56,3 +56,25 @@ class UserStatisticEntity(Entity[UserStatisticProps]):
             "message": MESSAGES['success'],
             "data": self.props.total_translated_text
         }).dict()
+
+    def increase_total_translated_doc(self, pair, limit):
+
+        if self.props.total_translated_doc.get(pair) is None:
+
+            self.props.total_translated_doc[pair] = 1
+        else:
+
+            if self.props.total_translated_doc.get(pair) > limit:
+                return BaseResponse(**{
+                    "code": StatusCodeEnum.failed.value,
+                    "message": MESSAGES['translate_limit_reached'],
+                    "data": self.props.total_translated_doc
+                }).dict()            
+
+            self.props.total_translated_doc[pair] += 1 
+
+        return BaseResponse(**{
+            "code": StatusCodeEnum.success.value,
+            "message": MESSAGES['success'],
+            "data": self.props.total_translated_doc
+        }).dict()

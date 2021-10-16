@@ -6,6 +6,7 @@ from core.value_objects.id import ID
 
 class CreateFileTranslationRequestCommand(BaseModel):
 
+    creator_id: Union[ID, None]
     source_file: File
     source_lang: Union[str, None]
     target_lang: str

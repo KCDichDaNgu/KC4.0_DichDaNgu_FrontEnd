@@ -241,15 +241,67 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
             source_text = valid_tasks_mapper[task_id]['task_result_content']['source_text']
             source_lang = valid_tasks_mapper[task_id]['task_result_content']['source_lang']
             target_lang = valid_tasks_mapper[task_id]['task_result_content']['target_lang']
-            
-            api_requests.append(
-                contentTranslator.translate(
-                    source_text=source_text, 
-                    source_lang=source_lang,
-                    target_lang=target_lang,
-                    session=session
+
+            if source_lang == target_lang:
+                async with db_instance.session() as session:
+                    async with session.start_transaction():
+                        
+                        update_request = []
+                        task_result = valid_tasks_mapper[task_id]['task_result'],
+                        trans_history = valid_tasks_mapper[task_id]['trans_history'],
+                        task = valid_tasks_mapper[task_id]['task']
+                        task_result_content = valid_tasks_mapper[task_id]['task_result_content']
+                        
+                        new_saved_content = TranslationTask_TranslationCompletedResultFileSchemaV1(
+                            source_text=task_result_content['source_text'],
+                            source_lang=task_result_content['source_lang'],
+                            target_lang=task_result_content['target_lang'],
+                            target_text=task_result_content['source_text'],
+                            task_name=TranslationTaskNameEnum.public_plain_text_translation.value
+                        )
+
+                        if isinstance(task_result, tuple):
+                            task_result = task_result[0]
+
+                        if isinstance(trans_history, tuple):
+                            trans_history = trans_history[0]
+
+                        update_request.append(
+                            translation_request_repository.update(
+                                task, 
+                                dict(
+                                    step_status=StepStatusEnum.completed.value,
+                                    current_step=TranslationTaskStepEnum.translating_language.value
+                                )
+                            )
+                        )
+                        
+                        update_request.append(
+                            transation_history_repository.update(
+                                trans_history, 
+                                dict(
+                                    status=TranslationHistoryStatus.translated.value
+                                )
+                            )
+                        )
+
+                        update_request.append(
+                            task_result.save_request_result_to_file(
+                                content=new_saved_content.json()
+                            )
+                        )
+                    
+                    await asyncio.gather(*update_request)
+
+            else:
+                api_requests.append(
+                    contentTranslator.translate(
+                        source_text=source_text,
+                        source_lang=source_lang,
+                        target_lang=target_lang,
+                        session=session,
+                    )
                 )
-            )
             
         api_results = await asyncio.gather(*api_requests)
 

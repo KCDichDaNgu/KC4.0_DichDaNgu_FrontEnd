@@ -13,7 +13,7 @@ from sanic.views import HTTPMethodView
 from modules.translation_history.dtos.translation_history_response import SingleTranslationHistoryResponse
 
 from core.utils.file import get_full_path
-
+from core.middlewares.authentication.core import get_me
 from core.exceptions import NotFoundException
 
 config: GlobalConfig = get_cnf()
@@ -46,14 +46,28 @@ class GetSingleTranslationHistory(HTTPMethodView):
         ), 
         location="query"
     )
+    @doc.consumes(
+        doc.String(
+            description="Access token",
+            name='Authorization'
+        ),
+        location='header'
+    )
     @doc.produces(SingleTranslationHistoryResponse)
 
     async def get(self, request):
+
+        user = await get_me(request)
         
         task_id = request.args.get('taskId')        
         translation_history_id = request.args.get('translationHistoryId')
 
         query = {}
+
+        if user:
+            query['creator_id'] = UUID(user.id)
+        else:
+            query['creator_id'] = None
         
         if not task_id is None:
             query['task_id'] = UUID(task_id)
@@ -63,7 +77,11 @@ class GetSingleTranslationHistory(HTTPMethodView):
         translation_history: TranslationHistoryEntity = await self.__translation_history_repository.find_one(query)
         
         if not translation_history:
-            raise NotFoundException('Translation not found')
+            return response.json(BaseResponse(**{
+                'code': StatusCodeEnum.success.value,
+                'data': [],
+                'message': MESSAGES['success']
+            }).dict())
         
         task = await self.__translation_request_repository.find_one({'id': UUID(translation_history.props.task_id.value)})
 

@@ -8,14 +8,16 @@ import numpy as np
 
 from infrastructure.configs.main import GlobalConfig, get_cnf, get_mongodb_instance
 from modules.task.database.task_result.repository import TasktResultRepository
-from core.utils.file import delete_files, get_full_path
+from core.utils.file import delete_files, delete_folders, get_full_path
 from infrastructure.adapters.logger import Logger
-from infrastructure.configs.task import TASK_EXPIRATION_TIME, get_task_result_file_path
+from infrastructure.configs.task import TASK_EXPIRATION_TIME, TASK_RESULT_FOLDER, get_task_result_file_path
+from infrastructure.configs.language_detection_task import get_file_language_detection_file_path
+from infrastructure.configs.translation_task import get_file_translation_file_path
 
 
 config: GlobalConfig = get_cnf()
 db_instance = get_mongodb_instance()
-static_folder_dir = get_full_path('')
+task_results_dir = get_full_path(f'{TASK_RESULT_FOLDER}/')
 
 task_result_repository = TasktResultRepository()
 
@@ -36,7 +38,7 @@ async def main():
 
         milestone = datetime.now() - timedelta(0, TASK_EXPIRATION_TIME)
 
-        saved_file_paths = [f for f in listdir(static_folder_dir) if (get_file_created_time(f) < milestone)]
+        saved_file_paths = [f for f in listdir(task_results_dir) if (get_file_created_time(f) < milestone)]
 
         while len(saved_file_paths) > 0:
 
@@ -56,9 +58,11 @@ async def main():
 
             invalid_file_paths = np.setxor1d(to_be_check_file_paths, task_results_file_paths)
 
-            task_results_full_file_path = list(map(lambda f_path: get_task_result_file_path(f_path), invalid_file_paths))
+            task_results_file_paths, file_translation_folders, language_detection_folders = get_to_be_deleted_file_path(invalid_file_paths)
 
-            await delete_files(task_results_full_file_path)
+            await delete_files(task_results_file_paths)
+
+            await delete_folders(file_translation_folders + language_detection_folders)
 
         logger.debug(
             msg=f'An task delete_invalid_file end in {datetime.now()}\n')
@@ -77,4 +81,38 @@ async def main():
 
 def get_file_created_time(file):
 
-    return datetime.utcfromtimestamp(getctime(get_full_path(file)))
+    return datetime.utcfromtimestamp(getctime(get_full_path(get_task_result_file_path(file))))
+
+def get_task_id_from_task_result_file_path(file_path):
+
+    return (file_path.split('.')[0]).split('__')[-1]
+
+def get_to_be_deleted_file_path(invalid_file_paths):
+
+    task_results_file_paths = list(
+        map(
+            lambda f_path: get_task_result_file_path(f_path),
+            invalid_file_paths,
+        )
+    )
+    task_ids = list(
+        map(
+            lambda f_path: get_task_id_from_task_result_file_path(f_path),
+            invalid_file_paths,
+        )
+    )
+
+    file_translation_folders = list(
+        map(
+            lambda f_path: get_file_translation_file_path(f_path, ""),
+            task_ids,
+        )
+    )
+    language_detection_folders = list(
+        map(
+            lambda f_path: get_file_language_detection_file_path(f_path, ""),
+            task_ids,
+        )
+    )
+
+    return task_results_file_paths, file_translation_folders, language_detection_folders
