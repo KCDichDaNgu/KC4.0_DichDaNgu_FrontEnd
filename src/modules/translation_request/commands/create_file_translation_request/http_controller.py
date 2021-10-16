@@ -12,6 +12,8 @@ from infrastructure.configs.message import MESSAGES
 from infrastructure.configs.language import LanguageEnum
 from infrastructure.configs.translation_task import is_allowed_file_extension
 from core.exceptions.argument_invalid import ArgumentInvalidException
+from core.value_objects.id import ID
+from core.middlewares.authentication.core import get_me
 
 
 config: GlobalConfig = get_cnf()
@@ -22,9 +24,9 @@ class CreateFileTranslationRequest(HTTPMethodView):
         super().__init__()
 
         from modules.translation_request.commands.create_file_translation_request.service import CreateFileTranslationRequestService
-        
+        from modules.user.commands.update_user_statistic.service import UpdateUserStatisticService
         self.__create_file_translation_request_service = CreateFileTranslationRequestService()
-
+        self.__update_user_statistic = UpdateUserStatisticService()
     @doc.summary(APP_CONFIG.ROUTES['translation_request.doc_translation.create']['summary'])
     @doc.description(APP_CONFIG.ROUTES['translation_request.doc_translation.create']['desc'])
     @doc.consumes(
@@ -59,7 +61,8 @@ class CreateFileTranslationRequest(HTTPMethodView):
     )
 
     async def post(self, request):
-
+        
+        user = await get_me(request)
         file = request.files.get("file")
         data = request.form
 
@@ -72,12 +75,22 @@ class CreateFileTranslationRequest(HTTPMethodView):
                 )
             )
 
+        if request.headers.get('Authorization'):        
+            translation_response = await self.create_private_file_translation_request(file, data, user)
+        else:
+            translation_response = await self.create_public_file_translation_request(file, data)
+
+        return translation_response
+
+    async def create_public_file_translation_request(self, file, data):
+
         command = CreateFileTranslationRequestCommand(
+            creator_id=ID(None),
             source_file=file,
             source_lang=data['sourceLang'][0] if 'sourceLang' in data else None,
             target_lang=data['targetLang'][0]
-        )
-        
+        )        
+
         new_task, new_translation_record = await self.__create_file_translation_request_service.create_request(command)
 
         return response.json(BaseResponse(
@@ -89,3 +102,45 @@ class CreateFileTranslationRequest(HTTPMethodView):
             },
             message=MESSAGES['success']
         ).dict())
+
+    async def create_private_file_translation_request(self, file, data, user) -> response:
+
+        pair = "{}-{}".format(data['sourceLang'], data['targetLang'])
+
+        if user is None:
+            return response.json(
+                status=401,
+                body={
+                    'code': StatusCodeEnum.failed.value,
+                    'message': MESSAGES['unauthorized']
+                }
+            )   
+            
+        user_statistic_result =  await self.__update_user_statistic.update_file_translate_statistic(user.id, pair)
+
+        if user_statistic_result['code'] == StatusCodeEnum.failed.value:
+            return response.json(
+                    status=400,
+                    body={
+                        'code': StatusCodeEnum.failed.value,
+                        'message': MESSAGES['translate_limit_reached']
+                    }
+                )
+        else:
+            command = CreateFileTranslationRequestCommand(
+                creator_id=ID(user.id),
+                source_file=file,
+                source_lang=data['sourceLang'][0] if 'sourceLang' in data else None,
+                target_lang=data['targetLang'][0]
+            )
+            new_task, new_translation_record = await self.__create_file_translation_request_service.create_request(command)
+
+            return response.json(BaseResponse(
+                code=StatusCodeEnum.success.value,
+                data={
+                    'taskId': new_task.id.value, 
+                    'taskName': new_task.props.task_name,
+                    'translationHitoryId': new_translation_record.id.value
+                },
+                message=MESSAGES['success']
+            ).dict())

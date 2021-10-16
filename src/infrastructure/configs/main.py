@@ -247,6 +247,14 @@ class AppConfig(BaseModel):
                 max_instances=1
             )
         ),
+        'translate_content_for_file_in_public_request.detect_content_language': BackgroundTask(
+            ID='translate_content_for_file_in_public_request.detect_content_language',
+            TRIGGER=BackgroundTaskTriggerEnum.interval.value,
+            CONFIG=dict(
+                seconds=3,
+                max_instances=1
+            )
+        ),
         'detect_plain_text_language_in_public_request': BackgroundTask(
             ID='detect_plain_text_language_in_public_request',
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,

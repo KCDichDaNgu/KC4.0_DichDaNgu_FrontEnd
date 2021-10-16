@@ -122,14 +122,14 @@ class TranslationRequestDService():
 
     async def create_file_translation_request(self, command: CreateFileTranslationRequestCommand):
 
-        if command.source_lang in LanguageEnum.enum_values():
+        if command.source_lang in LanguageEnum.enum_values() and command.source_lang != 'unknown':
             begin_step = TranslationTaskStepEnum.translating_language.value
         else:
             begin_step = TranslationTaskStepEnum.detecting_language.value
         
         new_request = TranslationRequestEntity(
             TranslationRequestProps(
-                creator_id=ID(None),
+                creator_id=command.creator_id,
                 creator_type=CreatorTypeEnum.end_user.value,
                 task_name=TranslationTaskNameEnum.public_file_translation.value,
                 step_status=StepStatusEnum.not_yet_processed.value,
@@ -148,7 +148,7 @@ class TranslationRequestDService():
 
         create_files_result = await new_task_result_entity.create_required_files_for_file_translation_task(binary_doc, original_file_ext)
 
-        if command.source_lang in LanguageEnum.enum_values():
+        if command.source_lang in LanguageEnum.enum_values() and command.source_lang != 'unknown':
 
             saved_content = FileTranslationTask_NotYetTranslatedResultFileSchemaV1(
                 original_file_full_path=create_files_result.data['original_file_full_path'],

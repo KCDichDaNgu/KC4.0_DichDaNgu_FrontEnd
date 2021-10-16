@@ -1,6 +1,4 @@
 from datetime import datetime
-import io
-import pickle
 from infrastructure.configs.language import LanguageEnum
 from infrastructure.configs.translation_history import TranslationHistoryStatus
 from core.utils.common import chunk_arr
@@ -10,8 +8,6 @@ from uuid import UUID
 
 from infrastructure.configs.main import GlobalConfig, get_cnf, get_mongodb_instance
 from infrastructure.configs.task import (
-    TranslationTask_TranslationCompletedResultFileSchemaV1, 
-    TranslationTask_NotYetTranslatedResultFileSchemaV1, 
     TranslationTaskNameEnum, 
     TranslationTaskStepEnum, 
     StepStatusEnum
@@ -27,10 +23,9 @@ import asyncio
 import aiohttp
 
 from infrastructure.adapters.logger import Logger
-
-from core.utils.file import get_doc_paragraphs, get_full_path
-from infrastructure.configs.translation_task import RESULT_FILE_STATUS, FileTranslationTask_NotYetTranslatedResultFileSchemaV1, FileTranslationTask_TranslatingResultFileSchemaV1, FileTranslationTask_TranslationCompletedResultFileSchemaV1, get_file_translation_file_path, get_file_translation_target_file_name
-from core.utils.document import check_if_paragraph_has_text, get_common_style
+from infrastructure.configs.translation_task import RESULT_FILE_STATUS, FileTranslationTask_NotYetTranslatedResultFileSchemaV1, FileTranslationTask_TranslationClosedResultFileSchemaV1
+from infrastructure.adapters.language_detector.main import LanguageDetector
+from infrastructure.configs.message import MESSAGES
 
 config: GlobalConfig = get_cnf()
 db_instance = get_mongodb_instance()
@@ -43,9 +38,9 @@ translation_request_repository = TranslationRequestRepository()
 translation_request_result_repository = TranslationRequestResultRepository()
 transation_history_repository = TranslationHistoryRepository()
 
-contentTranslator = ContentTranslator()
+languageDetector = LanguageDetector()
 
-logger = Logger('Task: translate_file_in_public_request.translate_content')
+logger = Logger('Task: translate_file_in_public_request.detect_content_language')
 
 async def read_task_result(
     tasks_result: List[TranslationRequestResultEntity], 
@@ -70,7 +65,7 @@ async def read_task_result(
         try: 
             data = await task_result.read_data_from_file()
 
-            if data['status'] in [RESULT_FILE_STATUS['not_yet_translated'], RESULT_FILE_STATUS['translating']]:
+            if data['status'] == RESULT_FILE_STATUS['language_not_yet_detected']:
 
                 valid_tasks_mapper[task_id] = {
                     'task_result_content': data,
@@ -149,19 +144,17 @@ async def mark_invalid_tasks(invalid_tasks_mapper):
 async def main():
 
     logger.debug(
-        msg=f'New task translate_file_in_public_request.translate_content run in {datetime.now()}'
+        msg=f'New task translate_file_in_public_request.detect_content_language run in {datetime.now()}'
     )
 
-    print(f'New task translate_file_in_public_request.translate_content run in {datetime.now()}')
+    print(f'New task translate_file_in_public_request.detect_content_language run in {datetime.now()}')
     
     try:
         tasks = await translation_request_repository.find_many(
             params=dict(
                 task_name=TranslationTaskNameEnum.public_file_translation.value,
-                current_step=TranslationTaskStepEnum.translating_language.value,
-                step_status={
-                    '$in':[StepStatusEnum.not_yet_processed.value, StepStatusEnum.in_progress.value]
-                },
+                current_step=TranslationTaskStepEnum.detecting_language.value,
+                step_status=StepStatusEnum.not_yet_processed.value,
                 expired_date={
                     "$gt": datetime.now()
                 }
@@ -173,9 +166,9 @@ async def main():
 
         if len(tasks_id) == 0: 
             logger.debug(
-                msg=f'An task translate_file_in_public_request.translate_content end in {datetime.now()}\n'
+                msg=f'An task translate_file_in_public_request.detect_content_language end in {datetime.now()}\n'
             )
-            print(f'An task translate_file_in_public_request.translate_content end in {datetime.now()}\n')
+            print(f'An task translate_file_in_public_request.detect_content_language end in {datetime.now()}\n')
             return
 
         tasks_result_and_trans_history_req = [
@@ -184,7 +177,7 @@ async def main():
                     task_id={
                         '$in': list(map(lambda t: UUID(t), tasks_id))
                     },
-                    step=TranslationTaskStepEnum.translating_language.value
+                    step=TranslationTaskStepEnum.detecting_language.value
                 )
             ),
             transation_history_repository.find_many(
@@ -220,10 +213,10 @@ async def main():
         print(e)
 
     logger.debug(
-        msg=f'An task translate_file_in_public_request.translate_content end in {datetime.now()}\n'
+        msg=f'An task translate_file_in_public_request.detect_content_language end in {datetime.now()}\n'
     )
 
-    print(f'An task translate_file_in_public_request.translate_content end in {datetime.now()}\n')
+    print(f'An task translate_file_in_public_request.detect_content_language end in {datetime.now()}\n')
             
 
 async def execute_in_batch(valid_tasks_mapper, tasks_id):
@@ -237,119 +230,21 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
         api_requests = []
 
         for task_id in tasks_id:
-            binary_progress_file_full_path = valid_tasks_mapper[task_id]['task_result_content']['binary_progress_file_full_path']
+            task_result_content = valid_tasks_mapper[task_id]['task_result_content']
+            original_file_full_path = task_result_content['original_file_full_path']
 
-            total_paragraphs = valid_tasks_mapper[task_id]['task_result_content']['statistic']['total_paragraphs']
-            processed_paragraph_index = valid_tasks_mapper[task_id]['task_result_content']['current_progress']['processed_paragraph_index']
-
-            source_lang = valid_tasks_mapper[task_id]['task_result_content']['source_lang']
-            target_lang = valid_tasks_mapper[task_id]['task_result_content']['target_lang']
-
-
-            if source_lang == target_lang:
-                async with db_instance.session() as session:
-
-                    async with session.start_transaction():
-                
-                        update_request = []
-                        
-                        task_result = valid_tasks_mapper[task_id]['task_result'],
-                        trans_history = valid_tasks_mapper[task_id]['trans_history'],
-                        task = valid_tasks_mapper[task_id]['task']
-                        task_result_content = valid_tasks_mapper[task_id]['task_result_content']
-
-                        original_file_name = task_result_content['original_file_full_path'].split('/')[-1]
-                        original_file_ext = original_file_name.split('.')[-1]
-
-                        target_file_name = f'{get_file_translation_target_file_name()}.{original_file_ext}'
-                        target_file_path = get_file_translation_file_path(task_id, target_file_name)
-                        target_file_full_path = get_full_path(target_file_path)
-
-
-                        doc = Document(task_result_content['original_file_full_path'])
-
-                        doc.save(target_file_full_path)
-
-                        new_saved_content = FileTranslationTask_TranslationCompletedResultFileSchemaV1(
-                            original_file_full_path=task_result_content['original_file_full_path'],
-                            binary_progress_file_full_path=task_result_content['binary_progress_file_full_path'],
-                            statistic=dict(
-                                total_paragraphs=total_paragraphs,
-                            ),
-                            current_progress=dict(
-                                processed_paragraph_index=total_paragraphs - 1
-                            ),
-                            target_file_full_path=target_file_full_path,
-                            source_lang=task_result_content['source_lang'],
-                            target_lang=task_result_content['target_lang'],
-                            task_name=TranslationTaskNameEnum.public_file_translation.value
-                        )
-
-                        if isinstance(task_result, tuple):
-                            task_result = task_result[0]
-
-                        if isinstance(trans_history, tuple):
-                            trans_history = trans_history[0]
-
-                        update_request.append(
-                            translation_request_repository.update(
-                                task, 
-                                dict(
-                                    step_status=StepStatusEnum.completed.value,
-                                    current_step=TranslationTaskStepEnum.translating_language.value
-                                )
-                            )
-                        )
-                        
-                        update_request.append(
-                            transation_history_repository.update(
-                                trans_history, 
-                                dict(
-                                    status= TranslationHistoryStatus.translated.value
-                                )
-                            )
-                        )
-
-                        update_request.append(
-                            task_result.save_request_result_to_file(
-                                content=new_saved_content.json()
-                            )
-                        )  
-
-                await asyncio.gather(*update_request)
+            doc = Document(original_file_full_path)
+            source_text = ''
             
-            else:
-
-                char_count = 0
-
-                with (open(binary_progress_file_full_path, "rb")) as openfile:
-
-                    doc = Document(pickle.load(openfile))
-
-                doc_paragraphs = list(get_doc_paragraphs(doc))
-
-                concat_paragraphs = []
-
-                for i in range(processed_paragraph_index + 1, total_paragraphs):
-                    text = doc_paragraphs[i].text
-
-                    if text != '':
-                        concat_paragraphs.append(text)
-                        char_count = char_count + len(text)
-
-                    if ((char_count + len(text)) > LIMIT_TEXT_TRANSLATE_REQUEST):
-                        break            
-
-                concat_text = " \n ".join(concat_paragraphs)
-
-                api_requests.append(
-                    contentTranslator.translate(
-                        source_text=concat_text, 
-                        source_lang=source_lang,
-                        target_lang=target_lang,
-                        session=session
-                    )
+            for paragraph in doc.paragraphs:
+                source_text = source_text + paragraph.text
+            
+            api_requests.append(
+                languageDetector.detect(
+                    text=source_text, 
+                    session=session
                 )
+            )
             
         api_results = await asyncio.gather(*api_requests)
 
@@ -359,12 +254,8 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                 
                 update_request = []
                 
-                for task_id, api_result in zip(tasks_id, api_results):
-                    if api_result.data == '':
-                        concat_translated_text = ['']
-                    else:
-                        concat_translated_text = api_result.data.split("\n")[:-1]
-                    
+                for task_id, api_result in zip(tasks_id, api_results):     
+
                     task_result = valid_tasks_mapper[task_id]['task_result'],
                     trans_history = valid_tasks_mapper[task_id]['trans_history'],
                     task = valid_tasks_mapper[task_id]['task']
@@ -374,63 +265,20 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                     binary_progress_file_full_path = task_result_content['binary_progress_file_full_path']
                     total_paragraphs = task_result_content['statistic']['total_paragraphs']
                     processed_paragraph_index = task_result_content['current_progress']['processed_paragraph_index']
-
-                    with (open(binary_progress_file_full_path, "rb")) as openfile:
-
-                        doc = Document(pickle.load(openfile))
-
-                    doc_paragraphs = list(get_doc_paragraphs(doc))
                     
-                    current_paragraph_index = processed_paragraph_index
+                    if api_result.lang == LanguageEnum.unknown.value:
 
-                    for i in range(len(concat_translated_text)):
-                        current_paragraph_index = current_paragraph_index + 1
-
-                        paragraph = doc_paragraphs[current_paragraph_index]
-                        
-                        while paragraph.text == '':
-                            
-                            if current_paragraph_index >= total_paragraphs - 1:
-                                break
-
-                            current_paragraph_index = current_paragraph_index + 1
-
-                            paragraph = doc_paragraphs[current_paragraph_index]
-
-                        if current_paragraph_index > total_paragraphs - 1:
-                                break
-
-                        if check_if_paragraph_has_text(paragraph):
-
-                            font_size, font_name, bold, font_color, underline, italic = get_common_style(paragraph)
-
-                            paragraph.text = concat_translated_text[i]
-                            
-                            for run in paragraph.runs:
-                                run.font.size = font_size
-                                run.font.name = font_name
-                                run.bold = bold
-                                run.font.color.rgb = font_color
-                                run.underline = underline
-                                run.italic = italic
-
-                    with open(binary_progress_file_full_path, 'r+b') as outp:
-                        new_file = io.BytesIO()
-                        doc.save(new_file)                        
-                        pickle.dump(new_file, outp, pickle.HIGHEST_PROTOCOL)
-
-                    if current_paragraph_index < total_paragraphs - 1:                        
-
-                        new_saved_content = FileTranslationTask_TranslatingResultFileSchemaV1(
+                        new_saved_content = FileTranslationTask_TranslationClosedResultFileSchemaV1(
                             original_file_full_path=original_file_full_path,
                             binary_progress_file_full_path=binary_progress_file_full_path,
+                            source_lang=api_result.lang,
                             statistic=dict(
                                 total_paragraphs=total_paragraphs,
                             ),
                             current_progress=dict(
-                                processed_paragraph_index=current_paragraph_index
+                                processed_paragraph_index=processed_paragraph_index
                             ),
-                            source_lang=task_result_content['source_lang'],
+                            message=MESSAGES['content_language_is_not_supported'],
                             target_lang=task_result_content['target_lang'],
                             task_name=TranslationTaskNameEnum.public_file_translation.value
                         )
@@ -440,13 +288,12 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
 
                         if isinstance(trans_history, tuple):
                             trans_history = trans_history[0]
-
+                    
                         update_request.append(
                             translation_request_repository.update(
                                 task, 
                                 dict(
-                                    step_status=StepStatusEnum.in_progress.value,
-                                    current_step=TranslationTaskStepEnum.translating_language.value
+                                    step_status=StepStatusEnum.closed.value
                                 )
                             )
                         )
@@ -455,7 +302,7 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                             transation_history_repository.update(
                                 trans_history, 
                                 dict(
-                                    status= TranslationHistoryStatus.translating.value
+                                    status=TranslationHistoryStatus.closed.value
                                 )
                             )
                         )
@@ -465,27 +312,66 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                                 content=new_saved_content.json()
                             )
                         )
+                   
+                    elif api_result.lang == task_result_content['target_lang']:
+
+                        new_saved_content = FileTranslationTask_TranslationClosedResultFileSchemaV1(
+                            original_file_full_path=original_file_full_path,
+                            binary_progress_file_full_path=binary_progress_file_full_path,
+                            source_lang=api_result.lang,
+                            statistic=dict(
+                                total_paragraphs=total_paragraphs,
+                            ),
+                            current_progress=dict(
+                                processed_paragraph_index=processed_paragraph_index
+                            ),
+                            message=MESSAGES['source_lang_and_target_lang_are_the_same'],
+                            target_lang=task_result_content['target_lang'],
+                            task_name=TranslationTaskNameEnum.public_file_translation.value
+                        )
+
+                        if isinstance(task_result, tuple):
+                            task_result = task_result[0]
+
+                        if isinstance(trans_history, tuple):
+                            trans_history = trans_history[0]
+                    
+                        update_request.append(
+                            translation_request_repository.update(
+                                task, 
+                                dict(
+                                    step_status=StepStatusEnum.closed.value
+                                )
+                            )
+                        )
+                        
+                        update_request.append(
+                            transation_history_repository.update(
+                                trans_history, 
+                                dict(
+                                    status=TranslationHistoryStatus.closed.value
+                                )
+                            )
+                        )
+
+                        update_request.append(
+                            task_result.save_request_result_to_file(
+                                content=new_saved_content.json()
+                            )
+                        )
+                    
                     else:
-                        original_file_name = task_result_content['original_file_full_path'].split('/')[-1]
-                        original_file_ext = original_file_name.split('.')[-1]
 
-                        target_file_name = f'{get_file_translation_target_file_name()}.{original_file_ext}'
-                        target_file_path = get_file_translation_file_path(task_id, target_file_name)
-                        target_file_full_path = get_full_path(target_file_path)
-
-                        doc.save(target_file_full_path)
-
-                        new_saved_content = FileTranslationTask_TranslationCompletedResultFileSchemaV1(
-                            original_file_full_path=task_result_content['original_file_full_path'],
-                            binary_progress_file_full_path=task_result_content['binary_progress_file_full_path'],
+                        new_saved_content = FileTranslationTask_NotYetTranslatedResultFileSchemaV1(
+                            original_file_full_path=original_file_full_path,
+                            binary_progress_file_full_path=binary_progress_file_full_path,
+                            source_lang=api_result.lang,
                             statistic=dict(
                                 total_paragraphs=total_paragraphs,
                             ),
                             current_progress=dict(
-                                processed_paragraph_index=current_paragraph_index
+                                processed_paragraph_index=processed_paragraph_index
                             ),
-                            target_file_full_path=target_file_full_path,
-                            source_lang=task_result_content['source_lang'],
                             target_lang=task_result_content['target_lang'],
                             task_name=TranslationTaskNameEnum.public_file_translation.value
                         )
@@ -495,13 +381,22 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
 
                         if isinstance(trans_history, tuple):
                             trans_history = trans_history[0]
-
+                    
                         update_request.append(
                             translation_request_repository.update(
                                 task, 
                                 dict(
-                                    step_status=StepStatusEnum.completed.value,
+                                    step_status=StepStatusEnum.not_yet_processed.value,
                                     current_step=TranslationTaskStepEnum.translating_language.value
+                                )
+                            )
+                        )
+
+                        update_request.append(
+                            translation_request_result_repository.update(
+                                task_result, 
+                                dict(
+                                    step=TranslationTaskStepEnum.translating_language.value
                                 )
                             )
                         )
@@ -510,7 +405,7 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                             transation_history_repository.update(
                                 trans_history, 
                                 dict(
-                                    status= TranslationHistoryStatus.translated.value
+                                    status=TranslationHistoryStatus.translating.value
                                 )
                             )
                         )
@@ -519,6 +414,6 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                             task_result.save_request_result_to_file(
                                 content=new_saved_content.json()
                             )
-                        )  
+                        )
 
                 await asyncio.gather(*update_request)
