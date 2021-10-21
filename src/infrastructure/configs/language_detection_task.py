@@ -17,6 +17,7 @@ def get_file_language_detection_source_file_name():
 
     return FILE_LANGUAGE_DETECTION_SOURCE_FILE_NAME
 
+
 class LanguageDetectionTaskNameEnum(str, ExtendedEnum):
 
     private_file_language_detection = 'private_file_language_detection'

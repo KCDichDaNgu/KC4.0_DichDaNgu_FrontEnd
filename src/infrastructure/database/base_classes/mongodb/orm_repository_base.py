@@ -61,7 +61,7 @@ class OrmRepositoryBase(
         return self.__mapper_ins    
         
     async def create(self, entity: Entity):
-        
+        print(entity)
         orm_entity = self.mapper_ins.to_orm_entity(entity)
         
         await DomainEvents.publish_events(entity.id, self.__logger)

@@ -56,6 +56,9 @@ class MongoDBDatabase(BaseModel):
         "language_detection_history": {
             "name": "language_detection_history"
         },
+        "speech_recognition_history": {
+            "name": "speech_recognition_history"
+        },
         "user": {
             "name": "user"
         },
@@ -95,6 +98,11 @@ ORM_VALID_CLASSNAMES = [
     'LanguageDetectionHistoryOrmEntity',
     'LanguageDetectionRequestOrmEntity',
     'LanguageDetectionRequestResultOrmEntity',
+
+    'SpeechRecognitionHistoryOrmEntity',
+    'SpeechRecognitionRequestOrmEntity',
+    'SpeechRecognitionRequestResultOrmEntity',
+
     'UserOrmEntity'
 ]
 
