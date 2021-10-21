@@ -52,6 +52,10 @@ def init_routes(app: Sanic) -> Sanic:
 
     from modules.language_detection_request.main import language_detection_request_bp
     from modules.language_detection_history.main import language_detection_history_bp
+    from modules.speech_recognition_history.main import speech_recognition_history_bp
+    from modules.speech_recognition_request.main import speech_recognition_request_bp
+
+
     from modules.system_setting.main import system_setting_bp
 
     from modules.static_files_server.main import static_files_server_bp
@@ -65,6 +69,9 @@ def init_routes(app: Sanic) -> Sanic:
 
     app.blueprint(language_detection_request_bp)
     app.blueprint(language_detection_history_bp)
+
+    app.blueprint(speech_recognition_history_bp)
+    app.blueprint(speech_recognition_request_bp)
 
     app.blueprint(static_files_server_bp)
     app.blueprint(user_bp)

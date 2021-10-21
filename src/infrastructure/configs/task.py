@@ -2,6 +2,7 @@ from core.types import ExtendedEnum
 
 from infrastructure.configs.translation_task import *
 from infrastructure.configs.language_detection_task import *
+from infrastructure.configs.speech_recognition_task import *
 
 TASK_EXPIRATION_TIME = 60 * 60
 TASK_RESULT_FOLDER = 'task_result'
