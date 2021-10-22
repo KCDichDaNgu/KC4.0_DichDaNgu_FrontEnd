@@ -316,7 +316,7 @@ class LanguageDetectionAPI(BaseModel):
 
 class SpeechRecognitionAPI(BaseModel):
 
-    URL: AnyHttpUrl = Field(...)
+    URL: str = Field(...)
     METHOD: str = Field(...)
     ALLOWED_CONCURRENT_REQUEST: int = Field(...)
 
