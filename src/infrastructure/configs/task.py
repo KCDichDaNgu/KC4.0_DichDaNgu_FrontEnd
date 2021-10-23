@@ -27,6 +27,8 @@ class TaskTypeEnum(str, ExtendedEnum):
     unclassified = 'unclassified'
     translation_task = 'translation_task'
     language_detection = 'language_detection'
+    speech_recogntion =  'speech_recogntion'
+    speed_translation = 'speed_translation'
 
 class CreatorTypeEnum(str, ExtendedEnum):
 

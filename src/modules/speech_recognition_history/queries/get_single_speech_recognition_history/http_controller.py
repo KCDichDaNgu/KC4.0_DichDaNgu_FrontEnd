@@ -67,7 +67,6 @@ class GetSingleSpeechRecognitionHistory(HTTPMethodView):
         if not speech_recognition_history:
             raise NotFoundException('SpeechRecognition not found')
         
-        
         task = await self.__speech_recognition_request_repository.find_one({'id': UUID(speech_recognition_history.props.task_id.value)})
 
         if task.props.task_name == SpeechRecognitionHistoryTypeEnum.private_speech_recognition:

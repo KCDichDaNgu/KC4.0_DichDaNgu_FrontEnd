@@ -16,7 +16,7 @@ def init_background_tasks(config: GlobalConfig):
 
     from modules.background_tasks.recognize_speech_created_by_public_request.recognize_speech.main import main as recognize_speech_created_by_public_request
     from modules.background_tasks.recognize_speech_created_by_public_request.fetch_recognize_result.main import main as fetch_recognize_result
-
+    from modules.background_tasks.translate_speech_created_by_public_request.main import main as translate_speech_created_by_public_request
     BACKGROUND_TASKS = config.APP_CONFIG.BACKGROUND_TASKS
 
     new_background_task_scheduler = BackgroundTaskManager(AsyncIOScheduler())
@@ -111,4 +111,13 @@ def init_background_tasks(config: GlobalConfig):
         id=background_task_10_conf.ID,
         trigger=background_task_10_conf.TRIGGER,
         **background_task_10_conf.CONFIG
+    )
+
+    background_task_11_conf = BACKGROUND_TASKS['translate_speech_in_public_request']
+ 
+    new_background_task_scheduler.add_job(
+        translate_speech_created_by_public_request,
+        id=background_task_11_conf.ID,
+        trigger=background_task_11_conf.TRIGGER,
+        **background_task_11_conf.CONFIG
     )

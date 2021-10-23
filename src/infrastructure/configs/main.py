@@ -162,6 +162,32 @@ class AppConfig(BaseModel):
             "method": "GET",
             "abstract": False,
         },
+        "speech_translation_request": {
+            "path": "/",
+            "name": "Speech translation request",
+            "abstract": True,
+        },
+        "speech_translation_request.create": {
+            "path": "translate-speech",
+            "name": "Create speech translation request",
+            "summary": "Create speech translation  request",
+            "desc": "Create speech translation  request",
+            "method": "POST",
+            "abstract": False,
+        },
+        "speech_translation_history": {
+            "path": "/speech-translation-history",
+            "name": "Speech translation history",
+            "abstract": True,
+        },
+        "speech_translation_history.get_single": {
+            "path": "/get-single",
+            "name": "Get single speech translation history",
+            "summary": "Get single speech translation history",
+            "desc": "Get single speech translation history",
+            "method": "GET",
+            "abstract": False,
+        },
         "static_files": {
             "path": "/static",
             "name": "Static files serving",
@@ -292,6 +318,11 @@ class AppConfig(BaseModel):
         ),
         "recognize_speech_in_public_request.fetch_recognize_result": BackgroundTask(
             ID="recognize_speech_in_public_request.fetch_recognize_result",
+            TRIGGER=BackgroundTaskTriggerEnum.interval.value,
+            CONFIG=dict(seconds=3, max_instances=1),
+        ),
+        "translate_speech_in_public_request": BackgroundTask(
+            ID="translate_speech_in_public_request",
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
             CONFIG=dict(seconds=3, max_instances=1),
         ),
