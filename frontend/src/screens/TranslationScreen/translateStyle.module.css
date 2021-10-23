@@ -1,0 +1,281 @@
+.outerContainer {
+  padding-left: 200px;
+  padding-right: 200px;
+}
+
+.outerTab {
+  padding: 25px 0px;
+  display: flex;
+  flex-direction: row;
+}
+
+.outerTabLeft {
+  display: flex;
+  font-size: 20px;
+  font-weight: 500;
+  margin-right: 10px;
+}
+
+.headerTop {
+  background-color: #1d5193;
+  /* height: 50px; */
+  color: #fff;
+  /* text-align: center; */
+}
+.buttonSidebars {
+  width: 50px;
+  position: relative;
+}
+.buttonSidebar {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  padding-bottom: 8px;
+  font-size: 24px;
+  border: none;
+  background-color: #1d5193;
+  color: #fff;
+}
+.buttonSidebar:hover {
+  background-color: #295b9b;
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  padding-bottom: 8px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 24px;
+  border: none;
+}
+.buttonSidebar:active {
+  background-color: #0d4b9c;
+}
+.title {
+  font-size: 28px;
+  padding: 8px;
+  align-items: center;
+}
+.documentOption {
+  padding-top: 10px;
+  text-align: center;
+}
+.showToast {
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
+  width: 200px;
+}
+.showToastCopy {
+  margin-right: 10px;
+  background-color: #536452;
+  color: #fff;
+  font-weight: 400;
+}
+.showToastDict {
+  margin-right: 10px;
+  background-color: #536452;
+  color: #fff;
+  font-weight: 400;
+}
+.content {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #888888;
+  box-sizing: border-box;
+  box-shadow: 0px 2px 0px 1px rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+}
+
+.buttonExchange {
+  background-color: #fff;
+  color: #000;
+  border: none;
+  border-radius: 50%;
+  padding: 8px 8px;
+  line-height: 8px;
+}
+.buttonExchange:hover {
+  background-color: #eee;
+  border-radius: 50%;
+  padding: 8px 8px;
+  line-height: 8px;
+}
+.buttonExchange:active {
+  background-color: #ccc;
+}
+.boxTranslate {
+}
+
+.btn:focus {
+  outline: none;
+}
+
+.from_language {
+  resize: none;
+  border: none;
+  float: left;
+  width: 100%;
+  height: 100%;
+  /* min-height: 100px; */
+  padding: 0 10px;
+  overflow: auto;
+  outline: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  overflow: hidden;
+  font-size: 24px;
+  color: black;
+}
+.to_language {
+  resize: none;
+  border-width: none;
+  border: none;
+  float: left;
+  width: 100%;
+  height: 100%;
+  padding: 0 10px;
+  overflow: auto;
+  outline: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+.buttonTextUtility {
+  background-color: #f3f3f3;
+  color: #000;
+  border: none;
+  font-size: 20px;
+  padding: 4px 8px;
+}
+
+.buttonUtility {
+  background-color: #fff;
+  color: #000;
+  border: none;
+  border-radius: 50%;
+  padding: 8px 8px;
+  line-height: 8px;
+}
+.buttonUtility:hover {
+  background-color: #eee;
+  border-radius: 50%;
+  padding: 8px 8px;
+  line-height: 8px;
+}
+.buttonUtility:active {
+  background-color: #ccc;
+}
+.resultTranslate_bandich {
+  resize: none;
+  border: none;
+  float: left;
+  width: 100%;
+  padding: 0 10px;
+  overflow: auto;
+  outline: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  overflow: hidden;
+  font-size: 24px;
+  color: rgb(167, 167, 167);
+}
+.resultTranslate_dadich {
+  resize: none;
+  border: none;
+  float: left;
+  width: 100%;
+  padding: 0 10px;
+  overflow: auto;
+  outline: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  overflow: hidden;
+  font-size: 24px;
+  word-wrap: break-word;
+}
+
+.activeChoose {
+  border-width: 0;
+  border-top: 0;
+  border-right: 0;
+  border-left: 0;
+  border-bottom: 2px solid #1d5193;
+  background-color: white;
+  color: #1d5193;
+  font-size: 18px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.normal {
+  border-width: 0;
+  border-top: 0;
+  border-right: 0;
+  border-left: 0;
+  border-bottom: 2px solid #fff;
+  background-color: #fff;
+  color: rgb(121, 121, 121) !important;
+  font-weight: bold;
+  font-size: 18px;
+  text-transform: uppercase;
+}
+
+.ResultTranslateBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.boxdich {
+  display: flex;
+  padding-top: 10px;
+  padding-bottom: 30px;
+  min-height: 108px;
+}
+.boxclick {
+  padding-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+@media screen and (max-width: 1440px) {
+  .outerContainer {
+    padding-left: 100px;
+    padding-right: 100px;
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  .outerContainer {
+    padding-left: 50px;
+    padding-right: 50px;
+  }
+}
+
+@media screen and (max-width: 769px) {
+  .ResultTranslateBox {
+    border-top: 1px solid #ccc;
+  }
+}
+
+@media (orientation: portrait) {
+  .outerContainer {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+
+  .outerTab {
+    padding: 15px 0px;
+    justify-content: space-around;
+  }
+}

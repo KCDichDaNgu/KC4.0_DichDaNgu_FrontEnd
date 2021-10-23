@@ -1,0 +1,211 @@
+.inputSearch {
+  margin-right: 10px;
+  border: none;
+  flex: 1;
+}
+
+.buttonDropDown {
+  background-color: white;
+  padding: 5px;
+  border-radius: 50%;
+  justify-content: center;
+  display: flex;
+  align-self: center;
+  border: 1px solid white;
+}
+
+.buttonDropDown:hover {
+  padding: 5px;
+  background-color: #dad6d6;
+}
+
+.buttonList {
+  padding: 12px;
+  display: flex;
+  color: black;
+  flex: 1;
+  border: none;
+  margin: 10px;
+  background: white;
+  border: 1px solid #888888;
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
+.buttonListChosen {
+  padding: 12px;
+  display: flex;
+  color: black;
+  flex: 1;
+  border: none;
+  margin: 10px;
+  background: white;
+  /* border: 1px solid #888888; */
+  /* border-radius: 10px; */
+}
+
+.buttonListChosenActive {
+  padding: 12px;
+  display: flex;
+  color: black;
+  flex: 1;
+  border: none;
+  margin: 10px;
+  background: white;
+  border: 1px solid #888888;
+  border-radius: 10px;
+  box-sizing: border-box;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+/* .buttonList:hover {
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+} */
+
+.innerBox {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background: #ffffff;
+  border: 1px solid #888888;
+  box-sizing: border-box;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+  margin-top: 50px;
+  margin-bottom: 100px;
+  margin-right: 80px;
+  margin-left: 80px;
+}
+
+.tabBox {
+  display: flex;
+  /* flex: 0.08; */
+  flex-direction: row;
+  align-items: flex-end;
+  border-bottom: 1px solid #888888;
+}
+
+.tab {
+  font-weight: normal;
+  font-weight: 500;
+  font-size: 2.3vh;
+  text-transform: uppercase;
+  margin-left: 20px;
+  margin-right: 20px;
+  padding-right: 30px;
+  padding-left: 30px;
+  background-color: white;
+  border-width: 0;
+  border: 0;
+  border-bottom: 1px solid white;
+}
+
+.tabActive {
+  font-weight: normal;
+  font-weight: 500;
+  font-size: 2.3vh;
+  text-transform: uppercase;
+  margin-left: 20px;
+  margin-right: 20px;
+  padding-right: 30px;
+  padding-left: 30px;
+  background-color: white;
+  border-width: 0;
+  border: 0;
+  border-bottom: 1px solid #1d5193;
+}
+
+.tab:hover {
+  border-bottom: 1px solid #1d5193;
+}
+
+.innerBody {
+  /* scroll *needs* height! */
+  height: 1px;
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+}
+
+.innerBodyLeft {
+  display: flex;
+  flex: 0.3;
+  flex-direction: column;
+  border-right: 1px solid #888888;
+}
+
+.innerSearchBox {
+  border-bottom: 1px solid #888888;
+  display: flex;
+  flex-direction: row;
+  padding: 5px;
+  justify-content: space-between;
+}
+
+.innerBodyRight {
+  display: flex;
+  flex-direction: column;
+  flex: 0.7;
+  padding: 20px;
+  overflow: auto;
+}
+
+.innerBodyRightBox {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  padding-bottom: 10px;
+  background-color: #f3f3f3;
+  border: 1px solid rgba(0, 0, 0, 0.7);
+  border-radius: 10px;
+  color: black;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 25px;
+}
+
+.from_language {
+  resize: none;
+  border: none;
+  float: left;
+  width: 100%;
+  height: 100%;
+  /* min-height: 100px; */
+  padding: 0 10px;
+  overflow: auto;
+  outline: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  overflow: hidden;
+  font-size: 24px;
+  color: black;
+}
+
+@media (orientation: portrait) {
+  .innerBox {
+    margin-right: 80px;
+    margin-left: 80px;
+    margin-bottom: 50px;
+  }
+
+  .tabBox {
+    justify-content: space-around;
+  }
+
+  .innerBodyLeft {
+    flex: 1;
+  }
+
+  .innerBodyRight {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .innerBox {
+    margin-bottom: 0px;
+    margin-right: 0px;
+    margin-left: 0px;
+  }
+}
