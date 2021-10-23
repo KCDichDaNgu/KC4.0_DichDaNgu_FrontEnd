@@ -18,3 +18,5 @@ umongo[mopyttor]
 sanic-cors
 numpy
 python-docx
+requests
+motor

@@ -5,7 +5,7 @@ from sanic import response
 import io
 from interface_adapters.dtos.base_response import BaseResponse
 from infrastructure.configs.main import GlobalConfig, StatusCodeEnum, get_cnf
-from modules.speech_recognition_request.command.create_speech_recognition_request.command import CreateSpeechRecognitionRequestCommand
+from modules.speech_recognition_request.command.create_speech_translation_request.command import CreateSpeechTranslationRequestCommand
 
 from infrastructure.configs.message import MESSAGES
 from infrastructure.configs.language import LanguageEnum
@@ -18,24 +18,33 @@ from core.middlewares.authentication.core import get_me
 config: GlobalConfig = get_cnf()
 APP_CONFIG = config.APP_CONFIG
 
-class CreateSpeechRecognitionRequest(HTTPMethodView):
+class CreateSpeechTranslationRequest(HTTPMethodView):
     def __init__(self) -> None:
         super().__init__()
-        from modules.speech_recognition_request.command.create_speech_recognition_request.service import CreateSpeechRecognitionRequestService
+        from modules.speech_recognition_request.command.create_speech_translation_request.service import CreateSpeechTranslationRequestService
 
         from modules.user.commands.update_user_statistic.service import UpdateUserStatisticService
-        self.__create_speech_recognition_request_service = CreateSpeechRecognitionRequestService()
+        self.__create_speech_translation_request_service = CreateSpeechTranslationRequestService()
         self.__update_user_statistic = UpdateUserStatisticService()
 
-    @doc.summary(APP_CONFIG.ROUTES['speech_recognition_request.create']['summary'])
-    @doc.description(APP_CONFIG.ROUTES['speech_recognition_request.create']['desc'])
+    @doc.summary(APP_CONFIG.ROUTES['speech_translation_request.create']['summary'])
+    @doc.description(APP_CONFIG.ROUTES['speech_translation_request.create']['desc'])
     @doc.consumes(
         doc.String(
             name="sourceLang",
             description='Source text language',
             required=False,
             choices=LanguageEnum.enum_values()
-        ),
+        ), 
+        location="formData"
+    )
+    @doc.consumes(
+        doc.String(
+            name="targetLang",
+            description='Target text language',
+            required=False,
+            choices=LanguageEnum.enum_values()
+        ), 
         location="formData"
     )
     @doc.consumes(
@@ -67,21 +76,22 @@ class CreateSpeechRecognitionRequest(HTTPMethodView):
             )
 
         if request.headers.get('Authorization'):        
-            translation_response = await self.create_private_speech_recognition_request(file, data, user)
+            translation_response = await self.create_private_speech_translation_request(file, data, user)
         else:
-            translation_response = await self.create_public_speech_recognition_request(file, data)
+            translation_response = await self.create_public_speech_translation_request(file, data)
 
         return translation_response
 
-    async def create_public_speech_recognition_request(self, file, data):
+    async def create_public_speech_translation_request(self, file, data):
 
-        command = CreateSpeechRecognitionRequestCommand(
+        command = CreateSpeechTranslationRequestCommand(
             creator_id=ID(None),
             source_file=file,
-            source_lang=data['sourceLang'][0] if 'sourceLang' in data else None,
+            source_lang=data['sourceLang'][0],
+            target_lang=data['targetLang'][0]
         )        
 
-        new_task, new_translation_record = await self.__create_speech_recognition_request_service.create_request(command)
+        new_task, new_translation_record = await self.__create_speech_translation_request_service.create_request(command)
 
         return response.json(BaseResponse(
             code=StatusCodeEnum.success.value,
@@ -93,7 +103,7 @@ class CreateSpeechRecognitionRequest(HTTPMethodView):
             message=MESSAGES['success']
         ).dict())
 
-    async def create_private_speech_recognition_request(self, file, data, user) -> response:
+    async def create_private_speech_translation_request(self, file, data, user) -> response:
 
         if user is None:
             return response.json(
@@ -115,12 +125,13 @@ class CreateSpeechRecognitionRequest(HTTPMethodView):
         #             }
         #         )
         # else:
-        command = CreateSpeechRecognitionRequestCommand(
+        command = CreateSpeechTranslationRequestCommand(
             creator_id=ID(user.id),
             source_file=file,
-            source_lang=data['sourceLang'],
+            source_lang=data['sourceLang'][0],
+            target_lang=data['targetLang'][0]
         )
-        new_task, new_translation_record = await self.__create_speech_recognition_request_service.create_request(command)
+        new_task, new_translation_record = await self.__create_speech_translation_request_service.create_request(command)
 
         return response.json(BaseResponse(
             code=StatusCodeEnum.success.value,

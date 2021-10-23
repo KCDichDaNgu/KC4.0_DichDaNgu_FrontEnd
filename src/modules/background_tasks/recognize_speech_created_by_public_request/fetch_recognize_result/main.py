@@ -3,7 +3,6 @@ import logging
 from core.utils.file import get_full_path
 from infrastructure.adapters.speech_recognitor.main import SpeechRecognitor
 from infrastructure.configs.language import LanguageEnum
-from infrastructure.configs.language_detection_task import get_file_language_detection_file_path
 from infrastructure.configs.speech_recognition_history import SpeechRecognitionHistoryStatus
 from core.utils.common import chunk_arr
 
@@ -12,16 +11,11 @@ from typing import List
 from uuid import UUID
 
 from infrastructure.configs.main import GlobalConfig, get_cnf, get_mongodb_instance
-from infrastructure.configs.speech_recognition_task import SpeechRecognitionTask_ConvertedResultFileSchemaV1, SpeechRecognitionTask_ConvertingResultFileSchemaV1, SpeechRecognitionTask_NotYetConvertedResultFileSchemaV1, get_speech_recognition_file_path, get_speech_recognition_source_file_name, get_speech_recognition_target_file_name
+from infrastructure.configs.speech_recognition_task import SPEECH_RECOGNITION_RESULT_FILE_STATUS, SpeechRecognitionTask_ConvertedResultFileSchemaV1, SpeechRecognitionTask_ConvertingResultFileSchemaV1, get_speech_recognition_file_path, get_speech_recognition_converted_file_name
 from infrastructure.configs.task import (
-    TranslationTask_TranslationCompletedResultFileSchemaV1, 
-    TranslationTask_NotYetTranslatedResultFileSchemaV1, 
-    TranslationTaskNameEnum, 
     SpeechRecognitionTaskStepEnum, 
     StepStatusEnum
 )
-
-from infrastructure.adapters.content_translator.main import ContentTranslator 
 
 
 from infrastructure.configs.task import (
@@ -52,7 +46,7 @@ speech_recognition_history_repository = SpeechRecognitionHistoryRepository()
 
 speechRecognitor = SpeechRecognitor()
 
-logger = Logger('Task: translate_plain_text_in_public_request.translate_content')
+logger = Logger('Task: recognize_speech_in_public_request.fetch_recognize_result')
 
 async def read_task_result(
     tasks_result: List[SpeechRecognitionRequestResultEntity], 
@@ -67,13 +61,12 @@ async def read_task_result(
     task_id_3 = list(map(lambda th: th.props.task_id.value, speech_recognitions_history))
 
     intersection_tasks_id = list(set(task_id_1) & set(task_id_2) & set(task_id_3))
-    
+
     for task_id in intersection_tasks_id:
 
         task = list(filter(lambda ts: ts.id.value == task_id, tasks))[0]
         task_result = list(filter(lambda ts: ts.props.task_id.value == task_id, tasks_result))[0]
         recognize_history = list(filter(lambda ts: ts.props.task_id.value == task_id, speech_recognitions_history))[0]
-
         try: 
             data = await task_result.read_data_from_file()
             
@@ -108,7 +101,7 @@ async def read_task_result(
 
         task = list(filter(lambda ts: ts.id.value == task_id, tasks))[0]
         task_result = list(filter(lambda ts: ts.props.task_id.value == task_id, tasks_result))[0]
-        recognize_history = list(filter(lambda ts: ts.props.task_id.value == task_id, recognize_history))[0]
+        recognize_history = list(filter(lambda ts: ts.props.task_id.value == task_id, speech_recognitions_history))[0]
 
         invalid_tasks_mapper[task_id] = {
             'task_result': task_result,
@@ -163,31 +156,33 @@ async def mark_invalid_tasks(invalid_tasks_mapper):
 async def main():
 
     logger.debug(
-        msg=f'New task translate_plain_text_in_public_request.translate_content run in {datetime.now()}'
+        msg=f'New task recognize_speech_in_public_request.fetch_recognize_result run in {datetime.now()}'
     )
 
-    print(f'New task translate_plain_text_in_public_request.translate_content run in {datetime.now()}')
+    print(f'New task recognize_speech_in_public_request.fetch_recognize_result run in {datetime.now()}')
     
     try:
         tasks = await speech_recognition_request_repository.find_many(
             params=dict(
-                task_name=SpeechRecognitionTaskNameEnum.public_speech_recognition.value,
+                task_name={
+                    "$in":[SpeechRecognitionTaskNameEnum.public_speech_recognition.value, SpeechRecognitionTaskNameEnum.public_speech_translation.value]
+                },
                 current_step=SpeechRecognitionTaskStepEnum.converting_speech.value,
                 step_status=StepStatusEnum.in_progress.value,
-                # expired_date={
-                #     "$gt": datetime.now()
-                # }
+                expired_date={
+                    "$gt": datetime.now()
+                }
             ),
             limit=ALLOWED_CONCURRENT_REQUEST * 10
         )
 
         tasks_id = list(map(lambda task: task.id.value, tasks))
-        
+
         if len(tasks_id) == 0: 
             logger.debug(
-                msg=f'An task translate_plain_text_in_public_request.translate_content end in {datetime.now()}\n'
+                msg=f'An task recognize_speech_in_public_request.fetch_recognize_result end in {datetime.now()}\n'
             )
-            print(f'An task translate_plain_text_in_public_request.translate_content end in {datetime.now()}\n')
+            print(f'An task recognize_speech_in_public_request.fetch_recognize_result end in {datetime.now()}\n')
             return
 
         tasks_result_and_recognition_history_req = [
@@ -232,10 +227,10 @@ async def main():
         print(e)
 
     logger.debug(
-        msg=f'An task translate_plain_text_in_public_request.translate_content end in {datetime.now()}\n'
+        msg=f'An task recognize_speech_in_public_request.fetch_recognize_result end in {datetime.now()}\n'
     )
 
-    print(f'An task translate_plain_text_in_public_request.translate_content end in {datetime.now()}\n')
+    print(f'An task recognize_speech_in_public_request.fetch_recognize_result end in {datetime.now()}\n')
             
 
 async def execute_in_batch(valid_tasks_mapper, tasks_id):
@@ -286,50 +281,103 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                     task = valid_tasks_mapper[task_id]['task']
                     task_result_content = valid_tasks_mapper[task_id]['task_result_content']
 
-                    target_file_name = f'{get_speech_recognition_target_file_name()}.txt'
-                    target_file_path = get_speech_recognition_file_path(task_id, target_file_name)
-                    target_file_full_path = get_full_path(target_file_path)
+                    converted_file_name = f'{get_speech_recognition_converted_file_name()}.txt'
+                    converted_file_path = get_speech_recognition_file_path(task_id, converted_file_name)
+                    converted_file_full_path = get_full_path(converted_file_path)
 
-                    with open(target_file_full_path, "w+") as text_file:
+                    with open(converted_file_full_path, "w+") as text_file:
                         text_file.write(api_result.text)
                     
-                    new_saved_content = SpeechRecognitionTask_ConvertedResultFileSchemaV1(
-                        source_file_full_path=task_result_content['source_file_full_path'],
-                        target_file_full_path=target_file_full_path,
-                        source_lang=task_result_content['source_lang'],
-                        job_id=task_result_content['job_id'],
-                        task_name=SpeechRecognitionTaskNameEnum.public_speech_recognition.value
-                    )
-
-                    if isinstance(task_result, tuple):
-                        task_result = task_result[0]
-
-                    if isinstance(recognize_history, tuple):
-                        recognize_history = recognize_history[0]
-
-                    update_request.append(
-                        speech_recognition_request_repository.update(
-                            task, 
-                            dict(
-                                step_status=StepStatusEnum.completed.value,
-                                current_step=SpeechRecognitionTaskStepEnum.converting_speech.value
-                            )
-                        )
-                    )
+                    if task_result_content['task_name'] == SpeechRecognitionTaskNameEnum.public_speech_recognition.value:
                     
-                    update_request.append(
-                        speech_recognition_history_repository.update(
-                            recognize_history, 
-                            dict(
-                                status=SpeechRecognitionHistoryStatus.converted.value
+                        new_saved_content = SpeechRecognitionTask_ConvertedResultFileSchemaV1(
+                            source_file_full_path=task_result_content['source_file_full_path'],
+                            converted_file_full_path=converted_file_full_path,
+                            source_lang=task_result_content['source_lang'],
+                            job_id=task_result_content['job_id'],
+                            task_name=SpeechRecognitionTaskNameEnum.public_speech_recognition.value
+                        )
+
+                        if isinstance(task_result, tuple):
+                            task_result = task_result[0]
+
+                        if isinstance(recognize_history, tuple):
+                            recognize_history = recognize_history[0]
+
+                        update_request.append(
+                            speech_recognition_request_repository.update(
+                                task, 
+                                dict(
+                                    step_status=StepStatusEnum.completed.value,
+                                    current_step=SpeechRecognitionTaskStepEnum.converting_speech.value
+                                )
                             )
                         )
-                    )
-
-                    update_request.append(
-                        task_result.save_request_result_to_file(
-                            content=new_saved_content.json()
+                        
+                        update_request.append(
+                            speech_recognition_history_repository.update(
+                                recognize_history, 
+                                dict(
+                                    status=SpeechRecognitionHistoryStatus.converted.value
+                                )
+                            )
                         )
-                    )
+
+                        update_request.append(
+                            task_result.save_request_result_to_file(
+                                content=new_saved_content.json()
+                            )
+                        )
+
+                    elif task_result_content['task_name'] == SpeechRecognitionTaskNameEnum.public_speech_translation.value:
+
+                        new_saved_content = SpeechRecognitionTask_ConvertedResultFileSchemaV1(
+                            source_file_full_path=task_result_content['source_file_full_path'],
+                            converted_file_full_path=converted_file_full_path,
+                            source_lang=task_result_content['source_lang'],
+                            target_lang=task_result_content['target_lang'],
+                            job_id=task_result_content['job_id'],
+                            task_name=SpeechRecognitionTaskNameEnum.public_speech_translation.value
+                        )
+
+                        if isinstance(task_result, tuple):
+                            task_result = task_result[0]
+
+                        if isinstance(recognize_history, tuple):
+                            recognize_history = recognize_history[0]
+
+                        update_request.append(
+                            speech_recognition_request_repository.update(
+                                task, 
+                                dict(
+                                    step_status=StepStatusEnum.in_progress.value,
+                                    current_step=SpeechRecognitionTaskStepEnum.translating_speech.value
+                                )
+                            )
+                        )
+                        
+                        update_request.append(
+                            speech_recognition_history_repository.update(
+                                recognize_history, 
+                                dict(
+                                    status=SpeechRecognitionHistoryStatus.converted.value
+                                )
+                            )
+                        )
+
+                        update_request.append(
+                            speech_recognition_request_result_repository.update(
+                                task_result, 
+                                dict(
+                                    step=SpeechRecognitionTaskStepEnum.translating_speech.value
+                                )
+                            )
+                        )
+
+                        update_request.append(
+                            task_result.save_request_result_to_file(
+                                content=new_saved_content.json()
+                            )
+                        )                    
                 
                 await asyncio.gather(*update_request)

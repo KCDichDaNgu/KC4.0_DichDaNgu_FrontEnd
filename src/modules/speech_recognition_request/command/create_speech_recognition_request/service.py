@@ -10,4 +10,4 @@ class CreateSpeechRecognitionRequestService():
         self.__speech_recognition_request_d_service = SpeechRecognitionRequestDService()
 
     async def create_request(self, command: CreateSpeechRecognitionRequestCommand):
-        return await self.__speech_recognition_request_d_service.create(command=command)
+        return await self.__speech_recognition_request_d_service.create_conversion_request(command=command)
