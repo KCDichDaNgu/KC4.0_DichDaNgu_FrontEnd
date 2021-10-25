@@ -11,9 +11,10 @@ import { STATE } from '../../redux/reducers/translateReducer';
 import {
 	changeSourceText,
 	changeTargetText,
+	changeSource,
 } from '../../redux/actions/translateAction';
 import {
-	changeFile, changeOutput
+	changeFileDocument, changeFileAudio, changeOutput
 } from '../../redux/actions/translateFileAction';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import AlbumIcon from '@mui/icons-material/Album';
@@ -23,11 +24,12 @@ import { useTranslation } from 'react-i18next';
 import ScrollTop from '../../components/ScrollTop';
 import TranslateFileDocumentOutput from './components/TranslateFileDocumentOutput';
 import TranslateFileAudioOutput from './components/TranslateFileAudioOutput';
-import TranslateFileInput from './components/TranslateFileInput';
 import TranslationChooselang from './components/TranslationChooselang';
 import TranslateOutput from './components/TranslateOutput';
 import TranslateInput from './components/TranslateInput';
 import { TRANSLATE_TYPE } from '../../constants/common';
+import TranslateFileDocumentInput from './components/TranslateFileDocumentInput';
+import TranslateFileAudioInput from './components/TranslateFileAudioInput';
 
 function Index(props) {
 	const { translationState, translationFileState } = props;
@@ -66,6 +68,7 @@ function Index(props) {
 		}
 	}, [translationFileState.currentState]);
 
+
 	const renderOutput = () => {
 		switch (translateType) {
 		case TRANSLATE_TYPE.plainText:
@@ -77,6 +80,17 @@ function Index(props) {
 		}
 	};
 
+	const renderInput = () => {
+		switch (translateType) {
+		case TRANSLATE_TYPE.plainText:
+			return <TranslateInput translateType={translateType} />;
+		case TRANSLATE_TYPE.document:
+			return <TranslateFileDocumentInput translateType={translateType} />;
+		case TRANSLATE_TYPE.audio:
+			return <TranslateFileAudioInput translateType={translateType} />;
+		}
+	};
+
 	return (
 		<>
 			<div className={styles.outerContainer}>
@@ -84,8 +98,7 @@ function Index(props) {
 					<Button
 						onClick={() => {
 							setTranslateType(TRANSLATE_TYPE.plainText);
-							props.changeFile(null);
-							props.changeOutput(null);
+							// props.changeOutput(null);
 						}}
 						style={{ fontWeight: 'bold', marginRight: '20px', display: 'flex', backgroundColor: 'white', color: 'grey', borderColor: 'grey' }}
 						variant={translateType == TRANSLATE_TYPE.plainText ? 'outlined' : null}
@@ -99,8 +112,10 @@ function Index(props) {
 					<Button
 						onClick={() => {
 							setTranslateType(TRANSLATE_TYPE.document);
-							props.changeTargetText('');
-							props.changeSourceText('');
+							if (props.translationState.translateCode.sourceLang === null) props.changeSource('en');
+							// props.changeTargetText('');
+							// props.changeSourceText('');
+							// props.changeOutput(null);
 						}}
 						style={{ fontWeight: 'bold', marginRight: '20px', display: 'flex', backgroundColor: 'white', color: 'grey', borderColor: 'grey' }}
 						variant={translateType == TRANSLATE_TYPE.document ? 'outlined' : null}
@@ -114,8 +129,11 @@ function Index(props) {
 					<Button
 						onClick={() => {
 							setTranslateType(TRANSLATE_TYPE.audio);
-							props.changeTargetText('');
-							props.changeSourceText('');
+							if (props.translationState.translateCode.sourceLang === null) props.changeSource('en');
+							// props.changeTargetText('');
+							// props.changeSourceText('');
+							// props.changeFile(null);
+							// props.changeOutput(null);
 						}}
 						style={{ fontWeight: 'bold', marginRight: '20px', display: 'flex', backgroundColor: 'white', color: 'grey', borderColor: 'grey' }}
 						variant={translateType == TRANSLATE_TYPE.audio ? 'outlined' : null}
@@ -134,7 +152,7 @@ function Index(props) {
 					<Col md={12} className={styles.boxTranslate}>
 						<Row style={{ minHeight: '150px' }}>
 							{/* Input of translation */}
-							{translateType === TRANSLATE_TYPE.plainText ? <TranslateInput /> : <TranslateFileInput translateType={translateType} />}
+							{renderInput()}
 							{/* Output of translation */}
 							{renderOutput()}
 						</Row>
@@ -162,6 +180,7 @@ Index.propTypes = {
 	changeTargetText: PropTypes.func,
 	changeFile: PropTypes.func,
 	changeOutput: PropTypes.func,
+	changeSource: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({
@@ -170,9 +189,11 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = {
+	changeSource,
 	changeSourceText,
 	changeTargetText,
-	changeFile,
+	changeFileDocument, 
+	changeFileAudio,
 	changeOutput,
 };
 

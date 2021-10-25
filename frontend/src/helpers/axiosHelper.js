@@ -12,11 +12,11 @@ const axiosDefault = axios.create({
 
 axiosDefault.interceptors.request.use(
 	async config => {
-	  const acc_token = localStorage.getItem(ACCESS_TOKEN);
-	  if(acc_token){
+		const acc_token = localStorage.getItem(ACCESS_TOKEN);
+		if (acc_token) {
 			config.headers.Authorization = `${acc_token}`;
-	  }
-	  return config;
+		}
+		return config;
 	},
 	error => Promise.reject(error),
 );
@@ -31,18 +31,16 @@ axiosDefault.interceptors.response.use(function (response) {
 	return Promise.reject(error);
 });
 
-const axiosSpeechRecognitionBeta = axiosDefault;
-
 const SPEECH_RECOGNIZATION_URL = process.env.REACT_APP_SPEECH_RECOGNIZATION_URL;
-axiosSpeechRecognitionBeta.defaults.baseURL = SPEECH_RECOGNIZATION_URL;
-axiosSpeechRecognitionBeta.defaults.timeout = 30000;
 
 export const translateFileAudio = (body) => {
 	return new Promise((resolve, reject) => {
-		axiosSpeechRecognitionBeta({
+		axiosDefault({
 			headers: {
 				'Content-Type': 'multipart/form-data',
 			},
+			baseURL: SPEECH_RECOGNIZATION_URL,
+			timeout: 30000,
 			method: 'POST',
 			url: 'translate-speech',
 			data: body,
@@ -54,13 +52,15 @@ export const translateFileAudio = (body) => {
 			.catch((error) => {
 				reject(error);
 			});
-	});	
+	});
 };
 
 
 export const getSpeechRecogntionHistoryGetSingle = (params) => {
 	return new Promise((resolve, reject) => {
-		axiosSpeechRecognitionBeta({
+		axiosDefault({
+			baseURL: SPEECH_RECOGNIZATION_URL,
+			timeout: 30000,
 			method: 'GET',
 			url: 'speech-recognition-history/get-single',
 			params,
@@ -76,7 +76,9 @@ export const getSpeechRecogntionHistoryGetSingle = (params) => {
 
 export const getTranslateResultBeta = (resultUrl) => {
 	return new Promise((resolve, reject) => {
-		axiosSpeechRecognitionBeta({
+		axiosDefault({
+			baseURL: SPEECH_RECOGNIZATION_URL,
+			timeout: 30000,
 			url: resultUrl,
 			method: 'GET',
 		})
@@ -107,14 +109,14 @@ export const downloadFile = (url) => {
 		url,
 		method: 'GET',
 		responseType: 'blob', // important
-	  }).then((response) => {
+	}).then((response) => {
 		const url = window.URL.createObjectURL(new Blob([response.data]));
 		const link = document.createElement('a');
 		link.href = url;
 		link.setAttribute('download', 'file.docx');
 		document.body.appendChild(link);
 		link.click();
-	  });
+	});
 };
 
 export const downloadSpeechRecognitionResultFile = (url) => {
@@ -122,14 +124,14 @@ export const downloadSpeechRecognitionResultFile = (url) => {
 		url: SPEECH_RECOGNIZATION_URL + url,
 		method: 'GET',
 		responseType: 'blob', // important
-	  }).then((response) => {
+	}).then((response) => {
 		const url = window.URL.createObjectURL(new Blob([response.data]));
 		const link = document.createElement('a');
 		link.href = url;
 		link.setAttribute('download', 'file.txt');
 		document.body.appendChild(link);
 		link.click();
-	  });
+	});
 };
 
 export const SignOut = () => {
@@ -186,7 +188,7 @@ export const translateFile = (body) => {
 			.catch((error) => {
 				reject(error);
 			});
-	});	
+	});
 };
 
 // sample data
@@ -280,7 +282,7 @@ export const getTranslateHistory = (params) => {
 			.catch((error) => {
 				reject(error);
 			});
-	});	
+	});
 };
 
 // -------------- API từ dưới xuống là của http://nmtuet.ddns.net:1710/ ------------- //
@@ -317,7 +319,7 @@ export const detectLang = (data) => {
 				resolve(result.data);
 			})
 			.catch((error) => {
-			// console.warn('axios helper', error);
+				// console.warn('axios helper', error);
 				reject(error);
 			});
 	});

@@ -10,7 +10,7 @@ import TranslateScreen from './screens/TranslationScreen';
 
 test('Hiện tiêu đề', () => {
 	render(<App />);
-	const linkElement = screen.getByText(/UET Dịch máy đa ngôn ngữ/i);
+	const linkElement = screen.getByText(/Dịch máy đa ngôn ngữ/i);
 	expect(linkElement).toBeInTheDocument();
 });
 

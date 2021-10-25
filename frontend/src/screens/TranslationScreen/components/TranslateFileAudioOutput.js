@@ -25,7 +25,7 @@ function TranslateFileAudioOutput(props) {
 	  */
 	const handleTranslate = () => {
 		const formData = new FormData();
-		formData.append('file', translationFileState.file);
+		formData.append('file', translationFileState.audioFile);
 		formData.append('sourceLang', translationState.translateCode.sourceLang);
 		formData.append('targetLang', translationState.translateCode.targetLang);
 		props.translateFileAudioAsync(formData);
@@ -35,7 +35,7 @@ function TranslateFileAudioOutput(props) {
 		if (translationFileState.currentState === STATE.LOADING) {
 			return true;
 		}
-		if (translationFileState.file === null && !props.isTranslate) {
+		if (translationFileState.audioFile === null && !props.isTranslate) {
 			return true;
 		}
 		if (translationState.translateCode.sourceLang === null) {
@@ -45,7 +45,7 @@ function TranslateFileAudioOutput(props) {
 	};
 
 	const convertedDocument = () => {
-		switch (translationFileState.outputTranslationFile.source_lang) {
+		switch (translationFileState.outputAudioFile.source_lang) {
 		case 'vi':
 			return t('taiChuyenNguTiengViet');
 		case 'en':
@@ -62,7 +62,7 @@ function TranslateFileAudioOutput(props) {
 	};
 
 	const translatedDocument = () => {
-		switch (translationFileState.outputTranslationFile.target_lang) {
+		switch (translationFileState.outputAudioFile.target_lang) {
 		case 'vi':
 			return t('taiTaiLieuTiengViet');
 		case 'en':
@@ -83,24 +83,25 @@ function TranslateFileAudioOutput(props) {
 			md={6}
 			className={styles.ResultTranslateBox}
 			style={{
-				backgroundColor: isNull(translationFileState.file) ? '#f3f3f3' : 'white'
+				backgroundColor: isNull(translationFileState.audioFile) ? '#f3f3f3' : 'white'
 			}}>
 			<div style={{
-				backgroundColor: isNull(translationFileState.file) ? '#f3f3f3' : 'white',
+				backgroundColor: isNull(translationFileState.audioFile) ? '#f3f3f3' : 'white',
 				display: 'flex',
 				paddingTop: 10,
 				paddingBottom: 10,
 				justifyContent: 'start',
 			}}>
-				{(translationFileState.outputTranslationFile && translationFileState.file) ?
+				{(translationFileState.outputAudioFile && translationFileState.audioFile) ?
 					<Col style={{
 						display: 'flex',
 						flexDirection: 'column',
+						paddingLeft: '0'
 					}}>
 						<Button
 							variant="contained"
 							color="primary"
-							onClick={() => downloadSpeechRecognitionResultFile(translationFileState.outputTranslationFile.converted_file_full_path)}
+							onClick={() => downloadSpeechRecognitionResultFile(translationFileState.outputAudioFile.converted_file_full_path)}
 							style={{
 								width: '300px',
 								marginBottom: '10px'
@@ -112,7 +113,7 @@ function TranslateFileAudioOutput(props) {
 						<Button
 							variant="contained"
 							color="success"
-							onClick={() => downloadSpeechRecognitionResultFile(translationFileState.outputTranslationFile.translated_file_full_path)}
+							onClick={() => downloadSpeechRecognitionResultFile(translationFileState.outputAudioFile.translated_file_full_path)}
 							style={{
 								width: '300px',
 								marginBottom: '10px'

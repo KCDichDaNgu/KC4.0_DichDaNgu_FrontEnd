@@ -4,14 +4,14 @@ import {
 	Col,
 } from 'react-bootstrap';
 import { Button, Typography, IconButton } from '@mui/material';
-import { changeFile, changeOutput } from '../../../redux/actions/translateFileAction';
+import { changeFileAudio, changeOutput, changeOutputAudio } from '../../../redux/actions/translateFileAction';
 import { STATE } from '../../../redux/reducers/translateFileReducer';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import CloseIcon from '@mui/icons-material/Close';
 import { TRANSLATE_TYPE } from '../../../constants/common';
 
-function TranslateFileInput(props) {
+function TranslateFileAudioOutput(props) {
 	const { translationFileState, translateType } = props;
 	const { t } = useTranslation();
 
@@ -19,8 +19,8 @@ function TranslateFileInput(props) {
  	* @description Function xóa file khỏi ô input
  	*/
 	const handleReset = () => {
-		props.changeFile(null);
-		props.changeOutput(null);
+		props.changeFileAudio(null);
+		props.changeOutputAudio(null);
 	};
 
 	return (
@@ -39,9 +39,9 @@ function TranslateFileInput(props) {
 					display: 'flex',
 					alignItems: 'center',
 					justifyContent: 'center',
-					flexDirection: translationFileState.file ? 'row' : 'column'
+					flexDirection: translationFileState.audioFile ? 'row' : 'column'
 				}}> 
-					{translationFileState.file === null ?
+					{translationFileState.audioFile === null ?
 						<>
 							<Typography variant="h6">
 								{t('chonTaiLieu')}
@@ -55,7 +55,7 @@ function TranslateFileInput(props) {
 								style={{ display: 'none' }}
 								id="contained-button-file"
 								onChange={(event) => {
-									props.changeFile(event.target.files[0]);
+									props.changeFileAudio(event.target.files[0]);
 								}}
 							/>
 							<label htmlFor="contained-button-file">
@@ -66,7 +66,7 @@ function TranslateFileInput(props) {
 						</> : 
 						<>
 							<Typography variant="h6">
-								{translationFileState.file.name}
+								{translationFileState.audioFile.name}
 							</Typography>
 							<div md={1} style={{ padding: '0' }} className={['text-center']}>
 								<IconButton aria-label="Example" onClick={handleReset} type="file">
@@ -81,11 +81,11 @@ function TranslateFileInput(props) {
 	);
 }
 
-TranslateFileInput.propTypes = {
+TranslateFileAudioOutput.propTypes = {
 	translateType: PropTypes.number,
 	translationFileState: PropTypes.object,
-	changeFile: PropTypes.func,
-	changeOutput: PropTypes.func,
+	changeFileAudio: PropTypes.func,
+	changeOutputAudio: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({
@@ -93,8 +93,9 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = { 
-	changeFile,
-	changeOutput
+	changeFileAudio,
+	changeOutput,
+	changeOutputAudio
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(TranslateFileInput);
+export default connect(mapStateToProps, mapDispatchToProps)(TranslateFileAudioOutput);
