@@ -123,8 +123,8 @@ function TranslationChooselang(props) {
 						/> : null}
 					{translationState.isSwap ? <Tab label={t('Translate.listLanguage.anh')} value={'en'} disabled={isDisableTab()} style={{fontWeight: 'bold'}}/> : null}
 					{translationState.isSwap ? <Tab label={t('Translate.listLanguage.trung')} value={'zh'} disabled={isDisableTab()} style={{fontWeight: 'bold'}}/> : null}
-					{translationState.isSwap ? <Tab label={t('Translate.listLanguage.lao')} value={'lo'} disabled={isDisableTab()} style={{fontWeight: 'bold'}}/> : null}
-					{translationState.isSwap ? <Tab label={t('Translate.listLanguage.khome')} value={'km'} disabled={isDisableTab()} style={{fontWeight: 'bold'}}/> : null}
+					{translationState.isSwap && translateType !== TRANSLATE_TYPE.audio ? <Tab label={t('Translate.listLanguage.lao')} value={'lo'} disabled={isDisableTab()} style={{fontWeight: 'bold'}}/> : null}
+					{translationState.isSwap && translateType !== TRANSLATE_TYPE.audio? <Tab label={t('Translate.listLanguage.khome')} value={'km'} disabled={isDisableTab()} style={{fontWeight: 'bold'}}/> : null}
 					{!translationState.isSwap ? <Tab label={t('Translate.listLanguage.viet')} value={'vi'} disabled={isDisableTab()} style={{fontWeight: 'bold'}}/> : null}
 				</Tabs>
 			</div>

@@ -25,7 +25,7 @@ function TranslateFileDocumentOutput(props) {
  	*/
 	const handleTranslate = () => {
 		const formData = new FormData();
-		formData.append('file', translationFileState.file);
+		formData.append('file', translationFileState.documentFile);
 		formData.append('sourceLang', translationState.translateCode.sourceLang);
 		formData.append('targetLang', translationState.translateCode.targetLang);
 		props.translateFileDocumentAsync(formData);
@@ -35,7 +35,7 @@ function TranslateFileDocumentOutput(props) {
 		if(translationFileState.currentState === STATE.LOADING) {
 			return true;
 		}
-		if(translationFileState.file === null && !props.isTranslate) {
+		if(translationFileState.documentFile === null && !props.isTranslate) {
 			return true;
 		}
 		if(translationState.translateCode.sourceLang === null) {
@@ -45,7 +45,7 @@ function TranslateFileDocumentOutput(props) {
 	};
 
 	const buttonTextDich = () => {
-		switch (translationFileState.outputTranslationFile.target_lang) {
+		switch (translationFileState.outputDocumentFile.target_lang) {
 		case 'vi':
 			return t('taiTaiLieuTiengViet');
 		case 'en':
@@ -66,20 +66,20 @@ function TranslateFileDocumentOutput(props) {
 			md={6} 
 			className={styles.ResultTranslateBox} 
 			style={{
-				backgroundColor: isNull(translationFileState.file) ? '#f3f3f3' : 'white'
+				backgroundColor: isNull(translationFileState.documentFile) ? '#f3f3f3' : 'white'
 			}}>
 			<div style={{
-				backgroundColor: isNull(translationFileState.file) ? '#f3f3f3' : 'white' , 
+				backgroundColor: isNull(translationFileState.documentFile) ? '#f3f3f3' : 'white' , 
 				display: 'flex', 
 				paddingTop: 10,
 				paddingBottom: 10,
 				justifyContent: 'start'
 			}}>
-				{(translationFileState.outputTranslationFile && translationFileState.file) ? 
+				{(translationFileState.outputDocumentFile && translationFileState.documentFile) ? 
 					<Button 
 						variant="contained" 
 						color="success" 
-						onClick={() => downloadFile(`http://nmtuet.ddns.net:8000/${translationFileState.outputTranslationFile.target_file_full_path}`)}
+						onClick={() => downloadFile(`http://nmtuet.ddns.net:8000/${translationFileState.outputDocumentFile.target_file_full_path}`)}
 					>
 						{buttonTextDich()}
 					</Button> : <LoadingButton 

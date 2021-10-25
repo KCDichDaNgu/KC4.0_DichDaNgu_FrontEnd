@@ -1,9 +1,14 @@
 import { 
 	TRANSLATEFILE_SUCCESS,
 	TRANSLATEFILE_FAIL,
+	TRANSLATEFILE_AUDIO_SUCCESS,
+	TRANSLATEFILE_DOCUMENT_SUCCESS,
 	TRANSLATEFILE,
-	CHANGE_FILE,
+	CHANGE_FILE_DOCUMENT,
+	CHANGE_FILE_AUDIO,
 	CHANGE_OUTPUT,
+	CHANGE_OUTPUT_AUDIO,
+	CHANGE_OUTPUT_DOCUMENT
 } from '../constant/translateFileTypes';
 import * as axiosHelper from '../../helpers/axiosHelper';
 import { debounce } from 'lodash';
@@ -19,9 +24,18 @@ const STATUS = {
 /**
  * @description Thay đổi giá trị
  */
-export function changeFile(data) {
+export function changeFileDocument(data) {
 	return {
-	  type: CHANGE_FILE,
+	  type: CHANGE_FILE_DOCUMENT,
+	  payload: {
+			file: data,
+		}
+	};
+}
+
+export function changeFileAudio(data) {
+	return {
+	  type: CHANGE_FILE_AUDIO,
 	  payload: {
 			file: data,
 		}
@@ -40,6 +54,24 @@ export function changeOutput(data) {
 	};
 }
 
+export function changeOutputDocument(data) {
+	return {
+	  type: CHANGE_OUTPUT_DOCUMENT,
+	  payload: {
+			data,
+		}
+	};
+}
+
+export function changeOutputAudio(data) {
+	return {
+	  type: CHANGE_OUTPUT_AUDIO,
+	  payload: {
+			data,
+		}
+	};
+}
+
 export function translationFileLoading() {
 	return {
 	  type: TRANSLATEFILE,
@@ -52,6 +84,22 @@ export function translationFileLoading() {
 export function translationFileSuccess(data) {
 	return {
 	  type: TRANSLATEFILE_SUCCESS,
+	  payload: {
+			data,
+		}
+	};
+}
+export function translationFileAudioSuccess(data) {
+	return {
+	  type: TRANSLATEFILE_AUDIO_SUCCESS,
+	  payload: {
+			data,
+		}
+	};
+}
+export function translationFileDocumentSuccess(data) {
+	return {
+	  type: TRANSLATEFILE_DOCUMENT_SUCCESS,
 	  payload: {
 			data,
 		}
@@ -120,10 +168,10 @@ const debouncedTranslationFile = debounce(async (body, dispatch) => {
 			dispatch(translationFileFailed(getTranslationFileResult.message));
 		} else {
 			const getTranslationResult = await axiosHelper.getTranslateResult(getTranslationFileResult.data.resultUrl);
-			if (getTranslationResult.status === 'closed'){
-				dispatch(translationFileFailed(getTranslationResult.message));
+			if (getTranslationResult.status === 'translated'){
+				dispatch(translationFileDocumentSuccess(getTranslationResult));				
 			} else {
-				dispatch(translationFileSuccess(getTranslationResult));
+				dispatch(translationFileFailed(getTranslationResult.message));
 			}
 		}
 	} catch(error) {
@@ -189,10 +237,10 @@ const debouncedTranslationFileAudio = debounce(async (body, dispatch) => {
 			dispatch(translationFileFailed(getTranslationFileResult.message));
 		} else {
 			const getTranslationResult = await axiosHelper.getTranslateResultBeta(getTranslationFileResult.data.resultUrl);
-			if (getTranslationResult.status === 'closed'){
-				dispatch(translationFileFailed(getTranslationResult.message));
+			if (getTranslationResult.status === 'translated'){
+				dispatch(translationFileAudioSuccess(getTranslationResult));
 			} else {
-				dispatch(translationFileSuccess(getTranslationResult));
+				dispatch(translationFileFailed(getTranslationResult.message));
 			}
 		}
 	} catch(error) {
