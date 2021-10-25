@@ -44,7 +44,7 @@ function TranslateFileAudioOutput(props) {
 		return false;
 	};
 
-	const translatedDocument = () => {
+	const convertedDocument = () => {
 		switch (translationFileState.outputTranslationFile.target_lang) {
 		case 'vi':
 			return t('taiChuyenNguTiengViet');
@@ -61,7 +61,7 @@ function TranslateFileAudioOutput(props) {
 		}
 	};
 
-	const convertedDocument = () => {
+	const translatedDocument = () => {
 		switch (translationFileState.outputTranslationFile.source_lang) {
 		case 'vi':
 			return t('taiTaiLieuTiengViet');
