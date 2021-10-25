@@ -9,9 +9,10 @@ import { STATE } from '../../../redux/reducers/translateFileReducer';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import CloseIcon from '@mui/icons-material/Close';
+import { TRANSLATE_TYPE } from '../../../constants/common';
 
 function TranslateFileInput(props) {
-	const { translationFileState } = props;
+	const { translationFileState, translateType } = props;
 	const { t } = useTranslation();
 
 	/**
@@ -46,7 +47,7 @@ function TranslateFileInput(props) {
 								{t('chonTaiLieu')}
 							</Typography>
 							<Typography p={1}>
-								{t('taiTep')}
+								{translateType == TRANSLATE_TYPE.document ? t('taiTepTaiLieu') : t('taiTepAmThanh')}
 							</Typography>
 							<input
 								type="file"
@@ -81,6 +82,7 @@ function TranslateFileInput(props) {
 }
 
 TranslateFileInput.propTypes = {
+	translateType: PropTypes.number,
 	translationFileState: PropTypes.object,
 	changeFile: PropTypes.func,
 	changeOutput: PropTypes.func,

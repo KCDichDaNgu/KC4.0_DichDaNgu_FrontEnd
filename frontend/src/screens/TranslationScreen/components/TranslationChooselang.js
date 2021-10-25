@@ -19,17 +19,18 @@ import {
 	changeTargetText,
 	changeDetectLang,
 } from '../../../redux/actions/translateAction';
+import { TRANSLATE_TYPE } from '../../../constants/common';
 
 function TranslationChooselang(props) {
-	const { translationFileState, translationState, isTranslate } = props;
+	const { translationFileState, translationState, translateType } = props;
 	const { t } = useTranslation();
 
 	/**
  	* @description Function hoán đổi loại ngôn ngữ
  	*/
 	const handleSwap = () => {
-		props.swapTranslate(translationState.translateCode.targetLang,translationState.translateCode.sourceLang);
-		if( translationState.translateText.targetText !== '' && isTranslate){
+		props.swapTranslate(translationState.translateCode.targetLang, translationState.translateCode.sourceLang);
+		if(translationState.translateText.targetText !== '' && translateType === TRANSLATE_TYPE.plainText){
 			props.changeSourceText(translationState.translateText.targetText);
 			props.changeTargetText(translationState.translateText.sourceText);
 		}
@@ -41,7 +42,7 @@ function TranslationChooselang(props) {
  	*/
 	const handleChangeFrom = (event, newValue) => {
 		props.changeSource(newValue);
-		if(isTranslate){
+		if(translateType === TRANSLATE_TYPE.plainText){
 			if(translationState.translateCode.detectLang !== null) {
 				props.changeDetectLang(null);
 			}
@@ -58,7 +59,7 @@ function TranslationChooselang(props) {
  	*/
 	const handleChangeTo = (event, newValue) => {
 		props.changeTarget(newValue);
-		if(isTranslate){
+		if(translateType === TRANSLATE_TYPE.plainText){
 			if( translationState.translateText.targetText !== '' ){
 				props.changeTargetText('');
 				if(translationState.translateCode.sourceLang){
@@ -103,7 +104,7 @@ function TranslationChooselang(props) {
 						},
 								  }}
 				>
-					{isTranslate ?
+					{translateType === TRANSLATE_TYPE.plainText ?
 						<Tab
 							icon={translationState.translateCode.detectLang? 
 								null : 
@@ -159,7 +160,7 @@ function TranslationChooselang(props) {
 }
 
 TranslationChooselang.propTypes = {
-	isTranslate: PropTypes.bool.isRequired,
+	translateType: PropTypes.number,
 	translationFileState: PropTypes.object,
 	translationState: PropTypes.object,
 	changeSource: PropTypes.func,

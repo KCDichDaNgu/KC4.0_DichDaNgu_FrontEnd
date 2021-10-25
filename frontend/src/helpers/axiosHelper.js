@@ -31,6 +31,65 @@ axiosDefault.interceptors.response.use(function (response) {
 	return Promise.reject(error);
 });
 
+const axiosSpeechRecognitionBeta = axiosDefault;
+
+const SPEECH_RECOGNIZATION_URL = process.env.REACT_APP_SPEECH_RECOGNIZATION_URL;
+axiosSpeechRecognitionBeta.defaults.baseURL = SPEECH_RECOGNIZATION_URL;
+axiosSpeechRecognitionBeta.defaults.timeout = 30000;
+
+export const translateFileAudio = (body) => {
+	return new Promise((resolve, reject) => {
+		axiosSpeechRecognitionBeta({
+			headers: {
+				'Content-Type': 'multipart/form-data',
+			},
+			method: 'POST',
+			url: 'translate-speech',
+			data: body,
+			// body: body,
+		})
+			.then((result) => {
+				resolve(result.data);
+			})
+			.catch((error) => {
+				reject(error);
+			});
+	});	
+};
+
+
+export const getSpeechRecogntionHistoryGetSingle = (params) => {
+	return new Promise((resolve, reject) => {
+		axiosSpeechRecognitionBeta({
+			method: 'GET',
+			url: 'speech-recognition-history/get-single',
+			params,
+		})
+			.then((result) => {
+				resolve(result.data);
+			})
+			.catch((error) => {
+				reject(error);
+			});
+	});
+};
+
+export const getTranslateResultBeta = (resultUrl) => {
+	return new Promise((resolve, reject) => {
+		axiosSpeechRecognitionBeta({
+			url: resultUrl,
+			method: 'GET',
+		})
+			.then((result) => {
+				resolve(result.data);
+			})
+			.catch((error) => {
+				reject(error);
+			});
+	});
+};
+
+
 export const SignIn = (body) => {
 	return new Promise((resolve, reject) => {
 		axiosDefault.post('user/auth', body)
@@ -53,6 +112,21 @@ export const downloadFile = (url) => {
 		const link = document.createElement('a');
 		link.href = url;
 		link.setAttribute('download', 'file.docx');
+		document.body.appendChild(link);
+		link.click();
+	  });
+};
+
+export const downloadSpeechRecognitionResultFile = (url) => {
+	axios({
+		url: SPEECH_RECOGNIZATION_URL + url,
+		method: 'GET',
+		responseType: 'blob', // important
+	  }).then((response) => {
+		const url = window.URL.createObjectURL(new Blob([response.data]));
+		const link = document.createElement('a');
+		link.href = url;
+		link.setAttribute('download', 'file.txt');
 		document.body.appendChild(link);
 		link.click();
 	  });
