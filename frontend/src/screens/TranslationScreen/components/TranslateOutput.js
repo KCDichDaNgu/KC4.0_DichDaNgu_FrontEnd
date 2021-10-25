@@ -16,16 +16,17 @@ import {
 import { useTranslation } from 'react-i18next';
 import LoadingButton from '@mui/lab/LoadingButton';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { TRANSLATE_TYPE } from '../../../constants/common';
 
 function TranslateInput(props) {
-	const { translationState, isTranslate } = props;
+	const { translationState, translateType } = props;
 	const { t } = useTranslation();
 
 	const isDisableTranslateButton = () => {
 		if(translationState.currentState === STATE.LOADING) {
 			return true;
 		}
-		if(translationState.translateText.sourceText === '' && isTranslate) {
+		if(translationState.translateText.sourceText === '' && translateType === TRANSLATE_TYPE.plainText) {
 			return true;
 		}
 		return false;
@@ -101,7 +102,7 @@ function TranslateInput(props) {
 }
 
 TranslateInput.propTypes = {
-	isTranslate: PropTypes.bool.isRequired,
+	translateType: PropTypes.number,
 	translationState: PropTypes.object,
 	changeTargetText: PropTypes.func,
 	translationAsync: PropTypes.func,

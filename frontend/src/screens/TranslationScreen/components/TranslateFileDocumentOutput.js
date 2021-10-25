@@ -4,7 +4,7 @@ import {
 	Col,
 } from 'react-bootstrap';
 import { Button } from '@mui/material';
-import { translateFileAsync } from '../../../redux/actions/translateFileAction';
+import { translateFileDocumentAsync } from '../../../redux/actions/translateFileAction';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { STATE } from '../../../redux/reducers/translateFileReducer';
 import { useTranslation } from 'react-i18next';
@@ -14,7 +14,7 @@ import { isNull } from 'lodash';
 import { downloadFile } from '../../../helpers/axiosHelper';
 
 
-function TranslateFileOutput(props) {
+function TranslateFileDocumentOutput(props) {
 	const { translationFileState, translationState } = props;
 	const { t } = useTranslation();
 
@@ -28,7 +28,7 @@ function TranslateFileOutput(props) {
 		formData.append('file', translationFileState.file);
 		formData.append('sourceLang', translationState.translateCode.sourceLang);
 		formData.append('targetLang', translationState.translateCode.targetLang);
-		props.translateFileAsync(formData);
+		props.translateFileDocumentAsync(formData);
 	};
 
 	const isDisableTranslateButton = () => {
@@ -96,20 +96,20 @@ function TranslateFileOutput(props) {
 	);
 }
 
-TranslateFileOutput.propTypes = {
+TranslateFileDocumentOutput.propTypes = {
 	isTranslate: PropTypes.bool.isRequired,
 	translationState: PropTypes.object,
 	translationFileState: PropTypes.object,
-	translateFileAsync: PropTypes.func,
+	translateFileDocumentAsync: PropTypes.func,
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state) => ({ 
 	translationState: state.translateReducer,
 	translationFileState: state.translateFileReducer 
 });
 
 const mapDispatchToProps = { 
-	translateFileAsync,
+	translateFileDocumentAsync,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(TranslateFileOutput);
+export default connect(mapStateToProps, mapDispatchToProps)(TranslateFileDocumentOutput);
