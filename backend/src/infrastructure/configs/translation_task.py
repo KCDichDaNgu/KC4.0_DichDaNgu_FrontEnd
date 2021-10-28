@@ -21,8 +21,9 @@ RESULT_FILE_STATUS = {
 
 class AllowedFileTranslationExtension(str, ExtendedEnum):
 
-    doc = 'doc'
+    txt = 'txt'
     docx = 'docx'
+
 
 def is_allowed_file_extension(file_name):
 
@@ -183,6 +184,7 @@ class TranslationTask_TranslationCompletedResultFileSchemaV1(BaseModel):
 class FileTranslationTask_LangUnknownResultFileSchemaV1(BaseModel):
 
     original_file_full_path: str
+    file_type:str
     binary_progress_file_full_path: str
     statistic: DocumentStatistic
     current_progress: DocumentCurrentProgress
@@ -206,6 +208,7 @@ class FileTranslationTask_LangUnknownResultFileSchemaV1(BaseModel):
 class FileTranslationTask_NotYetTranslatedResultFileSchemaV1(BaseModel):
 
     original_file_full_path: str
+    file_type:str
     binary_progress_file_full_path: str
     statistic: DocumentStatistic
     current_progress: DocumentCurrentProgress
@@ -230,6 +233,7 @@ class FileTranslationTask_NotYetTranslatedResultFileSchemaV1(BaseModel):
 class FileTranslationTask_TranslationClosedResultFileSchemaV1(BaseModel):
 
     original_file_full_path: str
+    file_type:str
     binary_progress_file_full_path: str
     statistic: DocumentStatistic
     current_progress: DocumentCurrentProgress
@@ -252,6 +256,7 @@ class FileTranslationTask_TranslationClosedResultFileSchemaV1(BaseModel):
 class FileTranslationTask_TranslatingResultFileSchemaV1(BaseModel):
 
     original_file_full_path: str
+    file_type:str
     binary_progress_file_full_path: str
     statistic: DocumentStatistic
     current_progress: DocumentCurrentProgress
@@ -275,6 +280,7 @@ class FileTranslationTask_TranslatingResultFileSchemaV1(BaseModel):
 class FileTranslationTask_TranslationCompletedResultFileSchemaV1(BaseModel):
 
     original_file_full_path: str
+    file_type:str
     binary_progress_file_full_path: str
     statistic: DocumentStatistic
     current_progress: DocumentCurrentProgress

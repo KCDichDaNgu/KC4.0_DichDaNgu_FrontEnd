@@ -7,6 +7,7 @@ def init_background_tasks(config: GlobalConfig):
     from modules.background_tasks.tranlate_plain_text_created_by_public_request.detect_content_language.main import main as detect_content_language_for_plain_text_in_public_request
     from modules.background_tasks.tranlate_plain_text_created_by_public_request.translate_content.main import main as translate_content_for_plain_text_in_public_request
     from modules.background_tasks.tranlate_file_created_by_public_request.translate_content.main import main as translate_content_for_file_in_public_request
+    from modules.background_tasks.tranlate_file_created_by_public_request.translate_txt_file.main import main as translate_txt_file_for_file_in_public_request
    
 
     from modules.background_tasks.detect_plain_text_language_created_by_public_request.main import main as detect_plain_text_language_created_by_public_request
@@ -119,5 +120,14 @@ def init_background_tasks(config: GlobalConfig):
         translate_speech_created_by_public_request,
         id=background_task_11_conf.ID,
         trigger=background_task_11_conf.TRIGGER,
+        **background_task_11_conf.CONFIG
+    )
+
+    background_task_12_conf = BACKGROUND_TASKS['translate_content_for_file_in_public_request.translate_txt_file']
+ 
+    new_background_task_scheduler.add_job(
+        translate_txt_file_for_file_in_public_request,
+        id=background_task_12_conf.ID,
+        trigger=background_task_12_conf.TRIGGER,
         **background_task_11_conf.CONFIG
     )

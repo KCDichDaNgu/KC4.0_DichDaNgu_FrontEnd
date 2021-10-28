@@ -326,6 +326,11 @@ class AppConfig(BaseModel):
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
             CONFIG=dict(seconds=3, max_instances=1),
         ),
+        "translate_content_for_file_in_public_request.translate_txt_file": BackgroundTask(
+            ID="translate_content_for_file_in_public_request.translate_txt_file",
+            TRIGGER=BackgroundTaskTriggerEnum.interval.value,
+            CONFIG=dict(seconds=3, max_instances=1),
+        ),
     }
 
     MAX_QUERY_SIZE = 10

@@ -31,7 +31,7 @@ from infrastructure.configs.main import StatusCodeEnum, get_mongodb_instance
 from modules.translation_request.commands.create_file_translation_request.command import CreateFileTranslationRequestCommand
 from infrastructure.configs.translation_task import FileTranslationTask_LangUnknownResultFileSchemaV1, FileTranslationTask_NotYetTranslatedResultFileSchemaV1
 
-from core.utils.file import get_doc_file_meta
+from core.utils.file import extract_file_extension, get_doc_file_meta
 
 TEXT_TRANSLATION_TASKS = [
     TranslationTaskNameEnum.private_plain_text_translation.value, 
@@ -143,17 +143,26 @@ class TranslationRequestDService():
                 step=new_request.props.current_step,
             )
         )  
+        original_file_ext = extract_file_extension(command.source_file.name)
 
-        binary_doc, original_file_ext, total_paragraphs = get_doc_file_meta(command.source_file)
+        binary_doc, total_paragraphs = (None, 0)
+        print(original_file_ext)
+        if original_file_ext == 'docx':
 
-        create_files_result = await new_task_result_entity.create_required_files_for_file_translation_task(binary_doc, original_file_ext)
+            binary_doc, total_paragraphs = get_doc_file_meta(command.source_file)
 
+            create_files_result = await new_task_result_entity.create_required_files_for_docx_file_translation_task(binary_doc, original_file_ext)
+
+        else:
+            create_files_result = await new_task_result_entity.create_required_files_for_txt_file_translation_task(command.source_file)
+            print(create_files_result)
         if command.source_lang in LanguageEnum.enum_values() and command.source_lang != 'unknown':
 
             saved_content = FileTranslationTask_NotYetTranslatedResultFileSchemaV1(
                 original_file_full_path=create_files_result.data['original_file_full_path'],
-                binary_progress_file_full_path=create_files_result.data['binary_progress_file_full_path'],
+                binary_progress_file_full_path=create_files_result.data.get('binary_progress_file_full_path', ''),
                 target_file_path=None,
+                file_type=original_file_ext,
                 statistic=dict(
                     total_paragraphs=total_paragraphs,
                 ),
@@ -169,8 +178,9 @@ class TranslationRequestDService():
 
             saved_content = FileTranslationTask_LangUnknownResultFileSchemaV1(
                 original_file_full_path=create_files_result.data['original_file_full_path'],
-                binary_progress_file_full_path=create_files_result.data['binary_progress_file_full_path'],
+                binary_progress_file_full_path=create_files_result.data.get('binary_progress_file_full_path', ''),
                 target_file_path=None,
+                file_type=original_file_ext,
                 statistic=dict(
                     total_paragraphs=total_paragraphs,
                 ),

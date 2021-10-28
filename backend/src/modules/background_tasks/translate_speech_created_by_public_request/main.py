@@ -310,15 +310,16 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                         )
                     
                     await asyncio.gather(*update_request)
-
-            api_requests.append(
-                contentTranslator.translate(
-                    source_text=converted_text,
-                    source_lang=source_lang,
-                    target_lang=target_lang,
-                    session=session,
+            
+            else:
+                api_requests.append(
+                    contentTranslator.translate(
+                        source_text=converted_text,
+                        source_lang=source_lang,
+                        target_lang=target_lang,
+                        session=session,
+                    )
                 )
-            )
 
         api_results = await asyncio.gather(*api_requests)
 

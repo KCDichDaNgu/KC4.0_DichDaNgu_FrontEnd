@@ -272,6 +272,7 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                             original_file_full_path=original_file_full_path,
                             binary_progress_file_full_path=binary_progress_file_full_path,
                             source_lang=api_result.lang,
+                            file_type=task_result_content['file_type'],
                             statistic=dict(
                                 total_paragraphs=total_paragraphs,
                             ),
@@ -318,6 +319,7 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                         new_saved_content = FileTranslationTask_TranslationClosedResultFileSchemaV1(
                             original_file_full_path=original_file_full_path,
                             binary_progress_file_full_path=binary_progress_file_full_path,
+                            file_type=task_result_content['file_type'],
                             source_lang=api_result.lang,
                             statistic=dict(
                                 total_paragraphs=total_paragraphs,
@@ -364,6 +366,7 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
 
                         new_saved_content = FileTranslationTask_NotYetTranslatedResultFileSchemaV1(
                             original_file_full_path=original_file_full_path,
+                            file_type=task_result_content['file_type'],
                             binary_progress_file_full_path=binary_progress_file_full_path,
                             source_lang=api_result.lang,
                             statistic=dict(

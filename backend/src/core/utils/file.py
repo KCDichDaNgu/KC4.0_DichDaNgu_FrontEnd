@@ -54,15 +54,13 @@ def get_doc_file_meta(doc_file: File):
 
     binary_doc = io.BytesIO(doc_file.body)
 
-    file_extension = extract_file_extension(doc_file.name)
-
     doc = Document(binary_doc)
 
     doc_paragraphs = list(get_doc_paragraphs(doc))
 
     total_doc_paragraphs = len(doc_paragraphs)
 
-    return binary_doc, file_extension, total_doc_paragraphs
+    return binary_doc, total_doc_paragraphs
 
 async def delete_files(invalid_file_paths):
 

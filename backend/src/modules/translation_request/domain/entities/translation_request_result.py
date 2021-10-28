@@ -54,7 +54,7 @@ class TranslationRequestResultEntity(
 
         return real_file_translation_task_folder
 
-    async def create_required_files_for_file_translation_task(
+    async def create_required_files_for_docx_file_translation_task(
         self,
         binary_doc: IO,
         original_file_ext: AllowedFileTranslationExtension
@@ -98,3 +98,34 @@ class TranslationRequestResultEntity(
             ),
             message=MESSAGES['success']
         )
+
+    async def create_required_files_for_txt_file_translation_task(self, original_file: File):
+        self.__create_file_translation_task_folder()
+        
+        original_file_ext = extract_file_extension(original_file.name)
+        original_file_name = f'{get_file_translation_source_file_name()}.{original_file_ext}'
+        original_file_path = get_file_translation_file_path(self.props.task_id.value, original_file_name)
+        original_file_full_path = get_full_path(original_file_path)
+        try:
+            with open(original_file_full_path, 'wb+') as outp:
+
+                outp.write(original_file.body)
+
+                outp.close()
+        
+        except Exception as e:
+            return BaseResponse(
+                code=StatusCodeEnum.failed.value,
+                data=dict(
+                    original_file_full_path=None
+                ),
+                message=MESSAGES['failed']
+            )
+        
+        return BaseResponse(
+                code=StatusCodeEnum.success.value,
+                data=dict(
+                    original_file_full_path=original_file_full_path
+                ),
+                message=MESSAGES['success']
+            )
