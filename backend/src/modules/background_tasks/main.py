@@ -15,9 +15,6 @@ def init_background_tasks(config: GlobalConfig):
     from modules.background_tasks.delete_invalid_task.main import main as delete_invalid_task
     from modules.background_tasks.delete_invalid_file.main import main as delete_invalid_file
 
-    from modules.background_tasks.recognize_speech_created_by_public_request.recognize_speech.main import main as recognize_speech_created_by_public_request
-    from modules.background_tasks.recognize_speech_created_by_public_request.fetch_recognize_result.main import main as fetch_recognize_result
-    from modules.background_tasks.translate_speech_created_by_public_request.main import main as translate_speech_created_by_public_request
     BACKGROUND_TASKS = config.APP_CONFIG.BACKGROUND_TASKS
 
     new_background_task_scheduler = BackgroundTaskManager(AsyncIOScheduler())
@@ -96,38 +93,11 @@ def init_background_tasks(config: GlobalConfig):
         **background_task_8_conf.CONFIG
     )
 
-    background_task_9_conf = BACKGROUND_TASKS['recognize_speech_in_public_request.recognize_speech']
- 
-    new_background_task_scheduler.add_job(
-        recognize_speech_created_by_public_request,
-        id=background_task_9_conf.ID,
-        trigger=background_task_9_conf.TRIGGER,
-        **background_task_9_conf.CONFIG
-    )
-
-    background_task_10_conf = BACKGROUND_TASKS['recognize_speech_in_public_request.fetch_recognize_result']
- 
-    new_background_task_scheduler.add_job(
-        fetch_recognize_result,
-        id=background_task_10_conf.ID,
-        trigger=background_task_10_conf.TRIGGER,
-        **background_task_10_conf.CONFIG
-    )
-
-    background_task_11_conf = BACKGROUND_TASKS['translate_speech_in_public_request']
- 
-    new_background_task_scheduler.add_job(
-        translate_speech_created_by_public_request,
-        id=background_task_11_conf.ID,
-        trigger=background_task_11_conf.TRIGGER,
-        **background_task_11_conf.CONFIG
-    )
-
-    background_task_12_conf = BACKGROUND_TASKS['translate_content_for_file_in_public_request.translate_txt_file']
+    background_task_9_conf = BACKGROUND_TASKS['translate_content_for_file_in_public_request.translate_txt_file']
  
     new_background_task_scheduler.add_job(
         translate_txt_file_for_file_in_public_request,
-        id=background_task_12_conf.ID,
-        trigger=background_task_12_conf.TRIGGER,
-        **background_task_11_conf.CONFIG
+        id=background_task_9_conf.ID,
+        trigger=background_task_9_conf.TRIGGER,
+        **background_task_9_conf.CONFIG
     )

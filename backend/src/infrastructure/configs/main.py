@@ -136,58 +136,6 @@ class AppConfig(BaseModel):
             "method": "GET",
             "abstract": False,
         },
-        "speech_recognition_request": {
-            "path": "/",
-            "name": "Speech recognition request",
-            "abstract": True,
-        },
-        "speech_recognition_request.create": {
-            "path": "recognize-speech",
-            "name": "Create speech recognition request",
-            "summary": "Create speech recognition  request",
-            "desc": "Create speech recognition  request",
-            "method": "POST",
-            "abstract": False,
-        },
-        "speech_recognition_history": {
-            "path": "/speech-recognition-history",
-            "name": "Speech recognition history",
-            "abstract": True,
-        },
-        "speech_recognition_history.get_single": {
-            "path": "/get-single",
-            "name": "Get single speech recognition history",
-            "summary": "Get single speech recognition history",
-            "desc": "Get single speech recognition history",
-            "method": "GET",
-            "abstract": False,
-        },
-        "speech_translation_request": {
-            "path": "/",
-            "name": "Speech translation request",
-            "abstract": True,
-        },
-        "speech_translation_request.create": {
-            "path": "translate-speech",
-            "name": "Create speech translation request",
-            "summary": "Create speech translation  request",
-            "desc": "Create speech translation  request",
-            "method": "POST",
-            "abstract": False,
-        },
-        "speech_translation_history": {
-            "path": "/speech-translation-history",
-            "name": "Speech translation history",
-            "abstract": True,
-        },
-        "speech_translation_history.get_single": {
-            "path": "/get-single",
-            "name": "Get single speech translation history",
-            "summary": "Get single speech translation history",
-            "desc": "Get single speech translation history",
-            "method": "GET",
-            "abstract": False,
-        },
         "static_files": {
             "path": "/static",
             "name": "Static files serving",
@@ -311,21 +259,6 @@ class AppConfig(BaseModel):
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
             CONFIG=dict(seconds=3, max_instances=1),
         ),
-        "recognize_speech_in_public_request.recognize_speech": BackgroundTask(
-            ID="recognize_speech_in_public_request.recognize_speech",
-            TRIGGER=BackgroundTaskTriggerEnum.interval.value,
-            CONFIG=dict(seconds=3, max_instances=1),
-        ),
-        "recognize_speech_in_public_request.fetch_recognize_result": BackgroundTask(
-            ID="recognize_speech_in_public_request.fetch_recognize_result",
-            TRIGGER=BackgroundTaskTriggerEnum.interval.value,
-            CONFIG=dict(seconds=3, max_instances=1),
-        ),
-        "translate_speech_in_public_request": BackgroundTask(
-            ID="translate_speech_in_public_request",
-            TRIGGER=BackgroundTaskTriggerEnum.interval.value,
-            CONFIG=dict(seconds=3, max_instances=1),
-        ),
         "translate_content_for_file_in_public_request.translate_txt_file": BackgroundTask(
             ID="translate_content_for_file_in_public_request.translate_txt_file",
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
@@ -348,14 +281,6 @@ class LanguageDetectionAPI(BaseModel):
     URL: AnyHttpUrl = Field(...)
     METHOD: str = Field(...)
     ALLOWED_CONCURRENT_REQUEST: int = Field(...)
-
-
-class SpeechRecognitionAPI(BaseModel):
-
-    URL: str = Field(...)
-    METHOD: str = Field(...)
-    ALLOWED_CONCURRENT_REQUEST: int = Field(...)
-
 
 class Pagination(BaseModel):
 
@@ -406,7 +331,6 @@ class GlobalConfig(BaseSettings):
 
     PUBLIC_TRANSLATION_API: TranslationAPI
     PUBLIC_LANGUAGE_DETECTION_API: LanguageDetectionAPI
-    PUBLIC_SPEECH_RECOGNITION_API: SpeechRecognitionAPI
 
     OAUTH2_PROVIDER: Oauth2Provider
     ACCESS_TOKEN_TTL: int
