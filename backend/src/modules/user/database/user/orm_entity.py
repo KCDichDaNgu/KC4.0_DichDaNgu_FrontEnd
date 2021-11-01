@@ -15,6 +15,7 @@ class UserOrmEntity(OrmEntityBase):
     username = fields.StringField(required=True)
     first_name = fields.StringField(required=True)
     last_name = fields.StringField(required=False)
+    password = fields.StringField(required=False)
     avatar = fields.StringField(required=False)
     email = fields.StringField(required=True, unique=True)
     role = fields.StringField(required=True, validate=validate.OneOf(UserRole.enum_values()))

@@ -61,6 +61,7 @@ def init_routes(app: Sanic) -> Sanic:
     from modules.static_files_server.main import static_files_server_bp
 
     from modules.user.main import user_bp
+    from modules.user.main import admin_bp
 
     app.blueprint(swagger_blueprint)
 
@@ -75,6 +76,7 @@ def init_routes(app: Sanic) -> Sanic:
 
     app.blueprint(static_files_server_bp)
     app.blueprint(user_bp)
+    app.blueprint(admin_bp)
     app.blueprint(system_setting_bp)
     
     return app

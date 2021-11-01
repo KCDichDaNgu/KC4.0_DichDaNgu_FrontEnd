@@ -76,5 +76,18 @@
 		},
 		"daThemVaoTuVung": "Đã thêm vào từ vựng",
 		"daSaoChep": "Đã sao chép"
-	}
+	},
+	"login":"Đăng nhập",
+	"username": "Tên đăng nhập",
+	"lastName": "Họ",
+	"firstName": "Tên",
+	"password":"Mật khẩu",
+	"role": "Vai trò",
+	"status": "Trạng thái",
+	"admin":"Quản trị viên",
+	"member": "Người dùng",
+	"active": "Hoạt động",
+	"inactive": "Không hoạt động",
+	"createUser": "Thêm người dùng",
+	"updateSuccess":" Cập nhật thành công"
 }

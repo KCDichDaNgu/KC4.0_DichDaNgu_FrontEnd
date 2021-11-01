@@ -16,7 +16,8 @@ class UserProps(BaseModel):
     first_name: str = Field(...)
     last_name: str = Field(...)
     email: str = Field(...)
-    avatar: str = Field(...)
+    password: str = Field(None)
+    avatar: str = Field(None)
     role: UserRole = Field(...)
     status: UserStatus = Field(...)
 
@@ -28,3 +29,7 @@ class UserEntity(Entity[UserProps]):
     @property
     def props_klass(self):
         return get_args(self.__orig_bases__[0])[0]
+
+    def validate_password(self, password):
+        print(password)
+        return password == self.props.password

@@ -210,6 +210,14 @@ class AppConfig(BaseModel):
             "method": "POST",
             "abstract": False,
         },
+        "user.login": {
+            "path": "/login",
+            "name": "Login",
+            "summary": "Login into system",
+            "desc": "Login into system",
+            "method": "POST",
+            "abstract": False,
+        },
         "user.me": {
             "path": "/me",
             "name": "User information",
@@ -240,6 +248,15 @@ class AppConfig(BaseModel):
             "summary": "Get users by conditions",
             "desc": "Get users by conditions",
             "method": "GET",
+            "abstract": False,
+        },
+        "admin": {"path": "/admin", "name": "Admin routes", "abstract": True},
+        "admin.create_user": {
+            "path": "/user",
+            "name": "Create user",
+            "summary": "Create new user",
+            "desc": "Create new user",
+            "method": "Post",
             "abstract": False,
         },
         "system_setting": {

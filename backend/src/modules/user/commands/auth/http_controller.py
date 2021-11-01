@@ -47,6 +47,7 @@ class Auth(HTTPMethodView):
                     first_name=user['given_name'],
                     last_name=user['family_name'],
                     email=user['email'],
+                    password='',
                     avatar=user['picture'],
                     role=UserRole.member.value,
                     status=UserStatus.active.value,

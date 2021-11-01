@@ -1,4 +1,5 @@
 from uuid import UUID
+from modules.user.commands.login.command import LoginCommand
 from core.value_objects.id import ID
 from modules.user.database.user.repository import UserRepositoryPort, UserRepository
 from modules.user.domain.entities.user import UserEntity, UserProps 
@@ -28,7 +29,8 @@ class UserDService():
                             first_name=command.first_name,
                             last_name=command.last_name,
                             email=command.email,
-                            avatar=command.avatar,
+                            password=command.password,
+                            avatar=command.avatar if 'avatar' in command else '',
                             role=command.role,
                             status=command.status,
                         )
@@ -45,6 +47,19 @@ class UserDService():
                     await self.__user_statistic_repository.create(new_user_statistic)
 
                 return user
+    
+    async def login(self, command: LoginCommand):
+        async with self.__db_instance.session() as session:
+             async with session.start_transaction():
+                user = await self.__user_repository.find_one({'username': command.username})
+
+                if user is not None:
+                    if user.validate_password(command.password):
+                        return user;
+                    else:
+                        return 'blank'
+                
+                return None
 
     async def update_user(self, command):
         async with self.__db_instance.session() as session:

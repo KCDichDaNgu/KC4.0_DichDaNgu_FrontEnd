@@ -1,9 +1,12 @@
 import axios from 'axios';
 import { ACCESS_TOKEN } from '../constants/envVar';
+const SPEECH_RECOGNIZATION_URL = process.env.REACT_APP_SPEECH_RECOGNIZATION_URL;
+
+const queryString = require('query-string');
 
 const axiosDefault = axios.create({
 	// baseURL: 'http://nmtuet.ddns.net:1710/',
-	baseURL: 'http://nmtuet.ddns.net:8000/',
+	baseURL: SPEECH_RECOGNIZATION_URL,
 	headers: {
 		'Content-Type': 'application/json',
 	},
@@ -30,8 +33,6 @@ axiosDefault.interceptors.response.use(function (response) {
 }, function (error) {
 	return Promise.reject(error);
 });
-
-const SPEECH_RECOGNIZATION_URL = process.env.REACT_APP_SPEECH_RECOGNIZATION_URL;
 
 export const translateFileAudio = (body) => {
 	return new Promise((resolve, reject) => {
@@ -92,9 +93,33 @@ export const getTranslateResultBeta = (resultUrl) => {
 };
 
 
-export const SignIn = (body) => {
+export const SignInWithGoogle = (body) => {
 	return new Promise((resolve, reject) => {
 		axiosDefault.post('user/auth', body)
+			.then((result) => {
+				resolve(result.data);
+			})
+			.catch((error) => {
+				reject(error);
+			});
+	});
+};
+
+export const SignIn = (body) => {
+	return new Promise((resolve, reject) => {
+		axiosDefault.post('user/login', body)
+			.then((result) => {
+				resolve(result.data);
+			})
+			.catch((error) => {
+				reject(error);
+			});
+	});
+};
+
+export const CreateUserByAdmin = (body) => {
+	return new Promise((resolve, reject) => {
+		axiosDefault.post('admin/user', body)
 			.then((result) => {
 				resolve(result.data);
 			})
@@ -149,6 +174,31 @@ export const SignOut = () => {
 export const getMe = () => {
 	return new Promise((resolve, reject) => {
 		axiosDefault.get('user/me')
+			.then((result) => {
+				resolve(result.data);
+			})
+			.catch((error) => {
+				reject(error);
+			});
+	});
+};
+
+export const getUserList = (params) => {
+	const _params = queryString.stringify(params);
+	return new Promise((resolve, reject) => {
+		axiosDefault.get('user/search', { params: _params })
+			.then((result) => {
+				resolve(result.data);
+			})
+			.catch((error) => {
+				reject(error);
+			});
+	});
+};
+
+export const updateUser = (body) => {
+	return new Promise((resolve, reject) => {
+		axiosDefault.put('user/other', body)
 			.then((result) => {
 				resolve(result.data);
 			})

@@ -79,7 +79,7 @@ function TranslateFileDocumentOutput(props) {
 					<Button 
 						variant="contained" 
 						color="success" 
-						onClick={() => downloadFile(`http://nmtuet.ddns.net:8000/${translationFileState.outputDocumentFile.target_file_full_path}`)}
+						onClick={() => downloadFile(`http://192.168.1.105:8000/${translationFileState.outputDocumentFile.target_file_full_path}`)}
 					>
 						{buttonTextDich()}
 					</Button> : <LoadingButton 

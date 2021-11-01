@@ -5,8 +5,7 @@ class CreateUserCommand(BaseModel):
     username: str
     first_name: str
     last_name: str
-    email: str
     password: str
-    avatar: str
+    email: str
     role: str
     status: str

@@ -6,7 +6,7 @@ import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import { useTranslation } from 'react-i18next';
-import { useGoogleLogout } from 'react-google-login';
+// import { useGoogleLogout } from 'react-google-login';
 import * as axiosHelper from '../../helpers/axiosHelper';
 import { USER_IMG_URL } from '../../constants/envVar';
 
@@ -21,7 +21,7 @@ function NavBarProfile(props) {
 		setAnchorEl(null);
 	};
 
-	const onLogoutSuccess = async () => {
+	const signOut = async () => {
 		try {
 			await axiosHelper.SignOut();
 			localStorage.clear();
@@ -36,14 +36,14 @@ function NavBarProfile(props) {
 		handleClose();
 	};
 
-	const { signOut } = useGoogleLogout({
-		// eslint-disable-next-line no-undef
-		clientId: process.env.REACT_APP_CLIENT_ID,
-		onLogoutSuccess,
-		onFailure,
-		isSignedIn: false,
-		accessType: 'offline',
-	});
+	// const { signOut } = useGoogleLogout({
+	// 	// eslint-disable-next-line no-undef
+	// 	clientId: process.env.REACT_APP_CLIENT_ID,
+	// 	onLogoutSuccess,
+	// 	onFailure,
+	// 	isSignedIn: false,
+	// 	accessType: 'offline',
+	// });
 
 
 	return (

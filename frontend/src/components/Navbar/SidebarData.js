@@ -1,3 +1,30 @@
+export const AdminSidebarData = [
+	{
+		title: 'Giới thiệu',
+		path: '/about',
+	},
+	{
+		title: 'Dịch',
+		path: '/',
+	},
+	{
+		title: 'Lịch sử và từ vựng',
+		path: '/HistoryAndFavorite',
+	},
+	{
+		title: 'Quản lý người dùng',
+		path: '/user-management',
+	},
+	{
+		title: 'Điều khoản và chính sách',
+		path: '/rules-and-policy',
+	},
+	{
+		title: 'Hỗ trợ',
+		path: '/help',
+	},
+];
+
 export const SidebarData = [
 	{
 		title: 'Giới thiệu',

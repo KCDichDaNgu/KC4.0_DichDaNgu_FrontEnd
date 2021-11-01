@@ -1,4 +1,5 @@
 import asyncio
+from modules.user.database.seeding.admin_account_seeder import AdminAccountSeeder
 from commands import cli, click
 from infrastructure.configs import EnvStateEnum
 from modules.system_setting.database.seeding.system_setting_seeder import SystemSettingSeeder
@@ -68,4 +69,12 @@ async def create_data(
             collection_name=mongodb_collections['system_setting']['name']
         )
 
+        admin_account = AdminAccountSeeder(
+            db_client=db_client,
+            database_name=database_name,
+            collection_name=mongodb_collections['user']['name']
+        )
+
         await system_setting_seeder.run(session)
+
+        await admin_account.run(session)
