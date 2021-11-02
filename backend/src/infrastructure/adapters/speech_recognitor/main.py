@@ -58,15 +58,14 @@ class SpeechRecognitor(SpeechRecognitorPort):
             files = {
                 'data_file': ('AUDIO', open(source_file_full_path, 'rb')),
                 'config': f'{{"type": "transcription","transcription_config": {{"language": {source_lang}}}}}',
-            }
-
+            }                    
             payload = {
-                'config': (None, '{\n"type": "transcription",\n"transcription_config": {\n"language": "en"\n}\n}'),
+                'config': (None, '{\n"type": "transcription",\n"transcription_config": {\n"language": "cmn"\n}\n}'),
             }
 
-            data={
-                "files":files,
-                "payload":payload
+            if source_lang == 'en':
+                payload = {
+                'config': (None, '{\n"type": "transcription",\n"transcription_config": {\n"language": "en"\n}\n}'),
             }
 
             response = requests.post('http://192.168.1.4:8082/v2/jobs', files=files,data=payload)
