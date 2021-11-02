@@ -42,11 +42,11 @@ class ContentTranslator(ContentTranslatorPort):
                 async with aiohttp.ClientSession() as session:
                     async with session.post(PUBLIC_TRANSLATION_API_URL, json=data, headers=headers) as response:
                         result = (await response.json())['data']
-
+                        print(PUBLIC_TRANSLATION_API_URL)
                         return ContentTranslationResponse(**result)
 
             else:
                 async with session.post(PUBLIC_TRANSLATION_API_URL, json=data, headers=headers) as response:
                     result = (await response.json())['data']
-
+                    print(PUBLIC_TRANSLATION_API_URL)
                     return ContentTranslationResponse(**result)
