@@ -109,6 +109,7 @@ function Index(props) {
 						</div>
 						{t('Translate.vanban')}
 					</Button>
+					
 					<Button
 						onClick={() => {
 							setTranslateType(TRANSLATE_TYPE.document);
@@ -126,6 +127,7 @@ function Index(props) {
 						</div>
 						{t('Translate.tailieu')}
 					</Button>
+
 					<Button
 						onClick={() => {
 							setTranslateType(TRANSLATE_TYPE.audio);
@@ -145,6 +147,7 @@ function Index(props) {
 						{t('Translate.amthanh')}
 					</Button>
 				</div>
+
 				<div className={styles.content} >
 					{/* ChooseLang */}
 					<TranslationChooselang translateType={translateType} />
@@ -158,6 +161,7 @@ function Index(props) {
 						</Row>
 					</Col>
 				</div>
+
 				<div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 5 }}>
 					<button onClick={() => { }} style={{ backgroundColor: '#fff', borderWidth: 0, color: '#63676C', fontStyle: 'italic', fontSize: 13 }}>
 						Gửi phản hồi
