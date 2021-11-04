@@ -1,4 +1,5 @@
 from uuid import UUID
+from infrastructure.configs.user import UserQuota
 from modules.user.commands.login.command import LoginCommand
 from core.value_objects.id import ID
 from modules.user.database.user.repository import UserRepositoryPort, UserRepository
@@ -41,7 +42,9 @@ class UserDService():
                         UserStatisticProps(
                             user_id=ID(user.id.value),
                             total_translated_text={},
-                            total_translated_doc={}
+                            total_translated_audio={},
+                            audio_translation_quota=UserQuota.audio_translation_quota,
+                            text_translation_quota=UserQuota.text_translation_quota,
                         )
                     )
                     await self.__user_statistic_repository.create(new_user_statistic)

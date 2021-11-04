@@ -23,6 +23,9 @@ class GetList(HTTPMethodView):
         from modules.user.database.user.repository import UserRepository
         self.__user_repository = UserRepository()
 
+        from modules.user.domain.services.user_service import UserDService
+        self.__user_domain_service = UserDService()
+
     @doc.summary(APP_CONFIG.ROUTES['user.get_list']['summary'])
     @doc.description(APP_CONFIG.ROUTES['user.get_list']['desc'])
     @doc.consumes(
@@ -136,21 +139,33 @@ class GetList(HTTPMethodView):
 
             user_list: UserEntity = query_result.data
 
+            user_statistics = []
+
+            for user in user_list:
+
+                user_statistic = await self.__user_domain_service.get_user_statistic(user.id.value)
+                user_statistics.append(user_statistic)
+
             users = list(
-                map(lambda item: {
-                    'id': item.id.value,
-                    'username': item.props.username,
-                    'firstName': item.props.first_name,
-                    'lasttName': item.props.last_name,
-                    'password': item.props.password,
-                    'avatar': item.props.avatar,
-                    'email': item.props.email,
-                    'status': item.props.status,
-                    'role': item.props.role,
-                    'updatedAt': str(item.updated_at.value),
-                    'createdAt': str(item.created_at.value),
-                }, user_list)
+                map(lambda user: {
+                    'id': user[0].id.value,
+                    'username': user[0].props.username,
+                    'firstName': user[0].props.first_name,
+                    'lasttName': user[0].props.last_name,
+                    'password': user[0].props.password,
+                    'avatar': user[0].props.avatar,
+                    'email': user[0].props.email,
+                    'status': user[0].props.status,
+                    'role': user[0].props.role,
+                    'total_translated_text':user[1].props.total_translated_text,
+                    'total_translated_audio':user[1].props.total_translated_audio,
+                    'audio_translation_quota':user[1].props.audio_translation_quota,
+                    'text_translation_quota':user[1].props.text_translation_quota,
+                    'updatedAt': str(user[0].updated_at.value),
+                    'createdAt': str(user[0].created_at.value),
+                }, list(zip(user_list,user_statistics)))
             )
+
             return response.json(
                 body={
                     'code': StatusCodeEnum.success.value,

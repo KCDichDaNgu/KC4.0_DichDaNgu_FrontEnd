@@ -37,7 +37,9 @@ class AdminAccountSeeder(BaseSeeder):
                     '_id': uuid4(),
                     'user_id': result.inserted_id,
                     'total_translated_text':{},
-                    'total_translated_doc':{},
+                    'total_translated_audio':{},
+                    'audio_translation_quota':1000,
+                    'text_translation_quota':1000,
                     'created_at': datetime.now(),
                     'updated_at': datetime.now()
                 })

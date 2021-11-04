@@ -1,7 +1,7 @@
 from interface_adapters.dtos.base_response import BaseResponse
 from infrastructure.configs.message import MESSAGES
 from modules.translation_request.commands.create_plain_text_translation_request.command import CreatePlainTextTranslationRequestCommand
-
+import re
 from sanic import response
 from modules.translation_request.commands.create_plain_text_translation_request.request_dto import CreatePlainTextTranslationRequestDto
 from infrastructure.configs.main import StatusCodeEnum, GlobalConfig, get_cnf
@@ -85,16 +85,21 @@ class CreatePlainTextTranslationRequest(HTTPMethodView):
                     'code': StatusCodeEnum.failed.value,
                     'message': MESSAGES['unauthorized']
                 }
-            )   
+            )
+
+
+        sentences = re.split('[;.?!]', data['sourceText'])
+
+        sentence_count = sum(1 for y in sentences if len(y) > 2)
             
-        user_statistic_result =  await self.__update_user_statistic.update_plaintext_translate_statistic(user.id, pair)
+        user_statistic_result =  await self.__update_user_statistic.update_text_translate_statistic(user.id, pair, sentence_count)
 
         if user_statistic_result['code'] == StatusCodeEnum.failed.value:
             return response.json(
                     status=400,
                     body={
                         'code': StatusCodeEnum.failed.value,
-                        'message': MESSAGES['translate_limit_reached']
+                        'message': MESSAGES['text_translate_limit_reached']
                     }
                 )
         else:

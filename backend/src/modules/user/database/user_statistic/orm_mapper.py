@@ -22,7 +22,9 @@ class UserStatisticOrmMapper(OrmMapperBase[UserStatisticEntity, UserStatisticOrm
         orm_props = {
             'user_id': props.user_id.value,
             'total_translated_text': props.total_translated_text,
-            'total_translated_doc': props.total_translated_doc
+            'total_translated_audio': props.total_translated_audio,
+            'text_translation_quota': props.text_translation_quota,
+            'audio_translation_quota' : props.audio_translation_quota,
         }
 
         return orm_props
@@ -32,7 +34,9 @@ class UserStatisticOrmMapper(OrmMapperBase[UserStatisticEntity, UserStatisticOrm
         props = {
             'user_id': ID(str(orm_entity.user_id)),
             'total_translated_text': orm_entity.total_translated_text,
-            'total_translated_doc': orm_entity.total_translated_doc
+            'total_translated_audio': orm_entity.total_translated_audio,
+            'text_translation_quota': orm_entity.text_translation_quota,
+            'audio_translation_quota': orm_entity.audio_translation_quota
         }
 
         return props

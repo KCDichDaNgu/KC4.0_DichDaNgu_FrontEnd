@@ -1,3 +1,4 @@
+
 from infrastructure.configs.message import MESSAGES
 from sanic import response
 from infrastructure.configs.main import StatusCodeEnum, GlobalConfig, get_cnf
@@ -14,6 +15,8 @@ class GetMe(HTTPMethodView):
 
     def __init__(self) -> None:
         super().__init__()
+        from modules.user.domain.services.user_service import UserDService
+        self.__user_domain_service = UserDService()
 
     @doc.summary(APP_CONFIG.ROUTES['user.me']['summary'])
     @doc.description(APP_CONFIG.ROUTES['user.me']['desc'])
@@ -33,6 +36,9 @@ class GetMe(HTTPMethodView):
                     'message': MESSAGES['failed']
                 }
             )
+
+        user_statistic = await self.__user_domain_service.get_user_statistic(user.id)
+
         return response.json(
             body={
                 'code': StatusCodeEnum.success.value,
@@ -45,6 +51,10 @@ class GetMe(HTTPMethodView):
                     'email': user.email,
                     'role': user.role,
                     'status': user.status,
+                    'total_translated_text':user_statistic.props.total_translated_text,
+                    'total_translated_audio':user_statistic.props.total_translated_audio,
+                    'audio_translation_quota':user_statistic.props.audio_translation_quota,
+                    'text_translation_quota':user_statistic.props.text_translation_quota,
                     'createdAt': user.created_at,
                     'updatedAt': user.updated_at
                 },

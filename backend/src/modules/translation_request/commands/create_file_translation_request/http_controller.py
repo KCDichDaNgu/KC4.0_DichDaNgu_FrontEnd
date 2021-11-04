@@ -3,6 +3,7 @@ from sanic_openapi.openapi2 import doc
 from sanic import response
 
 import io
+from core.utils.file import get_doc_file_meta
 from interface_adapters.dtos.base_response import BaseResponse
 from infrastructure.configs.main import GlobalConfig, StatusCodeEnum, get_cnf
 
@@ -105,7 +106,7 @@ class CreateFileTranslationRequest(HTTPMethodView):
 
     async def create_private_file_translation_request(self, file, data, user) -> response:
 
-        pair = "{}-{}".format(data['sourceLang'], data['targetLang'])
+        pair = "{}-{}".format(data['sourceLang'][0], data['targetLang'][0])
 
         if user is None:
             return response.json(
@@ -115,15 +116,17 @@ class CreateFileTranslationRequest(HTTPMethodView):
                     'message': MESSAGES['unauthorized']
                 }
             )   
-            
-        user_statistic_result =  await self.__update_user_statistic.update_file_translate_statistic(user.id, pair)
+
+        sentence_count = get_doc_file_meta(file)[2]
+        print(sentence_count)
+        user_statistic_result =  await self.__update_user_statistic.update_text_translate_statistic(user.id, pair, sentence_count)
 
         if user_statistic_result['code'] == StatusCodeEnum.failed.value:
             return response.json(
                     status=400,
                     body={
                         'code': StatusCodeEnum.failed.value,
-                        'message': MESSAGES['translate_limit_reached']
+                        'message': MESSAGES['text_translate_limit_reached']
                     }
                 )
         else:
