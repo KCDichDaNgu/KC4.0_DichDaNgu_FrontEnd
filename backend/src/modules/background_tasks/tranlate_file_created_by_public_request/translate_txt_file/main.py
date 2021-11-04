@@ -176,8 +176,6 @@ async def main():
 
         tasks_id = list(map(lambda task: task.id.value, tasks))
 
-        print(tasks_id)
-
         if len(tasks_id) == 0: 
             logger.debug(
                 msg=f'An task translate_file_in_public_request.translate_txt_file end in {datetime.now()}\n'
