@@ -1,5 +1,7 @@
 import React from 'react';
 import './App.css';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
 import TranslateScreen from './screens/TranslationScreen';
@@ -27,6 +29,7 @@ function App() {
 				<Route path='/rules-and-policy' exact component={RulesAndPolicy} />
 				<Route path='/help' exact component={Help} />
 			</Switch>
+			<ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
 		</Router>
 	);
 }

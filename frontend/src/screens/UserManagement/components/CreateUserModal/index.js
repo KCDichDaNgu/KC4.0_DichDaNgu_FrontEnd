@@ -1,9 +1,11 @@
 import React from 'react';
-import { Modal, Form, Input, Select, Row, Col } from 'antd';
+import { Modal, Form, Input, Select, Row, Col, InputNumber } from 'antd';
 import PropTypes from 'prop-types';
 import * as axiosHelper from '../../../../helpers/axiosHelper';
 // import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
+import { STATUS_CODE } from '../../../../constants/common';
 
 const CreateUserModal = (props) => {
 	// const dispatch = useDispatch();
@@ -20,10 +22,25 @@ const CreateUserModal = (props) => {
 
 	const onCreate = async (values) => {
 		try {
-			await axiosHelper.CreateUserByAdmin(values);
+			const new_values = (({ username, password, email, last_name, first_name, role, status }) => ({ username, password, email, last_name, first_name, role, status }))(values);
+			new_values['audio_translation_quota'] = {
+				'vi-en': values.audio_quota_vi_en,
+				'vi-zh': values.audio_quota_vi_zh,
+			};
+
+			new_values['text_translation_quota'] = {
+				'vi-en': values.text_quota_vi_en,
+				'vi-zh': values.text_quota_vi_zh,
+			};
+			const result = await axiosHelper.CreateUserByAdmin(new_values);
+
+			if (result.code === STATUS_CODE.success) {
+				toast.success(t('createUserSuccess'));
+			}
+
 			setVisible(false);
 		} catch (e) {
-			alert(e);
+			toast(e);
 			setVisible(false);
 		}
 	};
@@ -54,6 +71,9 @@ const CreateUserModal = (props) => {
 						<Input />
 					</Form.Item>
 				</Col>
+			</Row>
+
+			<Row gutter={12}>
 
 				<Col xs={24} md={12}>
 					<Form.Item name='last_name' label={t('lastName')}>
@@ -64,6 +84,30 @@ const CreateUserModal = (props) => {
 				<Col xs={24} md={12}>
 					<Form.Item name='first_name' label={t('firstName')}>
 						<Input />
+					</Form.Item>
+				</Col>
+
+				<Col xs={24} md={12}>
+					<Form.Item name='text_quota_vi_en' label={t('textQuotaViEn')}>
+						<InputNumber />
+					</Form.Item>
+				</Col>
+
+				<Col xs={24} md={12}>
+					<Form.Item name='text_quota_vi_zh' label={t('textQuotaViZh')}>
+						<InputNumber />
+					</Form.Item>
+				</Col>
+
+				<Col xs={24} md={12}>
+					<Form.Item name='audio_quota_vi_en' label={t('audioQuotaViEn')}>
+						<InputNumber />
+					</Form.Item>
+				</Col>
+
+				<Col xs={24} md={12}>
+					<Form.Item name='audio_quota_vi_zh' label={t('audioQuotaViZh')}>
+						<InputNumber />
 					</Form.Item>
 				</Col>
 

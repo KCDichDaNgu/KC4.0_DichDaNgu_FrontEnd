@@ -89,5 +89,15 @@
 	"active": "Hoạt động",
 	"inactive": "Không hoạt động",
 	"createUser": "Thêm người dùng",
-	"updateSuccess":" Cập nhật thành công"
+	"updateSuccess":"Cập nhật thành công",
+	"createUserSuccess":"Thêm người dùng thành công",
+	"textQuota": "Lưu lượng dịch văn bản",
+	"textQuotaViEn": "Lưu lượng dịch văn bản Viet - Anh",
+	"textQuotaViZh": "Lưu lượng dịch văn bản Viet - Trung",
+	"audioQuotaViEn": "Lưu lượng dịch âm thanh Viet - Anh",
+	"audioQuotaViZh": "Lưu lượng dịch âm thanh Viet - Trung",
+	"audioQuota": "Lưu lượng dịch âm thanh",
+	"text_translate_limit_reached": "Vượt quá giới hạn dịch",
+	"audio_translate_limit_reached": "Vượt quá giới hạn dịch",
+	"unauthorized": "Không có quyền truy cập"
 }

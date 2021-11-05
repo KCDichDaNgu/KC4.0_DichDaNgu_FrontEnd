@@ -45,7 +45,6 @@ function Index(props) {
 		case STATE.SUCCESS:
 			break;
 		case STATE.FAILURE:
-			alert(`${translationState.err}`);
 			break;
 		default:
 			break;
@@ -61,7 +60,6 @@ function Index(props) {
 		case STATE.SUCCESS:
 			break;
 		case STATE.FAILURE:
-			alert(`${translationFileState.err}`);
 			break;
 		default:
 			break;

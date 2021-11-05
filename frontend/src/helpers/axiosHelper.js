@@ -1,8 +1,10 @@
 import axios from 'axios';
+import { ToastError } from '../components/Toast';
 import { ACCESS_TOKEN } from '../constants/envVar';
 const SPEECH_RECOGNIZATION_URL = process.env.REACT_APP_SPEECH_RECOGNIZATION_URL;
 
 const queryString = require('query-string');
+
 
 const axiosDefault = axios.create({
 	// baseURL: 'http://nmtuet.ddns.net:1710/',
@@ -21,7 +23,7 @@ axiosDefault.interceptors.request.use(
 		}
 		return config;
 	},
-	error => Promise.reject(error),
+	// error => Promise.reject(error),
 );
 
 
@@ -31,6 +33,7 @@ axiosDefault.interceptors.response.use(function (response) {
 	// Do something with response data
 	return response;
 }, function (error) {
+	ToastError(error.response.data.message);
 	return Promise.reject(error);
 });
 

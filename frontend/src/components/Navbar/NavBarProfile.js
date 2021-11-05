@@ -8,10 +8,11 @@ import Tooltip from '@mui/material/Tooltip';
 import { useTranslation } from 'react-i18next';
 // import { useGoogleLogout } from 'react-google-login';
 import * as axiosHelper from '../../helpers/axiosHelper';
-import { USER_IMG_URL } from '../../constants/envVar';
-
-function NavBarProfile(props) {
+import { useHistory } from 'react-router-dom';
+import { USER_IMG_URL } from '../../constants/envVar';function NavBarProfile(props) {
 	const { t } = useTranslation();
+	const history = useHistory();
+
 	const [anchorEl, setAnchorEl] = useState(null);
 	const open = Boolean(anchorEl);
 	const handleClick = (event) => {
@@ -23,9 +24,10 @@ function NavBarProfile(props) {
 
 	const signOut = async () => {
 		try {
-			await axiosHelper.SignOut();
-			localStorage.clear();
+			await axiosHelper.SignOut();			
 			props.setIsSigIn(false);
+			history.push('/');
+			localStorage.clear();
 		}catch (e){
 			alert(e);
 		}

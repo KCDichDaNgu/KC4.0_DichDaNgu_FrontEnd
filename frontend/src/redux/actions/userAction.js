@@ -29,7 +29,7 @@ export const getCurrentUser = () => async (dispatch) => {
 		localStorage.setItem('user', JSON.stringify(result.data));
 		dispatch(getUserSuccess(result.data));
 	}catch(e) {
-		alert(e);
+		console.log(e);
 	}
 };
 
@@ -39,6 +39,6 @@ export const getUserAsync = (params) => async (dispatch) => {
 
 		dispatch(getUserListSuccess(result.data.list, result.data.total_entries));
 	}catch(e) {
-		alert(e);
+		console.log(e);
 	}
 };

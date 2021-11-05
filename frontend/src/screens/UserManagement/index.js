@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import CreateUserModal from './components/CreateUserModal';
 import { STATUS_CODE, USER_STATUS } from '../../constants/common';
 import * as axiosHelper from '../../helpers/axiosHelper';
+import { toast } from 'react-toastify';
 
 function UserManagement(props) {
 	const { userState, navbarState } = props;
@@ -17,8 +18,6 @@ function UserManagement(props) {
 
 	useEffect(() => {
 		const user = JSON.parse(localStorage.getItem('user'));
-
-		console.log(user);
 		if (isAdmin(user)) {
 			props.getUserAsync({});
 			setIsLoading(false);
@@ -27,8 +26,10 @@ function UserManagement(props) {
 	}, []);
 
 	useEffect(() => {
-		props.getUserAsync({});
-		setIsLoading(false);
+		if (navbarState.isLogin) {
+			props.getUserAsync({});
+			setIsLoading(false);
+		}
 	}, [navbarState.isLogin, visible]);
 
 
@@ -55,22 +56,31 @@ function UserManagement(props) {
 		);
 	};
 
+	const renderStatistic = (quota, used) => {
+		return (
+			<div>				
+				vi-en: {used['vi-en']}/{quota['vi-en']}<br/>
+				vi-zh: {used['vi-zh']}/{quota['vi-zh']}
+			</div>
+		);
+	};
+
 	const handleStatusChange = async (e, currentStatus, record) => {
 		const status = e.target.value;
 
 		const body = {
 			id: record.id,
 			role: record.role,
-			status: status
+			status: status,
+			audio_translation_quota: record.textTranslationQuota,
+			text_translation_quota: record.audioTranslationQuota
 		};
-
-		console.log(record);
 
 		const result = await axiosHelper.updateUser(body);
 
 		if (result.code === STATUS_CODE.success) {
 			props.getUserAsync({});
-			alert(t('updateSuccess'));
+			toast.success(t('updateSuccess'));
 		}
 	};
 
@@ -117,24 +127,22 @@ function UserManagement(props) {
 			// ),
 		},
 		{
-			title: t('password'),
-			dataIndex: 'password',
-			key: 'password',
-			// render: (password, user) => (
-			// 	<Tooltip
-			// 		trigger={['focus']}
-			// 		title={t('changeInput')}
-			// 		placement='topLeft'>
-			// 		<Input
-			// 			className='user-input'
-			// 			defaultValue={password}
-			// 			disabled={disableUpdate(user)}
-			// 			onPressEnter={event => {
-			// 				updateUser(user.id, { password: event.target.value });
-			// 			}
-			// 			} />
-			// 	</Tooltip>
-			// ),
+			title: t('audioQuota'),
+			align: 'center',
+			dataIndex: 'audioTranslationQuota',
+			key: 'audioQuota',
+			render: (audioQuota, record) => {
+				return renderStatistic(record.audioTranslationQuota, record.totalTranslatedAudio);
+			}
+		},
+		{
+			title: t('textQuota'),
+			align: 'center',
+			dataIndex: 'textTranslationQuota',
+			key: 'textQuota',
+			render: (textQuota, record) => {
+				return renderStatistic(record.textTranslationQuota, record.totalTranslatedText);
+			}
 		},
 		{
 			title: t('status'),
