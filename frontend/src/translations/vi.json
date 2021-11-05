@@ -89,6 +89,7 @@
 	"active": "Hoạt động",
 	"inactive": "Không hoạt động",
 	"createUser": "Thêm người dùng",
+	"updateUserQuota": "Cập nhật giới hạn dịch",
 	"updateSuccess":"Cập nhật thành công",
 	"createUserSuccess":"Thêm người dùng thành công",
 	"updateUserQuotaSuccess":"Cập nhật thành công",
@@ -105,6 +106,7 @@
 	"minute": "phút",
 	"requiredField": "Thông tin bắt buộc",
 	"cancel": "Hủy bỏ",
+	"edit": "Sửa",
 	"create": "Thêm",
 	"ViEn": "Việt - Anh",
 	"ViZh": "Việt - Trung"

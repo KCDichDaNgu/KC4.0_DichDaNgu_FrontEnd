@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Form, Row, Col, Input, InputNumber, Spin } from 'antd';
+import { Modal, Form, Row, Col, Input, Spin } from 'antd';
 import PropTypes from 'prop-types';
 import * as axiosHelper from '../../../../helpers/axiosHelper';
 // import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { STATUS_CODE } from '../../../../constants/common';
+import styles from './index.module.css';
 
 const EditQuotaModal = (props) => {
 	// const dispatch = useDispatch();
@@ -27,6 +28,7 @@ const EditQuotaModal = (props) => {
 		const _userData = await fetchUserData(userId);;
 
 		setUserData({
+			username: _userData.username,
 			audio_quota_vi_en: Math.floor(_userData.audioTranslationQuota['vi-en'] / 60),
 			audio_quota_vi_zh: Math.floor(_userData.audioTranslationQuota['vi-zh'] / 60),
 			text_quota_vi_en: _userData.textTranslationQuota['vi-en'],
@@ -68,38 +70,43 @@ const EditQuotaModal = (props) => {
 		}
 	};
 
-	if (isLoading) return <Spin/>;
+	if (isLoading) return <Spin />;
 
 	return (<Modal
 		visible={visible}
-		title={t('createUser')}
-		okText="Submit"
+		title={t('updateUserQuota')}
+		okText={t('edit')}
+		cancelText={t('cancel')}
 		onCancel={onCancel}
 		onOk={onSubmit}
 	>
 		<Form layout="vertical" form={form} onFinish={onCreate} initialValues={userData}>
 			<Row gutter={12}>
+				<Col span={24}>
+					<div className={styles.user}>User: {userData.username}</div>
+				</Col>
+
 				<Col xs={24} md={12}>
 					<Form.Item name='text_quota_vi_en' label={t('textQuotaViEn')} rules={[{ required: true, message: t('requiredField') }]}>
-						<Input />
+						<Input type="number" suffix={t('sentence')} className={styles.formQuota} />
 					</Form.Item>
 				</Col>
 
 				<Col xs={24} md={12}>
 					<Form.Item name='text_quota_vi_zh' label={t('textQuotaViZh')} rules={[{ required: true, message: t('requiredField') }]}>
-						<InputNumber />
+						<Input type="number" suffix={t('sentence')} className={styles.formQuota} />
 					</Form.Item>
 				</Col>
 
 				<Col xs={24} md={12}>
 					<Form.Item name='audio_quota_vi_en' label={t('audioQuotaViEn')} rules={[{ required: true, message: t('requiredField') }]}>
-						<InputNumber />
+						<Input type="number" suffix={t('minute')} className={styles.formQuota} />
 					</Form.Item>
 				</Col>
 
 				<Col xs={24} md={12}>
 					<Form.Item name='audio_quota_vi_zh' label={t('audioQuotaViZh')} rules={[{ required: true, message: t('requiredField') }]}>
-						<InputNumber />
+						<Input type="number" suffix={t('minute')} className={styles.formQuota} />
 					</Form.Item>
 				</Col>
 			</Row>

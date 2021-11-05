@@ -69,7 +69,7 @@ const CreateUserModal = (props) => {
 				</Col>
 
 				<Col xs={24} md={12}>
-					<Form.Item name='email' label={t('email')} rules={[{ required: true, message: t('requiredField') }]}>
+					<Form.Item name='email' label={t('email')}>
 						<Input />
 					</Form.Item>
 				</Col>
