@@ -36,11 +36,9 @@ class UpdateUserStatisticService():
             return increase_total_translated_text_result
 
     async def update_audio_translate_statistic(self, user_id, pair, audio_length):
-        
         user_statistic = await self.__user_domain_service.get_user_statistic(user_id)
 
         increase_total_translated_audio_result = user_statistic.increase_total_translated_audio(pair, audio_length)
-
         if increase_total_translated_audio_result['code'] == StatusCodeEnum.failed.value:
 
             return increase_total_translated_audio_result

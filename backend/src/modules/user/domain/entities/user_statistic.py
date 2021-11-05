@@ -52,7 +52,7 @@ class UserStatisticEntity(Entity[UserStatisticProps]):
     def increase_total_translated_audio(self, pair, audio_length):
 
         pair_quota = self.props.audio_translation_quota.get(pair, 1000)
-
+        
         new_length = self.props.total_translated_audio.get(pair, 0) + audio_length
 
         if new_length > pair_quota:
@@ -62,7 +62,7 @@ class UserStatisticEntity(Entity[UserStatisticProps]):
                 "data": self.props.total_translated_audio
             }).dict()            
 
-        self.props.total_translated_audio[pair] += new_length
+        self.props.total_translated_audio[pair] = new_length
 
         return BaseResponse(**{
             "code": StatusCodeEnum.success.value,

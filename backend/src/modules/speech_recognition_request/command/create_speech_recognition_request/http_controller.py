@@ -3,6 +3,7 @@ from sanic_openapi.openapi2 import doc
 from sanic import response
 
 import io
+from infrastructure.configs.user import TRANSLATION_PAIR_VI_EN, TRANSLATION_PAIR_VI_ZH, TranslationPairEnum
 from core.utils.audio import get_audio_length
 from interface_adapters.dtos.base_response import BaseResponse
 from infrastructure.configs.main import GlobalConfig, StatusCodeEnum, get_cnf
@@ -96,6 +97,12 @@ class CreateSpeechRecognitionRequest(HTTPMethodView):
 
     async def create_private_speech_recognition_request(self, file, data, user) -> response:
         pair = "{}-{}".format(data['sourceLang'][0], data['targetLang'][0])
+
+        if pair in TRANSLATION_PAIR_VI_EN:
+            pair = TranslationPairEnum.vi_en
+        elif pair in TRANSLATION_PAIR_VI_ZH:
+            pair = TranslationPairEnum.vi_zh
+
 
         if user is None:
             return response.json(
