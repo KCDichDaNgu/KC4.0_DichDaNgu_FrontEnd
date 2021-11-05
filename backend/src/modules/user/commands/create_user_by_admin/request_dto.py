@@ -31,3 +31,12 @@ class CreateUserByAdminRequestDto(AuthUser):
         description='',
         name='status'
     )
+    text_translation_quota: doc.Dictionary(
+        description='',
+        name='text_translation_quota',
+    )
+
+    audio_translation_quota: doc.Dictionary(
+        description='',
+        name='audio_translation_quota',
+    )

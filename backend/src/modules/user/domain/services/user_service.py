@@ -41,10 +41,22 @@ class UserDService():
                     new_user_statistic = UserStatisticEntity(
                         UserStatisticProps(
                             user_id=ID(user.id.value),
-                            total_translated_text={},
-                            total_translated_audio={},
-                            audio_translation_quota=UserQuota.audio_translation_quota,
-                            text_translation_quota=UserQuota.text_translation_quota,
+                            total_translated_text={
+                                'vi-zh': 0, 
+                                'vi-en': 0
+                            },
+                            total_translated_audio={
+                                'vi-zh': 0, 
+                                'vi-en': 0
+                            },
+                            text_translation_quota={
+                                'vi-zh': command.text_translation_quota['vi-zh'],
+                                'vi-en': command.text_translation_quota['vi-en'],
+                            },
+                            audio_translation_quota={
+                                'vi-zh': command.audio_translation_quota['vi-zh'],
+                                'vi-en': command.audio_translation_quota['vi-en'],
+                            }
                         )
                     )
                     await self.__user_statistic_repository.create(new_user_statistic)
@@ -70,10 +82,25 @@ class UserDService():
                 user = await self.__user_repository.find_one({'id': UUID(command.id)})
                 if user is None:
                     return None
+
                 changes = dict(command)
+
                 del changes["id"]
+                del changes["audio_translation_quota"]
+                del changes["text_translation_quota"]
+
                 updated_user = await self.__user_repository.update(user, changes)
 
+                if updated_user is not None:
+                    user_statistic = await self.__user_statistic_repository.find_one({'user_id': UUID(updated_user.id.value)})
+
+                    changes = dict(command)
+                    changes = {'audio_translation_quota': changes['audio_translation_quota'], 'text_translation_quota':changes['text_translation_quota']}
+                    
+                    if user is None:
+                        return None
+                    updated_user_statistic = await self.__user_statistic_repository.update(user_statistic, changes)
+                
                 return updated_user
     
     async def get_user_statistic(self,user_id):

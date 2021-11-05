@@ -5,6 +5,7 @@ from sanic.request import Request
 from sanic import response
 import aiohttp
 from datetime import datetime, timedelta
+from infrastructure.configs.message import MESSAGES
 
 def init_auth(config, injection: AuthInjectionInterface):
     print(config)
@@ -24,7 +25,7 @@ def login_required(async_handler=None, roles=['admin', 'member']):
             status=403,
             body={
                 'code': 0,
-                'message': 'failed'
+                'message': MESSAGES['unauthorized']
             }
         )
         
@@ -44,6 +45,42 @@ def login_required(async_handler=None, roles=['admin', 'member']):
         user = await auth_injection.get_user(token)
 
         if user.role not in roles:
+            return failed_response
+
+        return await async_handler(route, request, **kwargs)
+
+    return wrapped
+
+def active_required(async_handler=None, status=['active', 'inactive']):
+    if async_handler is None:
+        return partial(active_required, status=status)
+
+    async def wrapped(route, request: Request, **kwargs):
+        access_token = request.headers.get('Authorization')
+        failed_response = response.json(
+            status=403,
+            body={
+                'code': 0,
+                'message': MESSAGES['inactive_user']
+            }
+        )
+        
+        if access_token is None:
+            return failed_response
+
+        token = await auth_injection.get_token(access_token)
+        if token is None:
+            return failed_response
+
+        if token.props.revoked:
+            return failed_response
+
+        if datetime.now() > token.updated_at.value + timedelta(seconds=token.props.access_expires_in):
+            return failed_response
+
+        user = await auth_injection.get_user(token)
+
+        if user.status not in status:
             return failed_response
 
         return await async_handler(route, request, **kwargs)

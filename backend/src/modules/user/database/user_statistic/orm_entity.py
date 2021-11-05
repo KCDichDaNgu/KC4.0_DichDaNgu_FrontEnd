@@ -10,8 +10,8 @@ db_instance = get_mongodb_instance()
 class UserStatisticOrmEntity(OrmEntityBase):
 
     user_id = fields.UUIDField(required=True)
-    text_translation_quota = fields.IntegerField(required=True)
-    audio_translation_quota = fields.IntegerField(required=True)
+    text_translation_quota = fields.DictField(required=True)
+    audio_translation_quota = fields.DictField(required=True)
     total_translated_text = fields.DictField(required=False)
     total_translated_audio = fields.DictField(required=False)
     

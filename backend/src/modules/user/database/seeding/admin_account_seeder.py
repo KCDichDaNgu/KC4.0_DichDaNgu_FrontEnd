@@ -36,10 +36,22 @@ class AdminAccountSeeder(BaseSeeder):
                 await self.statistic_coll_connection.insert_one({
                     '_id': uuid4(),
                     'user_id': result.inserted_id,
-                    'total_translated_text':{},
-                    'total_translated_audio':{},
-                    'audio_translation_quota':1000,
-                    'text_translation_quota':1000,
+                    'total_translated_text':{
+                        'vi-zh': 0,
+                        'vi-en': 0,
+                    },
+                    'total_translated_audio':{
+                        'vi-zh': 0,
+                        'vi-en': 0,
+                    },
+                    'audio_translation_quota':{
+                        'vi-zh': 1000,
+                        'vi-en': 1000,
+                    },
+                    'text_translation_quota':{
+                        'vi-zh': 1000,
+                        'vi-en': 1000,
+                    },
                     'created_at': datetime.now(),
                     'updated_at': datetime.now()
                 })

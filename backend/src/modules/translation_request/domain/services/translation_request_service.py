@@ -155,7 +155,7 @@ class TranslationRequestDService():
 
         else:
             create_files_result = await new_task_result_entity.create_required_files_for_txt_file_translation_task(command.source_file)
-            print(create_files_result)
+
         if command.source_lang in LanguageEnum.enum_values() and command.source_lang != 'unknown':
 
             saved_content = FileTranslationTask_NotYetTranslatedResultFileSchemaV1(

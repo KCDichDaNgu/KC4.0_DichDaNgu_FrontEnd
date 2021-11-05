@@ -37,12 +37,15 @@ class UpdateOther(HTTPMethodView):
     async def put(self, request: Request):
         try:
             data = request.json
-            
+
             command = UpdateOtherUserCommand(
                 id=data['id'],
                 role=data['role'],
                 status=data['status'],
+                audio_translation_quota=data['audio_translation_quota'] if 'audio_translation_quota' in data else None,
+                text_translation_quota=data['text_translation_quota'] if 'text_translation_quota' in data else None,
             )
+
             user = await self.__user_service.update_user(command)
 
             if user is None:

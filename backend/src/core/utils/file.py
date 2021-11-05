@@ -72,6 +72,16 @@ def get_doc_file_meta(doc_file: File):
 
     return binary_doc, total_doc_paragraphs, sentence_count
 
+def get_txt_file_meta(txt_file: File):
+
+    full_text = (txt_file.body.decode('utf-8'))
+
+    sentences = re.split('[;.?!]', full_text)
+
+    sentence_count = sum(1 for y in sentences if len(y) > 2)
+
+    return sentence_count
+
 async def delete_files(invalid_file_paths):
 
     delete_request = []

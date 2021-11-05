@@ -3,7 +3,8 @@ from sanic_openapi.openapi2 import doc
 from sanic import response
 
 import io
-from core.utils.file import get_doc_file_meta
+from infrastructure.configs.user import TRANSLATION_PAIR_VI_EN, TRANSLATION_PAIR_VI_ZH, TranslationPairEnum
+from core.utils.file import extract_file_extension, get_doc_file_meta, get_txt_file_meta
 from interface_adapters.dtos.base_response import BaseResponse
 from infrastructure.configs.main import GlobalConfig, StatusCodeEnum, get_cnf
 
@@ -14,7 +15,7 @@ from infrastructure.configs.language import LanguageEnum
 from infrastructure.configs.translation_task import is_allowed_file_extension
 from core.exceptions.argument_invalid import ArgumentInvalidException
 from core.value_objects.id import ID
-from core.middlewares.authentication.core import get_me
+from core.middlewares.authentication.core import active_required, get_me
 
 
 config: GlobalConfig = get_cnf()
@@ -108,6 +109,11 @@ class CreateFileTranslationRequest(HTTPMethodView):
 
         pair = "{}-{}".format(data['sourceLang'][0], data['targetLang'][0])
 
+        if pair in TRANSLATION_PAIR_VI_EN:
+            pair = TranslationPairEnum.vi_en
+        elif pair in TRANSLATION_PAIR_VI_ZH:
+            pair = TranslationPairEnum.vi_zh
+
         if user is None:
             return response.json(
                 status=401,
@@ -117,8 +123,13 @@ class CreateFileTranslationRequest(HTTPMethodView):
                 }
             )   
 
-        sentence_count = get_doc_file_meta(file)[2]
-        print(sentence_count)
+        file_ext = extract_file_extension(file.name)
+
+        if file_ext == 'txt':
+            sentence_count = get_txt_file_meta(file)
+        else:
+            sentence_count = get_doc_file_meta(file)[2]
+
         user_statistic_result =  await self.__update_user_statistic.update_text_translate_statistic(user.id, pair, sentence_count)
 
         if user_statistic_result['code'] == StatusCodeEnum.failed.value:

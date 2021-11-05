@@ -13,7 +13,7 @@ from sanic_openapi import doc
 from sanic.views import HTTPMethodView
 from modules.user.dtos.auth_user_response import AuthUserResponse
 
-from core.middlewares.authentication.core import get_user_from_provider, create_token, refresh_token
+from core.middlewares.authentication.core import active_required, get_user_from_provider, create_token, refresh_token
 
 config: GlobalConfig = get_cnf()
 APP_CONFIG = config.APP_CONFIG

@@ -45,6 +45,7 @@ class UpdateSelf(HTTPMethodView):
                         'message': MESSAGES['failed']
                     }
                 )
+
             command = UpdateUserCommand(
                 id=me.id,
                 first_name=data['first_name'],

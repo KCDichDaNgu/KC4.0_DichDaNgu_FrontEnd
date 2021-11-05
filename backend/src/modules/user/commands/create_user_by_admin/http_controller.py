@@ -38,8 +38,10 @@ class CreateUserByAdmin(HTTPMethodView):
                 last_name=data['last_name'],
                 email=data['email'],
                 password=data['password'],
-                role=UserRole.member.value,
-                status=UserStatus.active.value,
+                role=data['role'],
+                status=data['status'],
+                audio_translation_quota=data['audio_translation_quota'],
+                text_translation_quota=data['text_translation_quota'],
             )
             
             user = await self.__user_service.create_user(command)

@@ -247,7 +247,7 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
             original_file = open(original_file_full_path,'r')
 
             original_text = original_file.read()
-            print(original_text)
+
             if source_lang == target_lang:
                 async with db_instance.session() as session:
 

@@ -1,3 +1,4 @@
+from infrastructure.configs.user import TRANSLATION_PAIR_VI_EN, TRANSLATION_PAIR_VI_ZH, TranslationPairEnum
 from interface_adapters.dtos.base_response import BaseResponse
 from infrastructure.configs.message import MESSAGES
 from modules.translation_request.commands.create_plain_text_translation_request.command import CreatePlainTextTranslationRequestCommand
@@ -78,6 +79,11 @@ class CreatePlainTextTranslationRequest(HTTPMethodView):
 
         pair = "{}-{}".format(data['sourceLang'], data['targetLang'])
 
+        if pair in TRANSLATION_PAIR_VI_EN:
+            pair = TranslationPairEnum.vi_en
+        elif pair in TRANSLATION_PAIR_VI_ZH:
+            pair = TranslationPairEnum.vi_zh
+
         if user is None:
             return response.json(
                 status=401,
@@ -86,7 +92,6 @@ class CreatePlainTextTranslationRequest(HTTPMethodView):
                     'message': MESSAGES['unauthorized']
                 }
             )
-
 
         sentences = re.split('[;.?!]', data['sourceText'])
 

@@ -9,3 +9,5 @@ class CreateUserCommand(BaseModel):
     email: str
     role: str
     status: str
+    audio_translation_quota: dict
+    text_translation_quota: dict
