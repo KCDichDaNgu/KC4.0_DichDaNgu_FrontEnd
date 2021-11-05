@@ -12,7 +12,7 @@ from sanic_openapi import doc
 from sanic.views import HTTPMethodView
 from modules.user.dtos.auth_user_response import AuthUserResponse
 
-from core.middlewares.authentication.core import get_user_from_provider, create_token, refresh_token
+from core.middlewares.authentication.core import get_user_from_provider, create_token, login_required, refresh_token
 
 config: GlobalConfig = get_cnf()
 APP_CONFIG = config.APP_CONFIG
@@ -27,15 +27,15 @@ class CreateUserByAdmin(HTTPMethodView):
     @doc.summary(APP_CONFIG.ROUTES['admin.create_user']['summary'])
     @doc.description(APP_CONFIG.ROUTES['admin.create_user']['desc'])
     @doc.consumes(CreateUserByAdminRequestDto, location="body", required=True)
-    @doc.produces(AuthUserResponse)
+    @login_required(roles=[UserRole.admin.value])
     async def post(self, request: Request):
         try:
             data = request.json
 
             command = CreateUserCommand(
                 username=data['username'],
-                first_name=data['first_name'],
-                last_name=data['last_name'],
+                first_name=data['first_name'] if 'first_name' in data else '',
+                last_name=data['last_name'] if 'last_name' in data else '',
                 email=data['email'],
                 password=data['password'],
                 role=data['role'],

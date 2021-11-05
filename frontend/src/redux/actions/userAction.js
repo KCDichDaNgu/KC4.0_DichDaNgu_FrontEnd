@@ -33,7 +33,7 @@ export const getCurrentUser = () => async (dispatch) => {
 	}
 };
 
-export const getUserAsync = (params) => async (dispatch) => {
+export const getUserListAsync = (params) => async (dispatch) => {
 	try {
 		const result = await axiosHelper.getUserList(params);
 

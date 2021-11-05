@@ -24,10 +24,10 @@ import { USER_IMG_URL } from '../../constants/envVar';function NavBarProfile(pro
 
 	const signOut = async () => {
 		try {
-			await axiosHelper.SignOut();			
 			props.setIsSigIn(false);
+			await axiosHelper.SignOut();
+			localStorage.clear();						
 			history.push('/');
-			localStorage.clear();
 		}catch (e){
 			alert(e);
 		}

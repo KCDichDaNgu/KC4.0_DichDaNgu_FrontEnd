@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ToastError } from '../components/Toast';
+import { toastError, toastInformLimitReached } from '../components/Toast';
 import { ACCESS_TOKEN } from '../constants/envVar';
 const SPEECH_RECOGNIZATION_URL = process.env.REACT_APP_SPEECH_RECOGNIZATION_URL;
 
@@ -33,7 +33,9 @@ axiosDefault.interceptors.response.use(function (response) {
 	// Do something with response data
 	return response;
 }, function (error) {
-	ToastError(error.response.data.message);
+	if (error.response.data.message !== 'text_translate_limit_reached' && error.response.data.message !== 'audio_translate_limit_reached') {
+		toastError(error.response.data.message);
+	}
 	return Promise.reject(error);
 });
 
@@ -54,6 +56,11 @@ export const translateFileAudio = (body) => {
 				resolve(result.data);
 			})
 			.catch((error) => {
+				if (error.response.data.message == 'audio_translate_limit_reached') {
+					const { used, quota } = error.response.data.data;
+					const { message } = error.response.data;
+					toastInformLimitReached(message, used, quota, 'audio');
+				}				
 				reject(error);
 			});
 	});
@@ -132,6 +139,18 @@ export const CreateUserByAdmin = (body) => {
 	});
 };
 
+export const updateUserQuota = (body) => {
+	return new Promise((resolve, reject) => {
+		axiosDefault.put('admin/user/update_quota', body)
+			.then((result) => {
+				resolve(result.data);
+			})
+			.catch((error) => {
+				reject(error);
+			});
+	});
+};
+
 export const downloadFile = (url) => {
 	axios({
 		url,
@@ -177,6 +196,17 @@ export const SignOut = () => {
 export const getMe = () => {
 	return new Promise((resolve, reject) => {
 		axiosDefault.get('user/me')
+			.then((result) => {
+				resolve(result.data);
+			})
+			.catch((error) => {
+				reject(error);
+			});
+	});
+};
+export const getUser = (id) => {
+	return new Promise((resolve, reject) => {
+		axiosDefault.get('user', { params: {id} })
 			.then((result) => {
 				resolve(result.data);
 			})
@@ -239,6 +269,11 @@ export const translateFile = (body) => {
 				resolve(result.data);
 			})
 			.catch((error) => {
+				if (error.response.data.message == 'text_translate_limit_reached') {
+					const { used, quota } = error.response.data.data;
+					const { message } = error.response.data;
+					toastInformLimitReached(message, used, quota, 'text');
+				}
 				reject(error);
 			});
 	});
@@ -253,6 +288,11 @@ export const postTranslate = (body) => {
 				resolve(result.data);
 			})
 			.catch((error) => {
+				if (error.response.data.message == 'text_translate_limit_reached') {
+					const { used, quota } = error.response.data.data;
+					const { message } = error.response.data;
+					toastInformLimitReached(message, used, quota, 'text');
+				}				
 				reject(error);
 			});
 	});

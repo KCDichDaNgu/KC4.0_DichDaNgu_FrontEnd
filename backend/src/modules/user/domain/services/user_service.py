@@ -1,4 +1,5 @@
 from uuid import UUID
+from core.middlewares.authentication.user import User
 from infrastructure.configs.user import UserQuota
 from modules.user.commands.login.command import LoginCommand
 from core.value_objects.id import ID
@@ -22,8 +23,9 @@ class UserDService():
         async with self.__db_instance.session() as session:
              async with session.start_transaction():
                 user = await self.__user_repository.find_one({'email': command.email})
+
                 if user is None:
-            
+
                     new_user = UserEntity(
                         UserProps(
                             username=command.username,
@@ -31,9 +33,9 @@ class UserDService():
                             last_name=command.last_name,
                             email=command.email,
                             password=command.password,
-                            avatar=command.avatar if 'avatar' in command else '',
                             role=command.role,
                             status=command.status,
+                            avatar=''
                         )
                     )
                     user = await self.__user_repository.create(new_user)
@@ -75,6 +77,24 @@ class UserDService():
                         return 'blank'
                 
                 return None
+    
+    async def get_user(self, user_id):
+        async with self.__db_instance.session() as session:
+            async with session.start_transaction():
+                user_entity = await self.__user_repository.find_one({'id': UUID(user_id)})
+
+                return User(
+                    id=user_entity.id.value,
+                    username=user_entity.props.username,
+                    first_name=user_entity.props.first_name,
+                    last_name=user_entity.props.last_name,
+                    avatar=user_entity.props.avatar,
+                    email=user_entity.props.email,
+                    role=user_entity.props.role,
+                    status=user_entity.props.status,
+                    created_at=str(user_entity.created_at.value),
+                    updated_at=str(user_entity.updated_at.value)
+                )
 
     async def update_user(self, command):
         async with self.__db_instance.session() as session:

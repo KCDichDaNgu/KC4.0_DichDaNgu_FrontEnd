@@ -1,25 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import styles from './userManagement.module.css';
-import { getUserAsync } from '../../redux/actions/userAction';
+import { getUserListAsync } from '../../redux/actions/userAction';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Table, Button, Radio } from 'antd';
+import EditIcon from '@mui/icons-material/Edit';
 import { useTranslation } from 'react-i18next';
 import CreateUserModal from './components/CreateUserModal';
 import { STATUS_CODE, USER_STATUS } from '../../constants/common';
 import * as axiosHelper from '../../helpers/axiosHelper';
 import { toast } from 'react-toastify';
+import EditQuotaModal from './components/EditQuotaModal';
 
 function UserManagement(props) {
 	const { userState, navbarState } = props;
 	const { t } = useTranslation();
 	const [isLoading, setIsLoading] = useState(true);
-	const [visible, setVisible] = useState(false);
-
+	const [createUserModalVisible, setCreateUserModalVisible] = useState(false);
+	const [editUserQuotaModalVisible, setEditUserQuotaModalVisible] = useState(false);
+	const [editingUserId, setEditingUserId] = useState('');
 	useEffect(() => {
 		const user = JSON.parse(localStorage.getItem('user'));
 		if (isAdmin(user)) {
-			props.getUserAsync({});
+			props.getUserListAsync({});
 			setIsLoading(false);
 		}
 		setIsLoading(false);
@@ -27,10 +30,10 @@ function UserManagement(props) {
 
 	useEffect(() => {
 		if (navbarState.isLogin) {
-			props.getUserAsync({});
+			props.getUserListAsync({});
 			setIsLoading(false);
 		}
-	}, [navbarState.isLogin, visible]);
+	}, [navbarState.isLogin, createUserModalVisible, editUserQuotaModalVisible]);
 
 
 
@@ -56,11 +59,23 @@ function UserManagement(props) {
 		);
 	};
 
-	const renderStatistic = (quota, used) => {
+	const renderStatistic = (id, quota, used, type) => {
 		return (
-			<div>				
-				vi-en: {used['vi-en']}/{quota['vi-en']}<br/>
-				vi-zh: {used['vi-zh']}/{quota['vi-zh']}
+
+			<div style={{ display: 'flex', flexDirection: 'column' }}>
+				{type === 'audio' ?
+					<div>
+						{t('ViEn')}: {Math.floor(used['vi-en'] / 6) / 10}/{Math.floor(quota['vi-en'] / 60)} {t('minute')}<br />
+						{t('ViZh')}: {Math.floor(used['vi-zh'] / 6) / 10}/{Math.floor(quota['vi-zh'] / 60)} {t('minute')}
+					</div> :
+					<div>
+						{t('ViEn')}: {used['vi-en']}/{quota['vi-en']} {t('sentence')}<br />
+						{t('ViZh')}: {used['vi-zh']}/{quota['vi-zh']} {t('sentence')}
+					</div>
+				}
+
+				<EditIcon fontSize='small' style={{ marginLeft: 'auto', cursor: 'pointer' }} onClick={() => { setEditUserQuotaModalVisible(true); setEditingUserId(id); }} />
+
 			</div>
 		);
 	};
@@ -79,7 +94,7 @@ function UserManagement(props) {
 		const result = await axiosHelper.updateUser(body);
 
 		if (result.code === STATUS_CODE.success) {
-			props.getUserAsync({});
+			props.getUserListAsync({});
 			toast.success(t('updateSuccess'));
 		}
 	};
@@ -132,7 +147,7 @@ function UserManagement(props) {
 			dataIndex: 'audioTranslationQuota',
 			key: 'audioQuota',
 			render: (audioQuota, record) => {
-				return renderStatistic(record.audioTranslationQuota, record.totalTranslatedAudio);
+				return renderStatistic(record.id, record.audioTranslationQuota, record.totalTranslatedAudio, 'audio');
 			}
 		},
 		{
@@ -141,7 +156,7 @@ function UserManagement(props) {
 			dataIndex: 'textTranslationQuota',
 			key: 'textQuota',
 			render: (textQuota, record) => {
-				return renderStatistic(record.textTranslationQuota, record.totalTranslatedText);
+				return renderStatistic(record.id, record.textTranslationQuota, record.totalTranslatedText, 'text');
 			}
 		},
 		{
@@ -167,7 +182,7 @@ function UserManagement(props) {
 
 	return (
 		<div className={styles.pageContainer} >
-			<Button onClick={() => setVisible(true)} type="primary" className={styles.createButton}>{t('createUser')}</Button>
+			<Button onClick={() => setCreateUserModalVisible(true)} type="primary" className={styles.createButton}>{t('createUser')}</Button>
 
 			<Table
 				bordered
@@ -176,7 +191,9 @@ function UserManagement(props) {
 				columns={columns}
 			>
 			</Table>
-			<CreateUserModal visible={visible} setVisible={setVisible} />
+
+			{createUserModalVisible && <CreateUserModal visible={createUserModalVisible} setVisible={setCreateUserModalVisible} />}
+			{editUserQuotaModalVisible && <EditQuotaModal userId={editingUserId} visible={editUserQuotaModalVisible} setVisible={setEditUserQuotaModalVisible} />}
 		</div>
 	);
 }
@@ -184,7 +201,7 @@ function UserManagement(props) {
 UserManagement.propTypes = {
 	userState: PropTypes.object,
 	navbarState: PropTypes.object,
-	getUserAsync: PropTypes.func,
+	getUserListAsync: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({
@@ -193,7 +210,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = {
-	getUserAsync
+	getUserListAsync
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserManagement);

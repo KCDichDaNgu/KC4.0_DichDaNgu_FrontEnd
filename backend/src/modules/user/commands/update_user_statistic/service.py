@@ -55,3 +55,19 @@ class UpdateUserStatisticService():
             user_statistic = await self.__user_domain_service.update_user_statistic(user_statistic_command)
 
             return increase_total_translated_audio_result
+    
+    async def update_user_quota(self, user_id, command):
+
+        user_statistic = await self.__user_domain_service.get_user_statistic(user_id)
+
+        user_statistic_command = UpdateUserStatisticCommand(
+            user_id=user_id,
+            total_translated_audio=user_statistic.props.total_translated_audio,
+            total_translated_text=user_statistic.props.total_translated_text,
+            audio_translation_quota=command.audio_translation_quota,
+            text_translation_quota=command.text_translation_quota,
+        )
+
+        user_statistic = await self.__user_domain_service.update_user_statistic(user_statistic_command)
+
+        return user_statistic

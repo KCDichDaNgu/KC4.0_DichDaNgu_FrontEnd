@@ -128,12 +128,9 @@ class CreateSpeechTranslationRequest(HTTPMethodView):
 
         if user_statistic_result['code'] == StatusCodeEnum.failed.value:
             return response.json(
-                    status=400,
-                    body={
-                        'code': StatusCodeEnum.failed.value,
-                        'message': MESSAGES['audio_translate_limit_reached']
-                    }
-                )
+                status=400,
+                body=user_statistic_result
+            )
         else:
             command = CreateSpeechTranslationRequestCommand(
                 creator_id=ID(user.id),

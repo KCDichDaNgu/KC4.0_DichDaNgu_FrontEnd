@@ -3,10 +3,9 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 
-function ToastSuccess(props) {
+function ToastError(props) {
 
 	const { t } = useTranslation();
-	console.log(props.message);
 	return (
 		<>
 			{t(props.message)}
@@ -14,8 +13,8 @@ function ToastSuccess(props) {
 	);
 }
 
-ToastSuccess.propTypes = {
+ToastError.propTypes = {
 	message: PropTypes.string
 };
 
-export default ToastSuccess;
+export default ToastError;

@@ -32,13 +32,18 @@ class UserStatisticEntity(Entity[UserStatisticProps]):
         pair_quota = self.props.text_translation_quota.get(pair, 1000)
 
         new_length = self.props.total_translated_text.get(pair, 0) + text_length
+        print(type(pair_quota))
+        print(type(new_length))
 
-        if new_length > pair_quota:
+        if int(new_length) > int(pair_quota):
 
             return BaseResponse(**{
                 "code": StatusCodeEnum.failed.value,
                 "message": MESSAGES['text_translate_limit_reached'],
-                "data": self.props.total_translated_text
+                "data": {
+                    'used': self.props.total_translated_text.get(pair),
+                    'quota': self.props.text_translation_quota.get(pair)
+                }
             }).dict()            
 
         self.props.total_translated_text[pair] = new_length
@@ -59,7 +64,10 @@ class UserStatisticEntity(Entity[UserStatisticProps]):
             return BaseResponse(**{
                 "code": StatusCodeEnum.failed.value,
                 "message": MESSAGES['audio_translate_limit_reached'],
-                "data": self.props.total_translated_audio
+                "data": {
+                    'used': self.props.total_translated_audio.get(pair),
+                    'quota': self.props.audio_translation_quota.get(pair)
+                }
             }).dict()            
 
         self.props.total_translated_audio[pair] = new_length

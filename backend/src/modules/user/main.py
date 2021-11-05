@@ -1,4 +1,6 @@
 from sanic import Blueprint
+from modules.user.queries.user.http_controller import GetUser
+from modules.user.commands.update_user_quota.http_controller import UpdateUserQuota
 from modules.user.commands.login.http_controller import Login
 from modules.user.commands.create_user_by_admin.http_controller import CreateUserByAdmin
 from infrastructure.configs import GlobalConfig, get_cnf
@@ -65,8 +67,19 @@ user_bp.add_route(
     methods=[APP_CONFIG.ROUTES['user.login']['method']]
 )
 
+user_bp.add_route(
+    GetUser.as_view(), 
+    uri=APP_CONFIG.ROUTES['user.get']['path'],
+    methods=[APP_CONFIG.ROUTES['user.get']['method']]
+)
+
 admin_bp.add_route(
     CreateUserByAdmin.as_view(), 
     uri=APP_CONFIG.ROUTES['admin.create_user']['path'],
     methods=[APP_CONFIG.ROUTES['admin.create_user']['method']]
+)
+admin_bp.add_route(
+    UpdateUserQuota.as_view(), 
+    uri=APP_CONFIG.ROUTES['admin.update_user_quota']['path'],
+    methods=[APP_CONFIG.ROUTES['admin.update_user_quota']['method']]
 )

@@ -95,26 +95,26 @@ function ModalInfo(props) {
 							variant="standard"
 						/>
 					</Box>
-					
+
 					<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'start', mt: 1 }}>
 						<InsertDriveFileIcon fontSize="medium" sx={{ color: 'action.active', mr: 1 }} />
 						{userInfo ?
 							<div>
-								vi-en: {userInfo.totalTranslatedText['vi-en']}/{userInfo.textTranslationQuota['vi-en']}&nbsp;
-								
-								vi-zh: {userInfo.totalTranslatedText['vi-zh']}/{userInfo.textTranslationQuota['vi-zh']}
-							</div> : 
+								{t('ViEn')}: {userInfo.totalTranslatedText['vi-en']}/{userInfo.textTranslationQuota['vi-en']} {t('sentence')}<br/>
+
+								{t('ViZh')}: {userInfo.totalTranslatedText['vi-zh']}/{userInfo.textTranslationQuota['vi-zh']} {t('sentence')}
+							</div> :
 							<></>
-						}						
+						}
 					</Box>
 
 					<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'start', mt: 1 }}>
 						<AlbumIcon fontSize="medium" sx={{ color: 'action.active', mr: 1 }} />
 						{userInfo ?
 							<div>
-								vi-en: {userInfo.totalTranslatedAudio['vi-en']}/{userInfo.audioTranslationQuota['vi-en']}&nbsp;
-								vi-zh: {userInfo.totalTranslatedAudio['vi-zh']}/{userInfo.audioTranslationQuota['vi-zh']}
-							</div> : 
+								{t('ViEn')}: {Math.floor(userInfo.totalTranslatedAudio['vi-en'] / 6) / 10}/{Math.floor(userInfo.audioTranslationQuota['vi-en'] / 60)} {t('minute')}<br/>
+								{t('ViZh')}: {Math.floor(userInfo.totalTranslatedAudio['vi-zh'] / 6) / 10}/{Math.floor(userInfo.audioTranslationQuota['vi-zh'] / 60)} {t('minute')}
+							</div> :
 							<></>
 						}
 					</Box>

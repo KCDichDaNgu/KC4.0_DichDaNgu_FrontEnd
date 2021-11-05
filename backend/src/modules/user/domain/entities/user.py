@@ -16,8 +16,8 @@ class UserProps(BaseModel):
     first_name: str = Field(...)
     last_name: str = Field(...)
     email: str = Field(...)
-    password: str = Field(None)
-    avatar: str = Field(None)
+    password: str = Field(...)
+    avatar: str = Field(...)
     role: UserRole = Field(...)
     status: UserStatus = Field(...)
 
