@@ -83,29 +83,29 @@ const EditQuotaModal = (props) => {
 		<Form layout="vertical" form={form} onFinish={onCreate} initialValues={userData}>
 			<Row gutter={12}>
 				<Col span={24}>
-					<div className={styles.user}>User: {userData.username}</div>
+					<div className={styles.user}>{t('member')}: {userData.username}</div>
 				</Col>
 
 				<Col xs={24} md={12}>
-					<Form.Item name='text_quota_vi_en' label={t('textQuotaViEn')} rules={[{ required: true, message: t('requiredField') }]}>
+					<Form.Item name='text_quota_vi_en' label={t('textViEn')} rules={[{ required: true, message: t('requiredField') }]}>
 						<Input type="number" suffix={t('sentence')} className={styles.formQuota} />
 					</Form.Item>
 				</Col>
 
 				<Col xs={24} md={12}>
-					<Form.Item name='text_quota_vi_zh' label={t('textQuotaViZh')} rules={[{ required: true, message: t('requiredField') }]}>
+					<Form.Item name='text_quota_vi_zh' label={t('textViZh')} rules={[{ required: true, message: t('requiredField') }]}>
 						<Input type="number" suffix={t('sentence')} className={styles.formQuota} />
 					</Form.Item>
 				</Col>
 
 				<Col xs={24} md={12}>
-					<Form.Item name='audio_quota_vi_en' label={t('audioQuotaViEn')} rules={[{ required: true, message: t('requiredField') }]}>
+					<Form.Item name='audio_quota_vi_en' label={t('audioViEn')} rules={[{ required: true, message: t('requiredField') }]}>
 						<Input type="number" suffix={t('minute')} className={styles.formQuota} />
 					</Form.Item>
 				</Col>
 
 				<Col xs={24} md={12}>
-					<Form.Item name='audio_quota_vi_zh' label={t('audioQuotaViZh')} rules={[{ required: true, message: t('requiredField') }]}>
+					<Form.Item name='audio_quota_vi_zh' label={t('audioViZh')} rules={[{ required: true, message: t('requiredField') }]}>
 						<Input type="number" suffix={t('minute')} className={styles.formQuota} />
 					</Form.Item>
 				</Col>

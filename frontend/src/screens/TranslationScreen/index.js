@@ -30,6 +30,7 @@ import TranslateInput from './components/TranslateInput';
 import { TRANSLATE_TYPE } from '../../constants/common';
 import TranslateFileDocumentInput from './components/TranslateFileDocumentInput';
 import TranslateFileAudioInput from './components/TranslateFileAudioInput';
+import authHoc from '../../hocs/authHoc';
 
 function Index(props) {
 	const { translationState, translationFileState } = props;
@@ -160,11 +161,11 @@ function Index(props) {
 					</Col>
 				</div>
 
-				<div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 5 }}>
+				{/* <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 5 }}>
 					<button onClick={() => { }} style={{ backgroundColor: '#fff', borderWidth: 0, color: '#63676C', fontStyle: 'italic', fontSize: 13 }}>
 						Gửi phản hồi
 					</button>
-				</div>
+				</div> */}
 				<ScrollTop {...props}>
 					<Fab color="primary" size="medium" aria-label="scroll back to top">
 						<KeyboardArrowUpIcon />
@@ -199,4 +200,4 @@ const mapDispatchToProps = {
 	changeOutput,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Index);
+export default connect(mapStateToProps, mapDispatchToProps)(authHoc(Index));

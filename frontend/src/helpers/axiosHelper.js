@@ -15,7 +15,27 @@ const axiosDefault = axios.create({
 	timeout: 10000,
 });
 
+const axios2 = axios.create({
+	// baseURL: 'http://nmtuet.ddns.net:1710/',
+	baseURL: SPEECH_RECOGNIZATION_URL,
+	headers: {
+		'Content-Type': 'application/json',
+	},
+	timeout: 10000,
+});
+
 axiosDefault.interceptors.request.use(
+	async config => {
+		const acc_token = localStorage.getItem(ACCESS_TOKEN);
+		if (acc_token) {
+			config.headers.Authorization = `${acc_token}`;
+		}
+		return config;
+	},
+	// error => Promise.reject(error),
+);
+
+axios2.interceptors.request.use(
 	async config => {
 		const acc_token = localStorage.getItem(ACCESS_TOKEN);
 		if (acc_token) {
@@ -183,7 +203,7 @@ export const downloadSpeechRecognitionResultFile = (url) => {
 
 export const SignOut = () => {
 	return new Promise((resolve, reject) => {
-		axiosDefault.post('user/logout')
+		axios2.post('user/logout')
 			.then((result) => {
 				resolve(result.data);
 			})
@@ -195,7 +215,7 @@ export const SignOut = () => {
 
 export const getMe = () => {
 	return new Promise((resolve, reject) => {
-		axiosDefault.get('user/me')
+		axios2.get('user/me')
 			.then((result) => {
 				resolve(result.data);
 			})
@@ -204,6 +224,7 @@ export const getMe = () => {
 			});
 	});
 };
+
 export const getUser = (id) => {
 	return new Promise((resolve, reject) => {
 		axiosDefault.get('user', { params: {id} })

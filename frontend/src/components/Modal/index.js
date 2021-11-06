@@ -36,7 +36,7 @@ function ModalInfo(props) {
 					setIsloading(false);
 				} catch (e) {
 					setIsloading(false);
-					alert(e);
+					// alert(e);
 				}
 			};
 			getInfo();
@@ -122,7 +122,7 @@ function ModalInfo(props) {
 				<Divider />
 				<DialogActions>
 					<Button variant="contained" onClick={props.onHide}>
-						{t('huyBo')}
+						{t('cancel')}
 					</Button>
 				</DialogActions>
 			</form>

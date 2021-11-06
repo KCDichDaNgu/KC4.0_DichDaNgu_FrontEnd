@@ -1,49 +1,32 @@
 export const AdminSidebarData = [
 	{
-		title: 'Giới thiệu',
-		path: '/about',
-	},
-	{
 		title: 'Dịch',
-		path: '/',
+		path: '/translate',
 	},
 	{
 		title: 'Lịch sử và từ vựng',
-		path: '/HistoryAndFavorite',
+		path: '/history-and-favorite',
 	},
 	{
 		title: 'Quản lý người dùng',
 		path: '/user-management',
 	},
-	{
-		title: 'Điều khoản và chính sách',
-		path: '/rules-and-policy',
-	},
-	{
-		title: 'Hỗ trợ',
-		path: '/help',
-	},
 ];
 
 export const SidebarData = [
 	{
-		title: 'Giới thiệu',
-		path: '/about',
-	},
-	{
 		title: 'Dịch',
-		path: '/',
+		path: '/translate',
 	},
 	{
 		title: 'Lịch sử và từ vựng',
-		path: '/HistoryAndFavorite',
-	},
+		path: '/history-and-favorite',
+	}
+];
+
+export const UnauthorizedSidebarData = [
 	{
-		title: 'Điều khoản và chính sách',
-		path: '/rules-and-policy',
-	},
-	{
-		title: 'Hỗ trợ',
-		path: '/help',
+		title: 'Đăng nhập',
+		path: '/login',
 	},
 ];

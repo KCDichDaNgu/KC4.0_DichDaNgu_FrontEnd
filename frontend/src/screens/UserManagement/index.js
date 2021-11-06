@@ -11,6 +11,7 @@ import { STATUS_CODE, USER_STATUS } from '../../constants/common';
 import * as axiosHelper from '../../helpers/axiosHelper';
 import { toast } from 'react-toastify';
 import EditQuotaModal from './components/EditQuotaModal';
+import authHoc from '../../hocs/authHoc';
 
 function UserManagement(props) {
 	const { userState, navbarState } = props;
@@ -19,12 +20,17 @@ function UserManagement(props) {
 	const [createUserModalVisible, setCreateUserModalVisible] = useState(false);
 	const [editUserQuotaModalVisible, setEditUserQuotaModalVisible] = useState(false);
 	const [editingUserId, setEditingUserId] = useState('');
+	const [currentUser, setCurrentUser] = useState('');
+
 	useEffect(() => {
 		const user = JSON.parse(localStorage.getItem('user'));
+
 		if (isAdmin(user)) {
 			props.getUserListAsync({});
+			setCurrentUser(user);
 			setIsLoading(false);
 		}
+
 		setIsLoading(false);
 	}, []);
 
@@ -35,15 +41,13 @@ function UserManagement(props) {
 		}
 	}, [navbarState.isLogin, createUserModalVisible, editUserQuotaModalVisible]);
 
-
-
 	const isAdmin = (user) => {
 		return user?.role === 'admin' && user?.status === USER_STATUS.active;
 	};
 
 	const renderStatus = (currentStatus, record) => {
 		return (
-			<Radio.Group defaultValue={currentStatus}>
+			<Radio.Group defaultValue={currentStatus} disabled={record.id === currentUser.id }>
 				{
 					Object.keys(USER_STATUS).map(statusKey => {
 						return (
@@ -87,8 +91,8 @@ function UserManagement(props) {
 			id: record.id,
 			role: record.role,
 			status: status,
-			audio_translation_quota: record.textTranslationQuota,
-			text_translation_quota: record.audioTranslationQuota
+			audio_translation_quota: record.audioTranslationQuota,
+			text_translation_quota: record.textTranslationQuota
 		};
 
 		const result = await axiosHelper.updateUser(body);
@@ -213,4 +217,4 @@ const mapDispatchToProps = {
 	getUserListAsync
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(UserManagement);
+export default connect(mapStateToProps, mapDispatchToProps)(authHoc(UserManagement));

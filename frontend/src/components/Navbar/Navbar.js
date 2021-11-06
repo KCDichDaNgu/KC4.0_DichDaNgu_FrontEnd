@@ -8,7 +8,7 @@ import { IconButton, Typography, CircularProgress } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 
 import { Link } from 'react-router-dom';
-import { SidebarData, AdminSidebarData } from './SidebarData';
+import { SidebarData, AdminSidebarData, UnauthorizedSidebarData } from './SidebarData';
 // import Logo from '../../assets/images/lg.png';
 import { sideBarHide, sideBarShow, changeIsLogin } from '../../redux/actions/navbarAction';
 import styles from './navbarStyle.module.css';
@@ -21,9 +21,11 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { ACCESS_TOKEN, } from '../../constants/envVar';
 import LoginModal from '../LoginModal';
 import { USER_STATUS } from '../../constants/common';
+import { useHistory } from 'react-router-dom';
 
 function Navbar() {
 	const boxRef = useRef(null);
+	const history = useHistory();
 	const boxOutsideClick = OutsideClick(boxRef);
 	const [modalShow, setModalShow] = useState(false);
 	const [loginModalVisible, setLoginModalVisible] = useState(false);
@@ -40,9 +42,11 @@ function Navbar() {
 
 		const user = JSON.parse(localStorage.getItem('user'));
 
-		if (isAdmin(user)) {
+		if (!user?.username) { setSidebarData(UnauthorizedSidebarData); }
+		else if (isAdmin(user)) {
 			setSidebarData(AdminSidebarData);
-		} else setSidebarData(SidebarData);
+		} else setSidebarData(SidebarData);;
+
 	}, [boxOutsideClick, dispatch]);
 
 	const isAdmin = (user) => {
@@ -54,7 +58,7 @@ function Navbar() {
 			dispatch(changeIsLogin(true));
 			setIsLoading(false);
 		}
-		
+
 	}, []);
 
 	const showSidebar = () => {
@@ -73,14 +77,14 @@ function Navbar() {
 			<Container fluid>
 				<Row className={styles.headerTop}>
 					<IconButton onClick={() => showSidebar()}><MenuIcon size="large" sx={{ color: 'white' }} /></IconButton>
-					<div style={{ display: 'flex', width: 'calc(100% - 50px)', paddingRight:'16px'}}>
+					<div style={{ display: 'flex', width: 'calc(100% - 50px)', paddingRight: '16px' }}>
 						<Typography sx={{}} variant="h5" className={styles.title}>
 							{t('Translate.title')}
 						</Typography>
 
 						<div className={styles.loginContainer}>
 							{navBarState.isLogin ? (
-								<NavBarProfile setIsSigIn={(value) => dispatch(changeIsLogin(value))} setModalShow={setModalShow} />
+								<NavBarProfile setIsSignIn={(value) => dispatch(changeIsLogin(value))} setModalShow={setModalShow} />
 							) :
 								<Row justify='end'>
 									<LoadingButton
@@ -88,12 +92,11 @@ function Navbar() {
 										loading={isLoading}
 										variant="text"
 										sx={{ color: 'white' }}
-										onClick={() => setLoginModalVisible(true)}
+										onClick={() => history.push('/login')}
 									>
 										{t('dangNhap')}
 									</LoadingButton>
 								</Row>
-
 							}
 
 						</div>

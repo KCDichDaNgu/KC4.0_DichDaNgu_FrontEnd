@@ -5,10 +5,12 @@ import * as axiosHelper from '../../helpers/axiosHelper';
 import { changeIsLogin } from '../../redux/actions/navbarAction';
 import { getCurrentUser } from '../../redux/actions/userAction';
 import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { ACCESS_TOKEN, REFRESH_TOKEN} from '../../constants/envVar';
 import { useTranslation } from 'react-i18next';
 const LoginModal = (props) => {
 	const dispatch = useDispatch();
+	const history = useHistory();
 	const [form] = Form.useForm();
 	const { visible, setVisible } = props;
 	const { t }  = useTranslation();
@@ -27,6 +29,7 @@ const LoginModal = (props) => {
 			dispatch(getCurrentUser());
 			localStorage.setItem(ACCESS_TOKEN, siginInResult.data.accessToken);
 			localStorage.setItem(REFRESH_TOKEN, siginInResult.data.refreshToken);
+			history.push('/translate');
 			setVisible(false);
 		}catch (e) {
 			alert(e);
@@ -38,7 +41,8 @@ const LoginModal = (props) => {
 	return (<Modal
 		visible={visible}
 		title={t('login')}
-		okText="Submit"
+		okText={t('login')}
+		cancelText={t('cancel')}
 		onCancel={onCancel}
 		onOk={onSubmit}
 	>

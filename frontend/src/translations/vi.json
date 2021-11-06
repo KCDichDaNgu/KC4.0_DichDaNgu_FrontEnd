@@ -1,5 +1,7 @@
 {
-	"title": "This Neural Machine Translation system is fully supported by the project 'Developing a multilingual translation system between Vietnamese and several other languages' funded by the Science and Technology Program KC 4.0, No. KC-4.0.12/19-25.",
+	"warningNoAuth1": "Bạn cần ",
+	"warningNoAuth2": " đăng nhập ",
+	"warningNoAuth3": "để có thể sử dụng các dịch vụ.",
 	"contact": "Contact KC-4.0.12/19-25 Team",
 	"footer": "© 2021 KC-4.0.12/19-25 Machine Translation Team",
 	"chinhSuaTaiKhoan": "Chỉnh sửa tài khoản",
@@ -41,8 +43,7 @@
 	"km": "Khơme",
 	"Translate": {
 		"khongHoTro": "Không hỗ trợ dịnh",
-		"title2" : "Multilingual Neural Machine Translation",
-		"title" : "Dịch máy đa ngôn ngữ",
+		"title" : "TekSpeech - dịch âm thanh, văn bản Trung, Anh - Việt",
 		"phathienngonngu": "Phát hiện ngôn ngữ",
 		"nhapVanBan": "Nhập văn bản",
 		"bandich": "Bản dịch",
@@ -98,6 +99,10 @@
 	"textQuotaViZh": "Giới hạn dịch văn bản Việt - Trung",
 	"audioQuotaViEn": "Giới hạn dịch âm thanh Việt - Anh",
 	"audioQuotaViZh": "Giới hạn dịch âm thanh Việt - Trung",
+	"textViEn": "Dịch văn bản Việt - Anh",
+	"textViZh": "Dịch văn bản Việt - Trung",
+	"audioViEn": "Dịch âm thanh Việt - Anh",
+	"audioViZh": "Dịch âm thanh Việt - Trung",
 	"audioQuota": "Giới hạn dịch âm thanh",
 	"text_translate_limit_reached": "Vượt quá giới hạn dịch",
 	"audio_translate_limit_reached": "Vượt quá giới hạn dịch",
@@ -105,9 +110,10 @@
 	"sentence": "câu",
 	"minute": "phút",
 	"requiredField": "Thông tin bắt buộc",
-	"cancel": "Hủy bỏ",
+	"cancel": "Đóng",
 	"edit": "Sửa",
 	"create": "Thêm",
 	"ViEn": "Việt - Anh",
-	"ViZh": "Việt - Trung"
+	"ViZh": "Việt - Trung",
+	"inactive_user": "Tài khoản người dùng không hoạt động"
 }

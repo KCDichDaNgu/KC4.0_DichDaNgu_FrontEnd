@@ -16,6 +16,7 @@ import { getHistoryAsync } from '../../redux/actions/historyAction';
 import { isEmpty } from 'lodash';
 import TranslationItem from './components/TranslationItem';
 import Pagination from '@mui/material/Pagination';
+import authHoc from '../../hocs/authHoc';
 
 const PER_PAGE = 9;
 const STATUS = 'translated';
@@ -146,4 +147,4 @@ const mapDispatchToProps = {
 	getHistoryAsync
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(HistoryAndFavorite);
+export default connect(mapStateToProps, mapDispatchToProps)(authHoc(HistoryAndFavorite));

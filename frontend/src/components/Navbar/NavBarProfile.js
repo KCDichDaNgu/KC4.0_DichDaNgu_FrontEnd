@@ -9,7 +9,8 @@ import { useTranslation } from 'react-i18next';
 // import { useGoogleLogout } from 'react-google-login';
 import * as axiosHelper from '../../helpers/axiosHelper';
 import { useHistory } from 'react-router-dom';
-import { USER_IMG_URL } from '../../constants/envVar';function NavBarProfile(props) {
+import { USER_IMG_URL } from '../../constants/envVar';
+function NavBarProfile(props) {
 	const { t } = useTranslation();
 	const history = useHistory();
 
@@ -24,12 +25,15 @@ import { USER_IMG_URL } from '../../constants/envVar';function NavBarProfile(pro
 
 	const signOut = async () => {
 		try {
-			props.setIsSigIn(false);
 			await axiosHelper.SignOut();
-			localStorage.clear();						
-			history.push('/');
-		}catch (e){
-			alert(e);
+			props.setIsSignIn(false);
+			localStorage.clear();
+			history.push('/login');
+		}
+		catch(e) {
+			props.setIsSignIn(false);
+			localStorage.clear();
+			history.push('/login');
 		}
 	};
 
@@ -77,7 +81,7 @@ import { USER_IMG_URL } from '../../constants/envVar';function NavBarProfile(pro
 }
 
 NavBarProfile.propTypes = {
-	setIsSigIn: PropTypes.func,
+	setIsSignIn: PropTypes.func,
 	setModalShow: PropTypes.func,
 };
 
