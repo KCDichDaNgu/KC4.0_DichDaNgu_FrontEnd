@@ -244,10 +244,14 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
             source_lang = valid_tasks_mapper[task_id]['task_result_content']['source_lang']
             target_lang = valid_tasks_mapper[task_id]['task_result_content']['target_lang']
 
-            original_file = open(original_file_full_path,'r')
+            try:
 
-            original_text = original_file.read()
-            print(original_text)
+                original_file = open(original_file_full_path, encoding="utf16")
+                original_text = original_file.read()
+
+            except Exception as e:
+                logger.error(e)
+                
             if source_lang == target_lang:
                 async with db_instance.session() as session:
 
