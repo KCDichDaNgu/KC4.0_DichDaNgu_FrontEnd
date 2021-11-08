@@ -32,8 +32,6 @@ class UserStatisticEntity(Entity[UserStatisticProps]):
         pair_quota = self.props.text_translation_quota.get(pair, 1000)
 
         new_length = self.props.total_translated_text.get(pair, 0) + text_length
-        print(type(pair_quota))
-        print(type(new_length))
 
         if int(new_length) > int(pair_quota):
 

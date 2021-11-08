@@ -74,9 +74,9 @@ def get_doc_file_meta(doc_file: File):
 
 def get_txt_file_meta(txt_file: File):
 
-    full_text = (txt_file.body.decode('utf-8'))
+    full_text = (txt_file.body.decode('utf-16'))
 
-    sentences = re.split('[;.?!]', full_text)
+    sentences = re.split('[;.?!。]', full_text)
 
     sentence_count = sum(1 for y in sentences if len(y) > 2)
 
