@@ -2,14 +2,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
 	Container,
 	Row,
-	// Image,
+	Image,
 } from 'react-bootstrap';
 import { IconButton, Typography, CircularProgress } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 
 import { Link } from 'react-router-dom';
 import { SidebarData, AdminSidebarData, UnauthorizedSidebarData } from './SidebarData';
-// import Logo from '../../assets/images/lg.png';
+import Logo from '../../assets/images/logo.png';
 import { sideBarHide, sideBarShow, changeIsLogin } from '../../redux/actions/navbarAction';
 import styles from './navbarStyle.module.css';
 import { useTranslation } from 'react-i18next';
@@ -113,9 +113,9 @@ function Navbar() {
 			<nav className={navBarState.shownavbar ? [styles.nav_menu, styles.active].join(' ') : styles.nav_menu}>
 				<ul className={styles.nav_menu_items}>
 					<li className={styles.logo}>
-						{/* <div className={styles.logosub}>
-							<Image style={{ width: '80px', padding: '10px 0' }} src={Logo} alt="" roundedCircle />
-						</div> */}
+						<div className={styles.logosub}>
+							<Image style={{ width: '100px', padding: '10px 0' }} src={Logo} alt="" roundedCircle />
+						</div>
 					</li>
 					{sidebarData.map((item, index) => {
 						return (

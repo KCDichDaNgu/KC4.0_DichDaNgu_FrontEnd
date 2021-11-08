@@ -107,12 +107,13 @@
 }
 
 .logo {
-  height: 90px;
+  height: 100px;
   display: flex;
   justify-content: center;
   align-items: center;
   padding-top: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 40px;
+  margin-top: 20px;
 }
 
 .logosub {
@@ -121,7 +122,7 @@
   align-items: center;
   padding-top: 20px;
   width: 80%;
-  border-bottom: 1px solid #ccc;
+  /* border-bottom: 1px solid #ccc; */
 }
 
 .nav_menu.active {
