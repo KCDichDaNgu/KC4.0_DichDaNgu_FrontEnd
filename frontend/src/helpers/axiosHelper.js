@@ -80,7 +80,7 @@ export const translateFileAudio = (body) => {
 					const { used, quota } = error.response.data.data;
 					const { message } = error.response.data;
 					toastInformLimitReached(message, used, quota, 'audio');
-				}				
+				}
 				reject(error);
 			});
 	});
@@ -171,16 +171,17 @@ export const updateUserQuota = (body) => {
 	});
 };
 
-export const downloadFile = (url) => {
+export const downloadFile = (url, file_type) => {
 	axios({
-		url,
+		url: SPEECH_RECOGNIZATION_URL + url,
 		method: 'GET',
 		responseType: 'blob', // important
 	}).then((response) => {
 		const url = window.URL.createObjectURL(new Blob([response.data]));
 		const link = document.createElement('a');
+		const file_name = file_type == 'txt' ? 'file.txt' : 'file.docx';
 		link.href = url;
-		link.setAttribute('download', 'file.docx');
+		link.setAttribute('download', file_name);
 		document.body.appendChild(link);
 		link.click();
 	});
@@ -227,7 +228,7 @@ export const getMe = () => {
 
 export const getUser = (id) => {
 	return new Promise((resolve, reject) => {
-		axiosDefault.get('user', { params: {id} })
+		axiosDefault.get('user', { params: { id } })
 			.then((result) => {
 				resolve(result.data);
 			})
@@ -313,7 +314,7 @@ export const postTranslate = (body) => {
 					const { used, quota } = error.response.data.data;
 					const { message } = error.response.data;
 					toastInformLimitReached(message, used, quota, 'text');
-				}				
+				}
 				reject(error);
 			});
 	});

@@ -79,7 +79,7 @@ function TranslateFileDocumentOutput(props) {
 					<Button 
 						variant="contained" 
 						color="success" 
-						onClick={() => downloadFile(`http://192.168.1.105:8000/${translationFileState.outputDocumentFile.target_file_full_path}`)}
+						onClick={() => downloadFile(translationFileState.outputDocumentFile.target_file_full_path, translationFileState.outputDocumentFile.file_type)}
 					>
 						{buttonTextDich()}
 					</Button> : <LoadingButton 

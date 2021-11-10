@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ant-design/icons": "^4.7.0",
     "@emotion/react": "^11.4.1",
     "@emotion/styled": "^11.3.0",
     "@mui/icons-material": "^5.0.0",
@@ -18,6 +19,7 @@
     "eslint-config-prettier": "^8.3.0",
     "i18next": "^19.9.0",
     "lodash": "^4.17.21",
+    "mic-recorder-to-mp3": "^2.2.2",
     "node-sass": "^6.0.1",
     "query-string": "^7.0.1",
     "react": "^17.0.1",

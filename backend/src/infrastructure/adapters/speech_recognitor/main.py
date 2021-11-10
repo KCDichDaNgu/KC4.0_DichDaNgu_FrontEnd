@@ -46,14 +46,6 @@ class SpeechRecognitor(SpeechRecognitorPort):
     ):
 
         if public_request:
-            headers = {
-                'Content-Type': 'multipart/form-data;boundary=----------------------------',
-            }
-
-            # data = FormData()
-
-            # data.add_field('data_file', ('AUDIO', open(source_file_full_path, 'rb')))
-            # data.add_field( 'config', f'{{"type": "transcription","transcription_config": {{"language": {source_lang}}}}}')
         
             files = {
                 'data_file': ('AUDIO', open(source_file_full_path, 'rb')),
