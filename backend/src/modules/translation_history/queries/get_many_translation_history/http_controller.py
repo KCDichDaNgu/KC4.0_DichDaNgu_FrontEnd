@@ -69,8 +69,8 @@ class GetManyTranslationHistory(HTTPMethodView):
     )
     @doc.consumes(
         doc.String(
-            description='orderBy',
-            name='orderBy'
+            description='sort',
+            name='sort'
         ),
         location="query"
     )
@@ -92,8 +92,11 @@ class GetManyTranslationHistory(HTTPMethodView):
         translation_type = request.args.get('translationType')
         per_page = request.args.get('perPage')
         page = request.args.get('page')
-        order_by = request.args.get('orderBy')
-
+        sort = {
+            "key": 'created_at',
+            "direction": request.args.get('sort', -1)
+        }
+           
         pagination = {
             'page': PAGINATION_CONFIG.DEFAULT_PAGE,
             'per_page': PAGINATION_CONFIG.DEFAULT_PER_PAGE
@@ -105,7 +108,7 @@ class GetManyTranslationHistory(HTTPMethodView):
             query['creator_id'] = UUID(user.id)
         else:
             query['creator_id'] = None
-
+2222222222222222222222222
         if not task_id is None:
             query['task_id'] = UUID(task_id)
 
@@ -124,7 +127,7 @@ class GetManyTranslationHistory(HTTPMethodView):
         query_result = await self.__translation_history_repository.find_many_paginated(
             query,
             pagination,
-            order_by
+            sort
         )
  
         translation_history: TranslationHistoryEntity = query_result.data
