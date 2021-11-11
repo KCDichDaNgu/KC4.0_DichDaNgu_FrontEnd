@@ -8,7 +8,7 @@ from core.domain_events import DomainEvents
 from infrastructure.adapters.logger import Logger
 from core.ports.repository import Pagination, RepositoryPort, DataWithPagination
 from core.exceptions import NotFoundException
-
+import pymongo
 from core.base_classes.entity import BaseEntityProps
 from abc import ABC, abstractmethod
 from typing import Generic, List, TypeVar, Any
@@ -177,7 +177,7 @@ class OrmRepositoryBase(
         self,
         params: Any,
         pagination: Pagination,
-        order_by: Any,
+        sort: Any,
     ):
         max_per_page = PAGINATION_CONFIG.MAX_PER_PAGE
         result = []
@@ -191,8 +191,8 @@ class OrmRepositoryBase(
         if pagination['per_page']:
             founds = founds.limit(min(max_per_page, pagination['per_page']))
 
-        if order_by:
-            founds = founds.sort(order_by)
+        if sort:
+            founds = founds.sort(sort['key'], int(sort['direction']))
 
         result = list((await founds.to_list(length=None))) if not founds is None else []
 
