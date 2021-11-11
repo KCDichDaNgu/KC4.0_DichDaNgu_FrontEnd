@@ -108,7 +108,7 @@ class GetManyTranslationHistory(HTTPMethodView):
             query['creator_id'] = UUID(user.id)
         else:
             query['creator_id'] = None
-2222222222222222222222222
+
         if not task_id is None:
             query['task_id'] = UUID(task_id)
 
