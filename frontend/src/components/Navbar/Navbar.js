@@ -9,7 +9,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 
 import { Link } from 'react-router-dom';
 import { SidebarData, AdminSidebarData, UnauthorizedSidebarData } from './SidebarData';
-import Logo from '../../assets/images/logo.png';
+import Logo from '../../assets/images/logo_new.png';
 import { sideBarHide, sideBarShow, changeIsLogin } from '../../redux/actions/navbarAction';
 import styles from './navbarStyle.module.css';
 import { useTranslation } from 'react-i18next';
@@ -114,15 +114,22 @@ function Navbar() {
 				<ul className={styles.nav_menu_items}>
 					<li className={styles.logo}>
 						<div className={styles.logosub}>
-							<Image style={{ width: '100px', padding: '10px 0' }} src={Logo} alt="" roundedCircle />
+							<Image style={{ width: '200px' }} src={Logo} alt="" roundedCircle />
 						</div>
 					</li>
 					{sidebarData.map((item, index) => {
 						return (
-							<li key={index} className={styles.nav_text}>
-								<Link to={item.path} onClick={() => hideSidebar()}>
-									<span>{item.title}</span>
-								</Link>
+							<li key={index} className={styles.nav_text} >
+								{item.type == 'screen' ?
+									<Link to={item.path} onClick={() => hideSidebar()}>
+										<span>{item.title}</span>
+									</Link> :
+
+									<Link to={item.path} download target="_blank" onClick={() => hideSidebar()}>
+										<span>{item.title}</span>
+									</Link>
+
+								}
 							</li>
 						);
 					})}

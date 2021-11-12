@@ -95,7 +95,7 @@
 
 .nav_menu {
   background-color: #ffffff;
-  width: 270px;
+  width: 330px;
   height: 100vh;
   display: flex;
   justify-content: center;
@@ -111,9 +111,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-top: 20px;
-  margin-bottom: 40px;
   margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .logosub {
@@ -138,7 +137,7 @@
   align-items: center;
   padding: 8px 8px 8px 8px;
   list-style: none;
-  height: 50px;
+  height: auto;
   justify-content: center;
 }
 
