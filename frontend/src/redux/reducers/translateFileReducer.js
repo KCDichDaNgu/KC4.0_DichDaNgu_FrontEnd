@@ -1,6 +1,7 @@
 import {
 	TRANSLATEFILE_AUDIO_SUCCESS,
 	TRANSLATEFILE_DOCUMENT_SUCCESS,
+	TRANSLATEFILE_AUDIO_CONVERTED,
 	TRANSLATEFILE_FAIL,
 	TRANSLATEFILE,
 	CHANGE_FILE,
@@ -24,6 +25,8 @@ const initialState = {
 	audioFile:null,
 	outputTranslationFile: null,
 	outputDocumentFile: null,
+	outputAudioConvertedFile: null,
+	outputAudioTranslatedFile: null,
 	outputAudioFile: null,
 	err: null,
 };
@@ -57,8 +60,17 @@ export default function(state = initialState, action) {
 	case TRANSLATEFILE_AUDIO_SUCCESS: {
 		return {
 			...state,
+			outputAudioTranslatedFile: action.payload.data,
 			outputAudioFile: action.payload.data,
 			currentState: STATE.SUCCESS,
+		};
+	}
+	case TRANSLATEFILE_AUDIO_CONVERTED: {
+		return {
+			...state,
+			outputAudioConvertedFile: action.payload.data,
+			outputAudioFile:action.payload.data,
+			currentState: STATE.LOADING,
 		};
 	}
 	case TRANSLATEFILE_DOCUMENT_SUCCESS: {
@@ -91,6 +103,8 @@ export default function(state = initialState, action) {
 		return {
 			...state,
 			outputAudioFile: action.payload.data,
+			outputAudioConvertedFile: action.payload.data,
+			outputAudioTranslatedFile: action.payload.data,
 		};
 	}
 	default:

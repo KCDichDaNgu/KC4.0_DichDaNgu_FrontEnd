@@ -115,7 +115,6 @@ function TranslateFileAudioOutput(props) {
 								style={{ display: 'none' }}
 								id="contained-button-file"
 								onChange={(event) => {
-									console.log(event.target.files[0]);
 									props.changeFileAudio(event.target.files[0]);
 								}}
 							/>

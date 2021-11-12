@@ -1,7 +1,8 @@
-import { 
+import {
 	TRANSLATEFILE_SUCCESS,
 	TRANSLATEFILE_FAIL,
 	TRANSLATEFILE_AUDIO_SUCCESS,
+	TRANSLATEFILE_AUDIO_CONVERTED,
 	TRANSLATEFILE_DOCUMENT_SUCCESS,
 	TRANSLATEFILE,
 	CHANGE_FILE_DOCUMENT,
@@ -26,8 +27,8 @@ const STATUS = {
  */
 export function changeFileDocument(data) {
 	return {
-	  type: CHANGE_FILE_DOCUMENT,
-	  payload: {
+		type: CHANGE_FILE_DOCUMENT,
+		payload: {
 			file: data,
 		}
 	};
@@ -35,8 +36,8 @@ export function changeFileDocument(data) {
 
 export function changeFileAudio(data) {
 	return {
-	  type: CHANGE_FILE_AUDIO,
-	  payload: {
+		type: CHANGE_FILE_AUDIO,
+		payload: {
 			file: data,
 		}
 	};
@@ -47,8 +48,8 @@ export function changeFileAudio(data) {
  */
 export function changeOutput(data) {
 	return {
-	  type: CHANGE_OUTPUT,
-	  payload: {
+		type: CHANGE_OUTPUT,
+		payload: {
 			data,
 		}
 	};
@@ -56,8 +57,8 @@ export function changeOutput(data) {
 
 export function changeOutputDocument(data) {
 	return {
-	  type: CHANGE_OUTPUT_DOCUMENT,
-	  payload: {
+		type: CHANGE_OUTPUT_DOCUMENT,
+		payload: {
 			data,
 		}
 	};
@@ -65,8 +66,8 @@ export function changeOutputDocument(data) {
 
 export function changeOutputAudio(data) {
 	return {
-	  type: CHANGE_OUTPUT_AUDIO,
-	  payload: {
+		type: CHANGE_OUTPUT_AUDIO,
+		payload: {
 			data,
 		}
 	};
@@ -74,7 +75,7 @@ export function changeOutputAudio(data) {
 
 export function translationFileLoading() {
 	return {
-	  type: TRANSLATEFILE,
+		type: TRANSLATEFILE,
 	};
 }
 
@@ -83,24 +84,35 @@ export function translationFileLoading() {
  */
 export function translationFileSuccess(data) {
 	return {
-	  type: TRANSLATEFILE_SUCCESS,
-	  payload: {
+		type: TRANSLATEFILE_SUCCESS,
+		payload: {
 			data,
 		}
 	};
 }
+
 export function translationFileAudioSuccess(data) {
 	return {
-	  type: TRANSLATEFILE_AUDIO_SUCCESS,
-	  payload: {
+		type: TRANSLATEFILE_AUDIO_SUCCESS,
+		payload: {
 			data,
 		}
 	};
 }
+
+export function translationFileAudioConverted(data) {
+	return {
+		type: TRANSLATEFILE_AUDIO_CONVERTED,
+		payload: {
+			data,
+		}
+	};
+}
+
 export function translationFileDocumentSuccess(data) {
 	return {
-	  type: TRANSLATEFILE_DOCUMENT_SUCCESS,
-	  payload: {
+		type: TRANSLATEFILE_DOCUMENT_SUCCESS,
+		payload: {
 			data,
 		}
 	};
@@ -111,8 +123,8 @@ export function translationFileDocumentSuccess(data) {
  */
 export function translationFileFailed(err) {
 	return {
-	  type: TRANSLATEFILE_FAIL,
-	  payload: {
+		type: TRANSLATEFILE_FAIL,
+		payload: {
 			err,
 		}
 	};
@@ -129,7 +141,7 @@ const recursiveCheckStatus = async (translationHistoryId, taskId, time) => {
 		translationHistoryId,
 		taskId,
 	});
-	if(getTranslationHistoryResult.data.status !== STATUS.TRANSLATED){
+	if (getTranslationHistoryResult.data.status !== STATUS.TRANSLATED) {
 		return new Promise((resolve, reject) => {
 			setTimeout(async () => {
 				// 10 * 1000 = 10 sec
@@ -160,52 +172,53 @@ const debouncedTranslationFile = debounce(async (body, dispatch) => {
 		let time = 1;
 		const postTranslationResult = await axiosHelper.translateFile(body);
 		const getTranslationFileResult = await recursiveCheckStatus(
-			postTranslationResult.data.translationHitoryId, 
-			postTranslationResult.data.taskId, 
+			postTranslationResult.data.translationHitoryId,
+			postTranslationResult.data.taskId,
 			time
 		);
-		if(getTranslationFileResult.message === 'Time Out'){
+		if (getTranslationFileResult.message === 'Time Out') {
 			dispatch(translationFileFailed(getTranslationFileResult.message));
 		} else {
 			const getTranslationResult = await axiosHelper.getTranslateResult(getTranslationFileResult.data.resultUrl);
-			if (getTranslationResult.status === 'translated'){
-				dispatch(translationFileDocumentSuccess(getTranslationResult));				
+			if (getTranslationResult.status === 'translated') {
+				dispatch(translationFileDocumentSuccess(getTranslationResult));
 			} else {
 				dispatch(translationFileFailed(getTranslationResult.message));
 			}
 		}
-	} catch(error) {
+	} catch (error) {
 		dispatch(translationFileFailed(error));
 	}
 }, 0);
 
 export const translateFileDocumentAsync = (body) => (dispatch) => {
-	if(body.get('file') !== null){
+	if (body.get('file') !== null) {
 		dispatch(translationFileLoading());
 		debouncedTranslationFile(body, dispatch);
 	}
 };
 
 export const translateFileAudioAsync = (body) => (dispatch) => {
-	if(body.get('file') !== null){
+	if (body.get('file') !== null) {
 		dispatch(translationFileLoading());
 		debouncedTranslationFileAudio(body, dispatch);
 	}
 };
 
-const recursiveCheckTranslateAudioStatus = async (translationHistoryId, taskId, time) => {
+const recursiveCheckTranslateAudioStatus = async (translationHistoryId, taskId, time, checkStatus) => {
 	const getTranslationHistoryResult = await axiosHelper.getSpeechRecogntionHistoryGetSingle({
 		translationHistoryId,
 		taskId,
 	});
-	if(getTranslationHistoryResult.data.status !== STATUS.TRANSLATED){
+
+	if (getTranslationHistoryResult.data.status !== checkStatus) {
 		return new Promise((resolve, reject) => {
 			setTimeout(async () => {
 				// 10 * 1000 = 10 sec
 				// if (time !== 10) {
 				// time += 1;
 				try {
-					const getTranslationHistoryResult = await recursiveCheckTranslateAudioStatus(translationHistoryId, taskId, time);
+					const getTranslationHistoryResult = await recursiveCheckTranslateAudioStatus(translationHistoryId, taskId, time, checkStatus);
 					resolve(getTranslationHistoryResult);
 				} catch (e) {
 					reject(e);
@@ -228,22 +241,45 @@ const debouncedTranslationFileAudio = debounce(async (body, dispatch) => {
 	try {
 		let time = 1;
 		const postTranslationResult = await axiosHelper.translateFileAudio(body);
-		const getTranslationFileResult = await recursiveCheckTranslateAudioStatus(
-			postTranslationResult.data.translationHitoryId, 
-			postTranslationResult.data.taskId, 
-			time
+
+		const getConvertResult = await recursiveCheckTranslateAudioStatus(
+			postTranslationResult.data.translationHitoryId,
+			postTranslationResult.data.taskId,
+			time,
+			STATUS.CONVERTED
 		);
-		if(getTranslationFileResult.message === 'Time Out'){
-			dispatch(translationFileFailed(getTranslationFileResult.message));
+
+		if (getConvertResult.message === 'Time Out') {
+			dispatch(translationFileFailed(getConvertResult.message));
 		} else {
-			const getTranslationResult = await axiosHelper.getTranslateResultBeta(getTranslationFileResult.data.resultUrl);
-			if (getTranslationResult.status === 'translated'){
+			const getTranslationResult = await axiosHelper.getTranslateResultBeta(getConvertResult.data.resultUrl);
+
+			if (getTranslationResult.status === 'converted') {
+				dispatch(translationFileAudioConverted(getTranslationResult));
+			} else {
+				dispatch(translationFileFailed(getTranslationResult.message));
+			}
+		}
+
+		const getTranslateResult = await recursiveCheckTranslateAudioStatus(
+			postTranslationResult.data.translationHitoryId,
+			postTranslationResult.data.taskId,
+			time,
+			STATUS.TRANSLATED
+		);
+
+		if (getTranslateResult.message === 'Time Out') {
+			dispatch(translationFileFailed(getConvertResult.message));
+		} else {
+			const getTranslationResult = await axiosHelper.getTranslateResultBeta(getTranslateResult.data.resultUrl);
+
+			if (getTranslationResult.status === 'translated') {
 				dispatch(translationFileAudioSuccess(getTranslationResult));
 			} else {
 				dispatch(translationFileFailed(getTranslationResult.message));
 			}
 		}
-	} catch(error) {
+	} catch (error) {
 		dispatch(translationFileFailed(error));
 	}
 }, 0);

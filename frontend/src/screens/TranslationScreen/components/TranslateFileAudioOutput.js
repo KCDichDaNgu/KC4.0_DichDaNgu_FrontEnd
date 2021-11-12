@@ -101,7 +101,7 @@ function TranslateFileAudioOutput(props) {
 						<Button
 							variant="contained"
 							color="primary"
-							onClick={() => downloadSpeechRecognitionResultFile(translationFileState.outputAudioFile.converted_file_full_path)}
+							onClick={() => downloadSpeechRecognitionResultFile(translationFileState.outputAudioConvertedFile.converted_file_full_path)}
 							style={{
 								width: '300px',
 								marginBottom: '10px'
@@ -110,23 +110,30 @@ function TranslateFileAudioOutput(props) {
 							{convertedDocument()}
 						</Button>
 
-						<Button
+						{translationFileState.outputAudioTranslatedFile ? <Button
 							variant="contained"
 							color="success"
-							onClick={() => downloadSpeechRecognitionResultFile(translationFileState.outputAudioFile.translated_file_full_path)}
+							onClick={() => downloadSpeechRecognitionResultFile(translationFileState.outputAudioTranslatedFile.translated_file_full_path)}
 							style={{
 								width: '300px',
 								marginBottom: '10px'
 							}}
 						>
 							{translatedDocument()}
-						</Button>
+						</Button> : <LoadingButton
+							variant="contained"
+							loading
+							style={{ fontWeight: 'bold', display: 'flex', width: '65px', }}
+						>
+							{t('dich')}
+						</LoadingButton>}
+
 
 					</Col>
 					: <LoadingButton
 						variant="contained"
 						onClick={handleTranslate}
-						loading={translationFileState.currentState === STATE.LOADING}
+						loading={translationFileState.currentState === STATE.LOADING && !translationFileState.outputAudioFile}
 						disabled={isDisableTranslateButton()}
 						style={{ fontWeight: 'bold', display: 'flex' }}
 					>
