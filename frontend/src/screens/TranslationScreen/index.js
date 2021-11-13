@@ -14,22 +14,21 @@ import {
 	changeSource,
 } from '../../redux/actions/translateAction';
 import {
-	changeFileDocument, changeFileAudio, changeOutput
+	changeFileDocument, changeOutput
 } from '../../redux/actions/translateFileAction';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
-import AlbumIcon from '@mui/icons-material/Album';
 import TranslateIcon from '@mui/icons-material/Translate';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useTranslation } from 'react-i18next';
 import ScrollTop from '../../components/ScrollTop';
 import TranslateFileDocumentOutput from './components/TranslateFileDocumentOutput';
-import TranslateFileAudioOutput from './components/TranslateFileAudioOutput';
 import TranslationChooselang from './components/TranslationChooselang';
 import TranslateOutput from './components/TranslateOutput';
 import TranslateInput from './components/TranslateInput';
 import { TRANSLATE_TYPE } from '../../constants/common';
 import TranslateFileDocumentInput from './components/TranslateFileDocumentInput';
-import TranslateFileAudioInput from './components/TranslateFileAudioInput';
+import authHoc from '../../hocs/authHoc';
+import { toastError } from '../../components/Toast';
 
 function Index(props) {
 	const { translationState, translationFileState } = props;
@@ -45,7 +44,7 @@ function Index(props) {
 		case STATE.SUCCESS:
 			break;
 		case STATE.FAILURE:
-			alert(`${translationState.err}`);
+			toastError(translationState.err);
 			break;
 		default:
 			break;
@@ -61,7 +60,7 @@ function Index(props) {
 		case STATE.SUCCESS:
 			break;
 		case STATE.FAILURE:
-			alert(`${translationFileState.err}`);
+			toastError(translationFileState.err);
 			break;
 		default:
 			break;
@@ -75,8 +74,6 @@ function Index(props) {
 			return <TranslateOutput translateType={translateType} />;
 		case TRANSLATE_TYPE.document:
 			return <TranslateFileDocumentOutput translateType={translateType} />;
-		case TRANSLATE_TYPE.audio:
-			return <TranslateFileAudioOutput translateType={translateType} />;
 		}
 	};
 
@@ -86,8 +83,6 @@ function Index(props) {
 			return <TranslateInput translateType={translateType} />;
 		case TRANSLATE_TYPE.document:
 			return <TranslateFileDocumentInput translateType={translateType} />;
-		case TRANSLATE_TYPE.audio:
-			return <TranslateFileAudioInput translateType={translateType} />;
 		}
 	};
 
@@ -109,6 +104,7 @@ function Index(props) {
 						</div>
 						{t('Translate.vanban')}
 					</Button>
+					
 					<Button
 						onClick={() => {
 							setTranslateType(TRANSLATE_TYPE.document);
@@ -126,25 +122,8 @@ function Index(props) {
 						</div>
 						{t('Translate.tailieu')}
 					</Button>
-					<Button
-						onClick={() => {
-							setTranslateType(TRANSLATE_TYPE.audio);
-							if (props.translationState.translateCode.sourceLang === null) props.changeSource('en');
-							// props.changeTargetText('');
-							// props.changeSourceText('');
-							// props.changeFile(null);
-							// props.changeOutput(null);
-						}}
-						style={{ fontWeight: 'bold', marginRight: '20px', display: 'flex', backgroundColor: 'white', color: 'grey', borderColor: 'grey' }}
-						variant={translateType == TRANSLATE_TYPE.audio ? 'outlined' : null}
-						disabled={translationState.currentState === STATE.LOADING || translationFileState.currentState === STATE.LOADING}
-					>
-						<div style={{ paddingRight: 5, alignContent: 'center' }}>
-							<AlbumIcon />
-						</div>
-						{t('Translate.amthanh')}
-					</Button>
 				</div>
+
 				<div className={styles.content} >
 					{/* ChooseLang */}
 					<TranslationChooselang translateType={translateType} />
@@ -158,11 +137,12 @@ function Index(props) {
 						</Row>
 					</Col>
 				</div>
-				<div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 5 }}>
+
+				{/* <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 5 }}>
 					<button onClick={() => { }} style={{ backgroundColor: '#fff', borderWidth: 0, color: '#63676C', fontStyle: 'italic', fontSize: 13 }}>
 						Gửi phản hồi
 					</button>
-				</div>
+				</div> */}
 				<ScrollTop {...props}>
 					<Fab color="primary" size="medium" aria-label="scroll back to top">
 						<KeyboardArrowUpIcon />
@@ -192,9 +172,8 @@ const mapDispatchToProps = {
 	changeSource,
 	changeSourceText,
 	changeTargetText,
-	changeFileDocument, 
-	changeFileAudio,
+	changeFileDocument,
 	changeOutput,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Index);
+export default connect(mapStateToProps, mapDispatchToProps)(authHoc(Index));

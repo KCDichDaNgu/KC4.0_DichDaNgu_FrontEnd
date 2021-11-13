@@ -248,6 +248,37 @@
   justify-content: space-between;
 }
 
+.recordIcon {
+  margin-right: auto;
+  border-radius: 50%;
+  font-size: 24px;
+}
+
+.recordIconAnimate {
+  margin-right: auto;
+  border-radius: 50%;
+  font-size: 24px;
+  animation: animate 5s linear infinite;
+}
+
+@keyframes animate {
+  0% {
+    box-shadow: 0 0 0 1px rgba(0, 0, 255, 0.1), 0 0 0 3px rgba(0, 0, 255, 0.1),
+      0 0 0 4px rgba(0, 0, 255, 0.1), 0 0 0 6px rgba(0, 0, 255, 0.1),
+      0 0 0 7px rgba(0, 0, 255, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 0 25px rgba(0, 0, 255, 0.1), 0 0 0 5px rgba(0, 0, 255, 0.1),
+      0 0 0 7px rgba(0, 0, 255, 0.1), 0 0 0 10px rgba(0, 0, 255, 0.1),
+      0 0 0 12px rgba(0, 0, 255, 0.1);
+  }
+  100% {
+    box-shadow: 0 0 0 15px rgba(0, 0, 255, 0.1), 0 0 0 3px rgba(0, 0, 255, 0.1),
+      0 0 0 4px rgba(0, 0, 255, 0.1), 0 0 0 6px rgba(0, 0, 255, 0.1),
+      0 0 0 7px rgba(0, 0, 255, 0.1);
+  }
+}
+
 @media screen and (max-width: 1440px) {
   .outerContainer {
     padding-left: 100px;

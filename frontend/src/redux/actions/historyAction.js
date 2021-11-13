@@ -2,7 +2,7 @@ import {
 	GETHISTORY, 
 	GETHISTORY_FAIL, 
 	GETHISTORY_SUCCESS,
-	CHANGEHISTORY,
+	CHANGEHISTORY
 } from '../constant/historyTypes';
 import * as axiosHelper from '../../helpers/axiosHelper';
 

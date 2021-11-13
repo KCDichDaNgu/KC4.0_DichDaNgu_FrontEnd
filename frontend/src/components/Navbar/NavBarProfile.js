@@ -6,12 +6,14 @@ import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import { useTranslation } from 'react-i18next';
-import { useGoogleLogout } from 'react-google-login';
+// import { useGoogleLogout } from 'react-google-login';
 import * as axiosHelper from '../../helpers/axiosHelper';
+import { useHistory } from 'react-router-dom';
 import { USER_IMG_URL } from '../../constants/envVar';
-
 function NavBarProfile(props) {
 	const { t } = useTranslation();
+	const history = useHistory();
+
 	const [anchorEl, setAnchorEl] = useState(null);
 	const open = Boolean(anchorEl);
 	const handleClick = (event) => {
@@ -21,13 +23,17 @@ function NavBarProfile(props) {
 		setAnchorEl(null);
 	};
 
-	const onLogoutSuccess = async () => {
+	const signOut = async () => {
 		try {
 			await axiosHelper.SignOut();
+			props.setIsSignIn(false);
 			localStorage.clear();
-			props.setIsSigIn(false);
-		}catch (e){
-			alert(e);
+			history.push('/login');
+		}
+		catch(e) {
+			props.setIsSignIn(false);
+			localStorage.clear();
+			history.push('/login');
 		}
 	};
 
@@ -36,14 +42,14 @@ function NavBarProfile(props) {
 		handleClose();
 	};
 
-	const { signOut } = useGoogleLogout({
-		// eslint-disable-next-line no-undef
-		clientId: process.env.REACT_APP_CLIENT_ID,
-		onLogoutSuccess,
-		onFailure,
-		isSignedIn: false,
-		accessType: 'offline',
-	});
+	// const { signOut } = useGoogleLogout({
+	// 	// eslint-disable-next-line no-undef
+	// 	clientId: process.env.REACT_APP_CLIENT_ID,
+	// 	onLogoutSuccess,
+	// 	onFailure,
+	// 	isSignedIn: false,
+	// 	accessType: 'offline',
+	// });
 
 
 	return (
@@ -75,7 +81,7 @@ function NavBarProfile(props) {
 }
 
 NavBarProfile.propTypes = {
-	setIsSigIn: PropTypes.func,
+	setIsSignIn: PropTypes.func,
 	setModalShow: PropTypes.func,
 };
 

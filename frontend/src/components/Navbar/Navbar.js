@@ -2,45 +2,64 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
 	Container,
 	Row,
-	// Image,
+	Image,
 } from 'react-bootstrap';
 import { IconButton, Typography, CircularProgress } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 
 import { Link } from 'react-router-dom';
-import { SidebarData } from './SidebarData';
-// import Logo from '../../assets/images/lg.png';
+import { SidebarData, AdminSidebarData, UnauthorizedSidebarData } from './SidebarData';
+import Logo from '../../assets/images/lg.png';
 import { sideBarHide, sideBarShow, changeIsLogin } from '../../redux/actions/navbarAction';
 import styles from './navbarStyle.module.css';
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 import OutsideClick from '../../helpers/outsideClick';
-import { useGoogleLogin } from 'react-google-login';
 import Modal from '../Modal';
-import * as axiosHelper from '../../helpers/axiosHelper';
 import NavBarProfile from './NavBarProfile';
 import LoadingButton from '@mui/lab/LoadingButton';
-import { ACCESS_TOKEN, REFRESH_TOKEN, USER_IMG_URL } from '../../constants/envVar';
+import { ACCESS_TOKEN, } from '../../constants/envVar';
+import LoginModal from '../LoginModal';
+import { USER_STATUS } from '../../constants/common';
+import { useHistory } from 'react-router-dom';
 
 function Navbar() {
 	const boxRef = useRef(null);
+	const history = useHistory();
 	const boxOutsideClick = OutsideClick(boxRef);
 	const [modalShow, setModalShow] = useState(false);
+	const [loginModalVisible, setLoginModalVisible] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
+	const [sidebarData, setSidebarData] = useState(SidebarData);
 	const navBarState = useSelector(state => state.navbarReducer);
 	const dispatch = useDispatch();
 	const { t } = useTranslation();
-	
+
 	useEffect(() => {
 		if (boxOutsideClick) {
 			dispatch(sideBarHide(false));
 		}
+
+		const user = JSON.parse(localStorage.getItem('user'));
+
+		if (!user?.username) { setSidebarData(UnauthorizedSidebarData); }
+		
+		else if (isAdmin(user)) {
+			setSidebarData(AdminSidebarData);
+		} else setSidebarData(SidebarData);;
+
 	}, [boxOutsideClick, dispatch]);
 
+	const isAdmin = (user) => {
+		return user?.role === 'admin' && user?.status === USER_STATUS.active;
+	};
+
 	useEffect(() => {
-		if(localStorage.getItem(ACCESS_TOKEN)){
+		if (localStorage.getItem(ACCESS_TOKEN)) {
 			dispatch(changeIsLogin(true));
+			setIsLoading(false);
 		}
+
 	}, []);
 
 	const showSidebar = () => {
@@ -51,79 +70,68 @@ function Navbar() {
 		dispatch(sideBarHide(false));
 	};
 
-	const onSuccess = async (res) => {
-		try {
-			setIsLoading(true);
-			const siginInResult = await axiosHelper.SignIn({
-				access_token: res.accessToken,
-				platform: 'web'
-			});
-			dispatch(changeIsLogin(true));
-			localStorage.setItem(ACCESS_TOKEN, siginInResult.data.accessToken);
-			localStorage.setItem(REFRESH_TOKEN, siginInResult.data.refreshToken);
-			localStorage.setItem(USER_IMG_URL, res.profileObj.imageUrl);
-			setIsLoading(false);
-		}catch (e) {
-			setIsLoading(false);
-			alert(e);
-		}
-		// refreshTokenSetup(res);
-	};
-
 	// eslint-disable-next-line no-unused-vars
-	const onFailure = (res) => {};
-
-	const { signIn } = useGoogleLogin({
-		onSuccess,
-		onFailure,
-		// eslint-disable-next-line no-undef
-		clientId: process.env.REACT_APP_CLIENT_ID,
-		isSignedIn: false,
-		accessType: 'offline',
-	});
-
+	const onFailure = (res) => { };
 	return (
 		// 	<nav className={navBarState.shownavbar ? [styles.nav_menu,styles.active].join(' ') : styles.nav_menu}>
 		<div ref={boxRef}>
 			<Container fluid>
 				<Row className={styles.headerTop}>
-					<IconButton onClick={() => showSidebar()}><MenuIcon size="large" sx={{color: 'white'}}/></IconButton>
-					<div style={{ display: 'flex', flex: 1, justifyContent: 'space-between' }}>
+					<IconButton onClick={() => showSidebar()}><MenuIcon size="large" sx={{ color: 'white' }} /></IconButton>
+					<div style={{ display: 'flex', width: 'calc(100% - 50px)', paddingRight: '16px' }}>
 						<Typography sx={{}} variant="h5" className={styles.title}>
 							{t('Translate.title')}
 						</Typography>
-						{navBarState.isLogin ? (
-							<NavBarProfile setIsSigIn={(value) => dispatch(changeIsLogin(value))} setModalShow={setModalShow}/>
-						) : 
-							<LoadingButton 
-								loadingIndicator={<CircularProgress sx={{color: 'white'}} size={20} />} 
-								loading={isLoading}
-								variant="text" 
-								sx={{color: 'white'}} 
-								onClick={() => signIn()}
-							>
-								{t('dangNhapVoiGoogle')}
-							</LoadingButton>
-						}
+
+						<div className={styles.loginContainer}>
+							{navBarState.isLogin ? (
+								<NavBarProfile setIsSignIn={(value) => dispatch(changeIsLogin(value))} setModalShow={setModalShow} />
+							) :
+								<Row justify='end'>
+									<LoadingButton
+										loadingIndicator={<CircularProgress sx={{ color: 'white' }} size={20} />}
+										loading={isLoading}
+										variant="text"
+										sx={{ color: 'white' }}
+										onClick={() => history.push('/login')}
+									>
+										{t('dangNhap')}
+									</LoadingButton>
+								</Row>
+							}
+
+						</div>
+
 						<Modal
 							show={modalShow}
 							onHide={() => setModalShow(false)} />
+						<LoginModal
+							visible={loginModalVisible}
+							setVisible={setLoginModalVisible} />
 					</div>
 				</Row>
 			</Container>
 			<nav className={navBarState.shownavbar ? [styles.nav_menu, styles.active].join(' ') : styles.nav_menu}>
 				<ul className={styles.nav_menu_items}>
 					<li className={styles.logo}>
-						{/* <div className={styles.logosub}>
+						<div className={styles.logosub}>
 							<Image style={{ width: '80px', padding: '10px 0' }} src={Logo} alt="" roundedCircle />
-						</div> */}
+						</div>
 					</li>
-					{SidebarData.map((item, index) => {
+					
+					{sidebarData.map((item, index) => {
 						return (
-							<li key={index} className={styles.nav_text}>
-								<Link to={item.path} onClick={() => hideSidebar()}>
-									<span>{item.title}</span>
-								</Link>
+							<li key={index} className={styles.nav_text} >
+								{item.type == 'screen' ?
+									<Link to={item.path} onClick={() => hideSidebar()}>
+										<span>{item.title}</span>
+									</Link> :
+
+									<Link to={item.path} download target="_blank" onClick={() => hideSidebar()}>
+										<span>{item.title}</span>
+									</Link>
+
+								}
 							</li>
 						);
 					})}

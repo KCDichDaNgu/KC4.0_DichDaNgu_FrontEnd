@@ -8,13 +8,13 @@ import { STATE } from '../../../redux/reducers/translateFileReducer';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { 
-	changeSource, 
-	changeTarget, 
-	swapTranslate, 
-	translationAsync, 
+import {
+	changeSource,
+	changeTarget,
+	swapTranslate,
+	translationAsync,
 	translationAndDetectAsync,
-	changeSourceText, 
+	changeSourceText,
 	reset,
 	changeTargetText,
 	changeDetectLang,
@@ -26,8 +26,8 @@ function TranslationChooselang(props) {
 	const { t } = useTranslation();
 
 	/**
- 	* @description Function hoán đổi loại ngôn ngữ
- 	*/
+	  * @description Function hoán đổi loại ngôn ngữ
+	  */
 	const handleSwap = () => {
 		props.swapTranslate(translationState.translateCode.targetLang, translationState.translateCode.sourceLang);
 		if(translationState.translateText.targetText !== '' && translateType === TRANSLATE_TYPE.plainText){
@@ -37,32 +37,42 @@ function TranslationChooselang(props) {
 	};
 
 	/**
- 	* @description Function thay đổi loại ngôn ngữ source
+	  * @description Function thay đổi loại ngôn ngữ source
 	* Trong TH đã có kết quả dịch, sẽ reset kết quả về rỗng
- 	*/
+	  */
 	const handleChangeFrom = (event, newValue) => {
 		props.changeSource(newValue);
-		if(translateType === TRANSLATE_TYPE.plainText){
-			if(translationState.translateCode.detectLang !== null) {
+		if (translateType === TRANSLATE_TYPE.plainText) {
+			if (translationState.translateCode.detectLang !== null) {
 				props.changeDetectLang(null);
 			}
-			if( translationState.translateText.targetText !== ''){
+			if (translationState.translateText.targetText !== '') {
 				props.changeTargetText('');
 			}
 		}
 	};
 
 	/**
+	  * @description Function thay đổi ngôn ngữ target, 2 TH: 
  	* @description Function thay đổi ngôn ngữ target, 2 TH: 
+	  * @description Function thay đổi ngôn ngữ target, 2 TH: 
+ 	* @description Function thay đổi ngôn ngữ target, 2 TH: 
+	  * @description Function thay đổi ngôn ngữ target, 2 TH: 
+ 	* @description Function thay đổi ngôn ngữ target, 2 TH: 
+	  * @description Function thay đổi ngôn ngữ target, 2 TH: 
+ 	* @description Function thay đổi ngôn ngữ target, 2 TH: 
+	  * @description Function thay đổi ngôn ngữ target, 2 TH: 
+ 	* @description Function thay đổi ngôn ngữ target, 2 TH: 
+	  * @description Function thay đổi ngôn ngữ target, 2 TH: 
 	* 1. Có kết quả dịch => reset lại target text => gọi lại hàm dịch.
 	* 2. Ko có kết quả dịch => không gọi lại hàm dịch.
- 	*/
+	  */
 	const handleChangeTo = (event, newValue) => {
 		props.changeTarget(newValue);
-		if(translateType === TRANSLATE_TYPE.plainText){
-			if( translationState.translateText.targetText !== '' ){
+		if (translateType === TRANSLATE_TYPE.plainText) {
+			if (translationState.translateText.targetText !== '') {
 				props.changeTargetText('');
-				if(translationState.translateCode.sourceLang){
+				if (translationState.translateCode.sourceLang) {
 					props.translationAsync({
 						sourceText: translationState.translateText.sourceText,
 						sourceLang: translationState.translateCode.sourceLang,
@@ -79,7 +89,7 @@ function TranslationChooselang(props) {
 	};
 
 	const showColorText = () => {
-		if(translationState.currentState === STATE.FAILURE){
+		if (translationState.currentState === STATE.FAILURE) {
 			return '#ff1744';
 		}
 		return null;
@@ -90,27 +100,27 @@ function TranslationChooselang(props) {
 	};
 
 	return (
-		<div style={{ borderBottom: '1px solid #ccc', display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}} >
+		<div style={{ borderBottom: '1px solid #ccc', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }} >
 			{/* ChooseLang */}
-			<div style={{ flex: 1, display: 'flex', overflow:'auto', whiteSpace: 'nowrap'}}>
-				<Tabs 
-					value={translationState.translateCode.sourceLang} 
-					onChange={handleChangeFrom} 
+			<div style={{ flex: 1, display: 'flex', overflow: 'auto', whiteSpace: 'nowrap' }}>
+				<Tabs
+					value={translationState.translateCode.sourceLang}
+					onChange={handleChangeFrom}
 					variant="scrollable"
 					scrollButtons='auto'
 					sx={{
 						[`& .${tabsClasses.scrollButtons}`]: {
-									  '&.Mui-disabled': { opacity: 0.3 },
+							'&.Mui-disabled': { opacity: 0.3 },
 						},
-								  }}
+					}}
 				>
 					{translateType === TRANSLATE_TYPE.plainText ?
 						<Tab
-							icon={translationState.translateCode.detectLang? 
-								null : 
-								<Tooltip title={t('Translate.phathienngonngu')}><PageviewIcon fontSize='medium'/></Tooltip>}
-							label={translationState.translateCode.detectLang?
-								<Typography color={showColorText()}>{translationState.translateCode.detectLang}</Typography>:
+							icon={translationState.translateCode.detectLang ?
+								null :
+								<Tooltip title={t('Translate.phathienngonngu')}><PageviewIcon fontSize='medium' /></Tooltip>}
+							label={translationState.translateCode.detectLang ?
+								<Typography color={showColorText()}>{translationState.translateCode.detectLang}</Typography> :
 								null
 							}
 							sx={{
@@ -118,13 +128,13 @@ function TranslationChooselang(props) {
 								minHeight: 'auto',
 							}}
 							value={null}
-							disabled={isDisableTab()} 
+							disabled={isDisableTab()}
 							style={{fontWeight: 'bold'}}
 						/> : null}
 					{translationState.isSwap ? <Tab label={t('Translate.listLanguage.anh')} value={'en'} disabled={isDisableTab()} style={{fontWeight: 'bold'}}/> : null}
 					{translationState.isSwap ? <Tab label={t('Translate.listLanguage.trung')} value={'zh'} disabled={isDisableTab()} style={{fontWeight: 'bold'}}/> : null}
-					{translationState.isSwap && translateType !== TRANSLATE_TYPE.audio ? <Tab label={t('Translate.listLanguage.lao')} value={'lo'} disabled={isDisableTab()} style={{fontWeight: 'bold'}}/> : null}
-					{translationState.isSwap && translateType !== TRANSLATE_TYPE.audio? <Tab label={t('Translate.listLanguage.khome')} value={'km'} disabled={isDisableTab()} style={{fontWeight: 'bold'}}/> : null}
+					{translationState.isSwap ? <Tab label={t('Translate.listLanguage.lao')} value={'lo'} disabled={isDisableTab()} style={{fontWeight: 'bold'}}/> : null}
+					{translationState.isSwap ? <Tab label={t('Translate.listLanguage.khome')} value={'km'} disabled={isDisableTab()} style={{fontWeight: 'bold'}}/> : null}
 					{!translationState.isSwap ? <Tab label={t('Translate.listLanguage.viet')} value={'vi'} disabled={isDisableTab()} style={{fontWeight: 'bold'}}/> : null}
 				</Tabs>
 			</div>
@@ -136,17 +146,17 @@ function TranslationChooselang(props) {
 					<SwapHorizIcon fontSize='medium'/>
 				</IconButton>
 			</div>
-			<div style={{ flex: 1, display: 'flex', overflow:'auto', whiteSpace: 'nowrap'}}>
-				<Tabs 
-					value={translationState.translateCode.targetLang} 
-					onChange={handleChangeTo} 
+			<div style={{ flex: 1, display: 'flex', overflow: 'auto', whiteSpace: 'nowrap' }}>
+				<Tabs
+					value={translationState.translateCode.targetLang}
+					onChange={handleChangeTo}
 					variant="scrollable"
 					scrollButtons='auto'
 					sx={{
 						[`& .${tabsClasses.scrollButtons}`]: {
-									  '&.Mui-disabled': { opacity: 0.3 },
+							'&.Mui-disabled': { opacity: 0.3 },
 						},
-								  }}
+					}}
 				>
 					{!translationState.isSwap ? <Tab label={t('Translate.listLanguage.anh')} value={'en'} disabled={isDisableTab()} style={{fontWeight: 'bold'}}/> : null}
 					{!translationState.isSwap ? <Tab label={t('Translate.listLanguage.trung')} value={'zh'} disabled={isDisableTab()} style={{fontWeight: 'bold'}}/> : null}
@@ -175,16 +185,16 @@ TranslationChooselang.propTypes = {
 
 const mapStateToProps = (state) => ({
 	translationState: state.translateReducer,
-	translationFileState: state.translateFileReducer 
+	translationFileState: state.translateFileReducer
 });
 
-const mapDispatchToProps = { 
-	changeSource, 
-	changeTarget, 
-	swapTranslate, 
-	translationAsync, 
+const mapDispatchToProps = {
+	changeSource,
+	changeTarget,
+	swapTranslate,
+	translationAsync,
 	translationAndDetectAsync,
-	changeSourceText, 
+	changeSourceText,
 	reset,
 	changeTargetText,
 	changeDetectLang,

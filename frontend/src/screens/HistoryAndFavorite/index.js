@@ -16,6 +16,8 @@ import { getHistoryAsync } from '../../redux/actions/historyAction';
 import { isEmpty } from 'lodash';
 import TranslationItem from './components/TranslationItem';
 import Pagination from '@mui/material/Pagination';
+import authHoc from '../../hocs/authHoc';
+import { toastError } from '../../components/Toast';
 
 const PER_PAGE = 9;
 const STATUS = 'translated';
@@ -34,7 +36,7 @@ function HistoryAndFavorite(props) {
 		case STATE.SUCCESS:
 			break;
 		case STATE.FAILURE:
-			alert(`${historyState.err}`);
+			toastError(historyState.err);
 			break;
 		default:
 			break;
@@ -146,4 +148,4 @@ const mapDispatchToProps = {
 	getHistoryAsync
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(HistoryAndFavorite);
+export default connect(mapStateToProps, mapDispatchToProps)(authHoc(HistoryAndFavorite));

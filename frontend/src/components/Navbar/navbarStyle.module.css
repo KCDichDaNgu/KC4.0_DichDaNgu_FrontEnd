@@ -9,6 +9,7 @@
   background-color: #1d5193;
   /* height: 50px; */
   color: #fff;
+  display: flex;
   /* text-align: center; */
 }
 
@@ -30,6 +31,11 @@
   border: none;
   background-color: #1d5193;
   color: #fff;
+}
+
+.loginContainer {
+  align-self: center;
+  margin-left: auto;
 }
 
 .buttonSidebar:hover {
@@ -84,6 +90,7 @@
 .title {
   padding: 8px;
   align-items: center;
+  color: white;
 }
 
 .nav_menu {
@@ -105,7 +112,7 @@
   justify-content: center;
   align-items: center;
   padding-top: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 40px;
 }
 
 .logosub {
@@ -130,7 +137,7 @@
   align-items: center;
   padding: 8px 8px 8px 8px;
   list-style: none;
-  height: 50px;
+  height: auto;
   justify-content: center;
 }
 

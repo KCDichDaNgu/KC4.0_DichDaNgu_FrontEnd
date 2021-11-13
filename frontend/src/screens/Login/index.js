@@ -1,21 +1,43 @@
 import React from 'react';
+// import LoginGoogle from './LoginGoogle';
 import Flat from '../../assets/images/Image_flag.png';
 import { Image } from 'react-bootstrap';
-import LoginGoogle from './LoginGoogle';
 import TextField from '@mui/material/TextField';
 import { useTranslation } from 'react-i18next';
 import { Controller, useForm } from 'react-hook-form';
+import * as axiosHelper from '../../helpers/axiosHelper';
+import { changeIsLogin } from '../../redux/actions/navbarAction';
+import { getCurrentUser } from '../../redux/actions/userAction';
+import { useDispatch } from 'react-redux';
+import { ACCESS_TOKEN, REFRESH_TOKEN } from '../../constants/envVar';
+import { useHistory } from 'react-router-dom';
+import LoginGoogle from './LoginGoogle';
 
 function Login() {
 	const { t } = useTranslation();
-
+	const dispatch = useDispatch();
+	const history = useHistory();
 	const {
 		control, handleSubmit, formState: { errors },
 	} = useForm();
 
-	const LoginNormal = () => {
-		alert('Chưa thể đăng nhập');
+	const LoginNormal = async (values) => {
+		try {
+			const siginInResult = await axiosHelper.SignIn(values);
+			dispatch(changeIsLogin(true));
+			dispatch(getCurrentUser());
+			localStorage.setItem(ACCESS_TOKEN, siginInResult.data.accessToken);
+			localStorage.setItem(REFRESH_TOKEN, siginInResult.data.refreshToken);
+			history.push('/translate');
+		} catch (e) {
+			// alert(e);
+			// setVisible(false);
+		}
 	};
+
+	// const LoginNormal = () => {
+	// 	alert('Chưa thể đăng nhập');
+	// };
 
 	return (
 		<div style={{ height: '93.8vh', backgroundColor: '#4e73df' }}>
@@ -26,14 +48,14 @@ function Login() {
 						<div className="card o-hidden border-0 shadow-lg my-5">
 							<div className="card-body p-0">
 								{/* Nested Row within Card Body */}
-								<div className="row mr-0">
+								<div className="row mr-0 ">
 									<div className="col-lg-6 d-none d-lg-block" >
 										<Image src={Flat} thumbnail />
 									</div>
 									<div className="col-lg-6 align-self-center">
 										<div className="m-5">
 											<div className="text-center">
-												<h1 className="h4 text-gray-900 mb-5">Chào mừng bạn trờ lại</h1>
+												<h1 className="h4 text-gray-900 mb-5">Chào mừng bạn trở lại</h1>
 											</div>
 											<form className="user" onSubmit={handleSubmit(LoginNormal)}>
 												<div className="form-group">
@@ -46,22 +68,22 @@ function Login() {
 														}}
 														render={({ field: { onChange, value } }) => (
 															<TextField
-																error={errors.account}
-																helperText={errors.account ? 'Trường này là bắt buộc' : null}
+																error={errors.username}
+																helperText={errors.username ? 'Trường này là bắt buộc' : null}
 																value={value}
 																onChange={onChange}
 																fullWidth
-																id="outlined-basic" 
-																label={t('email')} 
-																variant="outlined" 
+																id="outlined-basic"
+																label={t('username')}
+																variant="outlined"
 															/>
 														)}
-														name="account"
+														name="username"
 														defaultValue=""
 													/>
 													{/* {errors.account && <span className="text-danger">Trường này là bắt buộc</span>} */}
 												</div>
-												<div className="form-group">
+												<div className="form-group mb-4">
 													{/* <input type="password"  {...register('password', { required: true })} style={{ height: 50, borderRadius: 15 }} className="mb-4 form-control" id="exampleInputPassword" placeholder="Password" /> */}
 													<Controller
 														control={control}
@@ -76,9 +98,9 @@ function Login() {
 																onChange={onChange}
 																fullWidth
 																type="password"
-																id="outlined-basic" 
-																label={t('matKhau')} 
-																variant="outlined" 
+																id="outlined-basic"
+																label={t('matKhau')}
+																variant="outlined"
 															/>
 														)}
 														name="password"
@@ -86,24 +108,26 @@ function Login() {
 													/>
 												</div>
 												<button type="summit" style={{ backgroundColor: '#4E73DF', borderRadius: 10 }} className="btn btn-primary btn-block">
-													Đăng nhập
+													<div style={{ color: 'white', alignSelf: 'center', fontWeight: '600', fontSize: '22px' }}>Đăng nhập</div>
 												</button>
-												<hr />
+												{/* <hr /> */}
 											</form>
-											<LoginGoogle />
 											<hr />
-											<div className="text-center">
+											<LoginGoogle />
+											
+											{/* <div className="text-center">
 												<a className="small" href="/forgot-password">Quên mật khẩu?</a>
 											</div>
 											<div className="text-center">
 												<a className="small" href="/register">Có tài khoản? Đăng ký!</a>
-											</div>
+											</div> */}
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
+
 				</div>
 			</div>
 		</div>

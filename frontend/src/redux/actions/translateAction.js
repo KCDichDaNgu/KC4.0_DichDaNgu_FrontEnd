@@ -244,13 +244,14 @@ const recursiveDetectionCheckStatus = async (translationHistoryId, taskId, time)
  */
 const debouncedTranslate = debounce(async (body, dispatch) => {
 	try {
-		let time = 1;
+		let time = 1;		
 		const postTranslationResult = await axiosHelper.postTranslate(body);
 		const getTranslationHistoryResult = await recursiveCheckStatus(
 			postTranslationResult.data.translationHitoryId, 
 			postTranslationResult.data.taskId, 
 			time
 		);  
+
 		if(getTranslationHistoryResult.message === 'Time Out'){
 			dispatch(translationFailed(getTranslationHistoryResult.message));
 		} else {
