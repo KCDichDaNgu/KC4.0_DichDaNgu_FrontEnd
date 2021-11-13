@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route,  } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
 import TranslateScreen from './screens/TranslationScreen';
 import About from './screens/about';
@@ -21,6 +21,7 @@ function App() {
 
 			<Switch>
 				<Route path='/translate' exact component={TranslateScreen} />
+				<Route path='/' exact component={TranslateScreen}/> 
 				<Route path='/about' exact component={About} />
 				<Route path='/history-and-favorite' exact component={HistoryAndFavorite} />
 				<Route path='/user-management' exact component={UserManagement} />

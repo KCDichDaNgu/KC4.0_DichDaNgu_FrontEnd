@@ -67,7 +67,7 @@ function LoginHooks() {
 
 	const { signIn } = useGoogleLogin({
 		onSuccess,
-		onFailure,
+		// onFailure,
 		// eslint-disable-next-line no-undef
 		clientId: process.env.REACT_APP_CLIENT_ID,
 		isSignedIn: false,
