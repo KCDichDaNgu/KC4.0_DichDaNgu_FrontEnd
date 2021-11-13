@@ -3,6 +3,8 @@ from sanic_openapi.openapi2 import doc
 from sanic import response
 
 import io
+from infrastructure.configs.user import TRANSLATION_PAIR_VI_EN, TRANSLATION_PAIR_VI_ZH, TranslationPairEnum
+from core.utils.file import extract_file_extension, get_doc_file_meta, get_txt_file_meta
 from interface_adapters.dtos.base_response import BaseResponse
 from infrastructure.configs.main import GlobalConfig, StatusCodeEnum, get_cnf
 
@@ -13,7 +15,7 @@ from infrastructure.configs.language import LanguageEnum
 from infrastructure.configs.translation_task import is_allowed_file_extension
 from core.exceptions.argument_invalid import ArgumentInvalidException
 from core.value_objects.id import ID
-from core.middlewares.authentication.core import get_me
+from core.middlewares.authentication.core import active_required, get_me
 
 
 config: GlobalConfig = get_cnf()
@@ -105,7 +107,10 @@ class CreateFileTranslationRequest(HTTPMethodView):
 
     async def create_private_file_translation_request(self, file, data, user) -> response:
 
-        pair = "{}-{}".format(data['sourceLang'], data['targetLang'])
+        if data['sourceLang'] == LanguageEnum.vi:
+            pair = "{}-{}".format(data['sourceLang'], data['targetLang'])
+        else:
+            pair = "{}-{}".format(data['targetLang'], data['sourceLang'])
 
         if user is None:
             return response.json(
@@ -115,17 +120,21 @@ class CreateFileTranslationRequest(HTTPMethodView):
                     'message': MESSAGES['unauthorized']
                 }
             )   
-            
-        user_statistic_result =  await self.__update_user_statistic.update_file_translate_statistic(user.id, pair)
+
+        file_ext = extract_file_extension(file.name)
+
+        if file_ext == 'txt':
+            sentence_count = get_txt_file_meta(file)
+        else:
+            sentence_count = get_doc_file_meta(file)[2]
+
+        user_statistic_result =  await self.__update_user_statistic.update_text_translate_statistic(user.id, pair, sentence_count)
 
         if user_statistic_result['code'] == StatusCodeEnum.failed.value:
             return response.json(
-                    status=400,
-                    body={
-                        'code': StatusCodeEnum.failed.value,
-                        'message': MESSAGES['translate_limit_reached']
-                    }
-                )
+                status=400,
+                body=user_statistic_result
+            )
         else:
             command = CreateFileTranslationRequestCommand(
                 creator_id=ID(user.id),

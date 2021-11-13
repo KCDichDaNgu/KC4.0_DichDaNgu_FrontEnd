@@ -8,7 +8,7 @@ from core.domain_events import DomainEvents
 from infrastructure.adapters.logger import Logger
 from core.ports.repository import Pagination, RepositoryPort, DataWithPagination
 from core.exceptions import NotFoundException
-
+import pymongo
 from core.base_classes.entity import BaseEntityProps
 from abc import ABC, abstractmethod
 from typing import Generic, List, TypeVar, Any
@@ -193,7 +193,6 @@ class OrmRepositoryBase(
 
         if sort:
             founds = founds.sort(sort['key'], int(sort['direction']))
-
 
         result = list((await founds.to_list(length=None))) if not founds is None else []
 

@@ -41,7 +41,7 @@ language_detection_history = LanguageDetectionHistoryRepository()
 
 languageDetector = LanguageDetector()
 
-logger = Logger('Task: translate_plain_text_in_public_request.detect_content_language')
+logger = Logger('Task: detect_plain_text_language_created_by_public_request')
 
 async def read_task_result(
     tasks_result: List[LanguageDetectionRequestResultEntity], 
@@ -150,10 +150,10 @@ async def mark_invalid_tasks(invalid_tasks_mapper):
 async def main():
 
     logger.debug(
-        msg=f'New task translate_plain_text_in_public_request.detect_content_language run in {datetime.now()}'
+        msg=f'New task detect_plain_text_language_created_by_public_request run in {datetime.now()}'
     )
 
-    print(f'New task translate_plain_text_in_public_request.detect_content_language run in {datetime.now()}')
+    print(f'New task detect_plain_text_language_created_by_public_request run in {datetime.now()}')
     
     try:
         
@@ -173,10 +173,10 @@ async def main():
 
         if len(tasks_id) == 0: 
             logger.debug(
-                msg=f'An task translate_plain_text_in_public_request.detect_content_language end in {datetime.now()}\n'
+                msg=f'An task detect_plain_text_language_created_by_public_request end in {datetime.now()}\n'
             )
 
-            print(f'An task translate_plain_text_in_public_request.detect_content_language end in {datetime.now()}\n')
+            print(f'An task detect_plain_text_language_created_by_public_request end in {datetime.now()}\n')
             return
 
         tasks_result_and_trans_history_req = [
@@ -228,10 +228,10 @@ async def main():
         print(e)
 
     logger.debug(
-        msg=f'An task translate_plain_text_in_public_request.detect_content_language end in {datetime.now()}\n'
+        msg=f'An task detect_plain_text_language_created_by_public_request end in {datetime.now()}\n'
     )
 
-    print(f'An task translate_plain_text_in_public_request.detect_content_language end in {datetime.now()}\n')
+    print(f'An task detect_plain_text_language_created_by_public_request end in {datetime.now()}\n')
             
 
 async def execute_in_batch(valid_tasks_mapper, tasks_id):

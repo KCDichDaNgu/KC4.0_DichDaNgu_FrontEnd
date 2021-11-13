@@ -47,9 +47,16 @@ class Auth(HTTPMethodView):
                     first_name=user['given_name'],
                     last_name=user['family_name'],
                     email=user['email'],
+                    password='',
                     avatar=user['picture'],
                     role=UserRole.member.value,
                     status=UserStatus.active.value,
+                    text_translation_quota={
+                        'vi-zh': 1000,
+                        'vi-en': 1000,
+                        'vi-km': 1000,
+                        'vi-lo': 1000,
+                    },
                 )
                 
                 user = await self.__user_service.create_user(command)

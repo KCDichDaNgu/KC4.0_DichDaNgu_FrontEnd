@@ -12,9 +12,10 @@ db_instance = get_mongodb_instance()
 @validate_orm_class_name
 class UserOrmEntity(OrmEntityBase):
     
-    username = fields.StringField(required=True)
+    username = fields.StringField(required=True, unique=True)
     first_name = fields.StringField(required=True)
     last_name = fields.StringField(required=False)
+    password = fields.StringField(required=False)
     avatar = fields.StringField(required=False)
     email = fields.StringField(required=True, unique=True)
     role = fields.StringField(required=True, validate=validate.OneOf(UserRole.enum_values()))
@@ -22,6 +23,7 @@ class UserOrmEntity(OrmEntityBase):
 
     class Meta:
         collection_name = database_config.COLLECTIONS['user']['name']
+        indexes =  ({'key': ['username', 'email'], 'unique': True},)
 
     def pre_insert(self):
         super(UserOrmEntity, self).pre_insert()

@@ -146,16 +146,16 @@ class TranslationRequestDService():
         original_file_ext = extract_file_extension(command.source_file.name)
 
         binary_doc, total_paragraphs = (None, 0)
-        print(original_file_ext)
+
         if original_file_ext == 'docx':
 
-            binary_doc, total_paragraphs = get_doc_file_meta(command.source_file)
+            binary_doc, total_paragraphs, sentence_count = get_doc_file_meta(command.source_file)
 
             create_files_result = await new_task_result_entity.create_required_files_for_docx_file_translation_task(binary_doc, original_file_ext)
 
         else:
             create_files_result = await new_task_result_entity.create_required_files_for_txt_file_translation_task(command.source_file)
-            print(create_files_result)
+
         if command.source_lang in LanguageEnum.enum_values() and command.source_lang != 'unknown':
 
             saved_content = FileTranslationTask_NotYetTranslatedResultFileSchemaV1(

@@ -1,7 +1,9 @@
+from infrastructure.configs.language import LanguageEnum
+from infrastructure.configs.user import TRANSLATION_PAIR_VI_EN, TRANSLATION_PAIR_VI_ZH, TranslationPairEnum
 from interface_adapters.dtos.base_response import BaseResponse
 from infrastructure.configs.message import MESSAGES
 from modules.translation_request.commands.create_plain_text_translation_request.command import CreatePlainTextTranslationRequestCommand
-
+import re
 from sanic import response
 from modules.translation_request.commands.create_plain_text_translation_request.request_dto import CreatePlainTextTranslationRequestDto
 from infrastructure.configs.main import StatusCodeEnum, GlobalConfig, get_cnf
@@ -76,7 +78,10 @@ class CreatePlainTextTranslationRequest(HTTPMethodView):
 
     async def create_private_plain_text_translation_request(self, data, user) -> response:
 
-        pair = "{}-{}".format(data['sourceLang'], data['targetLang'])
+        if data['sourceLang'] == LanguageEnum.vi:
+            pair = "{}-{}".format(data['sourceLang'], data['targetLang'])
+        else:
+            pair = "{}-{}".format(data['targetLang'], data['sourceLang'])
 
         if user is None:
             return response.json(
@@ -85,18 +90,19 @@ class CreatePlainTextTranslationRequest(HTTPMethodView):
                     'code': StatusCodeEnum.failed.value,
                     'message': MESSAGES['unauthorized']
                 }
-            )   
+            )
+
+        sentences = re.split('[;.?!]', data['sourceText'])
+
+        sentence_count = sum(1 for y in sentences if len(y) > 2)
             
-        user_statistic_result =  await self.__update_user_statistic.update_plaintext_translate_statistic(user.id, pair)
+        user_statistic_result =  await self.__update_user_statistic.update_text_translate_statistic(user.id, pair, sentence_count)
 
         if user_statistic_result['code'] == StatusCodeEnum.failed.value:
             return response.json(
-                    status=400,
-                    body={
-                        'code': StatusCodeEnum.failed.value,
-                        'message': MESSAGES['translate_limit_reached']
-                    }
-                )
+                status=400,
+                body=user_statistic_result
+            )
         else:
             command = CreatePlainTextTranslationRequestCommand(
                 creator_id=ID(user.id),

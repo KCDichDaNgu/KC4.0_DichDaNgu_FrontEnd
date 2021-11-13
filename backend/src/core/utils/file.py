@@ -1,6 +1,7 @@
 import imp
 import io
 import os
+import re
 import aiofiles, asyncio
 from docx import Document
 import shutil
@@ -60,7 +61,26 @@ def get_doc_file_meta(doc_file: File):
 
     total_doc_paragraphs = len(doc_paragraphs)
 
-    return binary_doc, total_doc_paragraphs
+    full_text = ''
+
+    for paragraph in doc_paragraphs:
+        full_text = full_text + paragraph.text
+
+    sentences = re.split('[;.?!]', full_text)
+
+    sentence_count = sum(1 for y in sentences if len(y) > 2)
+
+    return binary_doc, total_doc_paragraphs, sentence_count
+
+def get_txt_file_meta(txt_file: File):
+
+    full_text = (txt_file.body.decode('utf-16', errors="ignore"))
+
+    sentences = re.split('[;.?!。]', full_text)
+
+    sentence_count = sum(1 for y in sentences if len(y) > 2)
+
+    return sentence_count
 
 async def delete_files(invalid_file_paths):
 

@@ -243,14 +243,16 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
 
             source_lang = valid_tasks_mapper[task_id]['task_result_content']['source_lang']
             target_lang = valid_tasks_mapper[task_id]['task_result_content']['target_lang']
+            original_text = ''
 
             try:
 
-                original_file = open(original_file_full_path, encoding="utf16")
+                original_file = open(original_file_full_path, mode='r',encoding="utf-16", errors="ignore")
                 original_text = original_file.read()
 
             except Exception as e:
-                logger.error(e)
+                original_file = open(original_file_full_path, mode='r',encoding="utf-8", errors="ignore")
+                original_text = original_file.read()
                 
             if source_lang == target_lang:
                 async with db_instance.session() as session:
@@ -340,7 +342,6 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                 update_request = []
                 
                 for task_id, api_result in zip(tasks_id, api_results):
-
                     
                     task_result = valid_tasks_mapper[task_id]['task_result'],
                     trans_history = valid_tasks_mapper[task_id]['trans_history'],

@@ -17,3 +17,8 @@ class UpdateOtherUserRequestDto(UpdateOtherUser):
         description='Status of user to update',
         name='status',
     )
+
+    text_translation_quota: doc.Dictionary(
+        description='Status of user to update',
+        name='text_translation_quota',
+    )
