@@ -348,6 +348,8 @@ class GlobalConfig(BaseSettings):
     APP_DEBUG: bool = False
     APP_WORKERS: int = 1
     ACCESS_LOG: bool = False
+    SSL_KEYFILE: str = None
+    SSL_CERTFILE: str = None
     APP_LIFESPAN: str = None
     SERVER_TYPE: str = None
 
