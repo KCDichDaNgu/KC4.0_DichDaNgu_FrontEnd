@@ -9,7 +9,8 @@ import {
 	CHANGE_FILE_AUDIO,
 	CHANGE_OUTPUT,
 	CHANGE_OUTPUT_AUDIO,
-	CHANGE_OUTPUT_DOCUMENT
+	CHANGE_OUTPUT_DOCUMENT,
+	CHANGE_FILE_AUDIO_VOICE_INPUT
 } from '../constant/translateFileTypes';
 
 export const STATE = {
@@ -28,6 +29,7 @@ const initialState = {
 	outputAudioConvertedFile: null,
 	outputAudioTranslatedFile: null,
 	outputAudioFile: null,
+	voiceInput: false,
 	err: null,
 };
 
@@ -49,6 +51,13 @@ export default function(state = initialState, action) {
 		return {
 			...state,
 			audioFile: action.payload.file,
+		};
+	}
+	case CHANGE_FILE_AUDIO_VOICE_INPUT: {
+		return {
+			...state,
+			audioFile: action.payload.file,
+			voiceInput: action.payload.voiceInput,
 		};
 	}
 	case TRANSLATEFILE: {

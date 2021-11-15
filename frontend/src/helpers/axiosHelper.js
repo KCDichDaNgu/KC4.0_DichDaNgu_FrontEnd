@@ -202,6 +202,18 @@ export const downloadSpeechRecognitionResultFile = (url) => {
 	});
 };
 
+export const getConvertedText = (url) => {
+	const res = axios({
+		url: SPEECH_RECOGNIZATION_URL + url,
+		method: 'GET',
+		responseType: 'text', // important
+	}).then((response) => {
+		return response.data;
+	});
+
+	return res;
+};
+
 export const SignOut = () => {
 	return new Promise((resolve, reject) => {
 		axios2.post('user/logout')

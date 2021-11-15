@@ -9,7 +9,8 @@ import {
 	CHANGE_FILE_AUDIO,
 	CHANGE_OUTPUT,
 	CHANGE_OUTPUT_AUDIO,
-	CHANGE_OUTPUT_DOCUMENT
+	CHANGE_OUTPUT_DOCUMENT,
+	CHANGE_FILE_AUDIO_VOICE_INPUT
 } from '../constant/translateFileTypes';
 import * as axiosHelper from '../../helpers/axiosHelper';
 import { debounce } from 'lodash';
@@ -39,6 +40,16 @@ export function changeFileAudio(data) {
 		type: CHANGE_FILE_AUDIO,
 		payload: {
 			file: data,
+		}
+	};
+}
+
+export function changeFileAudioVoiceInput(file, voiceInput) {
+	return {
+		type: CHANGE_FILE_AUDIO_VOICE_INPUT,
+		payload: {
+			file: file,
+			voiceInput: voiceInput
 		}
 	};
 }
