@@ -108,9 +108,9 @@ class CreateFileTranslationRequest(HTTPMethodView):
     async def create_private_file_translation_request(self, file, data, user) -> response:
 
         if data['sourceLang'] == LanguageEnum.vi:
-            pair = "{}-{}".format(data['sourceLang'], data['targetLang'])
+            pair = "{}-{}".format(data['sourceLang'][0], data['targetLang'][0])
         else:
-            pair = "{}-{}".format(data['targetLang'], data['sourceLang'])
+            pair = "{}-{}".format(data['targetLang'][0], data['sourceLang'][0])
 
         if user is None:
             return response.json(
