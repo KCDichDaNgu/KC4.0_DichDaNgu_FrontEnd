@@ -27,7 +27,7 @@ const initialState = {
 	currentState: STATE.INIT,
 	translateCode: {
 		detectLang: null,
-		sourceLang: null,
+		sourceLang: 'en',
 		targetLang: 'vi',
 	},
 	translateText: {

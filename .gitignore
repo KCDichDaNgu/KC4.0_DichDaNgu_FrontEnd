@@ -13,3 +13,4 @@ backend/static/*
 .vscode
 backend/static/task_result/
 backend/static/speech_recognition/*
+frontend/.env
