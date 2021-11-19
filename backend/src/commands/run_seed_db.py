@@ -9,7 +9,7 @@ from infrastructure.configs.database import MongoDBDatabase
 from motor.motor_asyncio import AsyncIOMotorClient
 
 mongodb_collections = MongoDBDatabase(
-    DATABASE_NAME='translation-tool',
+    DATABASE_NAME='test-translation-tool',
     PASSWORD='',
     USER='',
     HOST='localhost',
@@ -22,7 +22,7 @@ mongodb_collections = MongoDBDatabase(
 @click.option('-e', '--env', default='dev', type=click.Choice(EnvStateEnum.enum_values()))
 @click.option('-dbh', '--db-host', default='localhost', type=str)
 @click.option('-dbp', '--db-port', default=27017, type=int)
-@click.option('-dbn', '--db-name', default='translation-tool', type=str)
+@click.option('-dbn', '--db-name', default='test-translation-tool', type=str)
 @click.option('-rls', '--replica-set', default='rs0', type=str)
 @click.option('-drop-db', '--drop-db', default=True, type=bool)
 def run_seed_db(
@@ -41,7 +41,7 @@ def run_seed_db(
         replica_set
     )
 
-    database_name = 'translation-tool'
+    database_name = 'test-translation-tool'
 
     asyncio.run(create_data(
         mongodb_uri=mongodb_uri,

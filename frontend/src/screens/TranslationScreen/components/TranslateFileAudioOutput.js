@@ -147,7 +147,7 @@ function TranslateFileAudioOutput(props) {
 									{t('dich')}
 								</LoadingButton>}
 							</Col> :
-							<div style={isTranslating ?{ display: 'flex', justifyContent: 'center', alignItems: 'center'} : {}} >
+							<div style={isTranslating ? { display: 'flex', justifyContent: 'center', alignItems: 'center'} : {}} >
 								{ isTranslating ? 
 									<Spin style={{marginTop: '20px'}}/> : 
 									<> 

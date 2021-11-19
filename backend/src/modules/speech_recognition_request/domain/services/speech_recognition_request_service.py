@@ -141,5 +141,5 @@ class SpeechRecognitionRequestDService():
                     created_speech_recognition_record = await self.__speech_recognition_history_repository.create(
                         new_speech_recognition_history_entity
                     )
-                    
+                    print(created_speech_recognition_record)
                     return created_request, created_speech_recognition_record

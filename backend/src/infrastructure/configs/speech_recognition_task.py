@@ -9,6 +9,8 @@ SPEECH_RECOGNITION_FOLDER_PATH = "speech_recognition"
 SPEECH_RECOGNITION_SOURCE_FILE_NAME = "source_file"
 SPEECH_RECOGNITION_CONVERTED_FILE_NAME = "converted_file"
 SPEECH_RECOGNITION_TRANSLATED_FILE_NAME = "translated_file"
+SPEECH_RECOGNITION_CONVERTED_DIALOGUE_FILE_NAME = "converted_dialogue_file"
+SPEECH_RECOGNITION_TRANSLATED_DIALOGUE_FILE_NAME = "translated_dialogue_file"
 
 SPEECH_RECOGNITION_RESULT_FILE_STATUS = {
     "not_yet_converted": "not_yet_converted",
@@ -49,8 +51,13 @@ def get_speech_recognition_translated_file_name():
 
     return SPEECH_RECOGNITION_TRANSLATED_FILE_NAME
 
+def get_speech_recognition_converted_dialogue_file_name():
 
+    return SPEECH_RECOGNITION_CONVERTED_DIALOGUE_FILE_NAME
 
+def get_speech_recognition_translated_dialogue_file_name():
+
+    return SPEECH_RECOGNITION_TRANSLATED_DIALOGUE_FILE_NAME 
 
 class SpeechRecognitionTaskNameEnum(str, ExtendedEnum):
 
@@ -105,6 +112,7 @@ class SpeechRecognitionTask_ConvertingResultFileSchemaV1(BaseModel):
 class SpeechRecognitionTask_ConvertedResultFileSchemaV1(BaseModel):
     source_file_full_path: str
     converted_file_full_path: str
+    converted_dialogue_file_full_path: str
     job_id: str
 
     source_lang: LanguageEnum
@@ -124,7 +132,10 @@ class SpeechRecognitionTask_ConvertedResultFileSchemaV1(BaseModel):
 class SpeechRecognitionTask_TranslatingResultFileSchemaV1(BaseModel):
     source_file_full_path: str
     converted_file_full_path: str
+    converted_dialogue_file_full_path: str
+    translated_dialogue_file_full_path: str
     job_id: str
+    translated_line: int
 
     source_lang: LanguageEnum
     target_lang: Union[LanguageEnum, None] = Field(None, allow_mutation=False)
@@ -142,6 +153,8 @@ class SpeechRecognitionTask_TranslatingResultFileSchemaV1(BaseModel):
 class SpeechRecognitionTask_TranslatedResultFileSchemaV1(BaseModel):
     source_file_full_path: str
     converted_file_full_path: str
+    converted_dialogue_file_full_path: str
+    translated_dialogue_file_full_path: str
     translated_file_full_path: str
 
     job_id: str

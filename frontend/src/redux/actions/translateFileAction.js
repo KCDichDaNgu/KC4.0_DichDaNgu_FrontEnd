@@ -238,6 +238,11 @@ const recursiveCheckTranslateAudioStatus = async (translationHistoryId, taskId, 
 		taskId,
 	});
 
+	if (getTranslationHistoryResult.data.status == STATUS.CANCELLED) {
+		dispatch(translationFileFailed('unexpected error'));
+		return getTranslationHistoryResult;
+	}
+
 	if (getTranslationHistoryResult.data.status !== checkStatus) {
 		return new Promise((resolve, reject) => {
 			let timeoutID = setTimeout(async () => {
@@ -269,7 +274,7 @@ const debouncedTranslationFileAudio = debounce(async (body, dispatch) => {
 			postTranslationResult.data.translationHitoryId,
 			postTranslationResult.data.taskId,
 			time,
-			STATUS.CONVERTED,
+			STATUS.TRANSLATING,
 			dispatch
 		);
 
@@ -278,7 +283,7 @@ const debouncedTranslationFileAudio = debounce(async (body, dispatch) => {
 		} else {
 			const getTranslationResult = await axiosHelper.getTranslateResultBeta(getConvertResult.data.resultUrl);
 
-			if (getTranslationResult.status === 'converted') {
+			if (getTranslationResult.status === 'translating') {
 				dispatch(translationFileAudioConverted(getTranslationResult));
 			} else {
 				dispatch(translationFileFailed(getTranslationResult.message));

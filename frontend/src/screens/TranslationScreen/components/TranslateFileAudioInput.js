@@ -157,10 +157,15 @@ function TranslateFileAudioOutput(props) {
 			borderRight: '1px solid #ccc',
 			backgroundColor: translationFileState.currentState === STATE.LOADING || translationFileState.voiceInput === true ? '#f3f3f3' : 'white'
 		}}>
-			<div style={{
+			<div style={translationFileState.voiceInput != true ? {
 				paddingTop: '10px',
 				paddingBottom: '30px',
 				display: 'flex',
+				height: '100%'
+			} : {
+				padding: 0,
+				display: 'flex',
+				height: '100%'
 			}}>
 
 				<div style={translationFileState.voiceInput != true ? {
@@ -169,7 +174,7 @@ function TranslateFileAudioOutput(props) {
 					alignItems: 'center',
 					justifyContent: 'center',
 					flexDirection: translationFileState.audioFile ? 'row' : 'column'
-				} : { width: '100%' }}>
+				} : { width: '100%', height: '100%' }}>
 					{translationFileState.audioFile === null ?
 						<>
 							<Typography variant="h6">
@@ -218,38 +223,36 @@ function TranslateFileAudioOutput(props) {
 									<div md={1} style={{ padding: '0' }} className={['text-center']}>
 										<Button variant="contained" onClick={handleReset} type="file">
 											{/* <CloseIcon fontSize='small' /> */}
-											Dịch tiếp
+											{translationFileState.currentState === STATE.LOADING ? 'Hủy' : 'Dịch tiếp'}
 										</Button>
 									</div>
 								</div> :
-								<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+								<div style={{ display: 'flex', justifyContent: 'center', width: '100%', height: '100%' }}>
 									{isConverting ?
-										<div style={{ display: 'flex', flexDirection: 'column'}}>
-											<Spin style={{ marginTop: '20px' }} />
+										<div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
+											<Spin style={{ marginBottom: '20px' }} />
 
 											<div md={1} style={{ padding: '0' }} className={['text-center']}>
 												{cancelButton()}
 											</div>
 										</div> :
 										<>
-											<div style={{ paddingRight: '0', flex: 1 }} >
+											<div style={{ paddingRight: '0', flex: 1 }} className={styles.boxdich}>
 												<TextareaAutosize
-													ref={inputEl}
+													disabled={true}
 													minRows={3}
-													disabled
 													value={convertedText}
 													className={[styles.from_language]}
 												/>
 											</div>
 
-											<div md={1} style={{ padding: '0' }} className={['text-center']}>
+											<div style={{ padding: '0', alignSelf: 'flex-end', paddingBottom: 5 }} className={['text-center']}>
 												{!isShowCloseButton() ?
 													<IconButton aria-label="Example" onClick={handleReset} type="file">
 														<CloseIcon fontSize='small' />
 													</IconButton> : null}
 											</div>
 										</>}
-
 								</div>}
 
 						</>

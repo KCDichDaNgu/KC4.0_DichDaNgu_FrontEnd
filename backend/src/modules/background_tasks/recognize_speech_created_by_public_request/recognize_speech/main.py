@@ -114,7 +114,7 @@ async def read_task_result(
 async def mark_invalid_tasks(invalid_tasks_mapper):
 
     result = []
-    
+
     async with db_instance.session() as session:
         async with session.start_transaction():
 
@@ -218,7 +218,7 @@ async def main():
         chunked_tasks_id = list(chunk_arr(valid_tasks_id, ALLOWED_CONCURRENT_REQUEST))
         
         for chunk in chunked_tasks_id:
-            
+
             await execute_in_batch(valid_tasks_mapper, chunk)
 
     except Exception as e:
