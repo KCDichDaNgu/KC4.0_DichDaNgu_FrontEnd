@@ -15,6 +15,7 @@ import {
 import * as axiosHelper from '../../helpers/axiosHelper';
 import { debounce } from 'lodash';
 
+
 const STATUS = {
 	TRANSLATING: 'translating',
 	TRANSLATED: 'translated',
@@ -225,18 +226,12 @@ const recursiveCheckTranslateAudioStatus = async (translationHistoryId, taskId, 
 	if (getTranslationHistoryResult.data.status !== checkStatus) {
 		return new Promise((resolve, reject) => {
 			setTimeout(async () => {
-				// 10 * 1000 = 10 sec
-				// if (time !== 10) {
-				// time += 1;
 				try {
 					const getTranslationHistoryResult = await recursiveCheckTranslateAudioStatus(translationHistoryId, taskId, time, checkStatus);
 					resolve(getTranslationHistoryResult);
 				} catch (e) {
 					reject(e);
 				}
-				// } else {
-				// reject('Time Out');
-				// }
 			}, 1000);
 		});
 	} else {

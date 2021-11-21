@@ -65,34 +65,30 @@ function TranslateFileAudioOutput(props) {
 	const convertedDocument = () => {
 		switch (translationFileState.outputAudioFile.source_lang) {
 		case 'vi':
-			return t('taiChuyenNguTiengViet');
+			return t('taiVanBanNhanDangTiengViet');
 		case 'en':
-			return t('taiChuyenNguTiengAnh');
+			return t('taiVanBanNhanDangTiengAnh');
 		case 'zh':
-			return t('taiChuyenNguTiengTrung');
-		case 'lo':
-			return t('taiChuyenNguTiengLao');
-		case 'km':
-			return t('taiChuyenNguTiengKhome');
+			return t('taiVanBanNhanDangTiengTrung');
 		default:
-			return t('taiChuyenNgu');
+			return t('taiVanBanNhanDang');
 		}
 	};
 
 	const translatedDocument = () => {
 		switch (translationFileState.outputAudioFile.target_lang) {
 		case 'vi':
-			return t('taiTaiLieuTiengViet');
+			return t('taiVanBanDichTiengViet');
 		case 'en':
-			return t('taiTaiLieuTiengAnh');
+			return t('taiVanBanDichTiengAnh');
 		case 'zh':
-			return t('taiTaiLieuTiengTrung');
+			return t('taiVanBanDichTiengTrung');
 		case 'lo':
-			return t('taiTaiLieuTiengLao');
+			return t('taiVanBanDichTiengLao');
 		case 'km':
-			return t('taiTaiLieuTiengKhome');
+			return t('taiVanBanDichTiengKhome');
 		default:
-			return t('taiTaiLieu');
+			return t('taiVanBanDich');
 		}
 	};
 
@@ -122,7 +118,6 @@ function TranslateFileAudioOutput(props) {
 							}}>
 								<Button
 									variant="contained"
-									color="primary"
 									onClick={() => downloadSpeechRecognitionResultFile(translationFileState.outputAudioConvertedFile.converted_file_full_path)}
 									style={{
 										width: '300px',
@@ -134,7 +129,6 @@ function TranslateFileAudioOutput(props) {
 
 								{translationFileState.outputAudioTranslatedFile ? <Button
 									variant="contained"
-									color="success"
 									onClick={() => downloadSpeechRecognitionResultFile(translationFileState.outputAudioTranslatedFile.translated_file_full_path)}
 									style={{
 										width: '300px',

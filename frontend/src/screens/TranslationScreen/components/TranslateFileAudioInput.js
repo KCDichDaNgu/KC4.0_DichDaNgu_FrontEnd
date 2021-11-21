@@ -144,7 +144,7 @@ function TranslateFileAudioOutput(props) {
 							</Typography>
 							<input
 								type="file"
-								accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+								accept="audio/mpeg, audio/wav, .aac"
 								style={{ display: 'none' }}
 								id="contained-button-file"
 								onChange={(event) => {
@@ -174,16 +174,18 @@ function TranslateFileAudioOutput(props) {
 						</> :
 						<>
 							{translationFileState.voiceInput != true ?
-								<>
-									<Typography variant="h6">
+								<div>
+									<Typography variant="h6" className={['text-center']}>
 										{translationFileState.audioFile.name}
 									</Typography>
+
 									<div md={1} style={{ padding: '0' }} className={['text-center']}>
-										<IconButton aria-label="Example" onClick={handleReset} type="file">
-											<CloseIcon fontSize='small' />
-										</IconButton>
+										<Button variant="contained" onClick={handleReset} type="file">
+											{/* <CloseIcon fontSize='small' /> */}
+											Dịch tiếp
+										</Button>
 									</div>
-								</> :
+								</div> :
 								<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%'}}>
 									{isConverting ? <Spin style={{marginTop: '20px'}}/> : <>
 										<div style={{ paddingRight: '0', flex: 1 }} >
