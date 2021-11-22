@@ -66,6 +66,11 @@ export const UnauthorizedSidebarData = [
 		type: 'screen'
 	},
 	{
+		title: 'Dịch',
+		path: '/translate',
+		type: 'screen'
+	},
+	{
 		title: 'Đăng nhập',
 		path: '/login',
 		type: 'screen'

@@ -27,7 +27,7 @@ import TranslateOutput from './components/TranslateOutput';
 import TranslateInput from './components/TranslateInput';
 import { TRANSLATE_TYPE } from '../../constants/common';
 import TranslateFileDocumentInput from './components/TranslateFileDocumentInput';
-import authHoc from '../../hocs/authHoc';
+// import authHoc from '../../hocs/authHoc';
 import { toastError } from '../../components/Toast';
 
 function Index(props) {
@@ -176,4 +176,4 @@ const mapDispatchToProps = {
 	changeOutput,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(authHoc(Index));
+export default connect(mapStateToProps, mapDispatchToProps)((Index));
