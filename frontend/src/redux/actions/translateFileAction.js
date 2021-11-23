@@ -10,7 +10,8 @@ import {
 	CHANGE_OUTPUT,
 	CHANGE_OUTPUT_AUDIO,
 	CHANGE_OUTPUT_DOCUMENT,
-	CHANGE_FILE_AUDIO_VOICE_INPUT
+	CHANGE_FILE_AUDIO_VOICE_INPUT,
+	SET_TRANSLATE_SET_TIMEOUT_ID
 } from '../constant/translateFileTypes';
 import * as axiosHelper from '../../helpers/axiosHelper';
 import { debounce } from 'lodash';
@@ -142,25 +143,34 @@ export function translationFileFailed(err) {
 	};
 }
 
+export function setTranslateSetTimeoutId(id) {
+	return {
+		type: SET_TRANSLATE_SET_TIMEOUT_ID,
+		payload: {
+			id
+		}
+	};
+}
 /**
  * @description Do BE bắt fai kiểm tra status 
  * nên sẽ gọi lại API khi nào status được dịch.
  * Đặt thời gian mỗi lần gọi lại API 
  * ! => tránh việc gọi liên tục và ko cần thiết
  */
-const recursiveCheckStatus = async (translationHistoryId, taskId, time) => {
+const recursiveCheckStatus = async (translationHistoryId, taskId, time, dispatch) => {
 	const getTranslationHistoryResult = await axiosHelper.getTranslateHistoryGetSingle({
 		translationHistoryId,
 		taskId,
 	});
+
 	if (getTranslationHistoryResult.data.status !== STATUS.TRANSLATED) {
 		return new Promise((resolve, reject) => {
-			setTimeout(async () => {
+			let timeoutID = setTimeout(async () => {
 				// 10 * 1000 = 10 sec
 				// if (time !== 10) {
 				// time += 1;
 				try {
-					const getTranslationHistoryResult = await recursiveCheckStatus(translationHistoryId, taskId, time);
+					const getTranslationHistoryResult = await recursiveCheckStatus(translationHistoryId, taskId, time, dispatch);
 					resolve(getTranslationHistoryResult);
 				} catch (e) {
 					reject(e);
@@ -169,10 +179,12 @@ const recursiveCheckStatus = async (translationHistoryId, taskId, time) => {
 				// reject('Time Out');
 				// }
 			}, 1000);
-		});
+			dispatch(setTranslateSetTimeoutId(timeoutID));
+		});		
 	} else {
 		return getTranslationHistoryResult;
 	}
+
 };
 
 /**
@@ -183,11 +195,14 @@ const debouncedTranslationFile = debounce(async (body, dispatch) => {
 	try {
 		let time = 1;
 		const postTranslationResult = await axiosHelper.translateFile(body);
+
 		const getTranslationFileResult = await recursiveCheckStatus(
 			postTranslationResult.data.translationHitoryId,
 			postTranslationResult.data.taskId,
-			time
+			time,
+			dispatch
 		);
+		
 		if (getTranslationFileResult.message === 'Time Out') {
 			dispatch(translationFileFailed(getTranslationFileResult.message));
 		} else {
@@ -217,7 +232,7 @@ export const translateFileAudioAsync = (body) => (dispatch) => {
 	}
 };
 
-const recursiveCheckTranslateAudioStatus = async (translationHistoryId, taskId, time, checkStatus) => {
+const recursiveCheckTranslateAudioStatus = async (translationHistoryId, taskId, time, checkStatus, dispatch) => {
 	const getTranslationHistoryResult = await axiosHelper.getSpeechRecogntionHistoryGetSingle({
 		translationHistoryId,
 		taskId,
@@ -225,14 +240,16 @@ const recursiveCheckTranslateAudioStatus = async (translationHistoryId, taskId, 
 
 	if (getTranslationHistoryResult.data.status !== checkStatus) {
 		return new Promise((resolve, reject) => {
-			setTimeout(async () => {
+			let timeoutID = setTimeout(async () => {
 				try {
-					const getTranslationHistoryResult = await recursiveCheckTranslateAudioStatus(translationHistoryId, taskId, time, checkStatus);
+					const getTranslationHistoryResult = await recursiveCheckTranslateAudioStatus(translationHistoryId, taskId, time, checkStatus, dispatch);
 					resolve(getTranslationHistoryResult);
 				} catch (e) {
 					reject(e);
 				}
 			}, 1000);
+
+			dispatch(setTranslateSetTimeoutId(timeoutID));
 		});
 	} else {
 		return getTranslationHistoryResult;
@@ -252,7 +269,8 @@ const debouncedTranslationFileAudio = debounce(async (body, dispatch) => {
 			postTranslationResult.data.translationHitoryId,
 			postTranslationResult.data.taskId,
 			time,
-			STATUS.CONVERTED
+			STATUS.CONVERTED,
+			dispatch
 		);
 
 		if (getConvertResult.message === 'Time Out') {
@@ -271,7 +289,8 @@ const debouncedTranslationFileAudio = debounce(async (body, dispatch) => {
 			postTranslationResult.data.translationHitoryId,
 			postTranslationResult.data.taskId,
 			time,
-			STATUS.TRANSLATED
+			STATUS.TRANSLATED,
+			dispatch
 		);
 
 		if (getTranslateResult.message === 'Time Out') {

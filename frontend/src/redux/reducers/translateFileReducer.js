@@ -10,7 +10,8 @@ import {
 	CHANGE_OUTPUT,
 	CHANGE_OUTPUT_AUDIO,
 	CHANGE_OUTPUT_DOCUMENT,
-	CHANGE_FILE_AUDIO_VOICE_INPUT
+	CHANGE_FILE_AUDIO_VOICE_INPUT,
+	SET_TRANSLATE_SET_TIMEOUT_ID
 } from '../constant/translateFileTypes';
 
 export const STATE = {
@@ -31,6 +32,7 @@ const initialState = {
 	outputAudioFile: null,
 	voiceInput: false,
 	err: null,
+	setTimeoutId: 0,
 };
 
 export default function(state = initialState, action) {
@@ -106,6 +108,7 @@ export default function(state = initialState, action) {
 		return {
 			...state,
 			outputDocumentFile: action.payload.data,
+			currentState: STATE.INIT,
 		};
 	}
 	case CHANGE_OUTPUT_AUDIO: {
@@ -114,6 +117,13 @@ export default function(state = initialState, action) {
 			outputAudioFile: action.payload.data,
 			outputAudioConvertedFile: action.payload.data,
 			outputAudioTranslatedFile: action.payload.data,
+			currentState: STATE.INIT,
+		};
+	}
+	case SET_TRANSLATE_SET_TIMEOUT_ID: {
+		return {
+			...state,
+			setTimeoutId: action.payload.id
 		};
 	}
 	default:

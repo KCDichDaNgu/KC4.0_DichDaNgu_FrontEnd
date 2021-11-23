@@ -19,6 +19,7 @@ function TranslateFileDocumentInput(props) {
  	* @description Function xóa file khỏi ô input
  	*/
 	const handleReset = () => {
+		clearTimeout(translationFileState.setTimeoutId);
 		props.changeFileDocument(null);
 		props.changeOutputDocument(null);
 	};

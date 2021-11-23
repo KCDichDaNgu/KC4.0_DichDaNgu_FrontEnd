@@ -39,6 +39,7 @@ function TranslateFileAudioOutput(props) {
 	  * @description Function xóa file khỏi ô input
 	  */
 	const handleReset = () => {
+		clearTimeout(translationFileState.setTimeoutId);
 		setConvertedText('');
 		setIsConverting(true);
 		props.changeFileAudioVoiceInput(null, false);
