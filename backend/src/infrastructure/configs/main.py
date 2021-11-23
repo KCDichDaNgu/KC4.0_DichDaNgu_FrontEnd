@@ -255,47 +255,47 @@ class AppConfig(BaseModel):
         "translate_plain_text_in_public_request.detect_content_language": BackgroundTask(
             ID="translate_plain_text_in_public_request.detect_content_language",
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
-            CONFIG=dict(seconds=3, max_instances=1),
+            CONFIG=dict(seconds=1, max_instances=1),
         ),
         "translate_plain_text_in_public_request.translate_content": BackgroundTask(
             ID="translate_plain_text_in_public_request.translate_content",
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
-            CONFIG=dict(seconds=3, max_instances=1),
+            CONFIG=dict(seconds=1, max_instances=1),
         ),
         "translate_content_for_file_in_public_request.translate_content": BackgroundTask(
             ID="translate_content_for_file_in_public_request.translate_content",
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
-            CONFIG=dict(seconds=3, max_instances=1),
+            CONFIG=dict(seconds=1, max_instances=1),
         ),
         "translate_content_for_file_in_public_request.detect_content_language": BackgroundTask(
             ID="translate_content_for_file_in_public_request.detect_content_language",
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
-            CONFIG=dict(seconds=3, max_instances=1),
+            CONFIG=dict(seconds=1, max_instances=1),
         ),
         "detect_plain_text_language_in_public_request": BackgroundTask(
             ID="detect_plain_text_language_in_public_request",
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
-            CONFIG=dict(seconds=3, max_instances=1),
+            CONFIG=dict(seconds=1, max_instances=1),
         ),
         "detect_file_language_created_by_public_request": BackgroundTask(
             ID="detect_file_language_created_by_public_request",
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
-            CONFIG=dict(seconds=3, max_instances=1),
+            CONFIG=dict(seconds=1, max_instances=1),
         ),
         "delete_invalid_task": BackgroundTask(
             ID="delete_invalid_task",
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
-            CONFIG=dict(seconds=3, max_instances=1),
+            CONFIG=dict(seconds=1, max_instances=1),
         ),
         "delete_invalid_file": BackgroundTask(
             ID="delete_invalid_file",
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
-            CONFIG=dict(seconds=3, max_instances=1),
+            CONFIG=dict(seconds=1, max_instances=1),
         ),
         "translate_content_for_file_in_public_request.translate_txt_file": BackgroundTask(
             ID="translate_content_for_file_in_public_request.translate_txt_file",
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
-            CONFIG=dict(seconds=3, max_instances=1),
+            CONFIG=dict(seconds=1, max_instances=1),
         ),
     }
 
