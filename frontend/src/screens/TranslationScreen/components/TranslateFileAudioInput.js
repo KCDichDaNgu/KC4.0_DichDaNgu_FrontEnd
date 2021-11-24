@@ -221,10 +221,7 @@ function TranslateFileAudioOutput(props) {
 									</Typography>
 
 									<div md={1} style={{ padding: '0' }} className={['text-center']}>
-										<Button variant="contained" onClick={handleReset} type="file">
-											{/* <CloseIcon fontSize='small' /> */}
-											{translationFileState.currentState === STATE.LOADING ? 'Hủy' : 'Dịch tiếp'}
-										</Button>
+										{cancelButton()}
 									</div>
 								</div> :
 								<div style={{ display: 'flex', justifyContent: 'center', width: '100%', height: '100%' }}>
