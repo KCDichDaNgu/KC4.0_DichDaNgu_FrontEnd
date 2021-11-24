@@ -3,7 +3,8 @@ import styles from './userManagement.module.css';
 import { getUserListAsync } from '../../redux/actions/userAction';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Table, Button, Radio } from 'antd';
+import { Table, Radio } from 'antd';
+import { Button } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { useTranslation } from 'react-i18next';
 import CreateUserModal from './components/CreateUserModal';
@@ -186,7 +187,7 @@ function UserManagement(props) {
 
 	return (
 		<div className={styles.pageContainer} >
-			<Button onClick={() => setCreateUserModalVisible(true)} type="primary" className={styles.createButton}>{t('createUser')}</Button>
+			<Button onClick={() => setCreateUserModalVisible(true)} variant="outlined" className={styles.createButton}>{t('createUser')}</Button>
 
 			<Table
 				bordered

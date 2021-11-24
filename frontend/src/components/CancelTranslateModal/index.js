@@ -45,7 +45,7 @@ function CancelTranslateModal(props) {
 					</DialogActions>
 					<DialogActions>
 						<Button variant="contained" onClick={props.onCancel}>
-							{t('huyBo')}
+							{t('agree')}
 						</Button>
 					</DialogActions>
 				</Row>

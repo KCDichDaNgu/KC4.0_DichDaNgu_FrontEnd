@@ -13,3 +13,6 @@ export const STATUS_CODE = {
 	success: 1,
 	fail: 0,
 };
+
+export const DOCUMENT_FILE_TYPE = ['txt', 'docx'];
+export const AUDIO_FILE_TYPE = ['wav', 'aac', 'mp3'];

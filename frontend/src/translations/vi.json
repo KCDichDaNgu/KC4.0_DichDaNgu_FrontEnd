@@ -28,7 +28,7 @@
 	"xacNhanMatKhauMoi": "Xác nhận mật khẩu mới",
 	"caiDatTaiKhoan": "Cài đặt tài khoản",
 	"chonTaiLieu": "Chọn tài liệu",
-	"taiTepTaiLieu": "Tải lên tệp .docx",
+	"taiTepTaiLieu": "Tải lên tệp .docx, .txt",
 	"taiTepAmThanh": "Tải lên tệp .mp3, .aac, .wav",
 	"timTepTenMayBan": "Tìm tệp trên máy tính của bạn",
 	"email": "Email",
@@ -38,8 +38,8 @@
 	"dangXuat": "Đăng xuất",
 	"chinhSuaThongTin": "Chỉnh sửa thông tin",
 	"thongTinCaNhan": "Thông tin cá nhân",
-	"cancelTranslate": "Bỏ qua kết quả dịch",
-	"cancelTranslateContent": "Bạn sẽ không nhận được kết quả dịch này, tuy nhiên giới hạn dịch đã sử dụng của bạn vẫn được tăng thêm.",
+	"cancelTranslate": "Bỏ qua và dịch tiếp",
+	"cancelTranslateContent": "Bạn có thể dịch tiếp ngay lập tức, tuy nhiên kết quả dịch vẫn sẽ được lưu trữ trong hệ thống và lượng sử dụng vẫn sẽ được tính vào hạn mức của bạn.",
 	"loi": "Lỗi!!",
 	"en": "Anh",
 	"vi": "Việt",
@@ -47,7 +47,7 @@
 	"lo": "Lào",
 	"km": "Khơme",
 	"Translate": {
-		"khongHoTro": "Không hỗ trợ dịnh",
+		"khongHoTro": "Không hỗ trợ dịch",
 		"title" : "Giải pháp TekSpeech - dịch âm thanh, văn bản Trung, Anh - Việt",
 		"phathienngonngu": "Phát hiện ngôn ngữ",
 		"nhapVanBan": "Nhập văn bản",
@@ -117,9 +117,13 @@
 	"requiredField": "Thông tin bắt buộc",
 	"cancel": "Đóng",
 	"edit": "Sửa",
+	"agree": "Đồng ý",
 	"create": "Thêm",
 	"ViEn": "Việt - Anh",
 	"ViZh": "Việt - Trung",
 	"inactive_user": "Tài khoản người dùng không hoạt động",
-	"no_access_media": "Không có quyền truy cập thiết bị truyền thông"
+	"fileTypeNotSupported": "Định dạng tệp không hỗ trợ",
+	"no_access_media": "Không có quyền truy cập thiết bị truyền thông",
+	"unexpected_document_translate_error":"Có lỗi xảy ra, vui lòng kiểm tra tệp tải lên và thử lại.",
+	"unexpected_audio_translate_error":"Có lỗi xảy ra, vui lòng kiểm tra tệp tải lên và thử lại."
 }

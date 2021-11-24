@@ -11,7 +11,7 @@ import { STATE } from '../../../redux/reducers/translateFileReducer';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import CloseIcon from '@mui/icons-material/Close';
-import { TRANSLATE_TYPE } from '../../../constants/common';
+import { AUDIO_FILE_TYPE, TRANSLATE_TYPE } from '../../../constants/common';
 import MicRecorder from 'mic-recorder-to-mp3';
 import { AudioTwoTone, PauseCircleTwoTone } from '@ant-design/icons';
 import styles from '../translateStyle.module.css';
@@ -147,9 +147,25 @@ function TranslateFileAudioOutput(props) {
 					className={styles.translateButton}
 					style={{ minWidth: '65px', }}
 				>
-					HỦY
+					Dịch tiếp
 				</Button>
 			);
+	};
+
+	const handleUploadFile = (file) => {
+		try {
+			const file_ext = file.name.split('.').pop();
+
+			if (AUDIO_FILE_TYPE.includes(file_ext)) {
+				props.changeFileAudio(file);
+			}
+			else {
+				toastError(t('fileTypeNotSupported'));
+			}
+		}
+		catch (e) {
+			toastError(e);
+		}
 	};
 
 	return (
@@ -189,7 +205,7 @@ function TranslateFileAudioOutput(props) {
 								style={{ display: 'none' }}
 								id="contained-button-file"
 								onChange={(event) => {
-									props.changeFileAudio(event.target.files[0]);
+									handleUploadFile(event.target.files[0]);
 								}}
 							/>
 							<label htmlFor="contained-button-file">
@@ -216,7 +232,7 @@ function TranslateFileAudioOutput(props) {
 						<>
 							{translationFileState.voiceInput != true ?
 								<div>
-									<Typography variant="h6" className={['text-center']} style={{ marginBottom: '20px' }}>
+									<Typography variant="h6" className={['text-center']} style={{ marginBottom: '10px' }}>
 										{translationFileState.audioFile.name}
 									</Typography>
 

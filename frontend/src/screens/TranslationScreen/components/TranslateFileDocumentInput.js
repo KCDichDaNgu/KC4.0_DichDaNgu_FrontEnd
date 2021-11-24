@@ -8,9 +8,10 @@ import { changeFileDocument, changeOutputDocument } from '../../../redux/actions
 import { STATE } from '../../../redux/reducers/translateFileReducer';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { TRANSLATE_TYPE } from '../../../constants/common';
+import { DOCUMENT_FILE_TYPE, TRANSLATE_TYPE } from '../../../constants/common';
 import styles from '../translateStyle.module.css';
 import CancelTranslateModal from '../../../components/CancelTranslateModal';
+import { toastError } from '../../../components/Toast';
 function TranslateFileDocumentInput(props) {
 	const { translationFileState, translateType } = props;
 	const [modalShow, setModalShow] = useState(false);
@@ -51,9 +52,25 @@ function TranslateFileDocumentInput(props) {
 					className={styles.translateButton}
 					style={{ minWidth: '65px', }}
 				>
-					HỦY
+					Dịch tiếp
 				</Button>
 			);
+	};
+
+	const handleUploadFile = (file) => {
+		try {
+			const file_ext = file.name.split('.').pop();
+
+			if (DOCUMENT_FILE_TYPE.includes(file_ext)) {
+				props.changeFileDocument(file);
+			}
+			else {
+				toastError(t('fileTypeNotSupported'));
+			}
+		}
+		catch (e) {
+			toastError(e);
+		}
 	};
 
 
@@ -66,6 +83,7 @@ function TranslateFileDocumentInput(props) {
 				paddingTop: '10px',
 				paddingBottom: '30px',
 				display: 'flex',
+				height: '100%'
 			}}>
 
 				<div style={{
@@ -85,11 +103,11 @@ function TranslateFileDocumentInput(props) {
 							</Typography>
 							<input
 								type="file"
-								accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+								accept="text/plain, application/vnd.openxmlformats-officedocument.wordprocessingml.document, .docx"
 								style={{ display: 'none' }}
 								id="contained-button-file"
 								onChange={(event) => {
-									props.changeFileDocument(event.target.files[0]);
+									handleUploadFile(event.target.files[0]);
 								}}
 							/>
 							<label htmlFor="contained-button-file">
@@ -97,13 +115,19 @@ function TranslateFileDocumentInput(props) {
 									{t('timTepTenMayBan')}
 								</Button>
 							</label>
-						</> : 
-						<>
+						</> :
+						<div style={{
+							display: 'flex',
+							flexDirection: 'column',
+							justifyContent: 'center',
+						}}>
 							<Typography variant="h6" style={{ marginBottom: '10px' }}>
 								{translationFileState.documentFile.name}
 							</Typography>
-							{cancelButton()}
-						</>
+							<div md={1} style={{ padding: '0' }} className={['text-center']}>
+								{cancelButton()}
+							</div>
+						</div>
 					}
 				</div>
 			</div>

@@ -77,8 +77,8 @@ function TranslateFileDocumentOutput(props) {
 			}}>
 				{(translationFileState.outputDocumentFile && translationFileState.documentFile) ? 
 					<Button 
-						variant="contained" 
-						color="success" 
+						variant="outlined" 
+						style={{ fontWeight: 'bold', display: 'flex'}}
 						onClick={() => downloadFile(translationFileState.outputDocumentFile.target_file_full_path, translationFileState.outputDocumentFile.file_type)}
 					>
 						{buttonTextDich()}

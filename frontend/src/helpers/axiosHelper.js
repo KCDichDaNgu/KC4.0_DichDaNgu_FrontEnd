@@ -53,9 +53,11 @@ axiosDefault.interceptors.response.use(function (response) {
 	// Do something with response data
 	return response;
 }, function (error) {
-	if (error.response.data.message !== 'text_translate_limit_reached' && error.response.data.message !== 'audio_translate_limit_reached') {
-		toastError(error.response.data.message);
-	}
+	if (error.response.data.message) {
+		if (error.response.data.message !== 'text_translate_limit_reached' && error.response.data.message !== 'audio_translate_limit_reached') {
+			toastError(error.response.data.message);
+		}
+	}	
 	return Promise.reject(error);
 });
 
@@ -275,7 +277,6 @@ export const updateUser = (body) => {
 	});
 };
 
-
 export const RefreshToken = (body) => {
 	return new Promise((resolve, reject) => {
 		axiosDefault.post('user/auth', body)
@@ -308,6 +309,7 @@ export const translateFile = (body) => {
 					const { message } = error.response.data;
 					toastInformLimitReached(message, used, quota, 'text');
 				}
+				else toastError('unexpected_document_translate_error');
 				reject(error);
 			});
 	});
@@ -327,6 +329,7 @@ export const postTranslate = (body) => {
 					const { message } = error.response.data;
 					toastInformLimitReached(message, used, quota, 'text');
 				}
+				else toastError('unexpected_audio_translate_error');
 				reject(error);
 			});
 	});
