@@ -17,6 +17,7 @@ import { AudioTwoTone, PauseCircleTwoTone } from '@ant-design/icons';
 import styles from '../translateStyle.module.css';
 import { toastError } from '../../../components/Toast';
 import { getConvertedText } from '../../../helpers/axiosHelper';
+import CancelTranslateModal from '../../../components/CancelTranslateModal';
 function TranslateFileAudioOutput(props) {
 	const inputEl = useRef(null);
 	const { translationFileState, translateType, translationState } = props;
@@ -26,6 +27,7 @@ function TranslateFileAudioOutput(props) {
 	const [isConverting, setIsConverting] = useState(true);
 	const [blobUrl, setBlobUrl] = useState('');
 	const [isBlocked, setIsBlocked] = useState(true);
+	const [modalShow, setModalShow] = useState(false);
 	const [convertedText, setConvertedText] = useState('');
 
 	const isShowCloseButton = () => {
@@ -44,6 +46,11 @@ function TranslateFileAudioOutput(props) {
 		setIsConverting(true);
 		props.changeFileAudioVoiceInput(null, false);
 		props.changeOutputAudio(null);
+		setModalShow(false);
+	};
+
+	const handleResetTranslate = () => {
+		setModalShow(true);
 	};
 
 	useEffect(() => {
@@ -64,6 +71,7 @@ function TranslateFileAudioOutput(props) {
 		}
 
 	}, []);
+
 	const getConvertedTextResult = async () => {
 		const result = await getConvertedText(translationFileState.outputAudioConvertedFile.converted_file_full_path);
 		setConvertedText(result);
@@ -117,6 +125,33 @@ function TranslateFileAudioOutput(props) {
 		}
 	};
 
+	const cancelButton = () => {
+		if (translationFileState.currentState !== STATE.LOADING)
+			return (
+				<Button
+					variant="outlined"
+					onClick={handleReset}
+					type="file"
+					className={styles.translateButton}
+					style={{ minWidth: '65px', }}
+				>
+					{translationFileState.currentState == STATE.SUCCESS ? 'Dịch tiếp' : 'HỦY'}
+				</Button>
+			);
+		else
+			return (
+				<Button
+					variant="outlined"
+					onClick={handleResetTranslate}
+					type="file"
+					className={styles.translateButton}
+					style={{ minWidth: '65px', }}
+				>
+					HỦY
+				</Button>
+			);
+	};
+
 	return (
 		<Col md={6} style={{
 			borderRight: '1px solid #ccc',
@@ -128,13 +163,13 @@ function TranslateFileAudioOutput(props) {
 				display: 'flex',
 			}}>
 
-				<div style={ translationFileState.voiceInput != true ? {
+				<div style={translationFileState.voiceInput != true ? {
 					flex: 1,
 					display: 'flex',
 					alignItems: 'center',
 					justifyContent: 'center',
 					flexDirection: translationFileState.audioFile ? 'row' : 'column'
-				}: {width: '100%' }}>
+				} : { width: '100%' }}>
 					{translationFileState.audioFile === null ?
 						<>
 							<Typography variant="h6">
@@ -153,7 +188,7 @@ function TranslateFileAudioOutput(props) {
 								}}
 							/>
 							<label htmlFor="contained-button-file">
-								<Button variant="contained" size='small' component="span">
+								<Button variant="outlined" component="span" className={styles.translateButton}>
 									{t('timTepTenMayBan')}
 								</Button>
 							</label>
@@ -176,7 +211,7 @@ function TranslateFileAudioOutput(props) {
 						<>
 							{translationFileState.voiceInput != true ?
 								<div>
-									<Typography variant="h6" className={['text-center']}>
+									<Typography variant="h6" className={['text-center']} style={{ marginBottom: '20px' }}>
 										{translationFileState.audioFile.name}
 									</Typography>
 
@@ -187,24 +222,33 @@ function TranslateFileAudioOutput(props) {
 										</Button>
 									</div>
 								</div> :
-								<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%'}}>
-									{isConverting ? <Spin style={{marginTop: '20px'}}/> : <>
-										<div style={{ paddingRight: '0', flex: 1 }} >
-											<TextareaAutosize
-												ref={inputEl}
-												minRows={3}
-												disabled
-												value={convertedText}
-												className={[styles.from_language]}
-											/>
-										</div>
-										<div md={1} style={{ padding: '0' }} className={['text-center']}>
-											{!isShowCloseButton() ?
-												<IconButton aria-label="Example" onClick={handleReset} type="file">
-													<CloseIcon fontSize='small' />
-												</IconButton> : null}
-										</div>
-									</>}
+								<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+									{isConverting ?
+										<div style={{ display: 'flex', flexDirection: 'column'}}>
+											<Spin style={{ marginTop: '20px' }} />
+
+											<div md={1} style={{ padding: '0' }} className={['text-center']}>
+												{cancelButton()}
+											</div>
+										</div> :
+										<>
+											<div style={{ paddingRight: '0', flex: 1 }} >
+												<TextareaAutosize
+													ref={inputEl}
+													minRows={3}
+													disabled
+													value={convertedText}
+													className={[styles.from_language]}
+												/>
+											</div>
+
+											<div md={1} style={{ padding: '0' }} className={['text-center']}>
+												{!isShowCloseButton() ?
+													<IconButton aria-label="Example" onClick={handleReset} type="file">
+														<CloseIcon fontSize='small' />
+													</IconButton> : null}
+											</div>
+										</>}
 
 								</div>}
 
@@ -212,6 +256,12 @@ function TranslateFileAudioOutput(props) {
 					}
 				</div>
 			</div>
+
+			<CancelTranslateModal
+				show={modalShow}
+				onHide={() => setModalShow(false)}
+				onCancel={handleReset}
+			/>
 		</Col>
 	);
 }

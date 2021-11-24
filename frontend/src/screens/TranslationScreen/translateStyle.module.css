@@ -248,6 +248,12 @@
   justify-content: space-between;
 }
 
+.translateButton {
+  font-weight: bold !important;
+  background-color: #fff !important;
+  color: #1976d2 !important;
+}
+
 .recordIcon {
   margin-right: auto;
   border-radius: 50%;

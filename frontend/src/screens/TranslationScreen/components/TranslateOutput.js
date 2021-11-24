@@ -87,7 +87,7 @@ function TranslateInput(props) {
 					justifyContent: 'start'
 				}}>
 					<LoadingButton 
-						variant="contained" 
+						variant="outlined" 
 						onClick={handleTranslate}
 						loading={translationState.currentState === STATE.LOADING}
 						disabled={isDisableTranslateButton()}

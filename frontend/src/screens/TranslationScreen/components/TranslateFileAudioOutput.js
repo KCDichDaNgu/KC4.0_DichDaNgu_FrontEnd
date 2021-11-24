@@ -117,22 +117,25 @@ function TranslateFileAudioOutput(props) {
 								paddingLeft: '0'
 							}}>
 								<Button
-									variant="contained"
+									variant="outlined"
 									onClick={() => downloadSpeechRecognitionResultFile(translationFileState.outputAudioConvertedFile.converted_file_full_path)}
 									style={{
 										width: '300px',
-										marginBottom: '10px'
+										marginBottom: '10px',
+										fontWeight: 'bold'
 									}}
+									// classname=:
 								>
 									{convertedDocument()}
 								</Button>
 
 								{translationFileState.outputAudioTranslatedFile ? <Button
-									variant="contained"
+									variant="outlined"
 									onClick={() => downloadSpeechRecognitionResultFile(translationFileState.outputAudioTranslatedFile.translated_file_full_path)}
 									style={{
 										width: '300px',
-										marginBottom: '10px'
+										marginBottom: '10px',
+										fontWeight: 'bold'
 									}}
 								>
 									{translatedDocument()}
@@ -171,7 +174,7 @@ function TranslateFileAudioOutput(props) {
 					</>
 
 					: <LoadingButton
-						variant="contained"
+						variant="outlined"
 						onClick={handleTranslate}
 						loading={translationFileState.currentState === STATE.LOADING && !translationFileState.outputAudioFile && translationFileState.voiceInput != true}
 						disabled={isDisableTranslateButton()}

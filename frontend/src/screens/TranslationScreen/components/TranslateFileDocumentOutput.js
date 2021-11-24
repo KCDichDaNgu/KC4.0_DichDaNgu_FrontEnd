@@ -83,7 +83,7 @@ function TranslateFileDocumentOutput(props) {
 					>
 						{buttonTextDich()}
 					</Button> : <LoadingButton 
-						variant="contained" 
+						variant="outlined" 
 						onClick={handleTranslate}
 						loading={translationFileState.currentState === STATE.LOADING}
 						disabled={isDisableTranslateButton()}

@@ -38,6 +38,8 @@
 	"dangXuat": "Đăng xuất",
 	"chinhSuaThongTin": "Chỉnh sửa thông tin",
 	"thongTinCaNhan": "Thông tin cá nhân",
+	"cancelTranslate": "Bỏ qua kết quả dịch",
+	"cancelTranslateContent": "Bạn sẽ không nhận được kết quả dịch này, tuy nhiên giới hạn dịch đã sử dụng của bạn vẫn được tăng thêm.",
 	"loi": "Lỗi!!",
 	"en": "Anh",
 	"vi": "Việt",
