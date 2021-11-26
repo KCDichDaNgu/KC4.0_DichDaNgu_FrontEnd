@@ -60,7 +60,7 @@ class SpeechRecognitor(SpeechRecognitorPort):
                 'config': (None, '{\n"type": "transcription",\n"transcription_config": {\n"language": "en"\n}\n}'),
             }
 
-            response = requests.post('http://192.168.1.4:8082/v2/jobs', files=files,data=payload)
+            response = requests.post(PUBLIC_SPEECH_RECOGNITION_API_URL, files=files,data=payload)
 
             result = (response.json())["id"]
 
