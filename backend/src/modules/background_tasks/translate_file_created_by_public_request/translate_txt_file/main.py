@@ -246,10 +246,12 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
             original_text =''
             try:
 
-                original_file = open(original_file_full_path, encoding="utf16")
+                original_file = open(original_file_full_path, encoding="utf8", errors='ignore')
                 original_text = original_file.read()
 
             except Exception as e:
+                original_file = open(original_file_full_path, encoding="utf16", errors='ignore')
+                original_text = original_file.read()
                 logger.error('ERROR:', e)
                 
             if source_lang == target_lang:

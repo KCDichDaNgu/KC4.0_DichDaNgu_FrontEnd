@@ -74,7 +74,7 @@ def get_doc_file_meta(doc_file: File):
 
 def get_txt_file_meta(txt_file: File):
 
-    full_text = (txt_file.body.decode('utf-16'))
+    full_text = (txt_file.body.decode('utf-8', 'ignore'))
 
     sentences = re.split('[;.?!。]', full_text)
 
