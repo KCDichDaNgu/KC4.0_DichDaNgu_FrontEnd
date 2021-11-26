@@ -27,9 +27,15 @@ class CheckSpeechRecognitionResponse(BaseModel):
     class Config:
         use_enum_values = True
 
-class ResultSpeechRecognitionResponse(BaseModel):
+class TextResultSpeechRecognitionResponse(BaseModel):
 
     text: Any
+
+    class Config:
+        use_enum_values = True
+class ResultSpeechRecognitionResponse(BaseModel):
+
+    result: Any
 
     class Config:
         use_enum_values = True
@@ -60,7 +66,7 @@ class SpeechRecognitor(SpeechRecognitorPort):
                 'config': (None, '{\n"type": "transcription",\n"transcription_config": {\n"language": "en"\n}\n}'),
             }
 
-            response = requests.post('http://192.168.1.4:8082/v2/jobs', files=files,data=payload)
+            response = requests.post(PUBLIC_SPEECH_RECOGNITION_API_URL, files=files,data=payload)
 
             result = (response.json())["id"]
 
@@ -90,7 +96,7 @@ class SpeechRecognitor(SpeechRecognitorPort):
 
                     return CheckSpeechRecognitionResponse(status=result)
 
-    async def fetch_result(
+    async def fetch_text_result(
         self, 
         job_id: str, 
         session: aiohttp.ClientSession = None,
@@ -104,9 +110,29 @@ class SpeechRecognitor(SpeechRecognitorPort):
                     async with session.get(f'{PUBLIC_SPEECH_RECOGNITION_API_URL}/{job_id}/transcript?format=txt') as response:
                         
                         text = await response.text()
-                        return ResultSpeechRecognitionResponse(text=text)
+                        return TextResultSpeechRecognitionResponse(text=text)
 
             else:
                 async with session.get(f'{PUBLIC_SPEECH_RECOGNITION_API_URL}/{job_id}/transcript?format=txt') as response:
                     text = await response.text()
-                    return ResultSpeechRecognitionResponse(text=text)
+                    return TextResultSpeechRecognitionResponse(text=text)
+
+    async def fetch_result(
+        self, 
+        job_id: str, 
+        session: aiohttp.ClientSession = None,
+        public_request: bool = True
+    ):
+
+        if public_request:
+            if not session:
+
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(f'{PUBLIC_SPEECH_RECOGNITION_API_URL}/{job_id}/transcript') as response:
+                        result = await response.json()
+                        return ResultSpeechRecognitionResponse(result=result['results'])
+
+            else:
+                async with session.get(f'{PUBLIC_SPEECH_RECOGNITION_API_URL}/{job_id}/transcript') as response:
+                    result = await response.json()
+                    return ResultSpeechRecognitionResponse(result=result['results'])
