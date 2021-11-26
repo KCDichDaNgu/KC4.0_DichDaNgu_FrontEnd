@@ -49,10 +49,17 @@ async def save_dialogue_group_by_speaker(data, path):
 async def save_txt_dialogue_from_json(dialogue, path):
     
     async with aiofiles.open(path, 'w+') as f:
-
-        for line in dialogue:
-            new_line = 'User {user} ({start_time}s - {end_time}s): {content}\n'.format(user=line['user'], start_time=line['start_time'], end_time=line['end_time'], content=line['content'])
+        
+        if len(dialogue) == 1: 
+            line = dialogue[0]
             
+            new_line = line['content']            
             await f.write(new_line)
+            
+        else:
+            for line in dialogue:
+                new_line = 'User {user} ({start_time}s - {end_time}s): {content}\n'.format(user=line['user'], start_time=line['start_time'], end_time=line['end_time'], content=line['content'])
+                
+                await f.write(new_line)
         
         f.close()   
