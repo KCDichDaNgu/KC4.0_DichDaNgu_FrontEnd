@@ -116,7 +116,7 @@ const recursiveCheckStatus = async (translationHistoryId, taskId, time) => {
 				// } else {
 				// reject('Time Out');
 				// }
-			}, 1000);
+			}, 200);
 		});
 	} else {
 		return getTranslationHistoryResult;

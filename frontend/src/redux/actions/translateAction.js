@@ -204,7 +204,7 @@ const recursiveCheckStatus = async (translationHistoryId, taskId, time) => {
 				} catch (e) {
 					reject(e);
 				}
-			}, 1000);
+			}, 200);
 		});
 	} else {
 		return getTranslationHistoryResult;
