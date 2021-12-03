@@ -12,36 +12,36 @@ const authHoc = (WrappedComponent) => {
 		const dispatch = useDispatch();
 		const history = useHistory();
 
+		const redirectToLogin = () => {
+			if (history.location.pathname !== '/translate') {
+				history.push('/login');
+			}
+			else setRenderCom(true);
 
-
+			dispatch(changeIsLogin(false));
+			localStorage.clear();
+		};
 
 		useEffect(() => {
 			const acc_token = localStorage.getItem(ACCESS_TOKEN);
-		
+
 			if (!acc_token) {
-				history.push('/login');
-				dispatch(changeIsLogin(false));
-				localStorage.clear();
-				return;
+				redirectToLogin();
+				// return;
 			}
 
 			const getMe = async () => {
-
 				try {
 					const result = await axiosHelper.getMe();
+
 					if (!result.data.username) {
-						history.push('/login');
-						dispatch(changeIsLogin(false));
-						localStorage.clear();
-						return;
+						redirectToLogin();
+						// return;
 					}
 				}
-
 				catch (e) {
-					history.push('/login');
-					dispatch(changeIsLogin(false));
-					localStorage.clear();
-					return;
+					redirectToLogin();
+					// return;
 				}
 			};
 
@@ -50,9 +50,11 @@ const authHoc = (WrappedComponent) => {
 			setRenderCom(true);
 		}, []);
 
-		return <div>
-			{renderCom && <WrappedComponent {...props}>{children}</WrappedComponent>}
-		</div>;
+		return (
+			<div>
+				{renderCom && <WrappedComponent {...props}>{children}</WrappedComponent>}
+			</div>
+		);
 	};
 
 	return FuncComponent;

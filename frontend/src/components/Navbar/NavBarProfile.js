@@ -16,24 +16,31 @@ function NavBarProfile(props) {
 
 	const [anchorEl, setAnchorEl] = useState(null);
 	const open = Boolean(anchorEl);
+
 	const handleClick = (event) => {
 		setAnchorEl(event.currentTarget);
 	};
+
 	const handleClose = () => {
 		setAnchorEl(null);
+	};
+
+	const redirectToLogin = () => {
+		props.setIsSignIn(false);
+		localStorage.clear();
+
+		if (history.location.pathname !== '/translate') {
+			history.push('/login');
+		}
 	};
 
 	const signOut = async () => {
 		try {
 			await axiosHelper.SignOut();
-			props.setIsSignIn(false);
-			localStorage.clear();
-			history.push('/login');
+			redirectToLogin();
 		}
-		catch(e) {
-			props.setIsSignIn(false);
-			localStorage.clear();
-			history.push('/login');
+		catch (e) {
+			redirectToLogin();
 		}
 	};
 
