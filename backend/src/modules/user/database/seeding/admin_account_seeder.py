@@ -43,10 +43,10 @@ class AdminAccountSeeder(BaseSeeder):
                         'vi-lo': 0,
                     },
                     'text_translation_quota':{
-                        'vi-zh': 1000,
-                        'vi-en': 1000,
-                        'vi-km': 1000,
-                        'vi-lo': 1000,
+                        'vi-zh': 100000,
+                        'vi-en': 100000,
+                        'vi-km': 100000,
+                        'vi-lo': 100000,
                     },
                     'created_at': datetime.now(),
                     'updated_at': datetime.now()

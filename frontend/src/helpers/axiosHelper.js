@@ -107,7 +107,7 @@ export const updateUserQuota = (body) => {
 	});
 };
 
-export const downloadFile = (url, file_type) => {
+export const downloadFile = (file, url, file_type) => {
 	axios({
 		url: SERVER_URL + url,
 		method: 'GET',
@@ -115,7 +115,10 @@ export const downloadFile = (url, file_type) => {
 	}).then((response) => {
 		const url = window.URL.createObjectURL(new Blob([response.data]));
 		const link = document.createElement('a');
-		const file_name = file_type == 'txt' ? 'file.txt' : 'file.docx';
+		let file_name = file.name;
+		if (!file.name) {
+			file_name = `file.${file_type}`;
+		}
 		link.href = url;
 		link.setAttribute('download', file_name);
 		document.body.appendChild(link);

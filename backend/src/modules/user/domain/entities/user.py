@@ -31,5 +31,4 @@ class UserEntity(Entity[UserProps]):
         return get_args(self.__orig_bases__[0])[0]
 
     def validate_password(self, password):
-        print(password)
         return password == self.props.password

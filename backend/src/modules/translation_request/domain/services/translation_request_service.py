@@ -31,7 +31,7 @@ from infrastructure.configs.main import StatusCodeEnum, get_mongodb_instance
 from modules.translation_request.commands.create_file_translation_request.command import CreateFileTranslationRequestCommand
 from infrastructure.configs.translation_task import FileTranslationTask_LangUnknownResultFileSchemaV1, FileTranslationTask_NotYetTranslatedResultFileSchemaV1
 
-from core.utils.file import extract_file_extension, get_doc_file_meta
+from core.utils.file import extract_file_extension, get_doc_file_meta, get_presentation_file_meta, get_worksheet_file_meta
 
 TEXT_TRANSLATION_TASKS = [
     TranslationTaskNameEnum.private_plain_text_translation.value, 
@@ -144,18 +144,24 @@ class TranslationRequestDService():
             )
         )  
         original_file_ext = extract_file_extension(command.source_file.name)
-
-        binary_doc, total_paragraphs = (None, 0)
+        binary_doc, total_paragraphs, total_slides, total_sheets= (None, 0, 0, 0)
 
         if original_file_ext == 'docx':
 
             binary_doc, total_paragraphs, sentence_count = get_doc_file_meta(command.source_file)
-
-            create_files_result = await new_task_result_entity.create_required_files_for_docx_file_translation_task(binary_doc, original_file_ext)
-
+            create_files_result = await new_task_result_entity.create_required_files_for_file_translation_task(binary_doc, original_file_ext)
+        
+        elif original_file_ext == 'pptx':
+            
+            binary_presentation, total_paragraphs, total_slides, sentence_count = get_presentation_file_meta(command.source_file)
+            create_files_result = await new_task_result_entity.create_required_files_for_file_translation_task(binary_presentation, original_file_ext)
+        
+        elif original_file_ext == 'xlsx':
+            binary_worksheet, total_sheets, total_cells, sentence_count = get_worksheet_file_meta(command.source_file)
+            create_files_result = await new_task_result_entity.create_required_files_for_file_translation_task(binary_worksheet, original_file_ext)
         else:
             create_files_result = await new_task_result_entity.create_required_files_for_txt_file_translation_task(command.source_file)
-
+        
         if command.source_lang in LanguageEnum.enum_values() and command.source_lang != 'unknown':
 
             saved_content = FileTranslationTask_NotYetTranslatedResultFileSchemaV1(
@@ -165,9 +171,15 @@ class TranslationRequestDService():
                 file_type=original_file_ext,
                 statistic=dict(
                     total_paragraphs=total_paragraphs,
+                    total_slides=total_slides,
+                    total_sheets=total_sheets,
                 ),
                 current_progress=dict(
-                    processed_paragraph_index=-1
+                    processed_paragraph_index=-1,
+                    processed_slide_index=-1,
+                    processed_sheet_index=-1,
+                    last_row= 1,
+                    last_col= 0
                 ),
                 source_lang=command.source_lang,
                 target_lang=command.target_lang,
@@ -183,9 +195,15 @@ class TranslationRequestDService():
                 file_type=original_file_ext,
                 statistic=dict(
                     total_paragraphs=total_paragraphs,
+                    total_slides=total_slides,
+                    total_sheets=total_sheets,
                 ),
                 current_progress=dict(
-                    processed_paragraph_index=-1
+                    processed_paragraph_index=-1,
+                    processed_slide_index=-1,
+                    processed_sheet_index=-1,
+                    last_row= 1,
+                    last_col= 0
                 ),
                 target_lang=command.target_lang,
                 task_name=TranslationTaskNameEnum.public_file_translation.value
@@ -206,7 +224,7 @@ class TranslationRequestDService():
                     file_path=new_task_result_entity.props.file_path
                 )
             )
-            
+
             async with self.__db_instance.session() as session:
                 async with session.start_transaction():
 
@@ -214,12 +232,12 @@ class TranslationRequestDService():
                         new_request
                     )
 
-                    await self.__translation_request_result_repository.create(
+                    create_request_result = await self.__translation_request_result_repository.create(
                         new_task_result_entity
                     )
                     
                     created_translation_record = await self.__translation_history_repository.create(
                         new_translation_history_entity
                     )
-                    
+
                     return created_request, created_translation_record

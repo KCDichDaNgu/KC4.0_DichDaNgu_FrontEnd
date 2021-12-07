@@ -8,6 +8,8 @@ def init_background_tasks(config: GlobalConfig):
     from modules.background_tasks.translate_plain_text_created_by_public_request.translate_content.main import main as translate_content_for_plain_text_in_public_request
     from modules.background_tasks.translate_file_created_by_public_request.translate_content.main import main as translate_content_for_file_in_public_request
     from modules.background_tasks.translate_file_created_by_public_request.translate_txt_file.main import main as translate_txt_file_for_file_in_public_request
+    from modules.background_tasks.translate_pptx_file.translate_content.main import main as translate_pptx_file
+    from modules.background_tasks.translate_xlsx_file.translate_content.main import main as translate_xlsx_file
    
 
     from modules.background_tasks.detect_plain_text_language_created_by_public_request.main import main as detect_plain_text_language_created_by_public_request
@@ -100,4 +102,22 @@ def init_background_tasks(config: GlobalConfig):
         id=background_task_9_conf.ID,
         trigger=background_task_9_conf.TRIGGER,
         **background_task_9_conf.CONFIG
+    )
+    
+    background_task_10_conf = BACKGROUND_TASKS['translate_pptx_file_in_public_request.translate_content']
+ 
+    new_background_task_scheduler.add_job(
+        translate_pptx_file,
+        id=background_task_10_conf.ID,
+        trigger=background_task_10_conf.TRIGGER,
+        **background_task_10_conf.CONFIG
+    )
+    
+    background_task_11_conf = BACKGROUND_TASKS['translate_xlsx_file_in_public_request.translate_content']
+ 
+    new_background_task_scheduler.add_job(
+        translate_xlsx_file,
+        id=background_task_11_conf.ID,
+        trigger=background_task_11_conf.TRIGGER,
+        **background_task_11_conf.CONFIG
     )

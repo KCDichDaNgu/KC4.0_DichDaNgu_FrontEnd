@@ -20,3 +20,5 @@ numpy
 python-docx
 requests
 motor
+python-pptx
+openpyxl
