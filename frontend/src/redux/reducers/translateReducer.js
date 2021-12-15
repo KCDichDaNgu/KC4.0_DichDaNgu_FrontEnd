@@ -77,7 +77,7 @@ export default function(state = initialState, action) {
 			currentState: STATE.SUCCESS,
 			translateCode: {
 				...state.translateCode,
-				// detectLang: action.payload.detectLang,
+				detectLang: action.payload.detectLang,
 				sourceLang: action.payload.detectLang,
 			},
 			translateText: {
@@ -129,6 +129,7 @@ export default function(state = initialState, action) {
 	case CHANGE_SOURCE_TEXT: {
 		return {
 			...state,
+			currentState: STATE.INIT,
 			translateText: {
 				...state.translateText,
 				sourceText: action.payload.data,

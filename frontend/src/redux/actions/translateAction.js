@@ -300,6 +300,7 @@ const debouncedTranslateAndDetect = debounce(async (body, dispatch) => {
 				dispatch(detectLangFailed(getDetectResult.message, getDetectResult.source_lang));
 			} else {
 				// Sử dụng ngôn ngữ phát hiện được và dịch
+				dispatch(detectLangSuccess({target_text: '', source_lang: getDetectResult.source_lang}));
 				const postTranslationResult = await axiosHelper.postTranslate({
 					...body,
 					sourceLang: getDetectResult.source_lang,

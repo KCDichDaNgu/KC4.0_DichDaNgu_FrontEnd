@@ -44,7 +44,7 @@ function Index(props) {
 		case STATE.SUCCESS:
 			break;
 		case STATE.FAILURE:
-			toastError(translationState.err);
+			// toastError(translationState.err);
 			break;
 		default:
 			break;
@@ -75,7 +75,7 @@ function Index(props) {
 	};
 
 	const isDetectInfoShow = () =>{ 
-		return getIsAdmin() && translateType === TRANSLATE_TYPE.plainText;
+		return getIsAdmin() && translateType === TRANSLATE_TYPE.plainText && (translationState.translateCode.sourceLang == null || translationState.translateCode.detectLang != null);
 	};
 
 	const renderOutput = () => {

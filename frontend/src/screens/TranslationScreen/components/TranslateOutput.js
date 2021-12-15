@@ -29,6 +29,9 @@ function TranslateInput(props) {
 		if(translationState.translateText.sourceText === '' && translateType === TRANSLATE_TYPE.plainText) {
 			return true;
 		}
+		if ((translationState.translateCode.sourceLang == null || translationState.translateCode.detectLang != null) && translationState.currentState == STATE.FAILURE) {
+			return true;
+		};
 		return false;
 	};
 
