@@ -98,6 +98,23 @@ function TranslationChooselang(props) {
 		return translationState.currentState === STATE.LOADING || translationFileState.currentState === STATE.LOADING;
 	};
 
+	const isDetectFail = () => {
+		return (translationState.translateCode.detectLang !== null || translationState.currentState === STATE.FAILURE);
+	};
+
+	const renderDetectLabel = () => {
+		if (translationState.translateCode.detectLang == null) {
+			if (translationState.currentState === STATE.FAILURE)
+				return (
+					<Typography color={showColorText()}>Không thể nhận diện ngôn ngữ</Typography>
+				); 
+			else return null;
+		}
+		else return (
+			<Typography color={showColorText()}>Ngôn ngữ phát hiện: {t(translationState.translateCode.detectLang)}</Typography>
+		);
+	};
+
 	return (
 		<div style={{ borderBottom: '1px solid #ccc', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }} >
 			{/* ChooseLang */}
@@ -115,13 +132,10 @@ function TranslationChooselang(props) {
 				>
 					{translateType === TRANSLATE_TYPE.plainText ?
 						<Tab
-							icon={translationState.translateCode.detectLang ?
+							icon={isDetectFail() ?
 								null :
 								<Tooltip title={t('Translate.phathienngonngu')}><PageviewIcon fontSize='medium' /></Tooltip>}
-							label={translationState.translateCode.detectLang ?
-								<Typography color={showColorText()}>Ngôn ngữ phát hiện: {t(translationState.translateCode.detectLang)}</Typography> :
-								null
-							}
+							label={renderDetectLabel()}
 							sx={{
 								minWidth: 'auto',
 								minHeight: 'auto',
