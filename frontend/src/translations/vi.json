@@ -118,5 +118,6 @@
 	"ViLo": "Việt - Lào",
 	"ViKm": "Việt - Khơme",
 	"inactive_user": "Tài khoản người dùng không hoạt động",
-	"no_access_media": "Không có quyền truy cập thiết bị truyền thông"
+	"no_access_media": "Không có quyền truy cập thiết bị truyền thông",
+	"detectAndTranslate": "Phát hiện và dịch"
 }

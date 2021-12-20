@@ -58,6 +58,10 @@ function TranslateInput(props) {
 		}
 	};
 
+	const isDetect = () =>{ 
+		return translateType === TRANSLATE_TYPE.plainText && (translationState.translateCode.sourceLang == null || translationState.translateCode.detectLang != null);
+	};
+
 	return (
 		<Col 
 			md={6} 
@@ -96,7 +100,7 @@ function TranslateInput(props) {
 						disabled={isDisableTranslateButton()}
 						style={{ fontWeight: 'bold', display: 'flex'}}
 					>
-						{t('dich')}
+						{isDetect() ? t('detectAndTranslate') : t('dich')}
 					</LoadingButton>
 				</div>	
 			}

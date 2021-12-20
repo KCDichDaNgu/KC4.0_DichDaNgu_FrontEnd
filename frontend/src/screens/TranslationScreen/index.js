@@ -158,7 +158,7 @@ function Index(props) {
 						<KeyboardArrowUpIcon />
 					</Fab>
 				</ScrollTop>
-				{isDetectInfoShow() && `Ngôn ngữ được detect: ${translationState.translateCode.sourceLang}`}
+				{isDetectInfoShow() && `Ngôn ngữ được detect: ${translationState.translateCode.detectLang}`}
 			</div>
 		</>
 	);

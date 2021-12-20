@@ -5,6 +5,7 @@ import {
 	DETECTLANG,
 	DETECTLANG_FAIL,
 	DETECTLANG_SUCCESS,
+	TRANSLATE_AFTER_DETECTLANG_SUCCESS,
 	CHANGE_SOURCE, 
 	CHANGE_TARGET,
 	SWAP_TRANSLATE,
@@ -27,7 +28,7 @@ const initialState = {
 	currentState: STATE.INIT,
 	translateCode: {
 		detectLang: null,
-		sourceLang: 'en',
+		sourceLang: null,
 		targetLang: 'vi',
 	},
 	translateText: {
@@ -74,11 +75,21 @@ export default function(state = initialState, action) {
 	case DETECTLANG_SUCCESS: {
 		return {
 			...state,
-			currentState: STATE.SUCCESS,
+			currentState: STATE.LOADING,
 			translateCode: {
 				...state.translateCode,
 				detectLang: action.payload.detectLang,
 				sourceLang: action.payload.detectLang,
+			}
+		};
+	}
+	case TRANSLATE_AFTER_DETECTLANG_SUCCESS: {
+		return {
+			...state,
+			currentState: STATE.SUCCESS,
+			translateCode: {
+				...state.translateCode,
+				sourceLang: null,
 			},
 			translateText: {
 				...state.translateText,
