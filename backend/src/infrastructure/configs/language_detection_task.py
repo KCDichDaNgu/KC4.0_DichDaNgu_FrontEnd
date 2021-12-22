@@ -105,7 +105,7 @@ class FileLanguageDetectionTask_LangUnknownResultFileSchemaV1(BaseModel):
 
     source_file_full_path: str
     source_lang: Union[LanguageEnum, None] = Field(None, allow_mutation=False) 
-
+    file_type: str
     task_name: LanguageDetectionTaskNameEnum
 
     status: str = Field(RESULT_FILE_STATUS['language_not_yet_detected'], allow_mutation=False) 
@@ -121,7 +121,7 @@ class FileLanguageDetectionTask_LanguageDetectionClosedResultFileSchemaV1(BaseMo
 
     source_file_full_path: str
     source_lang: LanguageEnum
-
+    file_type: str
     task_name: LanguageDetectionTaskNameEnum
 
     status: str = Field(RESULT_FILE_STATUS['closed'], allow_mutation=False) 
@@ -137,7 +137,7 @@ class FileLanguageDetectionTask_LanguageDetectionCompletedResultFileSchemaV1(Bas
 
     source_file_full_path: str
     source_lang: LanguageEnum
-
+    file_type: str
     task_name: LanguageDetectionTaskNameEnum 
     
     status: str = Field(RESULT_FILE_STATUS['language_detected'], allow_mutation=False) 

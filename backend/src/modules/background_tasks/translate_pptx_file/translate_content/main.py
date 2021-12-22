@@ -101,7 +101,7 @@ async def read_task_result(
 
         trans_history = list(filter(lambda ts: ts.props.task_id.value == task_id, translations_history))[0]
 
-        if data['file_type'] != 'pptx':
+        if data['file_type'] == 'pptx':
 
             invalid_tasks_mapper[task_id] = {
                 'task_result': task_result,

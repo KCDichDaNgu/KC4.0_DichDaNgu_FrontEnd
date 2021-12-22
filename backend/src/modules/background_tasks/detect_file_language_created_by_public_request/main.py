@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from docx.api import Document
+from core.utils.file import get_presentation_full_text, get_worksheet_full_text
 from infrastructure.configs.message import MESSAGES
 from infrastructure.configs.language_detection_task import FileLanguageDetectionTask_LangUnknownResultFileSchemaV1, FileLanguageDetectionTask_LanguageDetectionClosedResultFileSchemaV1, FileLanguageDetectionTask_LanguageDetectionCompletedResultFileSchemaV1, LanguageDetectionTask_LanguageDetectionClosedResultFileSchemaV1
 from infrastructure.configs.language import LanguageEnum
@@ -70,7 +71,8 @@ async def read_task_result(
             
             if data['status'] == FileLanguageDetectionTask_LangUnknownResultFileSchemaV1(
                 source_file_full_path='',
-                task_name=LanguageDetectionTaskNameEnum.public_file_language_detection.value
+                task_name=LanguageDetectionTaskNameEnum.public_file_language_detection.value,
+                file_type=''
             ).status:
 
                 valid_tasks_mapper[task_id] = {
@@ -247,15 +249,36 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
         api_requests = []
 
         for task_id in tasks_id:
-            
-            source_file_full_path = valid_tasks_mapper[task_id]['task_result_content']['source_file_full_path']
-
-            doc = Document(source_file_full_path)
+            task_result_content = valid_tasks_mapper[task_id]['task_result_content']
+            source_file_full_path = task_result_content['source_file_full_path']
+            file_type = task_result_content['file_type']
             source_text = ''
             
-            for paragraph in doc.paragraphs:
-                source_text = source_text + paragraph.text
-            
+            try:
+                if file_type == 'docx':
+                    doc = Document(source_file_full_path)
+                    
+                    for paragraph in doc.paragraphs:
+                        source_text = source_text + paragraph.text
+                elif file_type == 'txt':
+                    try:
+
+                        original_file = open(source_file_full_path, mode='r',encoding="utf-16", errors="ignore")
+                        source_text = original_file.read()
+
+                    except Exception as e:
+                        original_file = open(source_file_full_path, mode='r',encoding="utf-8", errors="ignore")
+                        source_text = original_file.read()
+                        
+                elif file_type == 'pptx':
+                    source_text = get_presentation_full_text(source_file_full_path)
+                    
+                elif file_type == 'xlsx':
+                    source_text = get_worksheet_full_text(source_file_full_path)
+                    
+            except Exception as e:
+                print(e)
+
             api_requests.append(
                 languageDetector.detect(
                     text=source_text, 
@@ -283,6 +306,7 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                         new_saved_content = FileLanguageDetectionTask_LanguageDetectionClosedResultFileSchemaV1(
                             source_file_full_path=task_result_content['source_file_full_path'],
                             source_lang=api_result.lang,
+                            file_type=task_result_content['file_type'],
                             message=MESSAGES['content_language_is_not_supported'],
                             task_name=LanguageDetectionTaskNameEnum.public_plain_text_language_detection.value
                         )
@@ -322,6 +346,7 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                         new_saved_content = FileLanguageDetectionTask_LanguageDetectionCompletedResultFileSchemaV1(
                             source_file_full_path=task_result_content['source_file_full_path'],
                             source_lang=api_result.lang,
+                            file_type=task_result_content['file_type'],
                             task_name=LanguageDetectionTaskNameEnum.public_plain_text_language_detection.value
                         )
 
