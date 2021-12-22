@@ -225,6 +225,31 @@ export const translateFile = (body) => {
 	});
 };
 
+export const detectLangFile = (body) => {
+
+	return new Promise((resolve, reject) => {
+		axiosDefault({
+			headers: {
+				'Content-Type': 'multipart/form-data',
+			},
+			method: 'POST',
+			url: 'detect-f-lang',
+			data: body,
+		})
+			.then((result) => {
+				resolve(result.data);
+			})
+			.catch((error) => {
+				if (error.response.data.message == 'text_translate_limit_reached') {
+					const { used, quota } = error.response.data.data;
+					const { message } = error.response.data;
+					toastInformLimitReached(message, used, quota, 'text');
+				}
+				reject(error);
+			});
+	});
+};
+
 // sample data
 // { "sourceText": "string", "sourceLang": "zh", "targetLang": "zh"
 export const postTranslate = (body) => {

@@ -130,20 +130,19 @@ function TranslationChooselang(props) {
 						},
 					}}
 				>
-					{translateType === TRANSLATE_TYPE.plainText ?
-						<Tab
-							icon={isDetectFail() ?
-								null :
-								<Tooltip title={t('Translate.phathienngonngu')}><PageviewIcon fontSize='medium' /></Tooltip>}
-							label={renderDetectLabel()}
-							sx={{
-								minWidth: 'auto',
-								minHeight: 'auto',
-							}}
-							value={'detect'}
-							disabled={isDisableTab()}
-							style={{ fontWeight: 'bold' }}
-						/> : null}
+					<Tab
+						icon={isDetectFail() ?
+							null :
+							<Tooltip title={t('Translate.phathienngonngu')}><PageviewIcon fontSize='medium' /></Tooltip>}
+						label={renderDetectLabel()}
+						sx={{
+							minWidth: 'auto',
+							minHeight: 'auto',
+						}}
+						value={'detect'}
+						disabled={isDisableTab()}
+						style={{ fontWeight: 'bold' }}
+					/> 
 					{translationState.isSwap ? <Tab label={t('Translate.listLanguage.anh')} value={'en'} disabled={isDisableTab()} style={{ fontWeight: 'bold' }} /> : null}
 					{translationState.isSwap ? <Tab label={t('Translate.listLanguage.trung')} value={'zh'} disabled={isDisableTab()} style={{ fontWeight: 'bold' }} /> : null}
 					{translationState.isSwap ? <Tab label={t('Translate.listLanguage.lao')} value={'lo'} disabled={isDisableTab()} style={{ fontWeight: 'bold' }} /> : null}

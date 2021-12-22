@@ -4,7 +4,7 @@ import {
 	Col,
 } from 'react-bootstrap';
 import { Button } from '@mui/material';
-import { translateFileDocumentAsync } from '../../../redux/actions/translateFileAction';
+import { translateFileDocumentAsync, translationAndDetectFileAsync } from '../../../redux/actions/translateFileAction';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { STATE } from '../../../redux/reducers/translateFileReducer';
 import { useTranslation } from 'react-i18next';
@@ -24,11 +24,18 @@ function TranslateFileDocumentOutput(props) {
 	* 2. Còn lại thì dịch vs 2 TH => sourcelang === null (Nhận dạng ngôn ngữ) và sourcelang === vi,cn .. 
  	*/
 	const handleTranslate = () => {
-		const formData = new FormData();
-		formData.append('file', translationFileState.documentFile);
-		formData.append('sourceLang', translationState.translateCode.sourceLang);
-		formData.append('targetLang', translationState.translateCode.targetLang);
-		props.translateFileDocumentAsync(formData);
+		if(translationState.translateCode.sourceLang){
+			const formData = new FormData();
+			formData.append('file', translationFileState.documentFile);
+			formData.append('sourceLang', translationState.translateCode.sourceLang);
+			formData.append('targetLang', translationState.translateCode.targetLang);
+			props.translateFileDocumentAsync(formData);
+		} else {
+			props.translationAndDetectFileAsync({
+				sourceFile: translationFileState.documentFile,
+				targetLang: translationState.translateCode.targetLang,
+			});
+		}
 	};
 
 	const isDisableTranslateButton = () => {
@@ -38,10 +45,14 @@ function TranslateFileDocumentOutput(props) {
 		if(translationFileState.documentFile === null && !props.isTranslate) {
 			return true;
 		}
-		if(translationState.translateCode.sourceLang === null) {
-			return true;
-		}
+		// if(translationState.translateCode.sourceLang === null) {
+		// 	return true;
+		// }
 		return false;
+	};
+
+	const isDetect = () =>{ 
+		return (translationState.translateCode.sourceLang == null || translationState.translateCode.detectLang != null);
 	};
 
 	const buttonTextDich = () => {
@@ -89,7 +100,7 @@ function TranslateFileDocumentOutput(props) {
 						disabled={isDisableTranslateButton()}
 						style={{ fontWeight: 'bold', display: 'flex'}}
 					>
-						{t('dich')}
+						{isDetect() ? t('detectAndTranslate') : t('dich')}
 					</LoadingButton>}
 			</div>
 		</Col>
@@ -101,6 +112,7 @@ TranslateFileDocumentOutput.propTypes = {
 	translationState: PropTypes.object,
 	translationFileState: PropTypes.object,
 	translateFileDocumentAsync: PropTypes.func,
+	translationAndDetectFileAsync: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({ 
@@ -110,6 +122,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = { 
 	translateFileDocumentAsync,
+	translationAndDetectFileAsync
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TranslateFileDocumentOutput);

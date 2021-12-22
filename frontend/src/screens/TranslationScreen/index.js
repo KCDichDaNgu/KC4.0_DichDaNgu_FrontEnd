@@ -118,7 +118,7 @@ function Index(props) {
 					<Button
 						onClick={() => {
 							setTranslateType(TRANSLATE_TYPE.document);
-							if (props.translationState.translateCode.sourceLang === null) props.changeSource('en');
+							// if (props.translationState.translateCode.sourceLang === null) props.changeSource('en');
 							// props.changeTargetText('');
 							// props.changeSourceText('');
 							// props.changeOutput(null);

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {
 	TRANSLATEFILE_SUCCESS,
 	TRANSLATEFILE_FAIL,
@@ -5,10 +6,15 @@ import {
 	TRANSLATEFILE,
 	CHANGE_FILE_DOCUMENT,
 	CHANGE_OUTPUT,
-	CHANGE_OUTPUT_DOCUMENT
+	CHANGE_OUTPUT_DOCUMENT,
+	DETECTLANG_FILE,
+	DETECTLANG_FILE_FAIL,
+	DETECTLANG_FILE_SUCCESS,
+	TRANSLATE_AFTER_DETECTLANG_FILE_SUCCESS
 } from '../constant/translateFileTypes';
 import * as axiosHelper from '../../helpers/axiosHelper';
 import { debounce } from 'lodash';
+import { detectLangFailed, detectLangSuccess, translateAfterDetectLangSuccess } from './translateAction';
 
 const STATUS = {
 	TRANSLATING: 'translating',
@@ -16,6 +22,7 @@ const STATUS = {
 	CONVERTING: 'converting',
 	CONVERTED: 'converted',
 	CANCELLED: 'cancelled',
+	DETECTING: 'detecting'
 };
 
 /**
@@ -90,12 +97,66 @@ export function translationFileFailed(err) {
 	};
 }
 
+export function detectLangFile(err) {
+	return {
+		type: DETECTLANG_FILE
+	};
+}
+export function translateAfterDetectLangFileSuccess() {
+	return {
+		type: TRANSLATE_AFTER_DETECTLANG_FILE_SUCCESS
+	};
+}
+
+export function detectLangFileFailed(err, detectLang) {
+	return {
+	  type: DETECTLANG_FILE_FAIL,
+	  payload: {
+			detectLang,
+			err,
+		}
+	};
+}
+
+export function detectLangFileSuccess(data) {
+	return {
+	  type: DETECTLANG_FILE_SUCCESS,
+	  payload: {
+			detectLang: data.source_lang,
+		}
+	};
+}
+
+
+
 /**
  * @description Do BE bắt fai kiểm tra status 
  * nên sẽ gọi lại API khi nào status được dịch.
  * Đặt thời gian mỗi lần gọi lại API 
  * ! => tránh việc gọi liên tục và ko cần thiết
  */
+const recursiveDetectionCheckStatus = async (translationHistoryId, taskId, time) => {
+	const getDetectionHistoryResult = await axiosHelper.getDetectionHistoryGetSingle({
+		translationHistoryId,
+		taskId,
+	});
+
+	if (getDetectionHistoryResult.data.status === STATUS.DETECTING) {
+		return new Promise((resolve, reject) => {
+			setTimeout(async () => {
+				try {
+					const getDetectionHistoryResult = await recursiveDetectionCheckStatus(translationHistoryId, taskId, time);
+					resolve(getDetectionHistoryResult);
+				} catch (e) {
+					reject(e);
+				}
+			}, 200);
+		});
+	} else {
+		return getDetectionHistoryResult;
+	}
+};
+
 const recursiveCheckStatus = async (translationHistoryId, taskId, time) => {
 	const getTranslationHistoryResult = await axiosHelper.getTranslateHistoryGetSingle({
 		translationHistoryId,
@@ -151,9 +212,70 @@ const debouncedTranslationFile = debounce(async (body, dispatch) => {
 	}
 }, 0);
 
+const debouncedTranslateAndDetectFile = debounce(async (body, dispatch) => {
+	try {
+		let time = 1;
+		// Phát hiện ngôn ngữ
+		const formData = new FormData();
+		formData.append('file', body.sourceFile);
+		const getDetectLangInstant = await axiosHelper.detectLangFile(formData);
+		const getSourceLang = await recursiveDetectionCheckStatus(
+			getDetectLangInstant.data.translationHitoryId, 
+			getDetectLangInstant.data.taskId, 
+			time
+		); 
+	
+		if(getSourceLang.message === 'Time Out'){
+			dispatch(detectLangFileFailed(getSourceLang.message, 'unknown'));
+			dispatch(detectLangFailed(getSourceLang.message, 'unknown'));
+		} else {
+			const getDetectResult = await axiosHelper.getTranslateResult(getSourceLang.data.resultUrl);
+			if (getDetectResult.status === 'closed'){
+				dispatch(detectLangFileFailed(getDetectResult.message, getDetectResult.source_lang));
+				dispatch(detectLangFailed(getDetectResult.message, getDetectResult.source_lang));
+			} else {
+				// Sử dụng ngôn ngữ phát hiện được và dịch
+				dispatch(detectLangFileSuccess({source_lang: getDetectResult.source_lang}));
+				dispatch(detectLangSuccess({source_lang: getDetectResult.source_lang}));
+				formData.append('sourceLang', getDetectResult.source_lang);
+				formData.append('targetLang', body.targetLang);
+
+				const postTranslationResult = await axiosHelper.translateFile(formData);
+
+				const getTranslationHistoryResult = await recursiveCheckStatus(
+					postTranslationResult.data.translationHitoryId, 
+					postTranslationResult.data.taskId, 
+					time
+				);
+				if(getTranslationHistoryResult.message === 'Time Out'){
+					dispatch(detectLangFileFailed(getTranslationHistoryResult.message, 'unknown'));
+					dispatch(detectLangFailed(getTranslationHistoryResult.message, 'unknown'));
+				} else {
+					const getTranslationResult = await axiosHelper.getTranslateResult(getTranslationHistoryResult.data.resultUrl);
+					if (getTranslationResult.status === 'closed'){
+						dispatch(detectLangFileFailed(getTranslationResult.message, getTranslationResult.source_lang));
+						dispatch(detectLangFailed(getTranslationResult.message, getTranslationResult.source_lang));
+					} else {
+						dispatch(translationFileDocumentSuccess(getTranslationResult));
+						dispatch(translateAfterDetectLangFileSuccess());
+						dispatch(translateAfterDetectLangSuccess(getTranslationResult));
+					}
+				}
+			}
+		}
+	} catch(error) {
+		dispatch(detectLangFileFailed(error, 'unknown'));
+	}
+}, 0);
+
 export const translateFileDocumentAsync = (body) => (dispatch) => {
 	if (body.get('file') !== null) {
 		dispatch(translationFileLoading());
 		debouncedTranslationFile(body, dispatch);
 	}
+};
+
+export const translationAndDetectFileAsync = (body) => (dispatch) => {
+	dispatch(detectLangFile());
+	debouncedTranslateAndDetectFile(body, dispatch);
 };
