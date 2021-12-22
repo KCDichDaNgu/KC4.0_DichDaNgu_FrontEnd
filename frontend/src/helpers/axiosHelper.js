@@ -187,6 +187,18 @@ export const updateUser = (body) => {
 	});
 };
 
+export const updateUserSelf = (body) => {
+	return new Promise((resolve, reject) => {
+		axiosDefault.put('user', body)
+			.then((result) => {
+				resolve(result.data);
+			})
+			.catch((error) => {
+				reject(error);
+			});
+	});
+};
+
 
 export const RefreshToken = (body) => {
 	return new Promise((resolve, reject) => {
