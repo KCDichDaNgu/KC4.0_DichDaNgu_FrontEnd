@@ -4,7 +4,7 @@ from sanic import response
 
 import io
 from infrastructure.configs.user import TRANSLATION_PAIR_VI_EN, TRANSLATION_PAIR_VI_ZH, TranslationPairEnum
-from core.utils.file import extract_file_extension, get_doc_file_meta, get_txt_file_meta
+from core.utils.file import extract_file_extension, get_doc_file_meta, get_presentation_file_meta, get_txt_file_meta, get_worksheet_file_meta
 from interface_adapters.dtos.base_response import BaseResponse
 from infrastructure.configs.main import GlobalConfig, StatusCodeEnum, get_cnf
 
@@ -125,8 +125,12 @@ class CreateFileTranslationRequest(HTTPMethodView):
 
         if file_ext == 'txt':
             sentence_count = get_txt_file_meta(file)
-        else:
+        elif file_ext == 'docx':
             sentence_count = get_doc_file_meta(file)[2]
+        elif file_ext == 'pptx':
+            sentence_count = get_presentation_file_meta(file)[3]
+        elif file_ext == 'xlsx':
+            sentence_count = get_worksheet_file_meta(file)[3]
 
         user_statistic_result =  await self.__update_user_statistic.update_text_translate_statistic(user.id, pair, sentence_count)
 

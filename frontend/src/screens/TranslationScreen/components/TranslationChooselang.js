@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import Tabs, { tabsClasses } from '@mui/material/Tabs';
-import { IconButton, Tab} from '@mui/material';
+import { Typography, IconButton, Tab, Tooltip } from '@mui/material';
+import PageviewIcon from '@mui/icons-material/Pageview';
 import { STATE } from '../../../redux/reducers/translateFileReducer';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import { useTranslation } from 'react-i18next';
@@ -12,9 +13,11 @@ import {
 	changeTarget,
 	swapTranslate,
 	translationAsync,
+	translationAndDetectAsync,
 	changeSourceText,
 	reset,
 	changeTargetText,
+	changeDetectLang,
 } from '../../../redux/actions/translateAction';
 import { TRANSLATE_TYPE } from '../../../constants/common';
 
@@ -27,7 +30,7 @@ function TranslationChooselang(props) {
 	  */
 	const handleSwap = () => {
 		props.swapTranslate(translationState.translateCode.targetLang, translationState.translateCode.sourceLang);
-		if(translationState.translateText.targetText !== '' && translateType === TRANSLATE_TYPE.plainText){
+		if (translationState.translateText.targetText !== '' && translateType === TRANSLATE_TYPE.plainText) {
 			props.changeSourceText(translationState.translateText.targetText);
 			props.changeTargetText(translationState.translateText.sourceText);
 		}
@@ -38,8 +41,12 @@ function TranslationChooselang(props) {
 	* Trong TH đã có kết quả dịch, sẽ reset kết quả về rỗng
 	  */
 	const handleChangeFrom = (event, newValue) => {
-		props.changeSource(newValue);
+		if (newValue == 'detect') props.changeSource(null);
+		else props.changeSource(newValue);
 		if (translateType === TRANSLATE_TYPE.plainText) {
+			if (translationState.translateCode.detectLang !== null) {
+				props.changeDetectLang(null);
+			}
 			if (translationState.translateText.targetText !== '') {
 				props.changeTargetText('');
 			}
@@ -47,17 +54,7 @@ function TranslationChooselang(props) {
 	};
 
 	/**
-	  * @description Function thay đổi ngôn ngữ target, 2 TH: 
- 	* @description Function thay đổi ngôn ngữ target, 2 TH: 
-	  * @description Function thay đổi ngôn ngữ target, 2 TH: 
- 	* @description Function thay đổi ngôn ngữ target, 2 TH: 
-	  * @description Function thay đổi ngôn ngữ target, 2 TH: 
- 	* @description Function thay đổi ngôn ngữ target, 2 TH: 
-	  * @description Function thay đổi ngôn ngữ target, 2 TH: 
- 	* @description Function thay đổi ngôn ngữ target, 2 TH: 
-	  * @description Function thay đổi ngôn ngữ target, 2 TH: 
- 	* @description Function thay đổi ngôn ngữ target, 2 TH: 
-	  * @description Function thay đổi ngôn ngữ target, 2 TH: 
+			* @description Function thay đổi ngôn ngữ target, 2 TH: 
 	* 1. Có kết quả dịch => reset lại target text => gọi lại hàm dịch.
 	* 2. Ko có kết quả dịch => không gọi lại hàm dịch.
 	  */
@@ -72,13 +69,50 @@ function TranslationChooselang(props) {
 						sourceLang: translationState.translateCode.sourceLang,
 						targetLang: newValue,
 					});
+				} else {
+					props.translationAndDetectAsync({
+						sourceText: translationState.translateText.sourceText,
+						targetLang: newValue,
+					});
 				}
 			}
 		}
 	};
 
+	const showColorText = () => {
+		if (translationState.currentState === STATE.FAILURE) {
+			return '#ff1744';
+		}
+		return null;
+	};
+
+	const returnTabsValue = () => {
+		if (translationState.translateCode.detectLang !== null || translationState.translateCode.sourceLang == null) {
+			return 'detect';
+		}
+		else
+			return translationState.translateCode.sourceLang;
+	};
+
 	const isDisableTab = () => {
 		return translationState.currentState === STATE.LOADING || translationFileState.currentState === STATE.LOADING;
+	};
+
+	const isDetectFail = () => {
+		return (translationState.translateCode.detectLang !== null || translationState.currentState === STATE.FAILURE);
+	};
+
+	const renderDetectLabel = () => {
+		if (translationState.translateCode.detectLang == null) {
+			if (translationState.currentState === STATE.FAILURE)
+				return (
+					<Typography color={showColorText()}>Không thể nhận diện ngôn ngữ</Typography>
+				); 
+			else return null;
+		}
+		else return (
+			<Typography color={showColorText()}>Ngôn ngữ phát hiện: {t(translationState.translateCode.detectLang)}</Typography>
+		);
 	};
 
 	return (
@@ -86,7 +120,7 @@ function TranslationChooselang(props) {
 			{/* ChooseLang */}
 			<div style={{ flex: 1, display: 'flex', overflow: 'auto', whiteSpace: 'nowrap' }}>
 				<Tabs
-					value={translationState.translateCode.sourceLang}
+					value={returnTabsValue()}
 					onChange={handleChangeFrom}
 					variant="scrollable"
 					scrollButtons='auto'
@@ -96,19 +130,32 @@ function TranslationChooselang(props) {
 						},
 					}}
 				>
-					{translationState.isSwap ? <Tab label={t('Translate.listLanguage.anh')} value={'en'} disabled={isDisableTab()} style={{fontWeight: 'bold'}}/> : null}
-					{translationState.isSwap ? <Tab label={t('Translate.listLanguage.trung')} value={'zh'} disabled={isDisableTab()} style={{fontWeight: 'bold'}}/> : null}
-					{translationState.isSwap ? <Tab label={t('Translate.listLanguage.lao')} value={'lo'} disabled={isDisableTab()} style={{fontWeight: 'bold'}}/> : null}
-					{translationState.isSwap ? <Tab label={t('Translate.listLanguage.khome')} value={'km'} disabled={isDisableTab()} style={{fontWeight: 'bold'}}/> : null}
-					{!translationState.isSwap ? <Tab label={t('Translate.listLanguage.viet')} value={'vi'} disabled={isDisableTab()} style={{fontWeight: 'bold'}}/> : null}
+					<Tab
+						icon={isDetectFail() ?
+							null :
+							<Tooltip title={t('Translate.phathienngonngu')}><PageviewIcon fontSize='medium' /></Tooltip>}
+						label={renderDetectLabel()}
+						sx={{
+							minWidth: 'auto',
+							minHeight: 'auto',
+						}}
+						value={'detect'}
+						disabled={isDisableTab()}
+						style={{ fontWeight: 'bold' }}
+					/> 
+					{translationState.isSwap ? <Tab label={t('Translate.listLanguage.anh')} value={'en'} disabled={isDisableTab()} style={{ fontWeight: 'bold' }} /> : null}
+					{translationState.isSwap ? <Tab label={t('Translate.listLanguage.trung')} value={'zh'} disabled={isDisableTab()} style={{ fontWeight: 'bold' }} /> : null}
+					{translationState.isSwap ? <Tab label={t('Translate.listLanguage.lao')} value={'lo'} disabled={isDisableTab()} style={{ fontWeight: 'bold' }} /> : null}
+					{translationState.isSwap ? <Tab label={t('Translate.listLanguage.khome')} value={'km'} disabled={isDisableTab()} style={{ fontWeight: 'bold' }} /> : null}
+					{!translationState.isSwap ? <Tab label={t('Translate.listLanguage.viet')} value={'vi'} disabled={isDisableTab()} style={{ fontWeight: 'bold' }} /> : null}
 				</Tabs>
 			</div>
-			<div style={{  alignSelf: 'center'}}>
-				<IconButton 
-					aria-label="Example" 
-					onClick={handleSwap} 
+			<div style={{ alignSelf: 'center' }}>
+				<IconButton
+					aria-label="Example"
+					onClick={handleSwap}
 					disabled={translationState.translateCode.sourceLang === null || isDisableTab()}>
-					<SwapHorizIcon fontSize='medium'/>
+					<SwapHorizIcon fontSize='medium' />
 				</IconButton>
 			</div>
 			<div style={{ flex: 1, display: 'flex', overflow: 'auto', whiteSpace: 'nowrap' }}>
@@ -123,11 +170,11 @@ function TranslationChooselang(props) {
 						},
 					}}
 				>
-					{!translationState.isSwap ? <Tab label={t('Translate.listLanguage.anh')} value={'en'} disabled={isDisableTab()} style={{fontWeight: 'bold'}}/> : null}
-					{!translationState.isSwap ? <Tab label={t('Translate.listLanguage.trung')} value={'zh'} disabled={isDisableTab()} style={{fontWeight: 'bold'}}/> : null}
-					{!translationState.isSwap ? <Tab label={t('Translate.listLanguage.lao')} value={'lo'} disabled={isDisableTab()} style={{fontWeight: 'bold'}}/> : null}
-					{!translationState.isSwap ? <Tab label={t('Translate.listLanguage.khome')} value={'km'} disabled={isDisableTab()}style={{fontWeight: 'bold'}}/> : null}
-					{translationState.isSwap ? <Tab label={t('Translate.listLanguage.viet')} value={'vi'} disabled={isDisableTab()} style={{fontWeight: 'bold'}}/> : null}
+					{!translationState.isSwap ? <Tab label={t('Translate.listLanguage.anh')} value={'en'} disabled={isDisableTab()} style={{ fontWeight: 'bold' }} /> : null}
+					{!translationState.isSwap ? <Tab label={t('Translate.listLanguage.trung')} value={'zh'} disabled={isDisableTab()} style={{ fontWeight: 'bold' }} /> : null}
+					{!translationState.isSwap ? <Tab label={t('Translate.listLanguage.lao')} value={'lo'} disabled={isDisableTab()} style={{ fontWeight: 'bold' }} /> : null}
+					{!translationState.isSwap ? <Tab label={t('Translate.listLanguage.khome')} value={'km'} disabled={isDisableTab()} style={{ fontWeight: 'bold' }} /> : null}
+					{translationState.isSwap ? <Tab label={t('Translate.listLanguage.viet')} value={'vi'} disabled={isDisableTab()} style={{ fontWeight: 'bold' }} /> : null}
 				</Tabs>
 			</div>
 		</div>
@@ -142,8 +189,10 @@ TranslationChooselang.propTypes = {
 	changeTarget: PropTypes.func,
 	swapTranslate: PropTypes.func,
 	translationAsync: PropTypes.func,
+	translationAndDetectAsync: PropTypes.func,
 	changeSourceText: PropTypes.func,
 	changeTargetText: PropTypes.func,
+	changeDetectLang: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({
@@ -156,9 +205,11 @@ const mapDispatchToProps = {
 	changeTarget,
 	swapTranslate,
 	translationAsync,
+	translationAndDetectAsync,
 	changeSourceText,
 	reset,
 	changeTargetText,
+	changeDetectLang,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TranslationChooselang);

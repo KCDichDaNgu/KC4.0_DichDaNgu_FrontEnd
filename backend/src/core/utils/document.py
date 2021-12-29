@@ -66,3 +66,11 @@ def check_if_paragraph_has_text(paragraph):
 
     if paragraph.text != '':
         return True
+
+    return False
+
+def check_if_cell_is_string(cell):
+    if cell.data_type == 's' and cell.value != '':
+        return True
+    
+    return False

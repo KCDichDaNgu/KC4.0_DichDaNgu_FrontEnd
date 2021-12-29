@@ -5,6 +5,7 @@ import {
 } from 'react-bootstrap';
 import { Button, Typography, IconButton } from '@mui/material';
 import { changeFileDocument, changeOutputDocument } from '../../../redux/actions/translateFileAction';
+import { reset } from '../../../redux/actions/translateAction';
 import { STATE } from '../../../redux/reducers/translateFileReducer';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -19,6 +20,7 @@ function TranslateFileDocumentInput(props) {
  	* @description Function xóa file khỏi ô input
  	*/
 	const handleReset = () => {
+		props.reset();
 		props.changeFileDocument(null);
 		props.changeOutputDocument(null);
 	};
@@ -86,6 +88,7 @@ TranslateFileDocumentInput.propTypes = {
 	translationFileState: PropTypes.object,
 	changeFileDocument: PropTypes.func,
 	changeOutputDocument: PropTypes.func,
+	reset: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({
@@ -94,7 +97,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = { 
 	changeFileDocument,
-	changeOutputDocument
+	changeOutputDocument,
+	reset
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TranslateFileDocumentInput);

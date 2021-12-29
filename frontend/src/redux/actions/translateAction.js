@@ -7,6 +7,7 @@ import {
 	DETECTLANG,
 	DETECTLANG_FAIL,
 	DETECTLANG_SUCCESS,
+	TRANSLATE_AFTER_DETECTLANG_SUCCESS,
 	SWAP_TRANSLATE,
 	TRANSLATION_FAIL,
 	TRANSLATION_SUCCESS,
@@ -165,8 +166,16 @@ export function detectLangSuccess(data) {
 	return {
 	  type: DETECTLANG_SUCCESS,
 	  payload: {
-			targetText: data.target_text,
 			detectLang: data.source_lang,
+		}
+	};
+}
+
+export function translateAfterDetectLangSuccess(data) {
+	return {
+	  type: TRANSLATE_AFTER_DETECTLANG_SUCCESS,
+	  payload: {
+			targetText: data.target_text,
 		}
 	};
 }
@@ -300,6 +309,7 @@ const debouncedTranslateAndDetect = debounce(async (body, dispatch) => {
 				dispatch(detectLangFailed(getDetectResult.message, getDetectResult.source_lang));
 			} else {
 				// Sử dụng ngôn ngữ phát hiện được và dịch
+				dispatch(detectLangSuccess({target_text: '', source_lang: getDetectResult.source_lang}));
 				const postTranslationResult = await axiosHelper.postTranslate({
 					...body,
 					sourceLang: getDetectResult.source_lang,
@@ -316,7 +326,7 @@ const debouncedTranslateAndDetect = debounce(async (body, dispatch) => {
 					if (getTranslationResult.status === 'closed'){
 						dispatch(detectLangFailed(getTranslationResult.message, getTranslationResult.source_lang));
 					} else {
-						dispatch(detectLangSuccess(getTranslationResult));
+						dispatch(translateAfterDetectLangSuccess(getTranslationResult));
 					}
 				}
 			}

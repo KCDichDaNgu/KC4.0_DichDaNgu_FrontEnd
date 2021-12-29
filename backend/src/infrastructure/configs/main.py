@@ -285,15 +285,35 @@ class AppConfig(BaseModel):
         "delete_invalid_task": BackgroundTask(
             ID="delete_invalid_task",
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
-            CONFIG=dict(seconds=0, max_instances=1),
+            CONFIG=dict(seconds=60, max_instances=1),
         ),
         "delete_invalid_file": BackgroundTask(
             ID="delete_invalid_file",
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
-            CONFIG=dict(seconds=0, max_instances=1),
+            CONFIG=dict(seconds=60, max_instances=1),
         ),
         "translate_content_for_file_in_public_request.translate_txt_file": BackgroundTask(
             ID="translate_content_for_file_in_public_request.translate_txt_file",
+            TRIGGER=BackgroundTaskTriggerEnum.interval.value,
+            CONFIG=dict(seconds=0, max_instances=1),
+        ),
+        "translate_pptx_file_in_public_request.translate_content": BackgroundTask(
+            ID="translate_pptx_file_in_public_request.translate_content",
+            TRIGGER=BackgroundTaskTriggerEnum.interval.value,
+            CONFIG=dict(seconds=0, max_instances=1),
+        ),
+        "translate_pptx_file_in_public_request.detect_content_language": BackgroundTask(
+            ID="translate_pptx_file_in_public_request.detect_content_language",
+            TRIGGER=BackgroundTaskTriggerEnum.interval.value,
+            CONFIG=dict(seconds=0, max_instances=1),
+        ),
+        "translate_xlsx_file_in_public_request.translate_content": BackgroundTask(
+            ID="translate_xlsx_file_in_public_request.translate_content",
+            TRIGGER=BackgroundTaskTriggerEnum.interval.value,
+            CONFIG=dict(seconds=0, max_instances=1),
+        ),
+        "translate_xlsx_file_in_public_request.detect_content_language": BackgroundTask(
+            ID="translate_xlsx_file_in_public_request.detect_content_language",
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
             CONFIG=dict(seconds=0, max_instances=1),
         ),

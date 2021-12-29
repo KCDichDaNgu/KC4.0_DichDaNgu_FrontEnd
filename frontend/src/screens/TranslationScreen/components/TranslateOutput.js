@@ -29,6 +29,9 @@ function TranslateInput(props) {
 		if(translationState.translateText.sourceText === '' && translateType === TRANSLATE_TYPE.plainText) {
 			return true;
 		}
+		if ((translationState.translateCode.sourceLang == null || translationState.translateCode.detectLang != null) && translationState.currentState == STATE.FAILURE) {
+			return true;
+		};
 		return false;
 	};
 
@@ -53,6 +56,10 @@ function TranslateInput(props) {
 				targetLang: translationState.translateCode.targetLang,
 			});
 		}
+	};
+
+	const isDetect = () =>{ 
+		return translateType === TRANSLATE_TYPE.plainText && (translationState.translateCode.sourceLang == null || translationState.translateCode.detectLang != null);
 	};
 
 	return (
@@ -93,7 +100,7 @@ function TranslateInput(props) {
 						disabled={isDisableTranslateButton()}
 						style={{ fontWeight: 'bold', display: 'flex'}}
 					>
-						{t('dich')}
+						{isDetect() ? t('detectAndTranslate') : t('dich')}
 					</LoadingButton>
 				</div>	
 			}

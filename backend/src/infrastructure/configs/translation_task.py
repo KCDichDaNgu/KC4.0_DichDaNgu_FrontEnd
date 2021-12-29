@@ -1,5 +1,5 @@
 from infrastructure.configs.language import LanguageEnum
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 from pydantic.fields import Field
 from pydantic.main import BaseModel
 from core.types import ExtendedEnum
@@ -23,7 +23,8 @@ class AllowedFileTranslationExtension(str, ExtendedEnum):
 
     txt = 'txt'
     docx = 'docx'
-
+    pptx = 'pptx'
+    xlsx = 'xlsx'
 
 def is_allowed_file_extension(file_name):
 
@@ -81,10 +82,16 @@ class TranslationTaskStepEnum(str, ExtendedEnum):
     translating_language = 'translating_language'
 
 class DocumentStatistic(BaseModel):
-    total_paragraphs: int
+    total_paragraphs: Optional[int]
+    total_slides: Optional[int]
+    total_sheets: Optional[int]
 
 class DocumentCurrentProgress(BaseModel):
-    processed_paragraph_index: int
+    processed_paragraph_index: Optional[int]
+    processed_slide_index: Optional[int]
+    processed_sheet_index: Optional[int]
+    last_row: Optional[int]
+    last_col: Optional[int]
 
 class TranslationTask_LangUnknownResultFileSchemaV1(BaseModel):
 
@@ -185,7 +192,7 @@ class FileTranslationTask_LangUnknownResultFileSchemaV1(BaseModel):
 
     original_file_full_path: str
     file_type:str
-    binary_progress_file_full_path: str
+    binary_progress_file_full_path: Optional[str]
     statistic: DocumentStatistic
     current_progress: DocumentCurrentProgress
     
@@ -209,7 +216,7 @@ class FileTranslationTask_NotYetTranslatedResultFileSchemaV1(BaseModel):
 
     original_file_full_path: str
     file_type:str
-    binary_progress_file_full_path: str
+    binary_progress_file_full_path: Optional[str]
     statistic: DocumentStatistic
     current_progress: DocumentCurrentProgress
 
@@ -234,7 +241,7 @@ class FileTranslationTask_TranslationClosedResultFileSchemaV1(BaseModel):
 
     original_file_full_path: str
     file_type:str
-    binary_progress_file_full_path: str
+    binary_progress_file_full_path: Optional[str]
     statistic: DocumentStatistic
     current_progress: DocumentCurrentProgress
 
@@ -257,7 +264,7 @@ class FileTranslationTask_TranslatingResultFileSchemaV1(BaseModel):
 
     original_file_full_path: str
     file_type:str
-    binary_progress_file_full_path: str
+    binary_progress_file_full_path: Optional[str]
     statistic: DocumentStatistic
     current_progress: DocumentCurrentProgress
 
@@ -281,7 +288,7 @@ class FileTranslationTask_TranslationCompletedResultFileSchemaV1(BaseModel):
 
     original_file_full_path: str
     file_type:str
-    binary_progress_file_full_path: str
+    binary_progress_file_full_path: Optional[str]
     statistic: DocumentStatistic
     current_progress: DocumentCurrentProgress
 

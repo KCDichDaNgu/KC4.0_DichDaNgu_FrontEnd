@@ -25,7 +25,7 @@ import TranslateFileDocumentOutput from './components/TranslateFileDocumentOutpu
 import TranslationChooselang from './components/TranslationChooselang';
 import TranslateOutput from './components/TranslateOutput';
 import TranslateInput from './components/TranslateInput';
-import { TRANSLATE_TYPE } from '../../constants/common';
+import { TRANSLATE_TYPE, USER_STATUS } from '../../constants/common';
 import TranslateFileDocumentInput from './components/TranslateFileDocumentInput';
 import authHoc from '../../hocs/authHoc';
 import { toastError } from '../../components/Toast';
@@ -44,7 +44,7 @@ function Index(props) {
 		case STATE.SUCCESS:
 			break;
 		case STATE.FAILURE:
-			toastError(translationState.err);
+			// toastError(translationState.err);
 			break;
 		default:
 			break;
@@ -67,6 +67,16 @@ function Index(props) {
 		}
 	}, [translationFileState.currentState]);
 
+
+	const getIsAdmin = () => {
+		const user = JSON.parse(localStorage.getItem('user'));
+
+		return user?.role === 'admin' && user?.status === USER_STATUS.active;
+	};
+
+	const isDetectInfoShow = () =>{ 
+		return getIsAdmin() && translateType === TRANSLATE_TYPE.plainText && (translationState.translateCode.sourceLang == null || translationState.translateCode.detectLang != null);
+	};
 
 	const renderOutput = () => {
 		switch (translateType) {
@@ -108,7 +118,7 @@ function Index(props) {
 					<Button
 						onClick={() => {
 							setTranslateType(TRANSLATE_TYPE.document);
-							if (props.translationState.translateCode.sourceLang === null) props.changeSource('en');
+							// if (props.translationState.translateCode.sourceLang === null) props.changeSource('en');
 							// props.changeTargetText('');
 							// props.changeSourceText('');
 							// props.changeOutput(null);
@@ -148,6 +158,7 @@ function Index(props) {
 						<KeyboardArrowUpIcon />
 					</Fab>
 				</ScrollTop>
+				{isDetectInfoShow() && `Ngôn ngữ được detect: ${translationState.translateCode.detectLang}`}
 			</div>
 		</>
 	);

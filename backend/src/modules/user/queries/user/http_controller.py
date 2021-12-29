@@ -38,7 +38,6 @@ class GetUser(HTTPMethodView):
 
     async def get(self, request):
         user_id =request.args.get('id')
-        print(user_id)
         user = await self.__user_domain_service.get_user(user_id)
 
         if user is None:

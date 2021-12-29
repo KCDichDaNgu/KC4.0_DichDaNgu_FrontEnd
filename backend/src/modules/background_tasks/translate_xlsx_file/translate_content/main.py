@@ -1,6 +1,8 @@
 from datetime import datetime
 import io
 import pickle
+
+import openpyxl
 from infrastructure.configs.language import LanguageEnum
 from infrastructure.configs.translation_history import TranslationHistoryStatus
 from core.utils.common import chunk_arr
@@ -30,14 +32,14 @@ from infrastructure.adapters.logger import Logger
 
 from core.utils.file import get_doc_paragraphs, get_full_path
 from infrastructure.configs.translation_task import RESULT_FILE_STATUS, FileTranslationTask_NotYetTranslatedResultFileSchemaV1, FileTranslationTask_TranslatingResultFileSchemaV1, FileTranslationTask_TranslationCompletedResultFileSchemaV1, get_file_translation_file_path, get_file_translation_target_file_name
-from core.utils.document import check_if_paragraph_has_text, get_common_style
+from core.utils.document import check_if_cell_is_string, check_if_paragraph_has_text, get_common_style
 
 config: GlobalConfig = get_cnf()
 db_instance = get_mongodb_instance()
 
 PUBLIC_LANGUAGE_DETECTION_API_CONF = config.PUBLIC_LANGUAGE_DETECTION_API
 ALLOWED_CONCURRENT_REQUEST = PUBLIC_LANGUAGE_DETECTION_API_CONF.ALLOWED_CONCURRENT_REQUEST
-LIMIT_TEXT_TRANSLATE_REQUEST = 3000
+LIMIT_TEXT_TRANSLATE_REQUEST = 100
 
 translation_request_repository = TranslationRequestRepository()
 translation_request_result_repository = TranslationRequestResultRepository()
@@ -45,7 +47,7 @@ transation_history_repository = TranslationHistoryRepository()
 
 contentTranslator = ContentTranslator()
 
-logger = Logger('Task: translate_file_in_public_request.translate_content')
+logger = Logger('Task: translate_xlsx_file_in_public_request.translate_content')
 
 async def read_task_result(
     tasks_result: List[TranslationRequestResultEntity], 
@@ -70,7 +72,7 @@ async def read_task_result(
         try: 
             data = await task_result.read_data_from_file()
 
-            if data['status'] in [RESULT_FILE_STATUS['not_yet_translated'], RESULT_FILE_STATUS['translating']] and data['file_type'] == 'docx':
+            if data['status'] in [RESULT_FILE_STATUS['not_yet_translated'], RESULT_FILE_STATUS['translating']] and data['file_type'] == 'xlsx':
 
                 valid_tasks_mapper[task_id] = {
                     'task_result_content': data,
@@ -100,7 +102,7 @@ async def read_task_result(
 
         trans_history = list(filter(lambda ts: ts.props.task_id.value == task_id, translations_history))[0]
 
-        if data['file_type'] == 'docx':
+        if data['file_type'] == 'xlsx':
 
             invalid_tasks_mapper[task_id] = {
                 'task_result': task_result,
@@ -154,10 +156,10 @@ async def mark_invalid_tasks(invalid_tasks_mapper):
 async def main():
 
     logger.debug(
-        msg=f'New task translate_file_in_public_request.translate_content run in {datetime.now()}'
+        msg=f'New task translate_xlsx_file_in_public_request.translate_content run in {datetime.now()}'
     )
 
-    print(f'New task translate_file_in_public_request.translate_content run in {datetime.now()}')
+    print(f'New task translate_xlsx_file_in_public_request.translate_content run in {datetime.now()}')
     
     try:
         tasks = await translation_request_repository.find_many(
@@ -178,9 +180,9 @@ async def main():
 
         if len(tasks_id) == 0: 
             logger.debug(
-                msg=f'An task translate_file_in_public_request.translate_content end in {datetime.now()}\n'
+                msg=f'An task translate_xlsx_file_in_public_request.translate_content end in {datetime.now()}\n'
             )
-            print(f'An task translate_file_in_public_request.translate_content end in {datetime.now()}\n')
+            print(f'An task translate_xlsx_file_in_public_request.translate_content end in {datetime.now()}\n')
             return
 
         tasks_result_and_trans_history_req = [
@@ -213,8 +215,8 @@ async def main():
 
         valid_tasks_id = list(map(lambda t: t, list(valid_tasks_mapper)))
 
+        # valid_tasks_id = list(map(lambda t: t.id.value, tasks))
         chunked_tasks_id = list(chunk_arr(valid_tasks_id, ALLOWED_CONCURRENT_REQUEST))
-        
         for chunk in chunked_tasks_id:
             await execute_in_batch(valid_tasks_mapper, chunk)
 
@@ -224,10 +226,10 @@ async def main():
         print(e)
 
     logger.debug(
-        msg=f'An task translate_file_in_public_request.translate_content end in {datetime.now()}\n'
+        msg=f'An task translate_xlsx_file_in_public_request.translate_content end in {datetime.now()}\n'
     )
 
-    print(f'An task translate_file_in_public_request.translate_content end in {datetime.now()}\n')
+    print(f'An task translate_xlsx_file_in_public_request.translate_content end in {datetime.now()}\n')
             
 
 async def execute_in_batch(valid_tasks_mapper, tasks_id):
@@ -236,17 +238,19 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
     connector = aiohttp.TCPConnector(limit=ALLOWED_CONCURRENT_REQUEST)
 
     async with aiohttp.ClientSession(connector=connector, loop=loop) as session:
-
         api_requests = []
         for task_id in tasks_id:
             binary_progress_file_full_path = valid_tasks_mapper[task_id]['task_result_content']['binary_progress_file_full_path']
 
             total_paragraphs = valid_tasks_mapper[task_id]['task_result_content']['statistic']['total_paragraphs']
             processed_paragraph_index = valid_tasks_mapper[task_id]['task_result_content']['current_progress']['processed_paragraph_index']
+            total_sheets = valid_tasks_mapper[task_id]['task_result_content']['statistic']['total_sheets']
+            processed_sheet_index = valid_tasks_mapper[task_id]['task_result_content']['current_progress']['processed_sheet_index']
+            last_row = valid_tasks_mapper[task_id]['task_result_content']['current_progress']['last_row']
+            last_col = valid_tasks_mapper[task_id]['task_result_content']['current_progress']['last_col']
 
             source_lang = valid_tasks_mapper[task_id]['task_result_content']['source_lang']
             target_lang = valid_tasks_mapper[task_id]['task_result_content']['target_lang']
-
 
             if source_lang == target_lang:
                 async with db_instance.session() as session:
@@ -268,9 +272,9 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                         target_file_full_path = get_full_path(target_file_path)
 
 
-                        doc = Document(task_result_content['original_file_full_path'])
+                        workbook = openpyxl.load_workbook(task_result_content['original_file_full_path'])
 
-                        doc.save(target_file_full_path)
+                        workbook.save(target_file_full_path)
 
                         new_saved_content = FileTranslationTask_TranslationCompletedResultFileSchemaV1(
                             original_file_full_path=task_result_content['original_file_full_path'],
@@ -278,9 +282,11 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                             file_type=task_result_content['file_type'],
                             statistic=dict(
                                 total_paragraphs=total_paragraphs,
+                                total_sheets=total_sheets,
                             ),
                             current_progress=dict(
-                                processed_paragraph_index=total_paragraphs - 1
+                                processed_paragraph_index=total_paragraphs - 1,
+                                processed_sheet_index=total_sheets - 1
                             ),
                             target_file_full_path=target_file_full_path,
                             source_lang=task_result_content['source_lang'],
@@ -322,27 +328,31 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                 await asyncio.gather(*update_request)
             
             else:
-
-                char_count = 0
-
                 with (open(binary_progress_file_full_path, "rb")) as openfile:
+                    workbook = openpyxl.load_workbook(pickle.load(openfile))
+                char_count = 0
+                ws_name_list = workbook.sheetnames
 
-                    doc = Document(pickle.load(openfile))
-
-                doc_paragraphs = list(get_doc_paragraphs(doc))
-
+                processing_sheet= processed_sheet_index + 1;
+                worksheet = workbook[ws_name_list[processing_sheet]]
+                
                 concat_paragraphs = []
-
-                for i in range(processed_paragraph_index + 1, total_paragraphs):
-                    text = doc_paragraphs[i].text
-
-                    if text != '':
-                        concat_paragraphs.append(text)
-                        char_count = char_count + len(text)
-
-                    if ((char_count + len(text)) > LIMIT_TEXT_TRANSLATE_REQUEST):
-                        break            
-
+                for r in range(last_row, worksheet.max_row+1):
+                    breaker = False;
+                    for c in range(1, worksheet.max_column+1):                        
+                        if (r == last_row and c > last_col) or (r > last_row):                            
+                            cell = (worksheet.cell(r,c))
+                            if check_if_cell_is_string(cell):
+                                text = cell.value      
+                                concat_paragraphs.append(text)
+                                char_count = char_count + len(text)
+                                
+                                if ((char_count + len(text)) > LIMIT_TEXT_TRANSLATE_REQUEST):
+                                    breaker = True 
+                                    break
+                    if breaker:
+                        break;
+                
                 concat_text = " \n ".join(concat_paragraphs)
 
                 api_requests.append(
@@ -367,7 +377,7 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                         concat_translated_text = ['']
                     else:
                         concat_translated_text = api_result.data.split("\n")[:-1]
-                    
+
                     task_result = valid_tasks_mapper[task_id]['task_result'],
                     trans_history = valid_tasks_mapper[task_id]['trans_history'],
                     task = valid_tasks_mapper[task_id]['task']
@@ -376,63 +386,67 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                     original_file_full_path = task_result_content['original_file_full_path']
                     binary_progress_file_full_path = task_result_content['binary_progress_file_full_path']
                     total_paragraphs = task_result_content['statistic']['total_paragraphs']
-                    processed_paragraph_index = task_result_content['current_progress']['processed_paragraph_index']
+                    total_sheets = task_result_content['statistic']['total_sheets']
+                    processed_sheet_index = task_result_content['current_progress']['processed_sheet_index']
+                    last_row = task_result_content['current_progress']['last_row']
+                    last_col = task_result_content['current_progress']['last_col']
 
                     with (open(binary_progress_file_full_path, "rb")) as openfile:
 
-                        doc = Document(pickle.load(openfile))
-
-                    doc_paragraphs = list(get_doc_paragraphs(doc))
+                        workbook = openpyxl.load_workbook(pickle.load(openfile))
                     
-                    current_paragraph_index = processed_paragraph_index
-
-                    for i in range(len(concat_translated_text)):
-                        current_paragraph_index = current_paragraph_index + 1
-
-                        paragraph = doc_paragraphs[current_paragraph_index]
+                    ws_name_list = workbook.sheetnames
                         
-                        while paragraph.text == '':
-                            
-                            if current_paragraph_index >= total_paragraphs - 1:
-                                break
+                    processing_sheet = processed_sheet_index + 1;                   
+                    
+                    worksheet = workbook[ws_name_list[processing_sheet]]
+                    
+                    cell_index = 0 
 
-                            current_paragraph_index = current_paragraph_index + 1
+                    for r in range(last_row, worksheet.max_row + 1):
+                        breaker = False
+                        for c in range(1, worksheet.max_column + 1):
+                            if (r == last_row and c > last_col) or (r > last_row): 
+                                cell = (worksheet.cell(r,c))
 
-                            paragraph = doc_paragraphs[current_paragraph_index]
-
-                        if current_paragraph_index > total_paragraphs - 1:
-                                break
-
-                        if check_if_paragraph_has_text(paragraph):
-
-                            font_size, font_name, bold, font_color, underline, italic = get_common_style(paragraph)
-
-                            paragraph.text = concat_translated_text[i]
-                            
-                            for run in paragraph.runs:
-                                run.font.size = font_size
-                                run.font.name = font_name
-                                run.bold = bold
-                                run.font.color.rgb = font_color
-                                run.underline = underline
-                                run.italic = italic
+                                if check_if_cell_is_string(cell):
+                                    worksheet.cell(r,c).value = concat_translated_text[cell_index]
+                                    
+                                    if cell_index == len(concat_translated_text) - 1:
+                                        breaker = True
+                                        break
+                                    
+                                    cell_index += 1
+                                    
+                        last_row = r
+                        last_col = c
+                        if breaker:
+                            break
+                    
+                    if (last_row < worksheet.max_row or last_col < worksheet.max_column):
+                        processing_sheet = processing_sheet - 1
+                    else:
+                        last_row = 1
+                        last_col = 0
 
                     with open(binary_progress_file_full_path, 'r+b') as outp:
                         new_file = io.BytesIO()
-                        doc.save(new_file)                        
+                        workbook.save(new_file)                        
                         pickle.dump(new_file, outp, pickle.HIGHEST_PROTOCOL)
 
-                    if current_paragraph_index < total_paragraphs - 1:                        
+                    if (processing_sheet < total_sheets - 1):                        
 
                         new_saved_content = FileTranslationTask_TranslatingResultFileSchemaV1(
                             original_file_full_path=original_file_full_path,
                             binary_progress_file_full_path=binary_progress_file_full_path,
                             file_type=task_result_content['file_type'],
                             statistic=dict(
-                                total_paragraphs=total_paragraphs,
+                                total_sheets=total_sheets
                             ),
                             current_progress=dict(
-                                processed_paragraph_index=current_paragraph_index
+                                processed_sheet_index=processing_sheet,
+                                last_row=last_row,
+                                last_col=last_col,
                             ),
                             source_lang=task_result_content['source_lang'],
                             target_lang=task_result_content['target_lang'],
@@ -477,17 +491,19 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                         target_file_path = get_file_translation_file_path(task_id, target_file_name)
                         target_file_full_path = get_full_path(target_file_path)
 
-                        doc.save(target_file_full_path)
+                        workbook.save(target_file_full_path)
 
                         new_saved_content = FileTranslationTask_TranslationCompletedResultFileSchemaV1(
                             original_file_full_path=task_result_content['original_file_full_path'],
                             binary_progress_file_full_path=task_result_content['binary_progress_file_full_path'],
                             file_type=original_file_ext,
                             statistic=dict(
-                                total_paragraphs=total_paragraphs,
+                                total_sheets=total_sheets,
                             ),
                             current_progress=dict(
-                                processed_paragraph_index=current_paragraph_index
+                                processed_sheet_index=processing_sheet,
+                                last_row=last_row,
+                                last_col=last_col,
                             ),
                             target_file_full_path=target_file_full_path,
                             source_lang=task_result_content['source_lang'],

@@ -8,12 +8,14 @@ import shutil
 from sanic.request import File
 from docx import Document
 from docx.document import Document as _Document
-
+from pptx import Presentation
+import openpyxl
 from infrastructure.configs.main import GlobalConfig, get_cnf
 from docx.table import _Cell, Table
 from docx.oxml.text.paragraph import CT_P
 from docx.oxml.table import CT_Tbl
 from docx.text.paragraph import Paragraph
+from core.utils.document import check_if_cell_is_string
 
 config: GlobalConfig = get_cnf()
 STATIC_FOLDER = config.APP_CONFIG.STATIC_FOLDER
@@ -71,6 +73,109 @@ def get_doc_file_meta(doc_file: File):
     sentence_count = sum(1 for y in sentences if len(y) > 2)
 
     return binary_doc, total_doc_paragraphs, sentence_count
+
+def get_presentation_full_text(presentation_file: File):
+    full_text= ''
+    
+    presentation = Presentation(presentation_file)
+    slides = [slide for slide in presentation.slides]
+    shapes = []
+    
+    for slide in slides:
+        for shape in slide.shapes:
+            shapes.append(shape)
+
+    for shape in shapes:
+        if shape.has_text_frame:
+            text_frame = shape.text_frame
+            for paragraph in text_frame.paragraphs:
+                full_text = full_text + paragraph.text
+    
+    return full_text
+
+def get_presentation_file_meta(presentation_file: File):
+    
+    binary_presentation = io.BytesIO(presentation_file.body)
+    
+    presentation = Presentation(binary_presentation)
+    
+    total_presentation_paragraphs = 0
+    total_slides = 0
+    slides = [slide for slide in presentation.slides]
+    shapes = []
+    full_text = ''
+    
+    for slide in slides:
+        total_slides += 1
+        for shape in slide.shapes:
+            shapes.append(shape)
+
+    for shape in shapes:
+        if shape.has_text_frame:
+            text_frame = shape.text_frame
+            for paragraph in text_frame.paragraphs:
+                full_text = full_text + paragraph.text
+                total_presentation_paragraphs += 1
+                
+        # if shape.has_table:
+        #     for row in shape.table.rows:
+        #         for cell in row.cells:
+        #             total_presentation_paragraphs += 1
+        
+    sentences = re.split('[;.?!]', full_text)
+
+    sentence_count = sum(1 for y in sentences if len(y) > 2)
+    
+    return binary_presentation, total_presentation_paragraphs, total_slides, sentence_count
+
+def get_worksheet_full_text(worksheet):
+    try:
+        worksheet = openpyxl.load_workbook(worksheet)
+        full_text = ''
+        ws_name_list = worksheet.sheetnames
+        for ws_name in ws_name_list:
+            ws = worksheet[ws_name]
+
+            for r in range(1,ws.max_row+1):
+                for c in range(1,ws.max_column+1):  
+                    cell = ws.cell(r,c)
+                    
+                    if check_if_cell_is_string(cell):
+                        full_text += str(cell.value) + '.' 
+    except Exception as e:
+        print(e)
+    return full_text
+                
+
+def get_worksheet_file_meta(worksheet_file: File):
+    total_cells = 0
+    total_sheets = 0
+    full_text = ''
+    
+    binary_worksheet = io.BytesIO(worksheet_file.body)
+    
+    worksheet = openpyxl.load_workbook(binary_worksheet)
+    
+    ws_name_list = worksheet.sheetnames
+    
+    for ws_name in ws_name_list:
+        ws = worksheet[ws_name]
+        total_cells += ws.max_column * ws.max_row
+        
+        for r in range(1,ws.max_row+1):
+            for c in range(1,ws.max_column+1):
+                cell = ws.cell(r,c)
+                
+                if check_if_cell_is_string(cell):
+                    full_text += str(cell.value) + ';' 
+                
+    total_sheets = len(ws_name_list)
+        
+    sentences = re.split('[;.?!]', full_text)
+
+    sentence_count = sum(1 for y in sentences if len(y) > 2)
+
+    return binary_worksheet, total_sheets, total_cells, sentence_count
 
 def get_txt_file_meta(txt_file: File):
 

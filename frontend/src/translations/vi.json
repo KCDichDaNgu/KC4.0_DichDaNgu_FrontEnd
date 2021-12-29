@@ -9,6 +9,7 @@
 	"danhSachTrong": "Danh sách trống",
 	"huyBo": "Hủy bỏ",
 	"ten": "Tên",
+	"ho": "Họ",
 	"taiTaiLieu": "Tải tài liệu",
 	"taiTaiLieuTiengViet": "Tải tài liệu tiếng Việt",
 	"taiTaiLieuTiengTrung": "Tải tài liệu tiếng Trung",
@@ -26,7 +27,7 @@
 	"xacNhanMatKhauMoi": "Xác nhận mật khẩu mới",
 	"caiDatTaiKhoan": "Cài đặt tài khoản",
 	"chonTaiLieu": "Chọn tài liệu",
-	"taiTepTaiLieu": "Tải lên tệp .docx",
+	"taiTepTaiLieu": "Tải lên tệp .docx, .txt, .pptx",
 	"taiTepAmThanh": "Tải lên tệp .mp3, .aac, .wav",
 	"timTepTenMayBan": "Tìm tệp trên máy tính của bạn",
 	"email": "Email",
@@ -118,5 +119,6 @@
 	"ViLo": "Việt - Lào",
 	"ViKm": "Việt - Khơme",
 	"inactive_user": "Tài khoản người dùng không hoạt động",
-	"no_access_media": "Không có quyền truy cập thiết bị truyền thông"
+	"no_access_media": "Không có quyền truy cập thiết bị truyền thông",
+	"detectAndTranslate": "Phát hiện và dịch"
 }

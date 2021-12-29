@@ -26,7 +26,7 @@ from modules.language_detection_request.database.language_detection_history.repo
 from infrastructure.configs.language_detection_history import LanguageDetectionHistoryTypeEnum, LanguageDetectionHistoryStatus
 from infrastructure.configs.main import get_mongodb_instance
 from modules.language_detection_request.commands.create_file_language_detection_request.command import CreateFileLanguageDetectionRequestCommand
-from core.utils.file import get_doc_file_meta
+from core.utils.file import extract_file_extension, get_doc_file_meta
 from infrastructure.configs.language_detection_task import FileLanguageDetectionTask_LangUnknownResultFileSchemaV1
 
 TEXT_LANGUAGE_DETECTION_TASKS = [
@@ -122,13 +122,14 @@ class LanguageDetectionRequestDService():
                 step=new_request.props.current_step
             )
         )
-        
+        original_file_ext = extract_file_extension(command.source_file.name)
         create_file_result = await new_task_result_entity.create_required_files_for_file_language_detection_task(command.source_file)
 
 
         saved_content = FileLanguageDetectionTask_LangUnknownResultFileSchemaV1(
             source_file_full_path=create_file_result.data['source_file_full_path'],
-            task_name=LanguageDetectionTaskNameEnum.public_file_language_detection.value
+            task_name=LanguageDetectionTaskNameEnum.public_file_language_detection.value,
+            file_type=original_file_ext
         )
         
         saving_content_result = await new_task_result_entity.save_request_result_to_file(

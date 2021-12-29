@@ -20,6 +20,8 @@ class UpdateSelf(HTTPMethodView):
     def __init__(self) -> None:
         super().__init__()
         from modules.user.commands.update_self.service import UserService
+        from modules.user.domain.services.user_service import UserDService
+        self.__user_domain_service = UserDService()
         self.__user_service = UserService()
 
     @doc.summary(APP_CONFIG.ROUTES['user.update_self']['summary'])
@@ -37,6 +39,7 @@ class UpdateSelf(HTTPMethodView):
         try:
             data = request.json
             me = await get_me(request)
+
             if me is None:
                 return response.json(
                     status=404,
@@ -45,15 +48,19 @@ class UpdateSelf(HTTPMethodView):
                         'message': MESSAGES['failed']
                     }
                 )
+                
+            user_statistic = await self.__user_domain_service.get_user_statistic(me.id)
 
             command = UpdateUserCommand(
                 id=me.id,
                 first_name=data['first_name'],
                 last_name=data['last_name'],
                 avatar=data['avatar'],
+                text_translation_quota=user_statistic.props.text_translation_quota,
             )
-            user = await self.__user_service.update_user(command)
 
+            user = await self.__user_service.update_user(command) 
+ 
             if user is None:
                 return response.json(
                     status=400,
@@ -62,6 +69,7 @@ class UpdateSelf(HTTPMethodView):
                         'message': MESSAGES['failed']
                     }
                 )
+
             return response.json(body={
                 'code': StatusCodeEnum.success.value,
                 'message': MESSAGES['success']

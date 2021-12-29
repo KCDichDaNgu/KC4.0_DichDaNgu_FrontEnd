@@ -107,7 +107,7 @@ export const updateUserQuota = (body) => {
 	});
 };
 
-export const downloadFile = (url, file_type) => {
+export const downloadFile = (file, url, file_type) => {
 	axios({
 		url: SERVER_URL + url,
 		method: 'GET',
@@ -115,7 +115,10 @@ export const downloadFile = (url, file_type) => {
 	}).then((response) => {
 		const url = window.URL.createObjectURL(new Blob([response.data]));
 		const link = document.createElement('a');
-		const file_name = file_type == 'txt' ? 'file.txt' : 'file.docx';
+		let file_name = file.name;
+		if (!file.name) {
+			file_name = `file.${file_type}`;
+		}
 		link.href = url;
 		link.setAttribute('download', file_name);
 		document.body.appendChild(link);
@@ -184,6 +187,18 @@ export const updateUser = (body) => {
 	});
 };
 
+export const updateUserSelf = (body) => {
+	return new Promise((resolve, reject) => {
+		axiosDefault.put('user', body)
+			.then((result) => {
+				resolve(result.data);
+			})
+			.catch((error) => {
+				reject(error);
+			});
+	});
+};
+
 
 export const RefreshToken = (body) => {
 	return new Promise((resolve, reject) => {
@@ -207,6 +222,31 @@ export const translateFile = (body) => {
 			url: 'translate_f',
 			data: body,
 			// body: body,
+		})
+			.then((result) => {
+				resolve(result.data);
+			})
+			.catch((error) => {
+				if (error.response.data.message == 'text_translate_limit_reached') {
+					const { used, quota } = error.response.data.data;
+					const { message } = error.response.data;
+					toastInformLimitReached(message, used, quota, 'text');
+				}
+				reject(error);
+			});
+	});
+};
+
+export const detectLangFile = (body) => {
+
+	return new Promise((resolve, reject) => {
+		axiosDefault({
+			headers: {
+				'Content-Type': 'multipart/form-data',
+			},
+			method: 'POST',
+			url: 'detect-f-lang',
+			data: body,
 		})
 			.then((result) => {
 				resolve(result.data);

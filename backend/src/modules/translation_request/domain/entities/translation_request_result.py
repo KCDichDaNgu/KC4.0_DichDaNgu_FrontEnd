@@ -1,4 +1,6 @@
 import io
+import openpyxl
+from pptx.api import Presentation
 from pydantic import Field
 from typing import Any, Optional, get_args, IO
 from docx import Document
@@ -54,14 +56,13 @@ class TranslationRequestResultEntity(
 
         return real_file_translation_task_folder
 
-    async def create_required_files_for_docx_file_translation_task(
+    async def create_required_files_for_file_translation_task(
         self,
-        binary_doc: IO,
+        binary: IO,
         original_file_ext: AllowedFileTranslationExtension
     ):    
         # if self.props.task_name not in FILE_TRANSLATION_TASKS:
         #     raise ValueError('Translation task is not file translation')
-            
         original_file_name = f'{get_file_translation_source_file_name()}.{original_file_ext}'
         original_file_path = get_file_translation_file_path(self.props.task_id.value, original_file_name)
         original_file_full_path = get_full_path(original_file_path)
@@ -73,12 +74,19 @@ class TranslationRequestResultEntity(
         self.__create_file_translation_task_folder()
 
         try:
-            doc = Document(binary_doc)
+            if original_file_ext == 'docx':                
+                file = Document(binary)
+                
+            elif original_file_ext == 'pptx':            
+                file = Presentation(binary)
+                
+            elif original_file_ext == 'xlsx':            
+                file = openpyxl.load_workbook(binary)
 
-            doc.save(original_file_full_path)
+            file.save(original_file_full_path)
 
             with open(binary_progress_file_full_path, 'wb') as outp:
-                pickle.dump(binary_doc, outp, pickle.HIGHEST_PROTOCOL)
+                pickle.dump(binary, outp, pickle.HIGHEST_PROTOCOL)
 
         except Exception as e:
             return BaseResponse(
