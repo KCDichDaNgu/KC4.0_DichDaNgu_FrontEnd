@@ -43,10 +43,10 @@ function TranslationChooselang(props) {
 	const handleChangeFrom = (event, newValue) => {
 		if (newValue == 'detect') props.changeSource(null);
 		else props.changeSource(newValue);
+		if (translationState.translateCode.detectLang !== null) {
+			props.changeDetectLang(null);
+		}
 		if (translateType === TRANSLATE_TYPE.plainText) {
-			if (translationState.translateCode.detectLang !== null) {
-				props.changeDetectLang(null);
-			}
 			if (translationState.translateText.targetText !== '') {
 				props.changeTargetText('');
 			}

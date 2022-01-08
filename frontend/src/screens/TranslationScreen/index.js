@@ -12,6 +12,7 @@ import {
 	changeSourceText,
 	changeTargetText,
 	changeSource,
+	changeDetectLang
 } from '../../redux/actions/translateAction';
 import {
 	changeFileDocument, changeOutput
@@ -118,6 +119,7 @@ function Index(props) {
 					<Button
 						onClick={() => {
 							setTranslateType(TRANSLATE_TYPE.document);
+							props.changeDetectLang(null);
 							// if (props.translationState.translateCode.sourceLang === null) props.changeSource('en');
 							// props.changeTargetText('');
 							// props.changeSourceText('');
@@ -172,6 +174,8 @@ Index.propTypes = {
 	changeFile: PropTypes.func,
 	changeOutput: PropTypes.func,
 	changeSource: PropTypes.func,
+	changeDetectLang: PropTypes.func,
+	
 };
 
 const mapStateToProps = (state) => ({
@@ -185,6 +189,7 @@ const mapDispatchToProps = {
 	changeTargetText,
 	changeFileDocument,
 	changeOutput,
+	changeDetectLang
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(authHoc(Index));

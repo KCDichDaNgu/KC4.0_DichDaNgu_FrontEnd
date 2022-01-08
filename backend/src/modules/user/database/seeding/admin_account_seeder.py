@@ -51,6 +51,6 @@ class AdminAccountSeeder(BaseSeeder):
                     'created_at': datetime.now(),
                     'updated_at': datetime.now()
                 })
-
+                print("Admin account seeding successfully")
             else:
-                raise Exception("Seeding fail")
+                raise Exception("Admin account seeding fail")
