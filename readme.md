@@ -1,5 +1,4 @@
 *Môi trường: Ubuntu 20.04*
-
 ### Cài đặt MongoDB với Replica Set
 #### Cài đặt MongoDB: https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/
 
@@ -55,14 +54,6 @@ Chạy server
 #/translation-backend/backend/
 $ python3 src/server.py run-server -p 8001
 ```
-### Cài đặt frontend
-cd đến /frontend
-```
-#/translation-backend/frontend
-$ cp .env.example .env
-$ yarn 
-$ yarn build
-```
 ### Cài đặt Nginx https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-20-04#step-5-%E2%80%93-setting-up-server-blocks-(recommended)
 ```sh
 $ sudo apt update
@@ -97,6 +88,18 @@ Reload config và khởi động lại nginx
 ```
 $ sudo ln -s /etc/nginx/sites-available/translate_client /etc/nginx/sites-enabled/
 $ sudo nginx -t && sudo systemctl restart nginx
+```
+### Cài đặt frontend
+cd đến /frontend
+```
+#/translation-backend/frontend
+$ cp .env.example .env
+$ yarn 
+```
+Build và copy file build vào /var/www/translate_client/
+```
+$ yarn build
+$ sudo cp -r build/* /var/www/translate_client/
 ```
 #### Cài đặt chứng chỉ SSL https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-20-04
 ```
