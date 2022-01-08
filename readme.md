@@ -15,6 +15,10 @@ $ sudo systemctl stop mongod
 $ sudo mkdir -p /srv/mongodb/db0
 $ sudo mongod --port 27017 --dbpath /srv/mongodb/db0 --replSet rs0 --bind_ip localhost
 ```
+```
+$ mongo -p 27017
+$ rs.initiate()
+```
 ### Cài đặt Node https://github.com/nvm-sh/nvm#readme
 ```
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
@@ -43,6 +47,8 @@ $ source .venv/bin/activate
 $ pip install -r requirements.txt
 $ pip install -r requirements2.txt
 $ cp .env.example .env.development
+$ mkdir static
+$ mkdir tmp
 ```
 Seed database
 ```
