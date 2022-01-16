@@ -125,5 +125,6 @@
 	"fileTypeNotSupported": "Định dạng tệp không hỗ trợ",
 	"no_access_media": "Không có quyền truy cập thiết bị truyền thông",
 	"unexpected_document_translate_error":"Có lỗi xảy ra, vui lòng kiểm tra tệp tải lên và thử lại.",
-	"unexpected_audio_translate_error":"Có lỗi xảy ra, vui lòng kiểm tra tệp tải lên và thử lại."
+	"unexpected_audio_translate_erroradmin":"Có lỗi xảy ra, vui lòng kiểm tra tệp tải lên và thử lại.",
+	"invalid_credentials": "Tài khoản hoặc mật khẩu không chính xác"
 }

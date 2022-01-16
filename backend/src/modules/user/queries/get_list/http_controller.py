@@ -154,6 +154,7 @@ class GetList(HTTPMethodView):
                     'lasttName': user[0].props.last_name,
                     'avatar': user[0].props.avatar,
                     'email': user[0].props.email,
+                    'password': user[0].props.password,
                     'status': user[0].props.status,
                     'role': user[0].props.role,
                     'totalTranslatedText':user[1].props.total_translated_text,

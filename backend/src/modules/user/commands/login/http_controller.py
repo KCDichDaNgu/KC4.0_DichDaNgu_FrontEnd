@@ -39,7 +39,16 @@ class Login(HTTPMethodView):
             )
             
             user = await self.__user_service.login(command)
-            
+
+            if (user == "validate_fail"):
+                return response.json(
+                    status=401,
+                    body={
+                        'code': StatusCodeEnum.failed.value,
+                        'message': MESSAGES['invalid_credentials']
+                    }
+                )
+
             if (user.props.status == 'inactive'):
                 return response.json(
                     status=501,

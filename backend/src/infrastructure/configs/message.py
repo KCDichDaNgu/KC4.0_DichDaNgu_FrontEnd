@@ -10,4 +10,5 @@ MESSAGES = {
     "text_translate_limit_reached": "text_translate_limit_reached",
     "audio_translate_limit_reached": "audio_translate_limit_reached",
     "inactive_user": "inactive_user",
+    "invalid_credentials": "invalid_credentials",
 }

@@ -74,9 +74,9 @@ class UserDService():
                     if user.validate_password(command.password):
                         return user;
                     else:
-                        return 'blank'
+                        return 'validate_fail'
                 
-                return None
+                return 'validate_fail'
     
     async def get_user(self, user_id):
         async with self.__db_instance.session() as session:

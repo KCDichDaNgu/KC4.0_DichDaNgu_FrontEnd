@@ -147,6 +147,11 @@ function UserManagement(props) {
 			// ),
 		},
 		{
+			title: t('password'),
+			dataIndex: 'password',
+			key: 'password',
+		},
+		{
 			title: t('audioQuota'),
 			align: 'center',
 			dataIndex: 'audioTranslationQuota',
