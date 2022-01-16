@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Form, Input, Select, Row, Col } from 'antd';
+import { Modal, Form, Input, Select, Row, Col, InputNumber } from 'antd';
 import PropTypes from 'prop-types';
 import * as axiosHelper from '../../../../helpers/axiosHelper';
 // import { useDispatch } from 'react-redux';
@@ -69,7 +69,7 @@ const CreateUserModal = (props) => {
 				</Col>
 
 				<Col xs={24} md={12}>
-					<Form.Item name='email' label={t('email')}>
+					<Form.Item name='email' label={t('email')} rules={[{ required: true, message: t('requiredField') }]}>
 						<Input />
 					</Form.Item>
 				</Col>
@@ -92,7 +92,7 @@ const CreateUserModal = (props) => {
 				<Col xs={24} md={12}>
 					<div className={styles.formQuota}>
 						<Form.Item name='text_quota_vi_en' label={t('textQuotaViEn')} rules={[{ required: true, message: t('requiredField') }]}>
-							<Input type="number" suffix={t('sentence')} className={styles.formQuota} />
+							<InputNumber type="number" suffix={t('sentence')} min={0} className={styles.formQuota} />
 						</Form.Item>
 					</div>
 
@@ -100,19 +100,19 @@ const CreateUserModal = (props) => {
 
 				<Col xs={24} md={12}>
 					<Form.Item name='text_quota_vi_zh' label={t('textQuotaViZh')} rules={[{ required: true, message: t('requiredField') }]}>
-						<Input type="number" suffix={t('sentence')} className={styles.formQuota} />
+						<InputNumber type="number" suffix={t('sentence')} min={0} className={styles.formQuota} />
 					</Form.Item>
 				</Col>
 
 				<Col xs={24} md={12}>
 					<Form.Item name='audio_quota_vi_en' label={t('audioQuotaViEn')} rules={[{ required: true, message: t('requiredField') }]}>
-						<Input type="number" suffix={t('minute')} className={styles.formQuota} />
+						<InputNumber type="number" suffix={t('minute')} min={0} className={styles.formQuota} />
 					</Form.Item>
 				</Col>
 
 				<Col xs={24} md={12}>
 					<Form.Item name='audio_quota_vi_zh' label={t('audioQuotaViZh')} rules={[{ required: true, message: t('requiredField') }]}>
-						<Input type="number" suffix={t('minute')} className={styles.formQuota} />
+						<InputNumber type="number" suffix={t('minute')} min={0} className={styles.formQuota} />
 					</Form.Item>
 				</Col>
 

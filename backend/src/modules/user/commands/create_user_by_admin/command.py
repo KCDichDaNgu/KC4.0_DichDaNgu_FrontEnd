@@ -7,7 +7,7 @@ class CreateUserCommand(BaseModel):
     first_name: Optional[str]
     last_name: Optional[str]
     password: str
-    email: Optional[str]
+    email: str
     role: str
     status: str
     audio_translation_quota: dict

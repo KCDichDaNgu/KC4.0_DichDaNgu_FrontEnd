@@ -36,7 +36,7 @@ class CreateUserByAdmin(HTTPMethodView):
                 username=data['username'],
                 first_name=data['first_name'] if 'first_name' in data else '',
                 last_name=data['last_name'] if 'last_name' in data else '',
-                email=data['email'] if 'email' in data else '',
+                email=data['email'],
                 password=data['password'],
                 role=data['role'],
                 status=data['status'],

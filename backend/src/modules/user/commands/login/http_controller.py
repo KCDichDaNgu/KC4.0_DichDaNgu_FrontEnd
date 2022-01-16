@@ -37,10 +37,10 @@ class Login(HTTPMethodView):
                 username=data['username'],
                 password=data['password'],
             )
-            
+        
             user = await self.__user_service.login(command)
 
-            if (user == "validate_fail"):
+            if user is None:
                 return response.json(
                     status=401,
                     body={

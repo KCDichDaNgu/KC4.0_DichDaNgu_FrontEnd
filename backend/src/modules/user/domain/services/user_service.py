@@ -72,12 +72,10 @@ class UserDService():
 
                 if user is not None:
                     if user.validate_password(command.password):
-                        return user;
-                    else:
-                        return 'validate_fail'
+                        return user
                 
-                return 'validate_fail'
-    
+                return None
+
     async def get_user(self, user_id):
         async with self.__db_instance.session() as session:
             async with session.start_transaction():

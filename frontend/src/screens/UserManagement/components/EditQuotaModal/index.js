@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Form, Row, Col, Input, Spin } from 'antd';
+import { Modal, Form, Row, Col, InputNumber, Spin } from 'antd';
 import PropTypes from 'prop-types';
 import * as axiosHelper from '../../../../helpers/axiosHelper';
 // import { useDispatch } from 'react-redux';
@@ -88,25 +88,25 @@ const EditQuotaModal = (props) => {
 
 				<Col xs={24} md={12}>
 					<Form.Item name='text_quota_vi_en' label={t('textViEn')} rules={[{ required: true, message: t('requiredField') }]}>
-						<Input type="number" suffix={t('sentence')} className={styles.formQuota} />
+						<InputNumber type="number" suffix={t('sentence')} min={0} className={styles.formQuota} />
 					</Form.Item>
 				</Col>
 
 				<Col xs={24} md={12}>
 					<Form.Item name='text_quota_vi_zh' label={t('textViZh')} rules={[{ required: true, message: t('requiredField') }]}>
-						<Input type="number" suffix={t('sentence')} className={styles.formQuota} />
+						<InputNumber type="number" suffix={t('sentence')} min={0} className={styles.formQuota} />
 					</Form.Item>
 				</Col>
 
 				<Col xs={24} md={12}>
 					<Form.Item name='audio_quota_vi_en' label={t('audioViEn')} rules={[{ required: true, message: t('requiredField') }]}>
-						<Input type="number" suffix={t('minute')} className={styles.formQuota} />
+						<InputNumber type="number" suffix={t('minute')} min={0} className={styles.formQuota} />
 					</Form.Item>
 				</Col>
 
 				<Col xs={24} md={12}>
 					<Form.Item name='audio_quota_vi_zh' label={t('audioViZh')} rules={[{ required: true, message: t('requiredField') }]}>
-						<Input type="number" suffix={t('minute')} className={styles.formQuota} />
+						<InputNumber type="number" suffix={t('minute')} min={0} className={styles.formQuota} />
 					</Form.Item>
 				</Col>
 			</Row>
