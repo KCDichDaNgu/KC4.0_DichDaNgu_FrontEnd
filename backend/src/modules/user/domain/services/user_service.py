@@ -22,7 +22,7 @@ class UserDService():
     async def create_user(self, command: CreateUserCommand):
         async with self.__db_instance.session() as session:
              async with session.start_transaction():
-                user = await self.__user_repository.find_one({'email': command.email})
+                user = await self.__user_repository.find_one({'username': command.username})
 
                 if user is None:
 

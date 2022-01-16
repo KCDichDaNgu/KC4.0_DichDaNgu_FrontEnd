@@ -36,14 +36,14 @@ class CreateUserByAdmin(HTTPMethodView):
                 username=data['username'],
                 first_name=data['first_name'] if 'first_name' in data else '',
                 last_name=data['last_name'] if 'last_name' in data else '',
-                email=data['email'],
+                email=data['email'] if 'email' in data else '',
                 password=data['password'],
                 role=data['role'],
                 status=data['status'],
                 audio_translation_quota=data['audio_translation_quota'],
                 text_translation_quota=data['text_translation_quota'],
             )
-            
+
             user = await self.__user_service.create_user(command)
 
             result = await create_token(user, 'web')
