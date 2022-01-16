@@ -270,6 +270,9 @@ const debouncedTranslationFileAudio = debounce(async (body, dispatch) => {
 		let time = 1;
 		const postTranslationResult = await axiosHelper.translateFileAudio(body);
 
+		if (postTranslationResult == 'fail') {
+			dispatch(translationFileFailed('fail'));
+		}
 		const getConvertResult = await recursiveCheckTranslateAudioStatus(
 			postTranslationResult.data.translationHitoryId,
 			postTranslationResult.data.taskId,

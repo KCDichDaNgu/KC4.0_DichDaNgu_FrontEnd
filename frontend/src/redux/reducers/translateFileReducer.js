@@ -94,6 +94,8 @@ export default function(state = initialState, action) {
 	case TRANSLATEFILE_FAIL: {
 		return {
 			...state,
+			audioFile:null,
+			voiceInput: false,
 			currentState: STATE.FAILURE,
 			err: action.payload.err,
 		};

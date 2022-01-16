@@ -62,7 +62,7 @@ axiosDefault.interceptors.response.use(function (response) {
 });
 
 export const translateFileAudio = (body) => {
-	return new Promise((resolve, reject) => {
+	return new Promise((resolve) => {
 		axiosDefault({
 			headers: {
 				'Content-Type': 'multipart/form-data',
@@ -83,7 +83,7 @@ export const translateFileAudio = (body) => {
 					const { message } = error.response.data;
 					toastInformLimitReached(message, used, quota, 'audio');
 				}
-				reject(error);
+				resolve('fail');
 			});
 	});
 };
