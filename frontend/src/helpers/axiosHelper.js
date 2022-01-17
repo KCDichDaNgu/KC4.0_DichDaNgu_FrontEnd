@@ -277,6 +277,18 @@ export const updateUser = (body) => {
 	});
 };
 
+export const deleteUser = (body) => {
+	return new Promise((resolve, reject) => {
+		axiosDefault.delete('admin/user', {data: body})
+			.then((result) => {
+				resolve(result.data);
+			})
+			.catch((error) => {
+				reject(error);
+			});
+	});
+};
+
 export const RefreshToken = (body) => {
 	return new Promise((resolve, reject) => {
 		axiosDefault.post('user/auth', body)

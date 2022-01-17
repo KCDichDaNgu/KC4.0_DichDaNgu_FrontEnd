@@ -10,6 +10,7 @@ from modules.user.commands.auth.http_controller import Auth
 from modules.user.commands.logout.http_controller import Logout
 from modules.user.commands.update_self.http_controller import UpdateSelf
 from modules.user.commands.update_other.http_controller import UpdateOther
+from modules.user.commands.delete_user.http_controller import DeleteOther
 
 config: GlobalConfig = get_cnf()
 
@@ -82,4 +83,9 @@ admin_bp.add_route(
     UpdateUserQuota.as_view(), 
     uri=APP_CONFIG.ROUTES['admin.update_user_quota']['path'],
     methods=[APP_CONFIG.ROUTES['admin.update_user_quota']['method']]
+)
+admin_bp.add_route(
+    DeleteOther.as_view(), 
+    uri=APP_CONFIG.ROUTES['admin.delete']['path'],
+    methods=[APP_CONFIG.ROUTES['admin.delete']['method']]
 )

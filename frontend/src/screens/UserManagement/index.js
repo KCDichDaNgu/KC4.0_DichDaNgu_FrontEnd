@@ -48,7 +48,7 @@ function UserManagement(props) {
 
 	const renderStatus = (currentStatus, record) => {
 		return (
-			<Radio.Group defaultValue={currentStatus} disabled={record.id === currentUser.id }>
+			<Radio.Group defaultValue={currentStatus} disabled={record.id === currentUser.id}>
 				{
 					Object.keys(USER_STATUS).map(statusKey => {
 						return (
@@ -85,6 +85,14 @@ function UserManagement(props) {
 		);
 	};
 
+	const renderDelete = (record) => {
+		return (
+			<Button onClick={() => handleDelete(record)} disabled={record.id === currentUser.id}>
+				Xóa
+			</Button>
+		);
+	};
+
 	const handleStatusChange = async (e, currentStatus, record) => {
 		const status = e.target.value;
 
@@ -101,6 +109,20 @@ function UserManagement(props) {
 		if (result.code === STATUS_CODE.success) {
 			props.getUserListAsync({});
 			toast.success(t('updateSuccess'));
+		}
+	};
+
+	const handleDelete = async (record) => {
+
+		const body = {
+			username: record.username,
+		};
+		console.log(body);
+		const result = await axiosHelper.deleteUser(body);
+
+		if (result.code === STATUS_CODE.success) {
+			props.getUserListAsync({});
+			toast.success(t('deleteUserSuccess'));
 		}
 	};
 
@@ -183,6 +205,13 @@ function UserManagement(props) {
 			dataIndex: 'role',
 			key: 'role',
 			render: (role) => t(`${role}`)
+		},
+		{
+			align: 'center',
+			key: 'status',
+			render: (record) => {
+				return renderDelete(record);
+			}
 		},
 	];
 

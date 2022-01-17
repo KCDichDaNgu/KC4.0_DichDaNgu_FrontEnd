@@ -146,3 +146,17 @@ class UserDService():
                 updated_user_statistic = await self.__user_statistic_repository.update(user, changes)
 
                 return updated_user_statistic
+    
+    async def delete_user(self, command):
+        async with self.__db_instance.session() as session:
+            async with session.start_transaction():
+                user = await self.__user_repository.find_one({'username': command.username})
+                print(user)
+                if user is not None:
+                    deleted_user = await self.__user_repository.delete(user)
+                    
+                    return deleted_user
+                
+                return None
+
+                

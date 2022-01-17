@@ -275,6 +275,14 @@ class AppConfig(BaseModel):
             "method": "Post",
             "abstract": False,
         },
+        "admin.delete": {
+            "path": "/user",
+            "name": "Deleting user",
+            "summary": "Delete user by id",
+            "desc": "Delete user by id",
+            "method": "DELETE",
+            "abstract": False,
+        },
         "system_setting": {
             "path": "/system-setting",
             "name": "System setting",

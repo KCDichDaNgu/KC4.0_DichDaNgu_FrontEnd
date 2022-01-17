@@ -1,0 +1,4 @@
+class DeleteOtherUser:
+
+    username: str
+    
