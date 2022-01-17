@@ -20,6 +20,9 @@ class UpdateSelf(HTTPMethodView):
     def __init__(self) -> None:
         super().__init__()
         from modules.user.commands.update_self.service import UserService
+        from modules.user.domain.services.user_service import UserDService
+        
+        self.__user_domain_service = UserDService()
         self.__user_service = UserService()
 
     @doc.summary(APP_CONFIG.ROUTES['user.update_self']['summary'])
@@ -37,6 +40,7 @@ class UpdateSelf(HTTPMethodView):
         try:
             data = request.json
             me = await get_me(request)
+            
             if me is None:
                 return response.json(
                     status=404,
@@ -46,11 +50,15 @@ class UpdateSelf(HTTPMethodView):
                     }
                 )
 
+            user_statistic = await self.__user_domain_service.get_user_statistic(me.id)
+            
             command = UpdateUserCommand(
                 id=me.id,
                 first_name=data['first_name'],
                 last_name=data['last_name'],
                 avatar=data['avatar'],
+                text_translation_quota=user_statistic.props.text_translation_quota,
+                audio_translation_quota=user_statistic.props.audio_translation_quota,
             )
             user = await self.__user_service.update_user(command)
 

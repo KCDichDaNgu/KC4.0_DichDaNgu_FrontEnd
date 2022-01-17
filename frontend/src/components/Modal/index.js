@@ -20,6 +20,8 @@ import AlbumIcon from '@mui/icons-material/Album';
 import { useTranslation } from 'react-i18next';
 import * as axiosHelper from '../../helpers/axiosHelper';
 import { USER_IMG_URL } from '../../constants/envVar';
+import { toast } from 'react-toastify';
+import { STATUS_CODE } from '../../constants/common';
 
 function ModalInfo(props) {
 	const { t } = useTranslation();
@@ -42,6 +44,28 @@ function ModalInfo(props) {
 			getInfo();
 		}
 	}, [props.show]);
+
+	const onSave = async () => {
+		try {
+			// const new_values = (({ username, password, email, last_name, first_name, role, status }) => ({ username, password, email, last_name, first_name, role, status }))(values);
+			const new_values = {
+				first_name: userInfo.firstName,
+				last_name: userInfo.lastName,
+				avatar: userInfo.avatar,
+			};
+
+			const result = await axiosHelper.updateUserSelf(new_values);
+
+			if (result.code === STATUS_CODE.success) {
+				toast.success(t('updateSuccess'));
+			}
+
+			props.onHide();
+		} catch (e) {
+			toast(e);
+			props.onHide();
+		}
+	};
 
 	if (isLoading) return <></>;
 
@@ -70,14 +94,21 @@ function ModalInfo(props) {
 					<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
 						<PersonIcon fontSize="medium" sx={{ color: 'action.active', mr: 1 }} />
 						<TextField
-							id="name"
-							label={t('ten')}
+							id="firstName"
+							label={t('ho')}
 							fullWidth
-							InputProps={{
-								readOnly: true,
-							}}
 							size='small'
 							value={userInfo ? userInfo.firstName : ''}
+							variant="standard"
+							onChange={e => setUserInfo({...userInfo, firstName: e.target.value})}
+						/>
+						<TextField
+							id="lastName"
+							label={t('ten')}
+							fullWidth
+							size='small'
+							value={userInfo ? userInfo.lastName : ''}
+							onChange={e => setUserInfo({...userInfo, lastName: e.target.value})}
 							variant="standard"
 						/>
 					</Box>
@@ -123,6 +154,9 @@ function ModalInfo(props) {
 				<DialogActions>
 					<Button variant="contained" onClick={props.onHide}>
 						{t('cancel')}
+					</Button>
+					<Button variant="contained" onClick={onSave}>
+						{t('edit')}
 					</Button>
 				</DialogActions>
 			</form>

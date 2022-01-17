@@ -117,7 +117,7 @@ function UserManagement(props) {
 		const body = {
 			username: record.username,
 		};
-		console.log(body);
+		
 		const result = await axiosHelper.deleteUser(body);
 
 		if (result.code === STATUS_CODE.success) {
