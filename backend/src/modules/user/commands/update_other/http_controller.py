@@ -40,8 +40,13 @@ class UpdateOther(HTTPMethodView):
 
             command = UpdateOtherUserCommand(
                 id=data['id'],
-                role=data['role'],
-                status=data['status'],
+                username=data['username'] if 'username' in data else None,
+                role=data['role'] if 'role' in data else None,
+                status=data['status'] if 'status' in data else None,
+                email=data['email'] if 'email' in data else None,
+                last_name=data['last_name'] if 'last_name' in data else None,
+                first_name=data['first_name'] if 'first_name' in data else None,
+                password=data['password'] if 'password' in data else None,
                 audio_translation_quota=data['audio_translation_quota'] if 'audio_translation_quota' in data else None,
                 text_translation_quota=data['text_translation_quota'] if 'text_translation_quota' in data else None,
             )

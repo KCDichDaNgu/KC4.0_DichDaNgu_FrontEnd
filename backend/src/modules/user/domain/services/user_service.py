@@ -80,19 +80,19 @@ class UserDService():
         async with self.__db_instance.session() as session:
             async with session.start_transaction():
                 user_entity = await self.__user_repository.find_one({'id': UUID(user_id)})
-
-                return User(
-                    id=user_entity.id.value,
-                    username=user_entity.props.username,
-                    first_name=user_entity.props.first_name,
-                    last_name=user_entity.props.last_name,
-                    avatar=user_entity.props.avatar,
-                    email=user_entity.props.email,
-                    role=user_entity.props.role,
-                    status=user_entity.props.status,
-                    created_at=str(user_entity.created_at.value),
-                    updated_at=str(user_entity.updated_at.value)
-                )
+                return user_entity
+                # return User(
+                #     id=user_entity.id.value,
+                #     username=user_entity.props.username,
+                #     first_name=user_entity.props.first_name,
+                #     last_name=user_entity.props.last_name,
+                #     avatar=user_entity.props.avatar,
+                #     email=user_entity.props.email,
+                #     role=user_entity.props.role,
+                #     status=user_entity.props.status,
+                #     created_at=str(user_entity.created_at.value),
+                #     updated_at=str(user_entity.updated_at.value)
+                # )
 
     async def update_user(self, command):
         async with self.__db_instance.session() as session:
@@ -102,7 +102,7 @@ class UserDService():
                     return None
 
                 changes = dict(command)
-
+                print(changes)
                 del changes["id"]
                 del changes["audio_translation_quota"]
                 del changes["text_translation_quota"]

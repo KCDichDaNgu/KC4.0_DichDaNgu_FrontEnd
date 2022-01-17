@@ -13,6 +13,7 @@ import * as axiosHelper from '../../helpers/axiosHelper';
 import { toast } from 'react-toastify';
 import EditQuotaModal from './components/EditQuotaModal';
 import authHoc from '../../hocs/authHoc';
+import EditUserModal from './components/EditUserModal';
 
 function UserManagement(props) {
 	const { userState, navbarState } = props;
@@ -20,6 +21,7 @@ function UserManagement(props) {
 	const [isLoading, setIsLoading] = useState(true);
 	const [createUserModalVisible, setCreateUserModalVisible] = useState(false);
 	const [editUserQuotaModalVisible, setEditUserQuotaModalVisible] = useState(false);
+	const [editUserModalVisible, setEditUserModalVisible] = useState(false);
 	const [editingUserId, setEditingUserId] = useState('');
 	const [currentUser, setCurrentUser] = useState('');
 
@@ -40,7 +42,7 @@ function UserManagement(props) {
 			props.getUserListAsync({});
 			setIsLoading(false);
 		}
-	}, [navbarState.isLogin, createUserModalVisible, editUserQuotaModalVisible]);
+	}, [navbarState.isLogin, createUserModalVisible, editUserQuotaModalVisible, editUserModalVisible]);
 
 	const isAdmin = (user) => {
 		return user?.role === 'admin' && user?.status === USER_STATUS.active;
@@ -85,11 +87,17 @@ function UserManagement(props) {
 		);
 	};
 
-	const renderDelete = (record) => {
+	const renderAction = (record) => {
 		return (
-			<Button onClick={() => handleDelete(record)} disabled={record.id === currentUser.id}>
-				Xóa
-			</Button>
+			<div>
+				<Button onClick={() => { setEditUserModalVisible(true); setEditingUserId(record.id); }} disabled={record.id === currentUser.id}>
+					Sửa
+				</Button>
+				<Button onClick={() => handleDelete(record)} disabled={record.id === currentUser.id}>
+					Xóa
+				</Button>
+			</div>
+
 		);
 	};
 
@@ -99,6 +107,11 @@ function UserManagement(props) {
 		const body = {
 			id: record.id,
 			role: record.role,
+			username: record.username,
+			email: record.email,
+			password: record.password,
+			last_name: record.lastName,
+			first_name: record.firstName,
 			status: status,
 			audio_translation_quota: record.audioTranslationQuota,
 			text_translation_quota: record.textTranslationQuota
@@ -117,7 +130,7 @@ function UserManagement(props) {
 		const body = {
 			username: record.username,
 		};
-		
+
 		const result = await axiosHelper.deleteUser(body);
 
 		if (result.code === STATUS_CODE.success) {
@@ -208,9 +221,9 @@ function UserManagement(props) {
 		},
 		{
 			align: 'center',
-			key: 'status',
+			key: 'action',
 			render: (record) => {
-				return renderDelete(record);
+				return renderAction(record);
 			}
 		},
 	];
@@ -233,6 +246,7 @@ function UserManagement(props) {
 
 			{createUserModalVisible && <CreateUserModal visible={createUserModalVisible} setVisible={setCreateUserModalVisible} />}
 			{editUserQuotaModalVisible && <EditQuotaModal userId={editingUserId} visible={editUserQuotaModalVisible} setVisible={setEditUserQuotaModalVisible} />}
+			{editUserModalVisible && <EditUserModal userId={editingUserId} visible={editUserModalVisible} setVisible={setEditUserModalVisible} />}
 		</div>
 	);
 }

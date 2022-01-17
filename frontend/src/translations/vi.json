@@ -8,6 +8,7 @@
 	"danhSachTrong": "Danh sách trống",
 	"huyBo": "Hủy bỏ",
 	"ten": "Tên",
+	"ho": "Họ",
 	"taiTaiLieu": "Tải tài liệu",
 	"taiTaiLieuTiengViet": "Tải tài liệu tiếng Việt",
 	"taiTaiLieuTiengTrung": "Tải tài liệu tiếng Trung",
@@ -127,5 +128,7 @@
 	"unexpected_document_translate_error":"Có lỗi xảy ra, vui lòng kiểm tra tệp tải lên và thử lại.",
 	"unexpected_audio_translate_erroradmin":"Có lỗi xảy ra, vui lòng kiểm tra tệp tải lên và thử lại.",
 	"invalid_credentials": "Tài khoản hoặc mật khẩu không chính xác",
-	"deleteUserSuccess": "Xóa tài khoản thành công"
+	"deleteUserSuccess": "Xóa tài khoản thành công",
+	"editUserSuccess": "Chỉnh sửa thành công",
+	"editUser": "Chỉnh sửa thông tin người dùng"
 }

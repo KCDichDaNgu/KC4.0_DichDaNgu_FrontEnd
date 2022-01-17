@@ -50,26 +50,27 @@ class GetUser(HTTPMethodView):
                 }
             )
 
-        user_statistic = await self.__user_domain_service.get_user_statistic(user.id)
+        user_statistic = await self.__user_domain_service.get_user_statistic(user.id.value)
 
         return response.json(
             body={
                 'code': StatusCodeEnum.success.value,
                 'data': {
-                    'id': user.id,
-                    'username': user.username,
-                    'firstName': user.first_name,
-                    'lastName': user.last_name,
-                    'avatar': user.avatar,
-                    'email': user.email,
-                    'role': user.role,
-                    'status': user.status,
+                    'id': user.id.value,
+                    'username': user.props.username,
+                    'password': user.props.password,
+                    'firstName': user.props.first_name,
+                    'lastName': user.props.last_name,
+                    'avatar': user.props.avatar,
+                    'email': user.props.email,
+                    'role': user.props.role,
+                    'status': user.props.status,
                     'totalTranslatedText':user_statistic.props.total_translated_text,
                     'totalTranslatedAudio':user_statistic.props.total_translated_audio,
                     'audioTranslationQuota':user_statistic.props.audio_translation_quota,
                     'textTranslationQuota':user_statistic.props.text_translation_quota,
-                    'createdAt': user.created_at,
-                    'updatedAt': user.updated_at
+                    'createdAt': str(user.created_at.value),
+                    'updatedAt': str(user.created_at.value)
                 },
                 'message': MESSAGES['success']
             }

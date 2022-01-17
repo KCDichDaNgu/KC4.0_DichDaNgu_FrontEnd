@@ -151,7 +151,7 @@ class GetList(HTTPMethodView):
                     'id': user[0].id.value,
                     'username': user[0].props.username,
                     'firstName': user[0].props.first_name,  
-                    'lasttName': user[0].props.last_name,
+                    'lastName': user[0].props.last_name,
                     'avatar': user[0].props.avatar,
                     'email': user[0].props.email,
                     'password': user[0].props.password,
