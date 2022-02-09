@@ -7,4 +7,10 @@ dump.rdb
 .env.development
 .env.production
 .env.shared
-task_result/*
+backend/static/task_result/*
+backend/static/file_translation/*
+backend/static/*
+.vscode
+backend/static/task_result/
+backend/static/speech_recognition/*
+frontend/.env

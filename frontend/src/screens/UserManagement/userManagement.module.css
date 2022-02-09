@@ -1,0 +1,12 @@
+.pageContainer {
+  padding: 20px;
+  width: 100wh;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.createButton {
+  max-width: 150px;
+  margin: 20px 0px;
+}

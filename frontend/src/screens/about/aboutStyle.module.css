@@ -1,0 +1,21 @@
+.aboutStyle{
+    padding-top: 45px;
+}
+.aboutStyle1{
+    padding-top: 25px;
+    text-align: center;
+}
+
+.abouttext{
+    text-align: center;
+    font-size: 20px;
+}
+.abouttext1{
+    font-size: 20px;
+    color: #34639E;
+    margin-bottom: 0;
+}
+.abouttext2{
+    font-size: 20px;
+    color: rgb(110, 110, 110);
+}

@@ -1,0 +1,29 @@
+version: '3'
+services:
+
+  # The Application
+  dev-web-uettrans:
+    container_name: dev-web-uettrans
+    restart: always
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    working_dir: /var/www
+    ports:
+      - "8080:80"
+    # networks:
+    #   - traefik_traefik
+    # volumes:
+    #   - ./:/var/www
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.dev-web-uettrans.entrypoints=https"
+    #   - "traefik.http.routers.dev-web-uettrans.rule=Host(`dev-uettranslation.ksechain.com`)"
+    #   - "traefik.docker.network=traefik_traefik"
+    #   # - "traefik.http.services.web-uettrans.loadbalancer.server.port=80"
+    #   - "traefik.http.routers.dev-web-uettrans.tls=true"
+    #   - "traefik.http.routers.dev-web-uettrans.tls.certresolver=http"
+
+# networks:
+#   traefik_traefik:
+#     external: true

@@ -1,0 +1,24 @@
+.Tab_style {
+    color: #495057;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.Tab_style:hover {
+    color: rgb(207, 207, 207);
+}
+
+
+.nav-tabs .nav-item.show .nav-link,
+.nav-tabs .nav-link.active {
+    border-top: 0px solid #698668;
+    border-left: 0px solid #698668;
+    border-right: 0px solid #698668;
+    border-bottom: 2px solid #1d5193 !important;
+}
+
+.nav-tabs .nav-link:hover,
+.nav-tabs .nav-link:focus {
+    border-color: none !important;
+    border: 0;
+}
