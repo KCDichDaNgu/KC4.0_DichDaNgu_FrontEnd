@@ -1,0 +1,32 @@
+Traceback (most recent call last):
+  File "/workspace/datnt/multilingual_nmt/web/direct_translate.py", line 93, in translate_paragraphs
+    outputs = appmodel.model(lang=direction, debug=debug).translate_batch_sentence(tokenized_inputs, src_sos=src_sos, trg_sos=trg_sos, debug=debug)
+  File "/home/datnt/.pyenv/versions/3.7.0/envs/.venv/lib/python3.7/site-packages/torch/autograd/grad_mode.py", line 28, in decorate_context
+    return func(*args, **kwargs)
+  File "/workspace/datnt/multilingual_nmt/models/transformer.py", line 331, in translate_batch_sentence
+    input_max_length=input_max_length, debug=debug)
+  File "/workspace/datnt/multilingual_nmt/models/transformer.py", line 354, in translate_batch
+    debug=debug, path_dict=self.config.get("dictionary",""))
+  File "/workspace/datnt/multilingual_nmt/modules/inference/cached_beam_search.py", line 411, in translate_batch
+    return self.translate_batch_sentence(sentences, **kwargs)
+  File "/workspace/datnt/multilingual_nmt/modules/inference/cached_beam_search.py", line 368, in translate_batch_sentence
+    translated_sentences = self.beam_search(sent_ids, src_sos=src_sos, trg_sos=trg_sos, src_tokens=sent_tokens, replace_unk=replace_unk, debug=debug)
+  File "/workspace/datnt/multilingual_nmt/modules/inference/cached_beam_search.py", line 259, in beam_search
+    outputs[:, :, :i].view(-1, i), e_outputs, src_mask, trg_mask, output_attention=True, cache=cache)
+  File "/workspace/datnt/multilingual_nmt/models/transformer.py", line 541, in decode
+    return self.decoder(*args, **kwargs)
+  File "/home/datnt/.pyenv/versions/3.7.0/envs/.venv/lib/python3.7/site-packages/torch/nn/modules/module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/workspace/datnt/multilingual_nmt/modules/prototypes.py", line 264, in forward
+    cache_attn=cache_attn, cache_self_attn=cache_self_attn, need_attn=output_attention)
+  File "/home/datnt/.pyenv/versions/3.7.0/envs/.venv/lib/python3.7/site-packages/torch/nn/modules/module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/workspace/datnt/multilingual_nmt/modules/prototypes.py", line 114, in forward
+    x_na, na = self.attn_2(x2, memory, memory, src_mask, cache=cache_attn)
+  File "/home/datnt/.pyenv/versions/3.7.0/envs/.venv/lib/python3.7/site-packages/torch/nn/modules/module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/workspace/datnt/multilingual_nmt/layers/prototypes.py", line 101, in forward
+    value, attn = self.attention(q, k, v, mask)
+  File "/workspace/datnt/multilingual_nmt/layers/prototypes.py", line 120, in attention
+    scores = torch.matmul(q, k.transpose(-2, -1)) / math.sqrt(self.d_k)
+RuntimeError: CUDA out of memory. Tried to allocate 1.44 GiB (GPU 0; 23.70 GiB total capacity; 15.77 GiB already allocated; 382.50 MiB free; 21.15 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
