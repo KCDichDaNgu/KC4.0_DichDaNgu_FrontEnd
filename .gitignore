@@ -14,3 +14,4 @@ backend/static/*
 backend/static/task_result/
 backend/static/speech_recognition/*
 frontend/.env
+frontend/yarn.lock
