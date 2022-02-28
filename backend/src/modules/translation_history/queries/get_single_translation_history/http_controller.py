@@ -1,8 +1,10 @@
+from infrastructure.configs.translation_history import TranslationHistoryStatus
+from infrastructure.configs.translation_task import TRANSLATION_PRIVATE_TASKS, TranslationTaskNameEnum, TranslationTaskStepEnum
 from interface_adapters.dtos.base_response import BaseResponse
 from uuid import UUID
 from modules.translation_request.domain.entities.translation_history import TranslationHistoryEntity
 from sanic.exceptions import SanicException
-from infrastructure.configs.task import TRANSLATION_PUBLIC_TASKS, get_task_result_file_path
+from infrastructure.configs.task import TRANSLATION_PUBLIC_TASKS, StepStatusEnum, get_task_result_file_path
 from infrastructure.configs.message import MESSAGES
 from sanic import response
 from infrastructure.configs.main import StatusCodeEnum, GlobalConfig, get_cnf
@@ -26,9 +28,11 @@ class GetSingleTranslationHistory(HTTPMethodView):
 
         from modules.translation_request.database.translation_history.repository import TranslationHistoryRepository
         from modules.translation_request.database.translation_request.repository import TranslationRequestRepository
+        from modules.system_setting.database.repository import SystemSettingRepository
 
         self.__translation_history_repository = TranslationHistoryRepository()
         self.__translation_request_repository = TranslationRequestRepository()
+        self.__system_setting_repository = SystemSettingRepository()
 
     @doc.summary(APP_CONFIG.ROUTES['translation_history.get_single']['summary'])
     @doc.description(APP_CONFIG.ROUTES['translation_history.get_single']['desc'])
@@ -83,21 +87,76 @@ class GetSingleTranslationHistory(HTTPMethodView):
                 'message': MESSAGES['success']
             }).dict())
         
-        task = await self.__translation_request_repository.find_one({'id': UUID(translation_history.props.task_id.value)})
+        translation_request = await self.__translation_request_repository.find_one({'id': UUID(translation_history.props.task_id.value)})
 
-        if task.props.task_name not in TRANSLATION_PUBLIC_TASKS:
+        if translation_request.props.task_name in TRANSLATION_PRIVATE_TASKS and not user:
             raise SanicException('Server Error')
+        
+        
+        pos_in_translation_queue = 0
+        estimated_watting_time = 0
+        
+        
+        if translation_history.props.status == TranslationHistoryStatus.translating.value:
+        
+            previous_trans_req = await self.__translation_request_repository.find_many({
+                '$and': [
+                    {'created_at': {'$lt': translation_request.created_at.value}},
+                    {
+                        '$or': [
+                            {
+                                '$and': [
+                                    { 'current_step': TranslationTaskStepEnum.translating_language.value},
+                                    { 
+                                        'step_status': {
+                                            '$in': [
+                                                StepStatusEnum.not_yet_processed,
+                                                StepStatusEnum.in_progress
+                                            ]
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                '$and': [
+                                    { 'current_step': TranslationTaskStepEnum.detecting_language.value },
+                                    {
+                                        'step_status': {
+                                            '$in': [
+                                                StepStatusEnum.not_yet_processed
+                                            ]
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    } 
+                ]
+            })
+            
+            pos_in_translation_queue = len(previous_trans_req) + 1
+
+            system_setting = await self.__system_setting_repository.find_one({})
+            
+            translation_speed_for_each_sentence = system_setting.props.translation_speed_for_each_sentence 
+            
+            num_sents = sum([trans_req.props.num_sents for trans_req in previous_trans_req]) + translation_request.props.num_sents
+            
+            estimated_watting_time = translation_speed_for_each_sentence * num_sents
+        
 
         return response.json(BaseResponse(**{
             'code': StatusCodeEnum.success.value,
             'data': {
-                'taskId': task.id.value,
+                'taskId': translation_request.id.value,
                 'translationType': translation_history.props.translation_type,
                 'id': translation_history.id.value,
                 'status': translation_history.props.status,
                 'updatedAt': str(translation_history.updated_at.value),
                 'createdAt': str(translation_history.created_at.value),
-                'resultUrl': translation_history.props.real_file_path
+                'resultUrl': translation_history.props.real_file_path,
+                'posInTranslationQueue': pos_in_translation_queue,
+                'estimatedWattingTime': estimated_watting_time
             },
             'message': MESSAGES['success']
         }).dict())

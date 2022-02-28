@@ -29,4 +29,4 @@ class UserOrmEntity(OrmEntityBase):
         super(UserOrmEntity, self).pre_insert()
 
     def pre_update(self):
-        super(UserOrmEntity, self).pre_insert()
+        super(UserOrmEntity, self).pre_update()

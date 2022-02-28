@@ -10,6 +10,10 @@ from sanic_cors import CORS
 
 import os, aiofiles
 
+import nltk
+    
+nltk.download('punkt')
+
 async def listener_before_server_start(*args, **kwargs):
     print("before_server_start")
     
@@ -44,6 +48,11 @@ async def listener_before_server_stop(*args, **kwargs):
     
 async def listener_after_server_stop(*args, **kwargs):
     print("after_server_stop")
+    
+def make_required_dir_before_start():
+    
+    if not os.path.isdir('static/task_result'):
+        os.makedirs('static/task_result')
 
 def init_routes(app: Sanic) -> Sanic:
 
@@ -83,6 +92,8 @@ async def mkdir_required_folders(folders_path: List[str]):
             await aiofiles.os.mkdir(folder_path)
 
 async def init_app():
+    
+    make_required_dir_before_start()
 
     config: GlobalConfig = get_cnf()
     

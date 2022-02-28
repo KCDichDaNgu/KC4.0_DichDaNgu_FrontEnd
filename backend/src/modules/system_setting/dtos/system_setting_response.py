@@ -3,16 +3,40 @@ from sanic_openapi import doc
 
 class DataStructure:
 
-    maxUserTextTranslationPerDay = doc.Integer(
-        description='Max user text translate per day'
-    )
-
-    maxUserDocTranslationPerDay = doc.Integer(
-        description='Max user doc translate per day'
-    )
-
     taskExpiredDuration = doc.Integer(
-        description='Task expire duration'
+        description='taskExpiredDuration'
+    )
+    
+    translationApiUrl = doc.String(
+        description='translationApiUrl'
+    )
+    
+    translationApiAllowedConcurrentReq = doc.Integer(
+        description='translationApiAllowedConcurrentReq'
+    )
+    
+    languageDetectionApiUrl = doc.String(
+        description='languageDetectionApiUrl'
+    )
+    
+    languageDetectionApiAllowedConcurrentReq = doc.Integer(
+        description='languageDetectionApiAllowedConcurrentReq'
+    )
+    
+    translationSpeedForEachSentence = doc.Float(
+        description='translationSpeedForEachSentence'
+    )
+    
+    languageDetectionSpeed = doc.Float(
+        description='languageDetectionSpeed'
+    )
+    
+    emailForSendingEmail = doc.String(
+        description='emailForSendingEmail'
+    )
+    
+    emailPasswordForSendingEmail = doc.String(
+        description='emailPasswordForSendingEmail'
     )
 
 class SystemSettingResponse(ResponseBase):

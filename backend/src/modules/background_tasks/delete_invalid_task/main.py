@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from uuid import UUID
 from modules.language_detection_request.database.language_detection_history.repository import LanguageDetectionHistoryRepository
@@ -11,6 +11,7 @@ from infrastructure.configs.task import (
 )
 from modules.task.database.task_result.repository import TasktResultRepository
 from modules.task.database.task.repository import TaskRepository
+from modules.system_setting.database.repository import SystemSettingRepository
 
 from core.utils.file import delete_files, delete_folders
 import asyncio
@@ -25,6 +26,7 @@ translation_history_repository = TranslationHistoryRepository()
 language_detection_history_repository = LanguageDetectionHistoryRepository()
 task_repository = TaskRepository()
 task_result_repository = TasktResultRepository()
+system_setting_repository = SystemSettingRepository()
 
 logger = Logger('Task: delete_invalid_task')
 
@@ -37,12 +39,16 @@ async def main():
     print(f'New task delete_invalid_task run in {datetime.now()}')
 
     try:
+        
+        system_setting = await system_setting_repository.find_one({})
+        
+        task_expired_duration = system_setting.props.task_expired_duration
 
         invalid_tasks = await task_repository.find_many(
            params={
                 "$and": [
                     {
-                        "$or": [
+                        "$and": [
                             {
                                 "step_status": {
                                     "$in": [
@@ -51,7 +57,7 @@ async def main():
                                     ]
                                 }
                             },
-                            {"expired_date": {"$lt": datetime.now()}},
+                            {"created_at": {"$lt": datetime.now() - timedelta(seconds=task_expired_duration)}},
                         ],
                     },
                     {

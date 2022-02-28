@@ -9,7 +9,7 @@ from core.utils.common import chunk_arr
 from docx import Document
 from typing import List
 from uuid import UUID
-
+import pymongo
 from infrastructure.configs.main import GlobalConfig, get_cnf, get_mongodb_instance
 from infrastructure.configs.task import (
     TranslationTask_TranslationCompletedResultFileSchemaV1, 
@@ -24,6 +24,7 @@ from infrastructure.adapters.content_translator.main import ContentTranslator
 from modules.translation_request.database.translation_request.repository import TranslationRequestRepository, TranslationRequestEntity
 from modules.translation_request.database.translation_request_result.repository import TranslationRequestResultRepository, TranslationRequestResultEntity
 from modules.translation_request.database.translation_history.repository import TranslationHistoryRepository, TranslationHistoryEntity
+from modules.system_setting.database.repository import SystemSettingRepository
 
 import asyncio
 import aiohttp
@@ -31,23 +32,22 @@ import aiohttp
 from infrastructure.adapters.logger import Logger
 
 from core.utils.file import get_doc_paragraphs, get_full_path
-from infrastructure.configs.translation_task import RESULT_FILE_STATUS, FileTranslationTask_NotYetTranslatedResultFileSchemaV1, FileTranslationTask_TranslatingResultFileSchemaV1, FileTranslationTask_TranslationCompletedResultFileSchemaV1, get_file_translation_file_path, get_file_translation_target_file_name
+from infrastructure.configs.translation_task import RESULT_FILE_STATUS, AllowedFileTranslationExtensionEnum, FileTranslationTask_NotYetTranslatedResultFileSchemaV1, FileTranslationTask_TranslatingResultFileSchemaV1, FileTranslationTask_TranslationCompletedResultFileSchemaV1, get_file_translation_file_path, get_file_translation_target_file_name
 from core.utils.document import check_if_cell_is_string, check_if_paragraph_has_text, get_common_style
 
 config: GlobalConfig = get_cnf()
 db_instance = get_mongodb_instance()
 
-PUBLIC_LANGUAGE_DETECTION_API_CONF = config.PUBLIC_LANGUAGE_DETECTION_API
-ALLOWED_CONCURRENT_REQUEST = PUBLIC_LANGUAGE_DETECTION_API_CONF.ALLOWED_CONCURRENT_REQUEST
-LIMIT_TEXT_TRANSLATE_REQUEST = 100
+LIMIT_NUM_CHAR_TRANSLATE_REQUEST = 1000
 
 translation_request_repository = TranslationRequestRepository()
 translation_request_result_repository = TranslationRequestResultRepository()
 transation_history_repository = TranslationHistoryRepository()
+system_setting_repository = SystemSettingRepository()
 
 contentTranslator = ContentTranslator()
 
-logger = Logger('Task: translate_xlsx_file_in_public_request.translate_content')
+logger = Logger('Task: translate_file_created_by_public_request.translate_content.xlsx')
 
 async def read_task_result(
     tasks_result: List[TranslationRequestResultEntity], 
@@ -154,35 +154,61 @@ async def mark_invalid_tasks(invalid_tasks_mapper):
     return result
 
 async def main():
+    
+    system_setting = await system_setting_repository.find_one({})
+    
+    ALLOWED_CONCURRENT_REQUEST = system_setting.props.translation_api_allowed_concurrent_req
+    
+    if ALLOWED_CONCURRENT_REQUEST <= 0: return 
+    
+    tasks = await translation_request_repository.find_many(
+        params=dict(
+            current_step=TranslationTaskStepEnum.translating_language.value,
+            step_status={
+                '$in': [
+                    StepStatusEnum.not_yet_processed.value,
+                    StepStatusEnum.in_progress.value
+                ]
+            }
+        ),
+        limit=1,
+        order_by=[('created_at', pymongo.ASCENDING)]
+    ) 
+        
+    if not tasks or not (tasks[0].props.task_name == TranslationTaskNameEnum.public_file_translation.value and \
+        tasks[0].props.current_step == TranslationTaskStepEnum.translating_language.value and \
+        tasks[0].props.file_type == AllowedFileTranslationExtensionEnum.xlsx.value and \
+        tasks[0].props.step_status in [StepStatusEnum.not_yet_processed.value, StepStatusEnum.in_progress.value]): return 
 
     logger.debug(
-        msg=f'New task translate_xlsx_file_in_public_request.translate_content run in {datetime.now()}'
+        msg=f'New task translate_file_created_by_public_request.translate_content.xlsx run in {datetime.now()}'
     )
 
-    print(f'New task translate_xlsx_file_in_public_request.translate_content run in {datetime.now()}')
+    print(f'New task translate_file_created_by_public_request.translate_content.xlsx run in {datetime.now()}')
     
     try:
         tasks = await translation_request_repository.find_many(
             params=dict(
                 task_name=TranslationTaskNameEnum.public_file_translation.value,
                 current_step=TranslationTaskStepEnum.translating_language.value,
+                file_type=AllowedFileTranslationExtensionEnum.xlsx.value,
                 step_status={
                     '$in':[StepStatusEnum.not_yet_processed.value, StepStatusEnum.in_progress.value]
                 },
-                expired_date={
-                    "$gt": datetime.now()
-                }
+                # expired_date={
+                #     "$gt": datetime.now()
+                # }
             ),
-            limit=ALLOWED_CONCURRENT_REQUEST * 10
+            limit=ALLOWED_CONCURRENT_REQUEST
         )
 
         tasks_id = list(map(lambda task: task.id.value, tasks))
 
         if len(tasks_id) == 0: 
             logger.debug(
-                msg=f'An task translate_xlsx_file_in_public_request.translate_content end in {datetime.now()}\n'
+                msg=f'An task translate_file_created_by_public_request.translate_content.xlsx end in {datetime.now()}\n'
             )
-            print(f'An task translate_xlsx_file_in_public_request.translate_content end in {datetime.now()}\n')
+            print(f'An task translate_file_created_by_public_request.translate_content.xlsx end in {datetime.now()}\n')
             return
 
         tasks_result_and_trans_history_req = [
@@ -218,7 +244,7 @@ async def main():
         # valid_tasks_id = list(map(lambda t: t.id.value, tasks))
         chunked_tasks_id = list(chunk_arr(valid_tasks_id, ALLOWED_CONCURRENT_REQUEST))
         for chunk in chunked_tasks_id:
-            await execute_in_batch(valid_tasks_mapper, chunk)
+            await execute_in_batch(valid_tasks_mapper, chunk, ALLOWED_CONCURRENT_REQUEST)
 
     except Exception as e:
         logger.error(e)
@@ -226,16 +252,16 @@ async def main():
         print(e)
 
     logger.debug(
-        msg=f'An task translate_xlsx_file_in_public_request.translate_content end in {datetime.now()}\n'
+        msg=f'An task translate_file_created_by_public_request.translate_content.xlsx end in {datetime.now()}\n'
     )
 
-    print(f'An task translate_xlsx_file_in_public_request.translate_content end in {datetime.now()}\n')
+    print(f'An task translate_file_created_by_public_request.translate_content.xlsx end in {datetime.now()}\n')
             
 
-async def execute_in_batch(valid_tasks_mapper, tasks_id):
+async def execute_in_batch(valid_tasks_mapper, tasks_id, allowed_concurrent_request):
     loop = asyncio.get_event_loop()
 
-    connector = aiohttp.TCPConnector(limit=ALLOWED_CONCURRENT_REQUEST)
+    connector = aiohttp.TCPConnector(limit=allowed_concurrent_request)
 
     async with aiohttp.ClientSession(connector=connector, loop=loop) as session:
         api_requests = []
@@ -347,7 +373,7 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                                 concat_paragraphs.append(text)
                                 char_count = char_count + len(text)
                                 
-                                if ((char_count + len(text)) > LIMIT_TEXT_TRANSLATE_REQUEST):
+                                if ((char_count + len(text)) > LIMIT_NUM_CHAR_TRANSLATE_REQUEST):
                                     breaker = True 
                                     break
                     if breaker:

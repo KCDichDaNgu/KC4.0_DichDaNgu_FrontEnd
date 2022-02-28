@@ -1,0 +1,2 @@
+export const GET_SYSTEM_SETTING_SUCCESS = 'app/system_setting/GET_SYSTEM_SETTING_SUCCESS';
+export const UPDATE_SYSTEM_SETTING_SUCCESS = 'app/system_setting/GET_SYSTEM_SETTING_SUCCESS';

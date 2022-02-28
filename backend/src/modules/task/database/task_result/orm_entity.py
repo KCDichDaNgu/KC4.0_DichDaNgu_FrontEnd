@@ -1,7 +1,9 @@
+from infrastructure.configs.translation_task import AllowedFileTranslationExtensionEnum
 from infrastructure.database.base_classes.mongodb import OrmEntityBase
 from infrastructure.configs.main import MongoDBDatabase, GlobalConfig, get_cnf, get_mongodb_instance
 from infrastructure.configs.database import validate_orm_class_name
 from umongo import validate, fields
+from typing import Optional
 
 config: GlobalConfig = get_cnf()
 database_config: MongoDBDatabase = config.MONGODB_DATABASE
@@ -31,7 +33,7 @@ class TaskResultOrmEntity(OrmEntityBase):
 
     def pre_update(self):
 
-        super(TaskResultOrmEntity, self).pre_insert()
+        super(TaskResultOrmEntity, self).pre_update()
         
         if self.file_path is None:
 

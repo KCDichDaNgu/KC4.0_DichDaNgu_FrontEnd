@@ -11,7 +11,6 @@ class BackgroundTaskManager(BackgroundTaskManagerPort):
             self.__class__.scheduler = scheduler
 
     def start(self):
-        
         self.__class__.scheduler.start()
 
     def stop(self):
@@ -33,3 +32,7 @@ class BackgroundTaskManager(BackgroundTaskManagerPort):
     def remove_all_jobs(self, **kwargs):
 
         return self.__class__.scheduler.remove_all_jobs(**kwargs)
+    
+    def remove_job(self, job_id, jobstore=None):
+        return self.__class__.scheduler.remove_job(job_id, jobstore)
+

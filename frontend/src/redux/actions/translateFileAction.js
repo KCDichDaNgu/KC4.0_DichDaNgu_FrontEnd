@@ -10,7 +10,9 @@ import {
 	DETECTLANG_FILE,
 	DETECTLANG_FILE_FAIL,
 	DETECTLANG_FILE_SUCCESS,
-	TRANSLATE_AFTER_DETECTLANG_FILE_SUCCESS
+	TRANSLATE_AFTER_DETECTLANG_FILE_SUCCESS,
+	GETTING_SINGLE_TRANSLATION_HISTORY_SUCCESS,
+	GETTING_SINGLE_LANG_DETECTION_HISTORY_SUCCESS,
 } from '../constant/translateFileTypes';
 import * as axiosHelper from '../../helpers/axiosHelper';
 import { debounce } from 'lodash';
@@ -120,14 +122,30 @@ export function detectLangFileFailed(err, detectLang) {
 
 export function detectLangFileSuccess(data) {
 	return {
-	  type: DETECTLANG_FILE_SUCCESS,
-	  payload: {
+		type: DETECTLANG_FILE_SUCCESS,
+		payload: {
 			detectLang: data.source_lang,
 		}
 	};
 }
 
+export function saveGetDetectionHistoryGetSingle(data) {
+	return {
+		type: GETTING_SINGLE_LANG_DETECTION_HISTORY_SUCCESS,
+		payload: {
+			data
+		}
+	};
+}
 
+export function saveGetTranslationHistoryGetSingle(data) {
+	return {
+		type: GETTING_SINGLE_TRANSLATION_HISTORY_SUCCESS,
+		payload: {
+			data
+		}
+	};
+}
 
 /**
  * @description Do BE bắt fai kiểm tra status 
@@ -135,17 +153,19 @@ export function detectLangFileSuccess(data) {
  * Đặt thời gian mỗi lần gọi lại API 
  * ! => tránh việc gọi liên tục và ko cần thiết
  */
-const recursiveDetectionCheckStatus = async (translationHistoryId, taskId, time) => {
+const recursiveDetectionCheckStatus = async (translationHistoryId, taskId, time, dispatch) => {
 	const getDetectionHistoryResult = await axiosHelper.getDetectionHistoryGetSingle({
 		translationHistoryId,
 		taskId,
 	});
 
+	dispatch(saveGetDetectionHistoryGetSingle(getDetectionHistoryResult))
+
 	if (getDetectionHistoryResult.data.status === STATUS.DETECTING) {
 		return new Promise((resolve, reject) => {
 			setTimeout(async () => {
 				try {
-					const getDetectionHistoryResult = await recursiveDetectionCheckStatus(translationHistoryId, taskId, time);
+					const getDetectionHistoryResult = await recursiveDetectionCheckStatus(translationHistoryId, taskId, time, dispatch);
 					resolve(getDetectionHistoryResult);
 				} catch (e) {
 					reject(e);
@@ -157,11 +177,14 @@ const recursiveDetectionCheckStatus = async (translationHistoryId, taskId, time)
 	}
 };
 
-const recursiveCheckStatus = async (translationHistoryId, taskId, time) => {
+const recursiveCheckStatus = async (translationHistoryId, taskId, time, dispatch) => {
 	const getTranslationHistoryResult = await axiosHelper.getTranslateHistoryGetSingle({
 		translationHistoryId,
 		taskId,
 	});
+
+	dispatch(saveGetTranslationHistoryGetSingle(getTranslationHistoryResult));
+
 	if (getTranslationHistoryResult.data.status !== STATUS.TRANSLATED) {
 		return new Promise((resolve, reject) => {
 			setTimeout(async () => {
@@ -169,7 +192,7 @@ const recursiveCheckStatus = async (translationHistoryId, taskId, time) => {
 				// if (time !== 10) {
 				// time += 1;
 				try {
-					const getTranslationHistoryResult = await recursiveCheckStatus(translationHistoryId, taskId, time);
+					const getTranslationHistoryResult = await recursiveCheckStatus(translationHistoryId, taskId, time, dispatch);
 					resolve(getTranslationHistoryResult);
 				} catch (e) {
 					reject(e);
@@ -195,7 +218,8 @@ const debouncedTranslationFile = debounce(async (body, dispatch) => {
 		const getTranslationFileResult = await recursiveCheckStatus(
 			postTranslationResult.data.translationHitoryId,
 			postTranslationResult.data.taskId,
-			time
+			time,
+			dispatch
 		);
 		if (getTranslationFileResult.message === 'Time Out') {
 			dispatch(translationFileFailed(getTranslationFileResult.message));
@@ -222,7 +246,8 @@ const debouncedTranslateAndDetectFile = debounce(async (body, dispatch) => {
 		const getSourceLang = await recursiveDetectionCheckStatus(
 			getDetectLangInstant.data.translationHitoryId, 
 			getDetectLangInstant.data.taskId, 
-			time
+			time,
+			dispatch
 		); 
 	
 		if(getSourceLang.message === 'Time Out'){
@@ -245,7 +270,8 @@ const debouncedTranslateAndDetectFile = debounce(async (body, dispatch) => {
 				const getTranslationHistoryResult = await recursiveCheckStatus(
 					postTranslationResult.data.translationHitoryId, 
 					postTranslationResult.data.taskId, 
-					time
+					time,
+					dispatch
 				);
 				if(getTranslationHistoryResult.message === 'Time Out'){
 					dispatch(detectLangFileFailed(getTranslationHistoryResult.message, 'unknown'));

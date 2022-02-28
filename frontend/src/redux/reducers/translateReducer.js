@@ -14,6 +14,8 @@ import {
 	CHANGE_DETECT_LANG,
 	RESET,
 	DISABLEINPUT,
+	GETTING_SINGLE_TRANSLATION_HISTORY_SUCCESS,
+	GETTING_SINGLE_LANG_DETECTION_HISTORY_SUCCESS
 } from '../constant/translateTypes';
 
 export const STATE = {
@@ -35,6 +37,10 @@ const initialState = {
 		sourceText: '',
 		targetText: '',
 		editTargetText: '',
+	},
+	currentTranslationHistory: {
+		taskId: null,
+		translationHistoryId: null,
 	},
 	isSwap: true, // True: en, zh, lo, km => vn , False: vn => en, zh, lo, km
 	err: null,
@@ -186,6 +192,20 @@ export default function(state = initialState, action) {
 				detectLang: action.payload.data,
 			},
 		};
+	}
+	case GETTING_SINGLE_TRANSLATION_HISTORY_SUCCESS: {
+		return Object.assign(state, {
+			currentTranslationHistory: {
+				...action.payload.data.data
+			},
+		});
+	}
+	case GETTING_SINGLE_LANG_DETECTION_HISTORY_SUCCESS: {
+		return Object.assign(state, {
+			currentLangDetectionHistory: {
+				...action.payload.data.data
+			},
+		});
 	}
 	default:
 		return state;

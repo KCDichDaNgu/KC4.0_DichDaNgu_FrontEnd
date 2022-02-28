@@ -1,8 +1,10 @@
+from infrastructure.configs.language_detection_history import LanguageDetectionHistoryStatus
+from infrastructure.configs.language_detection_task import LanguageDetectionTaskNameEnum, LanguageDetectionTaskStepEnum
 from interface_adapters.dtos.base_response import BaseResponse
 from uuid import UUID
 from modules.language_detection_request.domain.entities.language_detection_history import LanguageDetectionHistoryEntity
 from sanic.exceptions import SanicException
-from infrastructure.configs.task import LANGUAGE_DETECTION_PUBLIC_TASKS
+from infrastructure.configs.task import LANGUAGE_DETECTION_PUBLIC_TASKS, StepStatusEnum
 from infrastructure.configs.message import MESSAGES
 from sanic import response
 from modules.language_detection_history.queries.get_single_language_detection_history.request_dto import GetSingleLanguageDetectionHistoryRequestDto
@@ -26,9 +28,11 @@ class GetSingleLanguageDetectionHistory(HTTPMethodView):
 
         from modules.language_detection_request.database.language_detection_history.repository import LanguageDetectionHistoryRepository
         from modules.language_detection_request.database.language_detection_request.repository import LanguageDetectionRequestRepository
-
+        from modules.system_setting.database.repository import SystemSettingRepository
+        
         self.__language_detection_history_repository = LanguageDetectionHistoryRepository()
         self.__language_detection_request_repository = LanguageDetectionRequestRepository()
+        self.__system_setting_repository = SystemSettingRepository()
 
     @doc.summary(APP_CONFIG.ROUTES['language_detection_history.get_single']['summary'])
     @doc.description(APP_CONFIG.ROUTES['language_detection_history.get_single']['desc'])
@@ -72,7 +76,38 @@ class GetSingleLanguageDetectionHistory(HTTPMethodView):
 
         if task.props.task_name not in LANGUAGE_DETECTION_PUBLIC_TASKS:
             raise SanicException('Server Error')
+        
+        
+        pos_in_lang_detection_queue = 0
+        estimated_watting_time = 0
+        
+        if language_detection_history.props.status == LanguageDetectionHistoryStatus.detecting.value:
+        
+            previous_lang_detection_req = await self.__language_detection_request_repository.find_many({
+                '$and': [
+                    {'created_at': {'$lt': task.created_at.value}},
+                    {
+                        '$and': [
+                            { 'current_step': LanguageDetectionTaskStepEnum.detecting_language.value },
+                            { 
+                                'step_status': {
+                                    '$in': [
+                                        StepStatusEnum.not_yet_processed
+                                    ]
+                                }
+                            }
+                        ],
+                    } 
+                ]
+            })
+            
+            pos_in_lang_detection_queue = len(previous_lang_detection_req) + 1
 
+            system_setting = await self.__system_setting_repository.find_one({})
+            
+            language_detection_speed = system_setting.props.language_detection_speed 
+            
+            estimated_watting_time = language_detection_speed * pos_in_lang_detection_queue
 
         return response.json(BaseResponse(**{
             'code': StatusCodeEnum.success.value,
@@ -83,7 +118,9 @@ class GetSingleLanguageDetectionHistory(HTTPMethodView):
                 'status': language_detection_history.props.status,
                 'updatedAt': str(language_detection_history.updated_at.value),
                 'createdAt': str(language_detection_history.created_at.value),
-                'resultUrl': language_detection_history.props.real_file_path
+                'resultUrl': language_detection_history.props.real_file_path,
+                'posInLangDetectionQueue': pos_in_lang_detection_queue,
+                'estimatedWattingTime': estimated_watting_time
             },
             'message': MESSAGES['success']
         }).dict())

@@ -53,8 +53,6 @@ function ModalInfo(props) {
 				avatar: userInfo.avatar,
 			};
 
-			console.log(new_values);
-
 			const result = await axiosHelper.updateUserSelf(new_values);
 
 			if (result.code === STATUS_CODE.success) {

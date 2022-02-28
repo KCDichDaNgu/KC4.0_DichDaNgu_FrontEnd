@@ -17,12 +17,14 @@ import { useTranslation } from 'react-i18next';
 import LoadingButton from '@mui/lab/LoadingButton';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { TRANSLATE_TYPE } from '../../../constants/common';
+// import * as axiosHelper from '../../../helpers/axiosHelper';
 
-function TranslateInput(props) {
+function TranslateOutput(props) {
 	const { translationState, translateType } = props;
 	const { t } = useTranslation();
 
 	const isDisableTranslateButton = () => {
+
 		if(translationState.currentState === STATE.LOADING) {
 			return true;
 		}
@@ -103,12 +105,13 @@ function TranslateInput(props) {
 						{isDetect() ? t('detectAndTranslate') : t('dich')}
 					</LoadingButton>
 				</div>	
+				
 			}
 		</Col>
 	);
 }
 
-TranslateInput.propTypes = {
+TranslateOutput.propTypes = {
 	translateType: PropTypes.number,
 	translationState: PropTypes.object,
 	changeTargetText: PropTypes.func,
@@ -126,4 +129,4 @@ const mapDispatchToProps = {
 	changeTargetText,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(TranslateInput);
+export default connect(mapStateToProps, mapDispatchToProps)(TranslateOutput);

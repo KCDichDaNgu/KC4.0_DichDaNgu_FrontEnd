@@ -19,9 +19,15 @@ class SystemSettingOrmMapper(OrmMapperBase[SystemSettingEntity, SystemSettingOrm
 
         orm_props = {
             'editor_id': props.editor_id.value,
-            'max_user_doc_translation_per_day': props.max_user_doc_translation_per_day,
-            'max_user_text_translation_per_day': props.max_user_text_translation_per_day,
             'task_expired_duration': props.task_expired_duration,
+            'translation_api_url': props.translation_api_url,
+            'translation_api_allowed_concurrent_req': props.translation_api_allowed_concurrent_req,
+            'language_detection_api_url': props.language_detection_api_url,
+            'language_detection_api_allowed_concurrent_req': props.language_detection_api_allowed_concurrent_req,
+            'translation_speed_for_each_sentence': props.translation_speed_for_each_sentence,
+            'language_detection_speed': props.language_detection_speed,
+            'email_for_sending_email': props.email_for_sending_email,
+            'email_password_for_sending_email': props.email_password_for_sending_email,
         }
 
         return orm_props
@@ -29,9 +35,15 @@ class SystemSettingOrmMapper(OrmMapperBase[SystemSettingEntity, SystemSettingOrm
     def to_domain_props(self, orm_entity: SystemSettingOrmEntity):
         props = {
             'editor_id':  ID(str(orm_entity.editor_id)),
-            'max_user_doc_translation_per_day': orm_entity.max_user_doc_translation_per_day,
-            'max_user_text_translation_per_day': orm_entity.max_user_text_translation_per_day,
             'task_expired_duration': orm_entity.task_expired_duration,
+            'translation_api_url': orm_entity.translation_api_url,
+            'translation_api_allowed_concurrent_req': orm_entity.translation_api_allowed_concurrent_req,
+            'language_detection_api_url': orm_entity.language_detection_api_url,
+            'language_detection_api_allowed_concurrent_req': orm_entity.language_detection_api_allowed_concurrent_req,
+            'translation_speed_for_each_sentence': orm_entity.translation_speed_for_each_sentence,
+            'language_detection_speed': orm_entity.language_detection_speed,
+            'email_for_sending_email': orm_entity.email_for_sending_email,
+            'email_password_for_sending_email': orm_entity.email_password_for_sending_email,
         }
 
         return props

@@ -22,3 +22,5 @@ requests
 motor
 python-pptx
 openpyxl
+nltk
+imbox

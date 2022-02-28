@@ -108,7 +108,7 @@ function TranslateFileDocumentOutput(props) {
 }
 
 TranslateFileDocumentOutput.propTypes = {
-	isTranslate: PropTypes.bool.isRequired,
+	isTranslate: PropTypes.bool,
 	translationState: PropTypes.object,
 	translationFileState: PropTypes.object,
 	translateFileDocumentAsync: PropTypes.func,

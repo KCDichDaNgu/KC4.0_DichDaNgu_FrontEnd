@@ -7,7 +7,8 @@ from infrastructure.configs.task import (
     CreatorTypeEnum, 
     LanguageDetectionTaskNameEnum, 
     StepStatusEnum, 
-    TranslationTaskNameEnum
+    TranslationTaskNameEnum,
+    AllowedFileTranslationExtensionEnum
 )
 from infrastructure.configs.database import validate_orm_class_name
 from infrastructure.configs.main import get_mongodb_instance
@@ -44,16 +45,21 @@ class TaskOrmEntity(OrmEntityBase):
     current_step = fields.StringField(
         required=True
     )
+    
+    file_type = fields.StringField(
+        allow_none=True,
+        validate=validate.OneOf(AllowedFileTranslationExtensionEnum.enum_values())
+    )
 
-    expired_date = fields.DateTimeField(required=True, allow_none=True)
+    # expired_date = fields.DateTimeField(required=True, allow_none=True)
 
     class Meta:
         collection_name = database_config.COLLECTIONS['task']['name']
     
-    def pre_insert(self):
+    # def pre_insert(self):
         
-        super(TaskOrmEntity, self).pre_insert()
+    #     super(TaskOrmEntity, self).pre_insert()
         
-        if self.created_at is not None and self.expired_date is None:
+    #     if self.created_at is not None and self.expired_date is None:
             
-            self.expired_date = self.created_at + timedelta(seconds=TASK_EXPIRATION_TIME)
+    #         self.expired_date = self.created_at + timedelta(seconds=TASK_EXPIRATION_TIME)

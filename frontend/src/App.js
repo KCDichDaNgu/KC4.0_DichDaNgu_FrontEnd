@@ -13,6 +13,7 @@ import Login from './screens/Login';
 import RulesAndPolicy from './screens/RulesAndPolicy';
 import Help from './screens/Help';
 import UserManagement from './screens/UserManagement';
+import SystemSetting from './screens/SystemSetting';
 
 function App() {
 	return (
@@ -25,6 +26,7 @@ function App() {
 				<Route path='/about' exact component={About} />
 				<Route path='/history-and-favorite' exact component={HistoryAndFavorite} />
 				<Route path='/user-management' exact component={UserManagement} />
+				<Route path='/system-setting' exact component={SystemSetting} />
 				<Route path='/login' exact component={Login} />
 				{/* <Route path='/register' exact component={Register} />
 				<Route path='/forgot-password' exact component={ForgotPassword} /> */}

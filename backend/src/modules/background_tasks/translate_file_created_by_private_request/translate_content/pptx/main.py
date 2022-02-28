@@ -5,9 +5,10 @@ from infrastructure.configs.language import LanguageEnum
 from infrastructure.configs.translation_history import TranslationHistoryStatus
 from core.utils.common import chunk_arr
 from docx import Document
+from pptx import Presentation
 from typing import List
 from uuid import UUID
-
+import pymongo
 from infrastructure.configs.main import GlobalConfig, get_cnf, get_mongodb_instance
 from infrastructure.configs.task import (
     TranslationTask_TranslationCompletedResultFileSchemaV1, 
@@ -22,6 +23,7 @@ from infrastructure.adapters.content_translator.main import ContentTranslator
 from modules.translation_request.database.translation_request.repository import TranslationRequestRepository, TranslationRequestEntity
 from modules.translation_request.database.translation_request_result.repository import TranslationRequestResultRepository, TranslationRequestResultEntity
 from modules.translation_request.database.translation_history.repository import TranslationHistoryRepository, TranslationHistoryEntity
+from modules.system_setting.database.repository import SystemSettingRepository
 
 import asyncio
 import aiohttp
@@ -29,23 +31,22 @@ import aiohttp
 from infrastructure.adapters.logger import Logger
 
 from core.utils.file import get_doc_paragraphs, get_full_path
-from infrastructure.configs.translation_task import RESULT_FILE_STATUS, FileTranslationTask_NotYetTranslatedResultFileSchemaV1, FileTranslationTask_TranslatingResultFileSchemaV1, FileTranslationTask_TranslationCompletedResultFileSchemaV1, get_file_translation_file_path, get_file_translation_target_file_name
+from infrastructure.configs.translation_task import RESULT_FILE_STATUS, AllowedFileTranslationExtensionEnum, FileTranslationTask_NotYetTranslatedResultFileSchemaV1, FileTranslationTask_TranslatingResultFileSchemaV1, FileTranslationTask_TranslationCompletedResultFileSchemaV1, get_file_translation_file_path, get_file_translation_target_file_name
 from core.utils.document import check_if_paragraph_has_text, get_common_style
 
 config: GlobalConfig = get_cnf()
 db_instance = get_mongodb_instance()
 
-PUBLIC_LANGUAGE_DETECTION_API_CONF = config.PUBLIC_LANGUAGE_DETECTION_API
-ALLOWED_CONCURRENT_REQUEST = PUBLIC_LANGUAGE_DETECTION_API_CONF.ALLOWED_CONCURRENT_REQUEST
-LIMIT_TEXT_TRANSLATE_REQUEST = 3000
+LIMIT_NUM_CHAR_TRANSLATE_REQUEST = 3000
 
 translation_request_repository = TranslationRequestRepository()
 translation_request_result_repository = TranslationRequestResultRepository()
 transation_history_repository = TranslationHistoryRepository()
+system_setting_repository = SystemSettingRepository()
 
 contentTranslator = ContentTranslator()
 
-logger = Logger('Task: translate_file_in_public_request.translate_content')
+logger = Logger('Task: translate_file_created_by_private_request.translate_content.pptx')
 
 async def read_task_result(
     tasks_result: List[TranslationRequestResultEntity], 
@@ -70,7 +71,7 @@ async def read_task_result(
         try: 
             data = await task_result.read_data_from_file()
 
-            if data['status'] in [RESULT_FILE_STATUS['not_yet_translated'], RESULT_FILE_STATUS['translating']] and data['file_type'] == 'docx':
+            if data['status'] in [RESULT_FILE_STATUS['not_yet_translated'], RESULT_FILE_STATUS['translating']] and data['file_type'] == 'pptx':
 
                 valid_tasks_mapper[task_id] = {
                     'task_result_content': data,
@@ -100,7 +101,7 @@ async def read_task_result(
 
         trans_history = list(filter(lambda ts: ts.props.task_id.value == task_id, translations_history))[0]
 
-        if data['file_type'] == 'docx':
+        if data['file_type'] == 'pptx':
 
             invalid_tasks_mapper[task_id] = {
                 'task_result': task_result,
@@ -152,35 +153,60 @@ async def mark_invalid_tasks(invalid_tasks_mapper):
     return result
 
 async def main():
+    
+    system_setting = await system_setting_repository.find_one({})
+    
+    ALLOWED_CONCURRENT_REQUEST = system_setting.props.translation_api_allowed_concurrent_req
+    
+    if ALLOWED_CONCURRENT_REQUEST <= 0: return
+    
+    tasks = await translation_request_repository.find_many(
+        params=dict(
+            current_step=TranslationTaskStepEnum.translating_language.value,
+            step_status={
+                '$in': [
+                    StepStatusEnum.not_yet_processed.value,
+                    StepStatusEnum.in_progress.value
+                ]
+            }
+        ),
+        limit=1,
+        order_by=[('created_at', pymongo.ASCENDING)]
+    ) 
+        
+    if not tasks or not (tasks[0].props.task_name == TranslationTaskNameEnum.private_file_translation.value and \
+        tasks[0].props.current_step == TranslationTaskStepEnum.translating_language.value and \
+        tasks[0].props.file_type == AllowedFileTranslationExtensionEnum.pptx.value and \
+        tasks[0].props.step_status in [StepStatusEnum.not_yet_processed.value, StepStatusEnum.in_progress.value]): return
 
     logger.debug(
-        msg=f'New task translate_file_in_public_request.translate_content run in {datetime.now()}'
+        msg=f'New task translate_file_created_by_private_request.translate_content.pptx run in {datetime.now()}'
     )
 
-    print(f'New task translate_file_in_public_request.translate_content run in {datetime.now()}')
+    print(f'New task translate_file_created_by_private_request.translate_content.pptx run in {datetime.now()}')
     
     try:
         tasks = await translation_request_repository.find_many(
             params=dict(
-                task_name=TranslationTaskNameEnum.public_file_translation.value,
+                task_name=TranslationTaskNameEnum.private_file_translation.value,
                 current_step=TranslationTaskStepEnum.translating_language.value,
                 step_status={
                     '$in':[StepStatusEnum.not_yet_processed.value, StepStatusEnum.in_progress.value]
                 },
-                expired_date={
-                    "$gt": datetime.now()
-                }
+                # expired_date={
+                #     "$gt": datetime.now()
+                # }
             ),
-            limit=ALLOWED_CONCURRENT_REQUEST * 10
+            limit=ALLOWED_CONCURRENT_REQUEST
         )
 
         tasks_id = list(map(lambda task: task.id.value, tasks))
 
         if len(tasks_id) == 0: 
             logger.debug(
-                msg=f'An task translate_file_in_public_request.translate_content end in {datetime.now()}\n'
+                msg=f'An task translate_file_created_by_private_request.translate_content.pptx end in {datetime.now()}\n'
             )
-            print(f'An task translate_file_in_public_request.translate_content end in {datetime.now()}\n')
+            print(f'An task translate_file_created_by_private_request.translate_content.pptx end in {datetime.now()}\n')
             return
 
         tasks_result_and_trans_history_req = [
@@ -212,11 +238,11 @@ async def main():
         await mark_invalid_tasks(invalid_tasks_mapper)
 
         valid_tasks_id = list(map(lambda t: t, list(valid_tasks_mapper)))
-
+        # valid_tasks_id = list(map(lambda t: t.id.value, tasks))
         chunked_tasks_id = list(chunk_arr(valid_tasks_id, ALLOWED_CONCURRENT_REQUEST))
         
         for chunk in chunked_tasks_id:
-            await execute_in_batch(valid_tasks_mapper, chunk)
+            await execute_in_batch(valid_tasks_mapper, chunk, ALLOWED_CONCURRENT_REQUEST)
 
     except Exception as e:
         logger.error(e)
@@ -224,16 +250,16 @@ async def main():
         print(e)
 
     logger.debug(
-        msg=f'An task translate_file_in_public_request.translate_content end in {datetime.now()}\n'
+        msg=f'An task translate_file_created_by_private_request.translate_content.pptx end in {datetime.now()}\n'
     )
 
-    print(f'An task translate_file_in_public_request.translate_content end in {datetime.now()}\n')
+    print(f'An task translate_file_created_by_private_request.translate_content.pptx end in {datetime.now()}\n')
             
 
-async def execute_in_batch(valid_tasks_mapper, tasks_id):
+async def execute_in_batch(valid_tasks_mapper, tasks_id, allowed_concurrent_request):
     loop = asyncio.get_event_loop()
 
-    connector = aiohttp.TCPConnector(limit=ALLOWED_CONCURRENT_REQUEST)
+    connector = aiohttp.TCPConnector(limit=allowed_concurrent_request)
 
     async with aiohttp.ClientSession(connector=connector, loop=loop) as session:
 
@@ -243,6 +269,8 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
 
             total_paragraphs = valid_tasks_mapper[task_id]['task_result_content']['statistic']['total_paragraphs']
             processed_paragraph_index = valid_tasks_mapper[task_id]['task_result_content']['current_progress']['processed_paragraph_index']
+            total_slides = valid_tasks_mapper[task_id]['task_result_content']['statistic']['total_slides']
+            processed_slide_index = valid_tasks_mapper[task_id]['task_result_content']['current_progress']['processed_slide_index']
 
             source_lang = valid_tasks_mapper[task_id]['task_result_content']['source_lang']
             target_lang = valid_tasks_mapper[task_id]['task_result_content']['target_lang']
@@ -268,9 +296,9 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                         target_file_full_path = get_full_path(target_file_path)
 
 
-                        doc = Document(task_result_content['original_file_full_path'])
+                        prs = Presentation(task_result_content['original_file_full_path'])
 
-                        doc.save(target_file_full_path)
+                        prs.save(target_file_full_path)
 
                         new_saved_content = FileTranslationTask_TranslationCompletedResultFileSchemaV1(
                             original_file_full_path=task_result_content['original_file_full_path'],
@@ -278,14 +306,16 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                             file_type=task_result_content['file_type'],
                             statistic=dict(
                                 total_paragraphs=total_paragraphs,
+                                total_slides=total_slides,
                             ),
                             current_progress=dict(
-                                processed_paragraph_index=total_paragraphs - 1
+                                processed_paragraph_index=total_paragraphs - 1,
+                                processed_slide_index=total_slides - 1
                             ),
                             target_file_full_path=target_file_full_path,
                             source_lang=task_result_content['source_lang'],
                             target_lang=task_result_content['target_lang'],
-                            task_name=TranslationTaskNameEnum.public_file_translation.value
+                            task_name=TranslationTaskNameEnum.private_file_translation.value
                         )
 
                         if isinstance(task_result, tuple):
@@ -322,29 +352,25 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                 await asyncio.gather(*update_request)
             
             else:
-
-                char_count = 0
-
                 with (open(binary_progress_file_full_path, "rb")) as openfile:
 
-                    doc = Document(pickle.load(openfile))
-
-                doc_paragraphs = list(get_doc_paragraphs(doc))
+                    pptx = Presentation(pickle.load(openfile))
+                slides = [slide for slide in pptx.slides]
+                processing_slide = processed_slide_index + 1;
 
                 concat_paragraphs = []
+                
+                for shape in slides[processing_slide].shapes:
+                    if shape.has_text_frame:
+                        text_frame = shape.text_frame
+                        for paragraph in text_frame.paragraphs:
+                            text = paragraph.text
 
-                for i in range(processed_paragraph_index + 1, total_paragraphs):
-                    text = doc_paragraphs[i].text
-
-                    if text != '':
-                        concat_paragraphs.append(text)
-                        char_count = char_count + len(text)
-
-                    if ((char_count + len(text)) > LIMIT_TEXT_TRANSLATE_REQUEST):
-                        break            
+                            if text != '':
+                                concat_paragraphs.append(text)          
 
                 concat_text = " \n ".join(concat_paragraphs)
-
+                print(concat_text)
                 api_requests.append(
                     contentTranslator.translate(
                         source_text=concat_text, 
@@ -367,7 +393,7 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                         concat_translated_text = ['']
                     else:
                         concat_translated_text = api_result.data.split("\n")[:-1]
-                    
+                    print(concat_translated_text)
                     task_result = valid_tasks_mapper[task_id]['task_result'],
                     trans_history = valid_tasks_mapper[task_id]['trans_history'],
                     task = valid_tasks_mapper[task_id]['task']
@@ -377,52 +403,33 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                     binary_progress_file_full_path = task_result_content['binary_progress_file_full_path']
                     total_paragraphs = task_result_content['statistic']['total_paragraphs']
                     processed_paragraph_index = task_result_content['current_progress']['processed_paragraph_index']
+                    total_slides = task_result_content['statistic']['total_slides']
+                    processed_slide_index = task_result_content['current_progress']['processed_slide_index']
 
                     with (open(binary_progress_file_full_path, "rb")) as openfile:
 
-                        doc = Document(pickle.load(openfile))
-
-                    doc_paragraphs = list(get_doc_paragraphs(doc))
-                    
-                    current_paragraph_index = processed_paragraph_index
-
-                    for i in range(len(concat_translated_text)):
-                        current_paragraph_index = current_paragraph_index + 1
-
-                        paragraph = doc_paragraphs[current_paragraph_index]
+                        pptx = Presentation(pickle.load(openfile))
                         
-                        while paragraph.text == '':
-                            
-                            if current_paragraph_index >= total_paragraphs - 1:
-                                break
-
-                            current_paragraph_index = current_paragraph_index + 1
-
-                            paragraph = doc_paragraphs[current_paragraph_index]
-
-                        if current_paragraph_index > total_paragraphs - 1:
-                                break
-
-                        if check_if_paragraph_has_text(paragraph):
-
-                            font_size, font_name, bold, font_color, underline, italic = get_common_style(paragraph)
-
-                            paragraph.text = concat_translated_text[i]
-                            
-                            for run in paragraph.runs:
-                                run.font.size = font_size
-                                run.font.name = font_name
-                                run.bold = bold
-                                run.font.color.rgb = font_color
-                                run.underline = underline
-                                run.italic = italic
+                    slides = [slide for slide in pptx.slides]
+                    processing_slide = processed_slide_index + 1;
+                    print(processing_slide, processed_slide_index)
+                    current_paragraph_index = processed_paragraph_index
+                    paragraph_index = 0
+                    print('length concat', len(concat_translated_text))
+                    for shape in slides[processing_slide].shapes:
+                        if shape.has_text_frame:
+                            text_frame = shape.text_frame
+                            for paragraph in text_frame.paragraphs:
+                                if paragraph.text != '':
+                                    paragraph.text = concat_translated_text[paragraph_index]
+                                    paragraph_index +=1
 
                     with open(binary_progress_file_full_path, 'r+b') as outp:
                         new_file = io.BytesIO()
-                        doc.save(new_file)                        
+                        pptx.save(new_file)                        
                         pickle.dump(new_file, outp, pickle.HIGHEST_PROTOCOL)
 
-                    if current_paragraph_index < total_paragraphs - 1:                        
+                    if processing_slide < total_slides - 1:                        
 
                         new_saved_content = FileTranslationTask_TranslatingResultFileSchemaV1(
                             original_file_full_path=original_file_full_path,
@@ -430,13 +437,15 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                             file_type=task_result_content['file_type'],
                             statistic=dict(
                                 total_paragraphs=total_paragraphs,
+                                total_slides=total_slides,
                             ),
                             current_progress=dict(
-                                processed_paragraph_index=current_paragraph_index
+                                processed_paragraph_index=current_paragraph_index,
+                                processed_slide_index=processing_slide
                             ),
                             source_lang=task_result_content['source_lang'],
                             target_lang=task_result_content['target_lang'],
-                            task_name=TranslationTaskNameEnum.public_file_translation.value
+                            task_name=TranslationTaskNameEnum.private_file_translation.value
                         )
 
                         if isinstance(task_result, tuple):
@@ -477,7 +486,7 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                         target_file_path = get_file_translation_file_path(task_id, target_file_name)
                         target_file_full_path = get_full_path(target_file_path)
 
-                        doc.save(target_file_full_path)
+                        pptx.save(target_file_full_path)
 
                         new_saved_content = FileTranslationTask_TranslationCompletedResultFileSchemaV1(
                             original_file_full_path=task_result_content['original_file_full_path'],
@@ -485,14 +494,16 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id):
                             file_type=original_file_ext,
                             statistic=dict(
                                 total_paragraphs=total_paragraphs,
+                                total_slides=total_slides,
                             ),
                             current_progress=dict(
-                                processed_paragraph_index=current_paragraph_index
+                                processed_paragraph_index=current_paragraph_index,
+                                processed_slide_index=processing_slide
                             ),
                             target_file_full_path=target_file_full_path,
                             source_lang=task_result_content['source_lang'],
                             target_lang=task_result_content['target_lang'],
-                            task_name=TranslationTaskNameEnum.public_file_translation.value
+                            task_name=TranslationTaskNameEnum.private_file_translation.value
                         )
 
                         if isinstance(task_result, tuple):

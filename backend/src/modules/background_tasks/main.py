@@ -3,19 +3,21 @@ from infrastructure.adapters.background_task_manager.main import BackgroundTaskM
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 def init_background_tasks(config: GlobalConfig):
-    from modules.background_tasks.translate_file_created_by_public_request.detect_content_language.main import main as detect_content_language_for_file_in_public_request
-    from modules.background_tasks.translate_plain_text_created_by_public_request.detect_content_language.main import main as detect_content_language_for_plain_text_in_public_request
-    from modules.background_tasks.translate_plain_text_created_by_public_request.translate_content.main import main as translate_content_for_plain_text_in_public_request
-    from modules.background_tasks.translate_file_created_by_public_request.translate_content.main import main as translate_content_for_file_in_public_request
-    from modules.background_tasks.translate_file_created_by_public_request.translate_txt_file.main import main as translate_txt_file_for_file_in_public_request
-    from modules.background_tasks.translate_pptx_file.translate_content.main import main as translate_pptx_file
-    from modules.background_tasks.translate_xlsx_file.translate_content.main import main as translate_xlsx_file
-   
-
-    from modules.background_tasks.detect_plain_text_language_created_by_public_request.main import main as detect_plain_text_language_created_by_public_request
-    from modules.background_tasks.detect_file_language_created_by_public_request.main import main as detect_file_language_created_by_public_request
-    from modules.background_tasks.delete_invalid_task.main import main as delete_invalid_task
-    from modules.background_tasks.delete_invalid_file.main import main as delete_invalid_file
+    
+    from modules.background_tasks.delete_invalid_file import add_fresh_jobs as add_fresh_jobs_1
+    from modules.background_tasks.delete_invalid_task import add_fresh_jobs as add_fresh_jobs_2
+    
+    from modules.background_tasks.detect_file_language_created_by_public_request import add_fresh_jobs as add_fresh_jobs_3
+    from modules.background_tasks.detect_plain_text_language_created_by_public_request import add_fresh_jobs as add_fresh_jobs_4
+    
+    from modules.background_tasks.translate_file_created_by_private_request import add_fresh_jobs as add_fresh_jobs_5
+    from modules.background_tasks.translate_file_created_by_public_request import add_fresh_jobs as add_fresh_jobs_6
+    
+    from modules.background_tasks.translate_plain_text_created_by_private_request import add_fresh_jobs as add_fresh_jobs_7
+    from modules.background_tasks.translate_plain_text_created_by_public_request import add_fresh_jobs as add_fresh_jobs_8
+    
+    from modules.background_tasks.send_translation_email import add_fresh_jobs as add_fresh_jobs_9
+    
 
     BACKGROUND_TASKS = config.APP_CONFIG.BACKGROUND_TASKS
 
@@ -23,101 +25,12 @@ def init_background_tasks(config: GlobalConfig):
 
     new_background_task_scheduler.remove_all_jobs()
     
-    background_task_1_conf = BACKGROUND_TASKS['translate_plain_text_in_public_request.detect_content_language']
- 
-    new_background_task_scheduler.add_job(
-        detect_content_language_for_plain_text_in_public_request,
-        id=background_task_1_conf.ID,
-        trigger=background_task_1_conf.TRIGGER,
-        **background_task_1_conf.CONFIG,
-    )
-
-    background_task_2_conf = BACKGROUND_TASKS['translate_plain_text_in_public_request.translate_content']
-
-    new_background_task_scheduler.add_job(
-        translate_content_for_plain_text_in_public_request,
-        id=background_task_2_conf.ID,
-        trigger=background_task_2_conf.TRIGGER,
-        **background_task_2_conf.CONFIG
-    )
-    
-    background_task_3_conf = BACKGROUND_TASKS['detect_plain_text_language_in_public_request']
-
-    new_background_task_scheduler.add_job(
-        detect_plain_text_language_created_by_public_request,
-        id=background_task_3_conf.ID,
-        trigger=background_task_3_conf.TRIGGER,
-        **background_task_3_conf.CONFIG
-    )
-    
-    background_task_4_conf = BACKGROUND_TASKS['delete_invalid_task']
- 
-    new_background_task_scheduler.add_job(
-        delete_invalid_task,
-        id=background_task_4_conf.ID,
-        trigger=background_task_4_conf.TRIGGER,
-        **background_task_4_conf.CONFIG
-    )
-    
-    background_task_5_conf = BACKGROUND_TASKS['delete_invalid_file']
- 
-    new_background_task_scheduler.add_job(
-        delete_invalid_file,
-        id=background_task_5_conf.ID,
-        trigger=background_task_5_conf.TRIGGER,
-        **background_task_5_conf.CONFIG
-    )
-
-    background_task_6_conf = BACKGROUND_TASKS['translate_content_for_file_in_public_request.translate_content']
- 
-    new_background_task_scheduler.add_job(
-        translate_content_for_file_in_public_request,
-        id=background_task_6_conf.ID,
-        trigger=background_task_6_conf.TRIGGER,
-        **background_task_6_conf.CONFIG
-    )
-
-    background_task_7_conf = BACKGROUND_TASKS['detect_file_language_created_by_public_request']
- 
-    new_background_task_scheduler.add_job(
-        detect_file_language_created_by_public_request,
-        id=background_task_7_conf.ID,
-        trigger=background_task_7_conf.TRIGGER,
-        **background_task_7_conf.CONFIG
-    )
-
-    background_task_8_conf = BACKGROUND_TASKS['translate_content_for_file_in_public_request.detect_content_language']
- 
-    new_background_task_scheduler.add_job(
-        detect_content_language_for_file_in_public_request,
-        id=background_task_8_conf.ID,
-        trigger=background_task_8_conf.TRIGGER,
-        **background_task_8_conf.CONFIG
-    )
-
-    background_task_9_conf = BACKGROUND_TASKS['translate_content_for_file_in_public_request.translate_txt_file']
- 
-    new_background_task_scheduler.add_job(
-        translate_txt_file_for_file_in_public_request,
-        id=background_task_9_conf.ID,
-        trigger=background_task_9_conf.TRIGGER,
-        **background_task_9_conf.CONFIG
-    )
-    
-    background_task_10_conf = BACKGROUND_TASKS['translate_pptx_file_in_public_request.translate_content']
- 
-    new_background_task_scheduler.add_job(
-        translate_pptx_file,
-        id=background_task_10_conf.ID,
-        trigger=background_task_10_conf.TRIGGER,
-        **background_task_10_conf.CONFIG
-    )
-    
-    background_task_11_conf = BACKGROUND_TASKS['translate_xlsx_file_in_public_request.translate_content']
- 
-    new_background_task_scheduler.add_job(
-        translate_xlsx_file,
-        id=background_task_11_conf.ID,
-        trigger=background_task_11_conf.TRIGGER,
-        **background_task_11_conf.CONFIG
-    )
+    new_background_task_scheduler = add_fresh_jobs_1(new_background_task_scheduler, BACKGROUND_TASKS)
+    new_background_task_scheduler = add_fresh_jobs_2(new_background_task_scheduler, BACKGROUND_TASKS)
+    new_background_task_scheduler = add_fresh_jobs_3(new_background_task_scheduler, BACKGROUND_TASKS)
+    new_background_task_scheduler = add_fresh_jobs_4(new_background_task_scheduler, BACKGROUND_TASKS)
+    new_background_task_scheduler = add_fresh_jobs_5(new_background_task_scheduler, BACKGROUND_TASKS)
+    new_background_task_scheduler = add_fresh_jobs_6(new_background_task_scheduler, BACKGROUND_TASKS)
+    new_background_task_scheduler = add_fresh_jobs_7(new_background_task_scheduler, BACKGROUND_TASKS)
+    new_background_task_scheduler = add_fresh_jobs_8(new_background_task_scheduler, BACKGROUND_TASKS)
+    new_background_task_scheduler = add_fresh_jobs_9(new_background_task_scheduler, BACKGROUND_TASKS)

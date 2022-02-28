@@ -2,10 +2,13 @@ import React, { useEffect, useState } from 'react';
 import {
 	Row,
 	Col,
+	Form
 } from 'react-bootstrap';
+import { message } from 'antd';
+import LoadingButton from '@mui/lab/LoadingButton';
 import PropTypes from 'prop-types';
 import styles from './translateStyle.module.css';
-import { Button, Fab, } from '@mui/material';
+import { Button, Fab } from '@mui/material';
 import { connect } from 'react-redux';
 import { STATE } from '../../redux/reducers/translateReducer';
 import {
@@ -26,15 +29,31 @@ import TranslateFileDocumentOutput from './components/TranslateFileDocumentOutpu
 import TranslationChooselang from './components/TranslationChooselang';
 import TranslateOutput from './components/TranslateOutput';
 import TranslateInput from './components/TranslateInput';
-import { TRANSLATE_TYPE, USER_STATUS } from '../../constants/common';
+import { STATUS_CODE, TRANSLATE_TYPE } from '../../constants/common';
 import TranslateFileDocumentInput from './components/TranslateFileDocumentInput';
 import authHoc from '../../hocs/authHoc';
 import { toastError } from '../../components/Toast';
+import * as axiosHelper from '../../helpers/axiosHelper';
+
 
 function Index(props) {
 	const { translationState, translationFileState } = props;
 	const { t } = useTranslation();
 	const [translateType, setTranslateType] = useState(TRANSLATE_TYPE.plainText);
+
+	const [ currentTranslationHistory, setCurrentTranslationHistory ] = useState({});
+	const [ currentLangDetectionHistory, setCurrentLangDetectionHistory ] = useState();
+
+	const [ updateReceiverEmailForm, setUpdateReceiverEmailForm ] = useState({
+		receiverEmail: "",
+	});
+
+	const handleChange = (event) => {
+		setUpdateReceiverEmailForm((values) => ({
+		  	...values,
+		  	[event.target.name]: event.target.value,
+		}));
+	};
 
 	/**
 	 * @description useEffect cho việc check kết quả và báo noti cho 
@@ -47,10 +66,14 @@ function Index(props) {
 		case STATE.FAILURE:
 			// toastError(translationState.err);
 			break;
+		case STATE.LOADING: {
+			break;
+		}
 		default:
 			break;
 		}
 	}, [translationState.currentState]);
+
 
 	/**
 	 * @description useEffect cho việc check kết quả và báo noti cho 
@@ -63,21 +86,45 @@ function Index(props) {
 		case STATE.FAILURE:
 			toastError(translationFileState.err);
 			break;
+		case STATE.LOADING: {
+			break;
+		}
 		default:
 			break;
 		}
 	}, [translationFileState.currentState]);
 
+	useEffect(() => {
+		
+		if (translationState.currentState === STATE.LOADING && translateType == TRANSLATE_TYPE.plainText) {
 
-	const getIsAdmin = () => {
-		const user = JSON.parse(localStorage.getItem('user'));
+			const interval1 = setInterval(() => {
+				setCurrentTranslationHistory(oldX => translationState.currentTranslationHistory)
+				setCurrentLangDetectionHistory(oldX => translationState.currentLangDetectionHistory)
+			}, 1);
 
-		return user?.role === 'admin' && user?.status === USER_STATUS.active;
-	};
+			return () => { 
+				clearInterval(interval1);
+			};
+		}
 
-	const isDetectInfoShow = () =>{ 
-		return getIsAdmin() && translateType === TRANSLATE_TYPE.plainText && (translationState.translateCode.sourceLang == null || translationState.translateCode.detectLang != null);
-	};
+		if (translationFileState.currentState === STATE.LOADING && translateType == TRANSLATE_TYPE.document) {
+
+			const interval1 = setInterval(() => {
+				setCurrentTranslationHistory(oldX => translationFileState.currentTranslationHistory)
+				setCurrentLangDetectionHistory(oldX => translationFileState.currentLangDetectionHistory)
+			}, 1);
+
+			return () => { 
+				clearInterval(interval1);
+			};
+		}
+
+		
+	}, [
+		translationState, 
+		translationFileState,
+	])
 
 	const renderOutput = () => {
 		switch (translateType) {
@@ -96,6 +143,85 @@ function Index(props) {
 			return <TranslateFileDocumentInput translateType={translateType} />;
 		}
 	};
+
+	const renderEstimatedTranslation = () => {
+
+		if (!(!!currentTranslationHistory && !!currentTranslationHistory?.taskId)) return;
+
+		let posInTranslationQueue = 0;
+		let estimatedWattingTime = 0;
+
+		if (translationState.currentState === STATE.LOADING && translationState.currentTranslationHistory && translateType == TRANSLATE_TYPE.plainText) {
+			posInTranslationQueue = translationState.currentTranslationHistory.posInTranslationQueue;
+			estimatedWattingTime = translationState.currentTranslationHistory.estimatedWattingTime;
+		}
+
+		if (translationFileState.currentState === STATE.LOADING && translationFileState.currentTranslationHistory && translateType == TRANSLATE_TYPE.document) {
+			posInTranslationQueue = translationFileState.currentTranslationHistory.posInTranslationQueue;
+			estimatedWattingTime = translationFileState.currentTranslationHistory.estimatedWattingTime;
+		}
+		
+		if (posInTranslationQueue > 0) {
+			return <div className='mt-3' style={{
+				fontWeight: 700,
+				width: '100%',
+				color: '#212529',
+				lineHeight: '2.5rem',
+				textAlign: 'center',
+				fontSize: '1.5rem'
+			}}>
+				{ t('viTriTrongHangChoDich') }: {posInTranslationQueue}
+				<br/>
+				{ t('thoiGianChoUocTinh') }: {estimatedWattingTime.toPrecision(2)} s
+			</div>
+		} 
+	}
+
+	const renderEstimatedLangDetection = () => {
+
+		if (!(!!currentLangDetectionHistory && !!currentLangDetectionHistory?.taskId)) return;
+
+		let posInLangDetectionQueue = 0;
+		let estimatedWattingTime = 0;
+		
+		if (translationState.currentState === STATE.LOADING && translationState.currentLangDetectionHistory && translateType == TRANSLATE_TYPE.plainText) {
+			posInLangDetectionQueue = translationState.currentLangDetectionHistory.posInLangDetectionQueue;
+			estimatedWattingTime = translationState.currentLangDetectionHistory.estimatedWattingTime;
+		}
+
+		if (translationFileState.currentState === STATE.LOADING && translationFileState.currentLangDetectionHistory && translateType == TRANSLATE_TYPE.document) {
+			posInLangDetectionQueue = translationFileState.currentLangDetectionHistory.posInLangDetectionQueue;
+			estimatedWattingTime = translationFileState.currentLangDetectionHistory.estimatedWattingTime;
+		}
+		
+		if (posInLangDetectionQueue > 0) {
+			return <div className='mt-3' style={{
+				fontWeight: 700,
+				width: '100%',
+				color: '#212529',
+				lineHeight: '2.5rem',
+				textAlign: 'center',
+				fontSize: '1.5rem'
+			}}>
+				{ t('viTriTrongHangChoNhanDienNgonNgu') }: {posInLangDetectionQueue}
+				<br/>
+				{ t('thoiGianChoUocTinh') }: {estimatedWattingTime.toPrecision(2)} s
+			</div>
+		} 
+	}
+
+	const updateReceiverEmail = async (e) => {
+		e.preventDefault()
+
+		let result = await axiosHelper.updateReceiverEmail({
+			taskId: currentTranslationHistory.taskId,
+			receiverEmail: updateReceiverEmailForm.receiverEmail
+		}) 
+		
+		if (result.code == STATUS_CODE.success) {
+			message.success(t('updateSuccess'));
+		}
+	}
 
 	return (
 		<>
@@ -150,6 +276,49 @@ function Index(props) {
 					</Col>
 				</div>
 
+				<div className='mt-5'></div>
+
+				{ renderEstimatedLangDetection() }
+
+				{ renderEstimatedTranslation() }
+
+				{ (!!currentTranslationHistory && !!currentTranslationHistory?.taskId) ? 
+					<Col md={5} xs={12} className="mt-3" style={{ margin: 'auto' }}>
+						
+						<Form onSubmit={ updateReceiverEmail }>
+							<Form.Group>
+								<Form.Label>{ t('emailNhanketQua') }</Form.Label>
+								<Form.Control 
+									type="email" 
+									placeholder="example@gmail.com" 
+									name="receiverEmail"
+									value={ updateReceiverEmailForm.receiverEmail }
+                      				onChange={ handleChange }/>
+								<Form.Text className="text-muted">
+									{ t('damBaoEmail') }
+								</Form.Text>
+							</Form.Group>
+
+							{ updateReceiverEmailForm.receiverEmail ?
+								<LoadingButton 
+									
+									type='submit'
+									variant="contained" 
+									// onClick={handleTranslate}
+									// loading={translationState.currentState === STATE.LOADING}
+									// disabled={isDisableTranslateButton()}
+									style={{ 
+										fontWeight: 'bold', 
+										display: 'flex', 
+										marginLeft: 'auto' 
+									}}>
+									{ t('gui') }
+								</LoadingButton> : <></>
+							}
+						</Form>
+					</Col>: <></>
+				}
+
 				{/* <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 5 }}>
 					<button onClick={() => { }} style={{ backgroundColor: '#fff', borderWidth: 0, color: '#63676C', fontStyle: 'italic', fontSize: 13 }}>
 						Gửi phản hồi
@@ -160,7 +329,6 @@ function Index(props) {
 						<KeyboardArrowUpIcon />
 					</Fab>
 				</ScrollTop>
-				{isDetectInfoShow() && `Ngôn ngữ được detect: ${translationState.translateCode.detectLang}`}
 			</div>
 		</>
 	);
