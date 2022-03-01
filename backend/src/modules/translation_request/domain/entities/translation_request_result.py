@@ -18,7 +18,7 @@ from modules.task.domain.entities.task_result import TaskResultEntity, TaskResul
 from infrastructure.configs.translation_task import (
     FILE_TRANSLATION_FOLDER_PATH,
     FILE_TRANSLATION_TASKS,
-    AllowedFileTranslationExtension,
+    AllowedFileTranslationExtensionEnum,
     get_file_translation_binary_progress_file_name, 
     get_file_translation_source_file_name,
     get_file_translation_file_path
@@ -59,7 +59,7 @@ class TranslationRequestResultEntity(
     async def create_required_files_for_file_translation_task(
         self,
         binary: IO,
-        original_file_ext: AllowedFileTranslationExtension
+        original_file_ext: AllowedFileTranslationExtensionEnum
     ):    
         # if self.props.task_name not in FILE_TRANSLATION_TASKS:
         #     raise ValueError('Translation task is not file translation')
@@ -74,7 +74,7 @@ class TranslationRequestResultEntity(
         self.__create_file_translation_task_folder()
 
         try:
-            if original_file_ext == 'docx':                
+            if original_file_ext == 'docx':          
                 file = Document(binary)
                 
             elif original_file_ext == 'pptx':            

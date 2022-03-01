@@ -35,7 +35,11 @@ class TranslationRequestOrmMapper(
             'creator_type': props.creator_type,
             'step_status': props.step_status,
             'current_step': props.current_step,
-            'expired_date': props.expired_date.value,
+            'num_sents': props.num_sents,
+            'total_email_sent': props.total_email_sent,
+            'receiver_email': props.receiver_email,
+            'file_type': props.file_type,
+            # 'expired_date': props.expired_date.value,
         }
         
         return orm_props
@@ -48,7 +52,11 @@ class TranslationRequestOrmMapper(
             'creator_type': orm_entity.creator_type,
             'step_status': orm_entity.step_status,
             'current_step': orm_entity.current_step,
-            'expired_date': DateVO(orm_entity.expired_date)
+            'num_sents': orm_entity.num_sents,
+            'total_email_sent': orm_entity.total_email_sent,
+            'receiver_email': orm_entity.receiver_email,
+            'file_type': orm_entity.file_type,
+            # 'expired_date': DateVO(orm_entity.expired_date)
         }
 
         return props

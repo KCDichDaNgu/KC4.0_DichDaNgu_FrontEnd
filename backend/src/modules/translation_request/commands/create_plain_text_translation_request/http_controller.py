@@ -12,8 +12,9 @@ from sanic_openapi import doc
 from sanic.views import HTTPMethodView
 from modules.translation_request.dtos.plain_text_translation_response import PlainTextTranslationRequestResponse
 from core.middlewares.authentication.core import get_me
-from modules.user.commands.update_user_statistic.command import UpdateUserStatisticCommand
 from core.value_objects.id import ID
+
+from nltk.tokenize import sent_tokenize
 
 config: GlobalConfig = get_cnf()
 APP_CONFIG = config.APP_CONFIG
@@ -24,8 +25,6 @@ class CreatePlainTextTranslationRequest(HTTPMethodView):
         super().__init__()
 
         from modules.translation_request.commands.create_plain_text_translation_request.service import CreatePlainTextTranslationRequestService
-        from modules.user.queries.get_user_statistic.service import GetUserStatisticService
-        from modules.system_setting.domain.service.system_setting_service import SystemSettingDService
         from modules.user.commands.update_user_statistic.service import UpdateUserStatisticService
 
         self.__create_plain_text_translation_request_service = CreatePlainTextTranslationRequestService()
@@ -48,7 +47,7 @@ class CreatePlainTextTranslationRequest(HTTPMethodView):
         user = await get_me(request)
         data = request.json 
 
-        if request.headers.get('Authorization'):        
+        if request.headers.get('Authorization') and user:        
             translation_response = await self.create_private_plain_text_translation_request(data, user)
         else:
             translation_response = await self.create_public_plain_text_translation_request(data)
@@ -92,9 +91,7 @@ class CreatePlainTextTranslationRequest(HTTPMethodView):
                 }
             )
 
-        sentences = re.split('[;.?!]', data['sourceText'])
-
-        sentence_count = sum(1 for y in sentences if len(y) > 2)
+        sentence_count = len(sent_tokenize(data['sourceText']))
             
         user_statistic_result =  await self.__update_user_statistic.update_text_translate_statistic(user.id, pair, sentence_count)
 

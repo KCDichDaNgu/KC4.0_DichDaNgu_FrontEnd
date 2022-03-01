@@ -15,8 +15,8 @@ from typing import get_args
 
 class LanguageDetectionRequestProps(TaskProps):
 
-    current_step: Union[LanguageDetectionTaskStepEnum] = Field(...)
-    task_name: Union[LanguageDetectionTaskNameEnum] = Field(...)
+    current_step: LanguageDetectionTaskStepEnum = Field(...)
+    task_name: LanguageDetectionTaskNameEnum = Field(...)
 
     @root_validator(pre=True)
     def validate(cls, values):

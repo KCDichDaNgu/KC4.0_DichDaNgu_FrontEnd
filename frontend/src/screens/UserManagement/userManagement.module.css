@@ -10,3 +10,14 @@
   max-width: 150px;
   margin: 20px 0px;
 }
+
+.outerContainer {
+  padding-left: 200px;
+  padding-right: 200px;
+}
+
+.outerTab {
+  padding: 25px 0px;
+  display: flex;
+  flex-direction: row;
+}

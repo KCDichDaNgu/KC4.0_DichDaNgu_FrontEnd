@@ -6,7 +6,7 @@ module.exports = {
 		'node': true,
 	},
 	'extends': [
-		'eslint:recommended',
+		// 'eslint:recommended',
 		'plugin:react/recommended',
 		'plugin:react-hooks/recommended',
 		'plugin:jsx-a11y/recommended',
@@ -29,24 +29,24 @@ module.exports = {
 		'react-redux',
 	],
 	'rules': {
-		'indent': [
-			'error',
-			'tab'
-		],
+		// 'indent': [
+		// 	'error',
+		// 	'tab'
+		// ],
 		// 'linebreak-style': [
 		// 	'error',
 		// 	'windows'
 		// ],
-		'quotes': [
-			'error',
-			'single'
-		],
-		'semi': [
-			'error',
-			'always'
-		],
+		// 'quotes': [
+		// 	'error',
+		// 	'single'
+		// ],
+		// 'semi': [
+		// 	'error',
+		// 	'always'
+		// ],
 		'react-hooks/exhaustive-deps': 0,
-		'no-unused-vars': 2,
+		// 'no-unused-vars': 2,
 		'no-console': 0,
 		'react-redux/connect-prefer-named-arguments': 2,
 		'react-redux/prefer-separate-component-file': 0,

@@ -11,9 +11,21 @@ db_instance = get_mongodb_instance()
 class SystemSettingOrmEntity(OrmEntityBase):
 
     editor_id = fields.UUIDField(allow_none=True)
-    max_user_text_translation_per_day = fields.IntegerField(required=True)
-    max_user_doc_translation_per_day = fields.IntegerField(required=True)
+    # max_user_text_translation_per_day = fields.IntegerField(required=True)
+    # max_user_doc_translation_per_day = fields.IntegerField(required=True)
     task_expired_duration = fields.IntegerField(required=True)
+    
+    translation_api_url = fields.UrlField(allow_none=True, default="http://nmtuet.ddns.net:1710/translate_paragraphs") 
+    translation_api_allowed_concurrent_req = fields.IntegerField(allow_none=False, default=1)
+    
+    language_detection_api_url = fields.UrlField(allow_none=True, default="http://nmtuet.ddns.net:1820/detect_lang") 
+    language_detection_api_allowed_concurrent_req = fields.IntegerField(allow_none=False, default=1)
+    
+    translation_speed_for_each_sentence = fields.IntegerField(allow_none=False, default=0.05)
+    language_detection_speed = fields.IntegerField(allow_none=False, default=0.05)
+    
+    email_for_sending_email = fields.EmailField(required=True)
+    email_password_for_sending_email = fields.StringField(required=True)
     
     class Meta:
         collection_name = database_config.COLLECTIONS['system_setting']['name']

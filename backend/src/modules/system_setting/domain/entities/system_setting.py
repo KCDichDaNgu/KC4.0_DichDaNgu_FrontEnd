@@ -1,6 +1,6 @@
 from pydantic.class_validators import root_validator, validator
-from typing import Union
-from pydantic import Field, BaseModel
+from typing import Union, Optional
+from pydantic import Field, BaseModel 
 
 from addict import Addict
 
@@ -12,9 +12,16 @@ from typing import get_args
 class SystemSettingProps(BaseModel):
 
     editor_id: ID = Field(...)
-    max_user_text_translation_per_day: int = Field(...)
-    max_user_doc_translation_per_day: int = Field(...)
     task_expired_duration: int = Field(...)
+    
+    translation_api_url: Optional[str]
+    translation_api_allowed_concurrent_req: int = Field(...)
+    language_detection_api_url: Optional[str]
+    language_detection_api_allowed_concurrent_req: int = Field(...)
+    translation_speed_for_each_sentence: float = Field(...)
+    language_detection_speed: float = Field(...)
+    email_for_sending_email: str = Field(...)
+    email_password_for_sending_email: str = Field(...)
 
     class Config:
         use_enum_values = True

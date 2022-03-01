@@ -20,6 +20,11 @@ export const AdminSidebarData = [
 		type: 'screen'
 	},
 	{
+		title: 'Cài đặt hệ thống',
+		path: '/system-setting',
+		type: 'screen'
+	},
+	{
 		title: 'Điều khoản và chính sách',
 		path: '/rules-and-policy',
 		type: 'screen'

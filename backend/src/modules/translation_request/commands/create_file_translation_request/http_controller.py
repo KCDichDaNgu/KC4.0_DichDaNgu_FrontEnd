@@ -27,8 +27,10 @@ class CreateFileTranslationRequest(HTTPMethodView):
 
         from modules.translation_request.commands.create_file_translation_request.service import CreateFileTranslationRequestService
         from modules.user.commands.update_user_statistic.service import UpdateUserStatisticService
+        
         self.__create_file_translation_request_service = CreateFileTranslationRequestService()
         self.__update_user_statistic = UpdateUserStatisticService()
+        
     @doc.summary(APP_CONFIG.ROUTES['translation_request.doc_translation.create']['summary'])
     @doc.description(APP_CONFIG.ROUTES['translation_request.doc_translation.create']['desc'])
     @doc.consumes(
@@ -77,7 +79,7 @@ class CreateFileTranslationRequest(HTTPMethodView):
                 )
             )
 
-        if request.headers.get('Authorization'):        
+        if request.headers.get('Authorization') and user:        
             translation_response = await self.create_private_file_translation_request(file, data, user)
         else:
             translation_response = await self.create_public_file_translation_request(file, data)

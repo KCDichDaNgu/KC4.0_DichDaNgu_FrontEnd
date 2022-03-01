@@ -22,9 +22,15 @@ class SystemSettingDService():
                 saved_setting = await self.__system_setting_repository.find_one({})
 
                 conditions = dict(
-                    max_user_doc_translation_per_day=command.max_user_doc_translation_per_day,
-                    max_user_text_translation_per_day=command.max_user_text_translation_per_day,
-                    task_expired_duration=command.task_expired_duration
+                    task_expired_duration=command.task_expired_duration,
+                    translation_api_url=command.translation_api_url,
+                    translation_api_allowed_concurrent_req=command.translation_api_allowed_concurrent_req,
+                    language_detection_api_url=command.language_detection_api_url,
+                    language_detection_api_allowed_concurrent_req=command.language_detection_api_allowed_concurrent_req,
+                    translation_speed_for_each_sentence=command.translation_speed_for_each_sentence,
+                    language_detection_speed=command.language_detection_speed,
+                    email_for_sending_email=command.email_for_sending_email,
+                    email_password_for_sending_email=command.email_password_for_sending_email
                 )
                 
                 updated_setting = await self.__system_setting_repository.update(saved_setting, conditions)

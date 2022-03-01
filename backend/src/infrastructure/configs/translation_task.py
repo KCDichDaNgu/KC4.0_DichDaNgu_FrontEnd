@@ -19,7 +19,7 @@ RESULT_FILE_STATUS = {
     'translating': 'translating'
 }
 
-class AllowedFileTranslationExtension(str, ExtendedEnum):
+class AllowedFileTranslationExtensionEnum(str, ExtendedEnum):
 
     txt = 'txt'
     docx = 'docx'
@@ -30,7 +30,7 @@ def is_allowed_file_extension(file_name):
 
     file_ext = extract_file_extension(file_name)
 
-    return file_ext in AllowedFileTranslationExtension.enum_values()
+    return file_ext in AllowedFileTranslationExtensionEnum.enum_values()
 
 def get_file_translation_file_path(task_id, file_name: str):
 

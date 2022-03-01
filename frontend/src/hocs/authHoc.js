@@ -14,10 +14,9 @@ const authHoc = (WrappedComponent) => {
 
 		const redirectToLogin = () => {
 			if (history.location.pathname !== '/translate') {
-				history.push('/login');
+				// history.push('/login');
 			}
 			else setRenderCom(true);
-
 			dispatch(changeIsLogin(false));
 			localStorage.clear();
 		};

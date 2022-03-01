@@ -4,7 +4,7 @@ from infrastructure.configs.language_detection_task import LanguageDetectionTask
 from infrastructure.configs.language import LanguageEnum
 from infrastructure.configs.language_detection_history import LanguageDetectionHistoryStatus
 from core.utils.common import chunk_arr
-
+import pymongo
 
 from typing import List
 from uuid import UUID
@@ -29,15 +29,15 @@ import aiohttp
 
 from infrastructure.adapters.logger import Logger
 
+from modules.system_setting.database.repository import SystemSettingRepository
+
 config: GlobalConfig = get_cnf()
 db_instance = get_mongodb_instance()
-
-PUBLIC_LANGUAGE_DETECTION_API_CONF = config.PUBLIC_LANGUAGE_DETECTION_API
-ALLOWED_CONCURRENT_REQUEST = PUBLIC_LANGUAGE_DETECTION_API_CONF.ALLOWED_CONCURRENT_REQUEST
 
 language_detection_request_repository = LanguageDetectionRequestRepository()
 language_detection_request_result_repository = LanguageDetectionRequestResultRepository()
 language_detection_history = LanguageDetectionHistoryRepository()
+system_setting_repository = SystemSettingRepository()
 
 languageDetector = LanguageDetector()
 
@@ -148,6 +148,25 @@ async def mark_invalid_tasks(invalid_tasks_mapper):
     return result
 
 async def main():
+    
+    system_setting = await system_setting_repository.find_one({})
+    
+    ALLOWED_CONCURRENT_REQUEST = system_setting.props.language_detection_api_allowed_concurrent_req
+    
+    if ALLOWED_CONCURRENT_REQUEST <= 0: return
+    
+    tasks = await language_detection_request_repository.find_many(
+        params=dict(
+            current_step=LanguageDetectionTaskStepEnum.detecting_language.value,
+            step_status=StepStatusEnum.not_yet_processed.value
+        ),
+        limit=1,
+        order_by=[('created_at', pymongo.ASCENDING)]
+    )
+    
+    if not tasks or not (tasks[0].props.task_name == LanguageDetectionTaskNameEnum.public_plain_text_language_detection.value and \
+        tasks[0].props.current_step == LanguageDetectionTaskStepEnum.detecting_language.value and \
+        tasks[0].props.step_status in [StepStatusEnum.not_yet_processed.value]): return 
 
     logger.debug(
         msg=f'New task detect_plain_text_language_created_by_public_request run in {datetime.now()}'
@@ -162,11 +181,11 @@ async def main():
                 task_name=LanguageDetectionTaskNameEnum.public_plain_text_language_detection.value,
                 current_step=LanguageDetectionTaskStepEnum.detecting_language.value,
                 step_status=StepStatusEnum.not_yet_processed.value,
-                expired_date={
-                    "$gt": datetime.now()
-                }
+                # expired_date={
+                #     "$gt": datetime.now()
+                # }
             ),
-            limit=ALLOWED_CONCURRENT_REQUEST * 10
+            limit=ALLOWED_CONCURRENT_REQUEST
         )
 
         tasks_id = list(map(lambda task: task.id.value, tasks))
@@ -215,7 +234,7 @@ async def main():
 
             try:
             
-                await execute_in_batch(valid_tasks_mapper, chunk)
+                await execute_in_batch(valid_tasks_mapper, chunk, ALLOWED_CONCURRENT_REQUEST)
                 
             except Exception as e:
                 logger.error(e)
@@ -234,11 +253,11 @@ async def main():
     print(f'An task detect_plain_text_language_created_by_public_request end in {datetime.now()}\n')
             
 
-async def execute_in_batch(valid_tasks_mapper, tasks_id):
+async def execute_in_batch(valid_tasks_mapper, tasks_id, allowed_concurrent_request):
 
     loop = asyncio.get_event_loop()
 
-    connector = aiohttp.TCPConnector(limit=ALLOWED_CONCURRENT_REQUEST)
+    connector = aiohttp.TCPConnector(limit=allowed_concurrent_request)
 
     async with aiohttp.ClientSession(connector=connector, loop=loop) as session:
         

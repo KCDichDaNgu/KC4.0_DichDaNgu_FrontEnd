@@ -18,9 +18,17 @@ class SystemSettingSeeder(BaseSeeder):
         if not saved_sys_setting:
             result = await self.coll_connection.insert_one({
                 '_id': uuid4(),
-                'max_user_text_translation_per_day': 0,
-                'max_user_doc_translation_per_day': 0,
+                # 'max_user_text_translation_per_day': 0,
+                # 'max_user_doc_translation_per_day': 0,
                 'task_expired_duration': 0,
+                'translation_api_url': "http://nmtuet.ddns.net:1710/translate_paragraphs",
+                'translation_api_allowed_concurrent_req': 1,
+                'language_detection_api_url': "http://nmtuet.ddns.net:1820/detect_lang",
+                'language_detection_api_allowed_concurrent_req': 1,
+                'translation_speed_for_each_sentence': 0.05,
+                'language_detection_speed': 0.05,
+                'email_for_sending_email': 'kcdichdangu.uet@gmail.com',
+                'email_password_for_sending_email': '',
                 'created_at': datetime.now(),
                 'updated_at': datetime.now()
             },

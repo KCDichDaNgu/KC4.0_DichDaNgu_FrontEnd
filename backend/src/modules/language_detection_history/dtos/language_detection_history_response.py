@@ -33,6 +33,9 @@ class DataStructure:
     createdAt = doc.DateTime(
         required=True,
     )
+    
+    posInLangDetectionQueue = doc.Integer()
+    estimatedWattingTime = doc.Float()
 
 class SingleLanguageDetectionHistoryResponse(ResponseBase):
     

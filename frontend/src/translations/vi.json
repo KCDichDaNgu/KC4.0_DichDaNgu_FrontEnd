@@ -81,6 +81,17 @@
 		"daThemVaoTuVung": "Đã thêm vào từ vựng",
 		"daSaoChep": "Đã sao chép"
 	},
+	"SystemSetting": {
+		"taskExpiredDuration": "Thời gian lưu trữ kết quả dịch (Tính bằng giây)",
+		"translationApiUrl": "Đường dẫn api dịch",
+		"translationApiAllowedConcurrentReq": "Số lượng yêu cầu dịch gửi đồng thời cho api dịch",
+		"languageDetectionApiUrl": "Đường dẫn api phát hiện ngôn ngữ",
+		"languageDetectionApiAllowedConcurrentReq": "Số lượng yêu cầu phát hiện ngôn ngữ gửi đồng thời",
+		"translationSpeedForEachSentence": "Tốc độ dịch số giây / câu",
+		"languageDetectionSpeed": "Tốc độ phát hiện ngôn ngữ (Tính bằng giây)",
+		"emailForSendingEmail": "Email cho gửi mail",
+		"emailPasswordForSendingEmail": "Mật khẩu email"
+	},
 	"login":"Đăng nhập",
 	"username": "Tên đăng nhập",
 	"lastName": "Họ",
@@ -113,6 +124,7 @@
 	"requiredField": "Thông tin bắt buộc",
 	"cancel": "Đóng",
 	"edit": "Sửa",
+	"update": "Cập nhật",
 	"create": "Thêm",
 	"ViEn": "Việt - Anh",
 	"ViZh": "Việt - Trung",
@@ -120,5 +132,11 @@
 	"ViKm": "Việt - Khơme",
 	"inactive_user": "Tài khoản người dùng không hoạt động",
 	"no_access_media": "Không có quyền truy cập thiết bị truyền thông",
-	"detectAndTranslate": "Phát hiện và dịch"
+	"detectAndTranslate": "Phát hiện và dịch",
+	"viTriTrongHangChoNhanDienNgonNgu": "Vị trí yêu cầu trong hàng chờ nhận diện ngôn ngữ",
+	"viTriTrongHangChoDich": "Vị trí yêu cầu trong hàng chờ dịch",
+	"thoiGianChoUocTinh": "Thời gian chờ ước tính",
+	"damBaoEmail": "Chúng tôi sẽ không bao giờ chia sẻ email của bạn với bất kỳ ai khác.",
+	"emailNhanketQua": "Email nhận kết quả",
+	"gui": "Gửi"
 }

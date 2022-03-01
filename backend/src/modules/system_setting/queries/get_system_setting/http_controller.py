@@ -27,9 +27,15 @@ class GetSystemSetting(HTTPMethodView):
             'code': StatusCodeEnum.success.value,
             'data': {
                 'editorId': saved_setting.props.editor_id.value,
-                'maxUserTextTranslationPerDay': saved_setting.props.max_user_text_translation_per_day,
-                'maxUserDocTranslationPerDay': saved_setting.props.max_user_doc_translation_per_day,
                 'taskExpiredDuration': saved_setting.props.task_expired_duration,
+                'translationApiUrl': saved_setting.props.translation_api_url,
+                'translationApiAllowedConcurrentReq': saved_setting.props.translation_api_allowed_concurrent_req,
+                'languageDetectionApiUrl': saved_setting.props.language_detection_api_url,
+                'languageDetectionApiAllowedConcurrentReq': saved_setting.props.language_detection_api_allowed_concurrent_req,
+                'translationSpeedForEachSentence': saved_setting.props.translation_speed_for_each_sentence,
+                'languageDetectionSpeed': saved_setting.props.language_detection_speed,
+                'emailForSendingEmail': saved_setting.props.email_for_sending_email,
+                'emailPasswordForSendingEmail': saved_setting.props.email_password_for_sending_email,
             },
             'message': MESSAGES['success']
         }).dict())

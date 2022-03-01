@@ -14,6 +14,8 @@ import {
 	CHANGE_DETECT_LANG,
 	DISABLEINPUT,
 	RESET,
+	GETTING_SINGLE_TRANSLATION_HISTORY_SUCCESS,
+	GETTING_SINGLE_LANG_DETECTION_HISTORY_SUCCESS
 } from '../constant/translateTypes';
 import * as axiosHelper from '../../helpers/axiosHelper';
 import { debounce } from 'lodash';
@@ -113,7 +115,7 @@ export const swapTranslate = (dataSource, dataTarget) => {
  */
 export function disableInput() {
 	return {
-	  type: DISABLEINPUT,
+	  	type: DISABLEINPUT,
 	};
 }
 
@@ -125,7 +127,7 @@ export function disableInput() {
  */
 export function translationLoading() {
 	return {
-	  type: TRANSLATION,
+	  	type: TRANSLATION,
 	};
 }
 
@@ -134,8 +136,8 @@ export function translationLoading() {
  */
 export function translationSuccess(data) {
 	return {
-	  type: TRANSLATION_SUCCESS,
-	  payload: {
+		type: TRANSLATION_SUCCESS,
+		payload: {
 			targetText: data.target_text,
 		}
 	};
@@ -146,8 +148,8 @@ export function translationSuccess(data) {
  */
 export function translationFailed(err) {
 	return {
-	  type: TRANSLATION_FAIL,
-	  payload: {
+		type: TRANSLATION_FAIL,
+		payload: {
 			err,
 		}
 	};
@@ -155,7 +157,7 @@ export function translationFailed(err) {
 
 export function detectLangLoading() {
 	return {
-	  type: DETECTLANG,
+	  	type: DETECTLANG,
 	};
 }
 
@@ -164,8 +166,8 @@ export function detectLangLoading() {
  */
 export function detectLangSuccess(data) {
 	return {
-	  type: DETECTLANG_SUCCESS,
-	  payload: {
+		type: DETECTLANG_SUCCESS,
+		payload: {
 			detectLang: data.source_lang,
 		}
 	};
@@ -173,8 +175,8 @@ export function detectLangSuccess(data) {
 
 export function translateAfterDetectLangSuccess(data) {
 	return {
-	  type: TRANSLATE_AFTER_DETECTLANG_SUCCESS,
-	  payload: {
+		type: TRANSLATE_AFTER_DETECTLANG_SUCCESS,
+		payload: {
 			targetText: data.target_text,
 		}
 	};
@@ -185,10 +187,28 @@ export function translateAfterDetectLangSuccess(data) {
  */
 export function detectLangFailed(err, detectLang) {
 	return {
-	  type: DETECTLANG_FAIL,
-	  payload: {
+		type: DETECTLANG_FAIL,
+		payload: {
 			detectLang,
 			err,
+		}
+	};
+}
+
+export function saveGetDetectionHistoryGetSingle(data) {
+	return {
+		type: GETTING_SINGLE_LANG_DETECTION_HISTORY_SUCCESS,
+		payload: {
+			data
+		}
+	};
+}
+
+export function saveGetTranslationHistoryGetSingle(data) {
+	return {
+		type: GETTING_SINGLE_TRANSLATION_HISTORY_SUCCESS,
+		payload: {
+			data
 		}
 	};
 }
@@ -199,21 +219,28 @@ export function detectLangFailed(err, detectLang) {
  * Đặt thời gian mỗi lần gọi lại API 
  * ! => tránh việc gọi liên tục và ko cần thiết
  */
-const recursiveCheckStatus = async (translationHistoryId, taskId, time) => {
+const recursiveCheckStatus = async (translationHistoryId, taskId, time, dispatch) => {
 	const getTranslationHistoryResult = await axiosHelper.getTranslateHistoryGetSingle({
 		translationHistoryId,
 		taskId,
 	});
+
+	dispatch(saveGetTranslationHistoryGetSingle(getTranslationHistoryResult));
+	// let tmp = localStorage.getItem(`get_translation_history_tmp`);
+
+	// if (tmp != JSON.stringify(getTranslationHistoryResult))
+	// 	localStorage.setItem(`get_translation_history_tmp`, JSON.stringify(getTranslationHistoryResult));
+	
 	if(getTranslationHistoryResult.data.status === STATUS.TRANSLATING){
 		return new Promise((resolve, reject) => {
 			setTimeout(async () => {
 				try {
-					const getTranslationHistoryResult = await recursiveCheckStatus(translationHistoryId, taskId, time);
+					const getTranslationHistoryResult = await recursiveCheckStatus(translationHistoryId, taskId, time, dispatch);
 					resolve(getTranslationHistoryResult);
 				} catch (e) {
 					reject(e);
 				}
-			}, 200);
+			}, 2000);
 		});
 	} else {
 		return getTranslationHistoryResult;
@@ -226,16 +253,19 @@ const recursiveCheckStatus = async (translationHistoryId, taskId, time) => {
  * Đặt thời gian mỗi lần gọi lại API 
  * ! => tránh việc gọi liên tục và ko cần thiết
  */
-const recursiveDetectionCheckStatus = async (translationHistoryId, taskId, time) => {
+const recursiveDetectionCheckStatus = async (translationHistoryId, taskId, time, dispatch) => {
 	const getDetectionHistoryResult = await axiosHelper.getDetectionHistoryGetSingle({
 		translationHistoryId,
 		taskId,
 	});
+
+	dispatch(saveGetDetectionHistoryGetSingle(getDetectionHistoryResult));
+
 	if(getDetectionHistoryResult.data.status === STATUS.DETECTING){
 		return new Promise((resolve, reject) => {
 			setTimeout(async () => {
 				try{
-					const getDetectionHistoryResult = await recursiveDetectionCheckStatus(translationHistoryId, taskId, time);
+					const getDetectionHistoryResult = await recursiveDetectionCheckStatus(translationHistoryId, taskId, time, dispatch);
 					resolve(getDetectionHistoryResult);
 				} catch (e) {
 					reject(e);
@@ -258,9 +288,10 @@ const debouncedTranslate = debounce(async (body, dispatch) => {
 		const getTranslationHistoryResult = await recursiveCheckStatus(
 			postTranslationResult.data.translationHitoryId, 
 			postTranslationResult.data.taskId, 
-			time
+			time,
+			dispatch
 		);  
-
+		
 		if(getTranslationHistoryResult.message === 'Time Out'){
 			dispatch(translationFailed(getTranslationHistoryResult.message));
 		} else {
@@ -299,7 +330,8 @@ const debouncedTranslateAndDetect = debounce(async (body, dispatch) => {
 		const getSourceLang = await recursiveDetectionCheckStatus(
 			getDetectLangInstant.data.translationHitoryId, 
 			getDetectLangInstant.data.taskId, 
-			time
+			time,
+			dispatch
 		); 
 		if(getSourceLang.message === 'Time Out'){
 			dispatch(detectLangFailed(getSourceLang.message, 'unknown'));
@@ -317,7 +349,8 @@ const debouncedTranslateAndDetect = debounce(async (body, dispatch) => {
 				const getTranslationHistoryResult = await recursiveCheckStatus(
 					postTranslationResult.data.translationHitoryId, 
 					postTranslationResult.data.taskId, 
-					time
+					time,
+					dispatch
 				);
 				if(getTranslationHistoryResult.message === 'Time Out'){
 					dispatch(detectLangFailed(getTranslationHistoryResult.message, 'unknown'));

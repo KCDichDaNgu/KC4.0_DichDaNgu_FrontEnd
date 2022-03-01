@@ -33,9 +33,15 @@ class UpdateSystemSetting(HTTPMethodView):
         data = request.json['data']
 
         command = UpdateSystemSettingCommand(
-            max_user_text_translation_per_day=data['maxUserTextTranslationPerDay'],
-            max_user_doc_translation_per_day=data['maxUserDocTranslationPerDay'],
             task_expired_duration=data['taskExpiredDuration'],
+            # translation_api_url=data['translationApiUrl'],
+            translation_api_allowed_concurrent_req=data['translationApiAllowedConcurrentReq'],
+            # language_detection_api_url=data['languageDetectionApiUrl'],
+            language_detection_api_allowed_concurrent_req=data['languageDetectionApiAllowedConcurrentReq'],
+            translation_speed_for_each_sentence=data['translationSpeedForEachSentence'],
+            language_detection_speed=data['languageDetectionSpeed'],
+            email_for_sending_email=data['emailForSendingEmail'],
+            email_password_for_sending_email=data['emailPasswordForSendingEmail'],
         )
 
         saved_setting = await self.__system_setting_service.update(command)
@@ -43,9 +49,15 @@ class UpdateSystemSetting(HTTPMethodView):
         return response.json(BaseResponse(**{
             'code': StatusCodeEnum.success.value,
             'data': {
-                'maxUserTextTranslationPerDay': saved_setting.props.max_user_text_translation_per_day,
-                'maxUserDocTranslationPerDay': saved_setting.props.max_user_doc_translation_per_day,
                 'taskExpiredDuration': saved_setting.props.task_expired_duration,
+                'translationApiUrl': saved_setting.props.translation_api_url,
+                'translationApiAllowedConcurrentReq': saved_setting.props.translation_api_allowed_concurrent_req,
+                'languageDetectionApiUrl': saved_setting.props.language_detection_api_url,
+                'languageDetectionApiAllowedConcurrentReq': saved_setting.props.language_detection_api_allowed_concurrent_req,
+                'translationSpeedForEachSentence': saved_setting.props.translation_speed_for_each_sentence,
+                'languageDetectionSpeed': saved_setting.props.language_detection_speed,
+                'emailForSendingEmail': saved_setting.props.email_for_sending_email,
+                'emailPasswordForSendingEmail': saved_setting.props.email_password_for_sending_email,
             },
             'message': MESSAGES['success']
         }).dict())

@@ -27,7 +27,6 @@ export const getCurrentUser = () => async (dispatch) => {
 	try {
 		const result = await axiosHelper.getMe();
 		localStorage.setItem('user', JSON.stringify(result.data));
-		console.log(result.data);
 		dispatch(getUserSuccess(result.data));
 	}catch(e) {
 		console.log(e);

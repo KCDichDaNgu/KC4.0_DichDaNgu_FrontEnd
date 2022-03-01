@@ -24,6 +24,7 @@ from infrastructure.adapters.language_detector.main import LanguageDetector
 from modules.translation_request.database.translation_request.repository import TranslationRequestRepository, TranslationRequestEntity
 from modules.translation_request.database.translation_request_result.repository import TranslationRequestResultRepository, TranslationRequestResultEntity
 from modules.translation_request.database.translation_history.repository import TranslationHistoryRepository, TranslationHistoryEntity
+from modules.system_setting.database.repository import SystemSettingRepository
 
 import asyncio
 import aiohttp
@@ -33,12 +34,10 @@ from infrastructure.adapters.logger import Logger
 config: GlobalConfig = get_cnf()
 db_instance = get_mongodb_instance()
 
-PUBLIC_LANGUAGE_DETECTION_API_CONF = config.PUBLIC_LANGUAGE_DETECTION_API
-ALLOWED_CONCURRENT_REQUEST = PUBLIC_LANGUAGE_DETECTION_API_CONF.ALLOWED_CONCURRENT_REQUEST
-
 translation_request_repository = TranslationRequestRepository()
 translation_request_result_repository = TranslationRequestResultRepository()
 transation_history_repository = TranslationHistoryRepository()
+system_setting_repository = SystemSettingRepository()
 
 languageDetector = LanguageDetector()
 
@@ -150,6 +149,10 @@ async def mark_invalid_tasks(invalid_tasks_mapper):
     return result
 
 async def main():
+    
+    system_setting = await system_setting_repository.find_one({})
+    
+    ALLOWED_CONCURRENT_REQUEST = system_setting.props.language_detection_api_allowed_concurrent_req
 
     logger.debug(
         msg=f'New task translate_plain_text_in_public_request.detect_content_language run in {datetime.now()}'
@@ -164,11 +167,11 @@ async def main():
                 task_name=TranslationTaskNameEnum.public_plain_text_translation.value,
                 current_step=TranslationTaskStepEnum.detecting_language.value,
                 step_status=StepStatusEnum.not_yet_processed.value,
-                expired_date={
-                    "$gt": datetime.now()
-                }
+                # expired_date={
+                #     "$gt": datetime.now()
+                # }
             ),
-            limit=ALLOWED_CONCURRENT_REQUEST * 10
+            limit=ALLOWED_CONCURRENT_REQUEST
         )
 
         tasks_id = list(map(lambda task: task.id.value, tasks))
@@ -217,7 +220,7 @@ async def main():
 
             try:
             
-                await execute_in_batch(valid_tasks_mapper, chunk)
+                await execute_in_batch(valid_tasks_mapper, chunk, ALLOWED_CONCURRENT_REQUEST)
 
             except Exception as e:
                 logger.error(e)
@@ -236,11 +239,11 @@ async def main():
     print(f'An task translate_plain_text_in_public_request.detect_content_language end in {datetime.now()}\n')
             
 
-async def execute_in_batch(valid_tasks_mapper, tasks_id):
+async def execute_in_batch(valid_tasks_mapper, tasks_id, allowed_concurrent_request):
 
     loop = asyncio.get_event_loop()
 
-    connector = aiohttp.TCPConnector(limit=ALLOWED_CONCURRENT_REQUEST)
+    connector = aiohttp.TCPConnector(limit=allowed_concurrent_request)
 
     async with aiohttp.ClientSession(connector=connector, loop=loop) as session:
         

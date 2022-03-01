@@ -18,4 +18,4 @@ class LanguageDetectionRequestResultOrmEntity(TaskResultOrmEntity):
 
     def pre_update(self):
 
-        super(LanguageDetectionRequestResultOrmEntity, self).pre_insert()
+        super(LanguageDetectionRequestResultOrmEntity, self).pre_update()

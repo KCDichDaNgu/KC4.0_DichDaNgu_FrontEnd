@@ -10,6 +10,8 @@ import {
 	DETECTLANG_FILE_FAIL,
 	DETECTLANG_FILE_SUCCESS,
 	TRANSLATE_AFTER_DETECTLANG_FILE_SUCCESS,
+	GETTING_SINGLE_TRANSLATION_HISTORY_SUCCESS,
+	GETTING_SINGLE_LANG_DETECTION_HISTORY_SUCCESS
 } from '../constant/translateFileTypes';
 
 export const STATE = {
@@ -24,6 +26,8 @@ const initialState = {
 	documentFile: null,
 	outputTranslationFile: null,
 	outputDocumentFile: null,
+	currentTranslationHistory: null,
+	currentLangDetectionHistory: null,
 	err: null,
 };
 
@@ -110,6 +114,20 @@ export default function(state = initialState, action) {
 				sourceLang: null,
 			}
 		};
+	}
+	case GETTING_SINGLE_TRANSLATION_HISTORY_SUCCESS: {
+		return Object.assign(state, {
+			currentTranslationHistory: {
+				...action.payload.data.data
+			},
+		});
+	}
+	case GETTING_SINGLE_LANG_DETECTION_HISTORY_SUCCESS: {
+		return Object.assign(state, {
+			currentLangDetectionHistory: {
+				...action.payload.data.data
+			},
+		});
 	}
 	default:
 		return state;

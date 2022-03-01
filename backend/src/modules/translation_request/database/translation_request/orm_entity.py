@@ -1,6 +1,6 @@
 from infrastructure.configs.main import MongoDBDatabase, GlobalConfig, get_cnf
 from infrastructure.configs.task import (
-    TRANSLATION_PRIVATE_TASKS
+    TRANSLATION_PRIVATE_TASKS,
 )
 from infrastructure.configs.database import validate_orm_class_name
 from umongo import fields, validate
@@ -19,6 +19,22 @@ class TranslationRequestOrmEntity(TaskOrmEntity):
     task_name = fields.StringField(
         required=True, 
         validate=validate.OneOf(TranslationTaskNameEnum.enum_values())
+    )
+    
+    receiver_email = fields.EmailField(
+        allow_none=True
+    )
+    
+    total_email_sent = fields.IntegerField(
+        allow_none=True,
+        default=0,
+        validate=validate.Range(min=0)
+    )
+    
+    num_sents = fields.IntegerField(
+        allow_none=False,
+        default=0, 
+        validate=validate.Range(min=0)
     )
 
     def pre_insert(self):

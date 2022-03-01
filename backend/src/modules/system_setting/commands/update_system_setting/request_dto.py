@@ -3,17 +3,38 @@ from sanic_openapi import doc
 
 class UpdateSystemSettingDto(UpdateSystemSetting):
 
-    maxUserTextTranslationPerDay: doc.Integer(
-        description='Max translate text per day',
-        required=True,
-    )
-
-    maxUserDocTranslationPerDay: doc.Integer(
-        description='Max translate documents per day',
-        required=True,
+    taskExpiredDuration = doc.Integer(
+        description='taskExpiredDuration'
     )
     
-    taskExpiredDuration: doc.Integer(
-        description='Translation history expire duration',
-        required=True,
+    translationApiUrl = doc.String(
+        description='translationApiUrl'
+    )
+    
+    translationApiAllowedConcurrentReq = doc.Integer(
+        description='translationApiAllowedConcurrentReq'
+    )
+    
+    languageDetectionApiUrl = doc.String(
+        description='languageDetectionApiUrl'
+    )
+    
+    languageDetectionApiAllowedConcurrentReq = doc.Integer(
+        description='languageDetectionApiAllowedConcurrentReq'
+    )
+    
+    translationSpeedForEachSentence = doc.Float(
+        description='translationSpeedForEachSentence'
+    )
+    
+    languageDetectionSpeed = doc.Float(
+        description='languageDetectionSpeed'
+    )
+    
+    emailForSendingEmail = doc.String(
+        description='emailForSendingEmail'
+    )
+    
+    emailPasswordForSendingEmail = doc.String(
+        description='emailPasswordForSendingEmail'
     )

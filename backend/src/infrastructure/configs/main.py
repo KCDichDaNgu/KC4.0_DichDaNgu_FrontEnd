@@ -65,6 +65,14 @@ class AppConfig(BaseModel):
             "name": "Translation request",
             "abstract": True,
         },
+        "translation_request.update_receiver_email": {
+            "path": "update-receiver-email",
+            "name": "update_receiver_email",
+            "summary": "update_receiver_email",
+            "desc": "update_receiver_email",
+            "method": "PUT",
+            "abstract": False,
+        },
         "translation_request.text_translation.create": {
             "path": "translate",
             "name": "Create text translation request",
@@ -252,28 +260,27 @@ class AppConfig(BaseModel):
     STRICT_SLASHES = False
 
     BACKGROUND_TASKS: Dict[str, BackgroundTask] = {
-        "translate_plain_text_in_public_request.detect_content_language": BackgroundTask(
-            ID="translate_plain_text_in_public_request.detect_content_language",
+        "delete_invalid_file": BackgroundTask(
+            ID="delete_invalid_file",
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
             CONFIG=dict(seconds=0, max_instances=1),
         ),
-        "translate_plain_text_in_public_request.translate_content": BackgroundTask(
-            ID="translate_plain_text_in_public_request.translate_content",
+        
+        "delete_invalid_task": BackgroundTask(
+            ID="delete_invalid_task",
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
             CONFIG=dict(seconds=0, max_instances=1),
         ),
-        "translate_content_for_file_in_public_request.translate_content": BackgroundTask(
-            ID="translate_content_for_file_in_public_request.translate_content",
+        
+         "send_translation_email": BackgroundTask(
+            ID="send_translation_email",
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
             CONFIG=dict(seconds=0, max_instances=1),
         ),
-        "translate_content_for_file_in_public_request.detect_content_language": BackgroundTask(
-            ID="translate_content_for_file_in_public_request.detect_content_language",
-            TRIGGER=BackgroundTaskTriggerEnum.interval.value,
-            CONFIG=dict(seconds=0, max_instances=1),
-        ),
-        "detect_plain_text_language_in_public_request": BackgroundTask(
-            ID="detect_plain_text_language_in_public_request",
+        
+
+        "detect_plain_text_language_created_by_public_request": BackgroundTask(
+            ID="detect_plain_text_language_created_by_public_request",
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
             CONFIG=dict(seconds=0, max_instances=1),
         ),
@@ -282,38 +289,96 @@ class AppConfig(BaseModel):
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
             CONFIG=dict(seconds=0, max_instances=1),
         ),
-        "delete_invalid_task": BackgroundTask(
-            ID="delete_invalid_task",
-            TRIGGER=BackgroundTaskTriggerEnum.interval.value,
-            CONFIG=dict(seconds=60, max_instances=1),
-        ),
-        "delete_invalid_file": BackgroundTask(
-            ID="delete_invalid_file",
-            TRIGGER=BackgroundTaskTriggerEnum.interval.value,
-            CONFIG=dict(seconds=60, max_instances=1),
-        ),
-        "translate_content_for_file_in_public_request.translate_txt_file": BackgroundTask(
-            ID="translate_content_for_file_in_public_request.translate_txt_file",
+        
+        
+        "detect_plain_text_language_created_by_private_request": BackgroundTask(
+            ID="detect_plain_text_language_created_by_private_request",
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
             CONFIG=dict(seconds=0, max_instances=1),
         ),
-        "translate_pptx_file_in_public_request.translate_content": BackgroundTask(
-            ID="translate_pptx_file_in_public_request.translate_content",
+        "detect_file_language_created_by_private_request": BackgroundTask(
+            ID="detect_file_language_created_by_private_request",
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
             CONFIG=dict(seconds=0, max_instances=1),
         ),
-        "translate_pptx_file_in_public_request.detect_content_language": BackgroundTask(
-            ID="translate_pptx_file_in_public_request.detect_content_language",
+        
+        
+        "translate_file_created_by_private_request.detect_content_language": BackgroundTask(
+            ID="translate_file_created_by_private_request.detect_content_language",
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
             CONFIG=dict(seconds=0, max_instances=1),
         ),
-        "translate_xlsx_file_in_public_request.translate_content": BackgroundTask(
-            ID="translate_xlsx_file_in_public_request.translate_content",
+        "translate_file_created_by_private_request.translate_content.docx": BackgroundTask(
+            ID="translate_file_created_by_private_request.translate_content.docx",
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
             CONFIG=dict(seconds=0, max_instances=1),
         ),
-        "translate_xlsx_file_in_public_request.detect_content_language": BackgroundTask(
-            ID="translate_xlsx_file_in_public_request.detect_content_language",
+        "translate_file_created_by_private_request.translate_content.pptx": BackgroundTask(
+            ID="translate_file_created_by_private_request.translate_content.pptx",
+            TRIGGER=BackgroundTaskTriggerEnum.interval.value,
+            CONFIG=dict(seconds=0, max_instances=1),
+        ),
+        "translate_file_created_by_private_request.translate_content.txt": BackgroundTask(
+            ID="translate_file_created_by_private_request.translate_content.txt",
+            TRIGGER=BackgroundTaskTriggerEnum.interval.value,
+            CONFIG=dict(seconds=0, max_instances=1),
+        ),
+        "translate_file_created_by_private_request.translate_content.xlsx": BackgroundTask(
+            ID="translate_file_created_by_private_request.translate_content.xlsx",
+            TRIGGER=BackgroundTaskTriggerEnum.interval.value,
+            CONFIG=dict(seconds=0, max_instances=1),
+        ),
+        
+        
+        
+        "translate_file_created_by_public_request.detect_content_language": BackgroundTask(
+            ID="translate_file_created_by_public_request.detect_content_language",
+            TRIGGER=BackgroundTaskTriggerEnum.interval.value,
+            CONFIG=dict(seconds=0, max_instances=1),
+        ),
+        "translate_file_created_by_public_request.translate_content.docx": BackgroundTask(
+            ID="translate_file_created_by_public_request.translate_content.docx",
+            TRIGGER=BackgroundTaskTriggerEnum.interval.value,
+            CONFIG=dict(seconds=0, max_instances=1),
+        ),
+        "translate_file_created_by_public_request.translate_content.pptx": BackgroundTask(
+            ID="translate_file_created_by_public_request.translate_content.pptx",
+            TRIGGER=BackgroundTaskTriggerEnum.interval.value,
+            CONFIG=dict(seconds=0, max_instances=1),
+        ),
+        "translate_file_created_by_public_request.translate_content.txt": BackgroundTask(
+            ID="translate_file_created_by_public_request.translate_content.txt",
+            TRIGGER=BackgroundTaskTriggerEnum.interval.value,
+            CONFIG=dict(seconds=0, max_instances=1),
+        ),
+        "translate_file_created_by_public_request.translate_content.xlsx": BackgroundTask(
+            ID="translate_file_created_by_public_request.translate_content.xlsx",
+            TRIGGER=BackgroundTaskTriggerEnum.interval.value,
+            CONFIG=dict(seconds=0, max_instances=1),
+        ),
+        
+        
+        
+        "translate_plain_text_created_by_private_request.detect_content_language": BackgroundTask(
+            ID="translate_plain_text_created_by_private_request.detect_content_language",
+            TRIGGER=BackgroundTaskTriggerEnum.interval.value,
+            CONFIG=dict(seconds=0, max_instances=1),
+        ),
+        "translate_plain_text_created_by_private_request.translate_content": BackgroundTask(
+            ID="translate_plain_text_created_by_private_request.translate_content",
+            TRIGGER=BackgroundTaskTriggerEnum.interval.value,
+            CONFIG=dict(seconds=0, max_instances=1),
+        ),
+        
+        
+        
+        "translate_plain_text_created_by_public_request.detect_content_language": BackgroundTask(
+            ID="translate_plain_text_created_by_public_request.detect_content_language",
+            TRIGGER=BackgroundTaskTriggerEnum.interval.value,
+            CONFIG=dict(seconds=0, max_instances=1),
+        ),
+        "translate_plain_text_created_by_public_request.translate_content": BackgroundTask(
+            ID="translate_plain_text_created_by_public_request.translate_content",
             TRIGGER=BackgroundTaskTriggerEnum.interval.value,
             CONFIG=dict(seconds=0, max_instances=1),
         ),

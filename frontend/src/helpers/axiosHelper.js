@@ -175,6 +175,44 @@ export const getUserList = (params) => {
 	});
 };
 
+export const updateReceiverEmail = (data) => {
+	return new Promise((resolve, reject) => {
+		axiosDefault.put('update-receiver-email', data)
+			.then((result) => {
+				resolve(result.data);
+			})
+			.catch((error) => {
+				reject(error);
+			});
+	});
+}
+
+
+export const getSystemSetting = () => {
+	return new Promise((resolve, reject) => {
+		axiosDefault.get('system-setting')
+			.then((result) => {
+				resolve(result.data);
+			})
+			.catch((error) => {
+				reject(error);
+			});
+	});
+};
+
+export const updateSystemSetting = (data) => {
+	// const _params = queryString.stringify(data);
+	return new Promise((resolve, reject) => {
+		axiosDefault.put('system-setting', {data: data})
+			.then((result) => {
+				resolve(result.data);
+			})
+			.catch((error) => {
+				reject(error);
+			});
+	});
+};
+
 export const updateUser = (body) => {
 	return new Promise((resolve, reject) => {
 		axiosDefault.put('user/other', body)
