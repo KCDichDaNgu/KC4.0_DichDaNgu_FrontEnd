@@ -172,7 +172,7 @@ function Index(props) {
 			}}>
 				{ t('viTriTrongHangChoDich') }: {posInTranslationQueue}
 				<br/>
-				{ t('thoiGianChoUocTinh') }: {estimatedWattingTime.toPrecision(2)} s
+				{ t('thoiGianChoUocTinh') }: {Math.round(estimatedWattingTime)} s
 			</div>
 		} 
 	}
@@ -205,7 +205,7 @@ function Index(props) {
 			}}>
 				{ t('viTriTrongHangChoNhanDienNgonNgu') }: {posInLangDetectionQueue}
 				<br/>
-				{ t('thoiGianChoUocTinh') }: {estimatedWattingTime.toPrecision(2)} s
+				{ t('thoiGianChoUocTinh') }: {Math.round(estimatedWattingTime)} s
 			</div>
 		} 
 	}
