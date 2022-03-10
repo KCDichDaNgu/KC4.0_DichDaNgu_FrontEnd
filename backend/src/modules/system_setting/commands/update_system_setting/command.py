@@ -4,7 +4,7 @@ from typing import Optional
 
 class UpdateSystemSettingCommand(BaseModel):
 
-    task_expired_duration: int
+    task_expired_duration: float
     translation_api_url: Optional[str]
     translation_api_allowed_concurrent_req: int
     language_detection_api_url: Optional[str]
