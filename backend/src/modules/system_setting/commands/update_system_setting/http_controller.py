@@ -33,13 +33,13 @@ class UpdateSystemSetting(HTTPMethodView):
         data = request.json['data']
 
         command = UpdateSystemSettingCommand(
-            task_expired_duration=data['taskExpiredDuration'],
+            task_expired_duration=float(data['taskExpiredDuration']),
             # translation_api_url=data['translationApiUrl'],
             translation_api_allowed_concurrent_req=data['translationApiAllowedConcurrentReq'],
             # language_detection_api_url=data['languageDetectionApiUrl'],
             language_detection_api_allowed_concurrent_req=data['languageDetectionApiAllowedConcurrentReq'],
-            translation_speed_for_each_character=data['translationSpeedForEachCharacter'],
-            language_detection_speed=data['languageDetectionSpeed'],
+            translation_speed_for_each_character=float(data['translationSpeedForEachCharacter']),
+            language_detection_speed=float(data['languageDetectionSpeed']),
             email_for_sending_email=data['emailForSendingEmail'],
             email_password_for_sending_email=data['emailPasswordForSendingEmail'],
         )
