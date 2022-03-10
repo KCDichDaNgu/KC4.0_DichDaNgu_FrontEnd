@@ -57,7 +57,7 @@ const SettingPage = () => {
                     message: t('requiredField'),
                 },
             ],
-            translationSpeedForEachSentence: [
+            translationSpeedForEachCharacter: [
                 {
                     required: true,
                     message: t('requiredField'),
@@ -176,11 +176,11 @@ const SettingPage = () => {
 
                                 <Col xs={ 24 } md={ 12 }>
 
-                                    <label>{ t('SystemSetting.translationSpeedForEachSentence') }</label>
+                                    <label>{ t('SystemSetting.translationSpeedForEachCharacter') }</label>
 
                                     <Form.Item 
-                                        name={ ['translationSpeedForEachSentence'] }
-                                        rules={ updateFormRules.translationSpeedForEachSentence }>
+                                        name={ ['translationSpeedForEachCharacter'] }
+                                        rules={ updateFormRules.translationSpeedForEachCharacter }>
                                         <Input className='user-input' /> 
                                     </Form.Item>
                                 </Col>

@@ -71,16 +71,16 @@ function UserManagement(props) {
 				<Row>
 					<Col span={12}>
 						<div style={{ flexDirection: 'column', textAlign: 'start' }}>
-							{t('ViEn')}: {used['vi-en']}/{quota['vi-en']} {t('sentence')}<br />
-							{t('ViZh')}: {used['vi-zh']}/{quota['vi-zh']} {t('sentence')}
+							{t('ViEn')}: {used['vi-en']}/{quota['vi-en']} {t('character')}<br />
+							{t('ViZh')}: {used['vi-zh']}/{quota['vi-zh']} {t('character')}
 
 						</div>
 					</Col>
 
 					<Col span={12}>
 						<div style={{ flexDirection: 'column', textAlign: 'start' }}>
-							{t('ViLo')}: {used['vi-lo']}/{quota['vi-lo']} {t('sentence')}<br />
-							{t('ViKm')}: {used['vi-km']}/{quota['vi-km']} {t('sentence')}
+							{t('ViLo')}: {used['vi-lo']}/{quota['vi-lo']} {t('character')}<br />
+							{t('ViKm')}: {used['vi-km']}/{quota['vi-km']} {t('character')}
 						</div>
 					</Col>
 				</Row>

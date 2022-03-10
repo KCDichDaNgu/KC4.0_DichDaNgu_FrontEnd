@@ -130,10 +130,10 @@ function ModalInfo(props) {
 						<InsertDriveFileIcon fontSize="medium" sx={{ color: 'action.active', mr: 1 }} />
 						{userInfo ?
 							<div>
-								{t('ViEn')}: {userInfo.totalTranslatedText['vi-en']}/{userInfo.textTranslationQuota['vi-en']} {t('sentence')}<br/>
-								{t('ViZh')}: {userInfo.totalTranslatedText['vi-zh']}/{userInfo.textTranslationQuota['vi-zh']} {t('sentence')}<br/>
-								{t('ViLo')}: {userInfo.totalTranslatedText['vi-lo']}/{userInfo.textTranslationQuota['vi-lo']} {t('sentence')}<br/>
-								{t('ViKm')}: {userInfo.totalTranslatedText['vi-km']}/{userInfo.textTranslationQuota['vi-km']} {t('sentence')}
+								{t('ViEn')}: {userInfo.totalTranslatedText['vi-en']}/{userInfo.textTranslationQuota['vi-en']} {t('character')}<br/>
+								{t('ViZh')}: {userInfo.totalTranslatedText['vi-zh']}/{userInfo.textTranslationQuota['vi-zh']} {t('character')}<br/>
+								{t('ViLo')}: {userInfo.totalTranslatedText['vi-lo']}/{userInfo.textTranslationQuota['vi-lo']} {t('character')}<br/>
+								{t('ViKm')}: {userInfo.totalTranslatedText['vi-km']}/{userInfo.textTranslationQuota['vi-km']} {t('character')}
 							</div> :
 							<></>
 						}

@@ -18,7 +18,7 @@ class SystemSettingProps(BaseModel):
     translation_api_allowed_concurrent_req: int = Field(...)
     language_detection_api_url: Optional[str]
     language_detection_api_allowed_concurrent_req: int = Field(...)
-    translation_speed_for_each_sentence: float = Field(...)
+    translation_speed_for_each_character: float = Field(...)
     language_detection_speed: float = Field(...)
     email_for_sending_email: str = Field(...)
     email_password_for_sending_email: str = Field(...)

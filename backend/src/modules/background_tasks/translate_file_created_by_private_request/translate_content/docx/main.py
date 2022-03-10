@@ -33,8 +33,6 @@ from core.utils.file import get_doc_paragraphs, get_full_path
 from infrastructure.configs.translation_task import RESULT_FILE_STATUS, AllowedFileTranslationExtensionEnum, FileTranslationTask_NotYetTranslatedResultFileSchemaV1, FileTranslationTask_TranslatingResultFileSchemaV1, FileTranslationTask_TranslationCompletedResultFileSchemaV1, get_file_translation_file_path, get_file_translation_target_file_name
 from core.utils.document import check_if_paragraph_has_text, get_common_style
 
-from nltk.tokenize import sent_tokenize
-
 config: GlobalConfig = get_cnf()
 db_instance = get_mongodb_instance()
 

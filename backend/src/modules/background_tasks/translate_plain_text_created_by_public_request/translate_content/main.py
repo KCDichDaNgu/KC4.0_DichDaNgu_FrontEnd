@@ -366,7 +366,7 @@ async def execute_in_batch(valid_tasks_mapper, tasks_id, allowed_concurrent_requ
                     #     translation_request_result_repository.update(
                     #         task_result, 
                     #         dict(
-                    #             num_of_sents_to_trans=0
+                    #             num_of_chars_to_trans=0
                     #         )
                     #     )
                     # )

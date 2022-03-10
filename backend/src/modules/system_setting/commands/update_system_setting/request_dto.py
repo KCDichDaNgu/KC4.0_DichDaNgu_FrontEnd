@@ -23,8 +23,8 @@ class UpdateSystemSettingDto(UpdateSystemSetting):
         description='languageDetectionApiAllowedConcurrentReq'
     )
     
-    translationSpeedForEachSentence = doc.Float(
-        description='translationSpeedForEachSentence'
+    translationSpeedForEachCharacter = doc.Float(
+        description='translationSpeedForEachCharacter'
     )
     
     languageDetectionSpeed = doc.Float(

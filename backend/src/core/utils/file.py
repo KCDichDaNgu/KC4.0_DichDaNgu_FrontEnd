@@ -15,7 +15,7 @@ from docx.oxml.text.paragraph import CT_P
 from docx.oxml.table import CT_Tbl
 from docx.text.paragraph import Paragraph
 from core.utils.document import check_if_cell_is_string
-from nltk.tokenize import sent_tokenize
+from core.utils.text import count_chars
 
 from typing import Union
 from openpyxl import Workbook
@@ -68,18 +68,18 @@ def get_doc_file_meta(doc_file: File):
 
     full_text = ''
     
-    sentence_count = 0
+    character_count = 0
 
     for paragraph in doc_paragraphs:
         full_text = full_text + paragraph.text
         
-        sentence_count += len(sent_tokenize(paragraph.text))
+        character_count += count_chars(paragraph.text)
 
-    # sentences = re.split('[;.?!]', full_text)
+    # characters = re.split('[;.?!]', full_text)
 
-    # sentence_count = sum(1 for y in sentences if len(y) > 2)
+    # character_count = sum(1 for y in characters if len(y) > 2)
 
-    return binary_doc, total_doc_paragraphs, sentence_count
+    return binary_doc, total_doc_paragraphs, character_count
 
 def get_presentation_full_text(presentation_file: File):
     full_text= ''
@@ -110,7 +110,7 @@ def get_presentation_file_meta(presentation_file):
     
     presentation = Presentation(binary_presentation)
     
-    sentence_count = 0
+    character_count = 0
     
     total_presentation_paragraphs = 0
     total_slides = 0
@@ -130,18 +130,18 @@ def get_presentation_file_meta(presentation_file):
                 full_text = full_text + paragraph.text
                 total_presentation_paragraphs += 1
                 
-                sentence_count += len(sent_tokenize(paragraph.text))
+                character_count += count_chars(paragraph.text)
                 
         # if shape.has_table:
         #     for row in shape.table.rows:
         #         for cell in row.cells:
         #             total_presentation_paragraphs += 1
         
-    # sentences = re.split('[;.?!]', full_text)
+    # characters = re.split('[;.?!]', full_text)
 
-    # sentence_count = sum(1 for y in sentences if len(y) > 2)
+    # character_count = sum(1 for y in characters if len(y) > 2)
     
-    return binary_presentation, total_presentation_paragraphs, total_slides, sentence_count
+    return binary_presentation, total_presentation_paragraphs, total_slides, character_count
 
 def get_worksheet_full_text(worksheet):
     try:
@@ -167,7 +167,7 @@ def get_worksheet_file_meta(worksheet_file: File):
     total_sheets = 0
     full_text = ''
     
-    sentence_count = 0
+    character_count = 0
     
     binary_worksheet = io.BytesIO(worksheet_file.body)
     
@@ -186,27 +186,27 @@ def get_worksheet_file_meta(worksheet_file: File):
                 if check_if_cell_is_string(cell):
                     full_text += str(cell.value) + ';' 
                     
-                    sentence_count += len(sent_tokenize(cell.value))
+                    character_count += count_chars(cell.value)
                 
     total_sheets = len(ws_name_list)
         
-    # sentences = re.split('[;.?!]', full_text)
+    # characters = re.split('[;.?!]', full_text)
 
-    # sentence_count = sum(1 for y in sentences if len(y) > 2)
+    # character_count = sum(1 for y in characters if len(y) > 2)
 
-    return binary_worksheet, total_sheets, total_cells, sentence_count
+    return binary_worksheet, total_sheets, total_cells, character_count
 
-def get_txt_file_meta(txt_file: File):
+def get_txt_file_meta(txt_file: File, lang_code):
 
     full_text = (txt_file.body.decode('utf-16', errors="ignore"))
     
-    sentence_count = len(sent_tokenize(full_text))
+    character_count = count_chars(full_text, lang_code)
 
-    # sentences = re.split('[;.?!。]', full_text)
+    # characters = re.split('[;.?!。]', full_text)
 
-    # sentence_count = sum(1 for y in sentences if len(y) > 2)
+    # character_count = sum(1 for y in characters if len(y) > 2)
 
-    return sentence_count
+    return character_count
 
 async def delete_files(invalid_file_paths):
 

@@ -32,7 +32,7 @@ class GetSystemSetting(HTTPMethodView):
                 'translationApiAllowedConcurrentReq': saved_setting.props.translation_api_allowed_concurrent_req,
                 'languageDetectionApiUrl': saved_setting.props.language_detection_api_url,
                 'languageDetectionApiAllowedConcurrentReq': saved_setting.props.language_detection_api_allowed_concurrent_req,
-                'translationSpeedForEachSentence': saved_setting.props.translation_speed_for_each_sentence,
+                'translationSpeedForEachCharacter': saved_setting.props.translation_speed_for_each_character,
                 'languageDetectionSpeed': saved_setting.props.language_detection_speed,
                 'emailForSendingEmail': saved_setting.props.email_for_sending_email,
                 'emailPasswordForSendingEmail': saved_setting.props.email_password_for_sending_email,

@@ -21,7 +21,7 @@ class SystemSettingOrmEntity(OrmEntityBase):
     language_detection_api_url = fields.UrlField(allow_none=True, default="http://nmtuet.ddns.net:1820/detect_lang") 
     language_detection_api_allowed_concurrent_req = fields.IntegerField(allow_none=False, default=1)
     
-    translation_speed_for_each_sentence = fields.IntegerField(allow_none=False, default=0.05)
+    translation_speed_for_each_character = fields.IntegerField(allow_none=False, default=0.05)
     language_detection_speed = fields.IntegerField(allow_none=False, default=0.05)
     
     email_for_sending_email = fields.EmailField(required=True)

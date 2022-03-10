@@ -12,10 +12,8 @@ from modules.task.domain.entities.task import TaskEntity, TaskProps
 
 from typing import get_args
 from core.utils.file import get_doc_file_meta, get_presentation_file_meta, get_worksheet_file_meta, get_txt_file_meta
-from docx import Document
-from pptx.api import Presentation
 
-from nltk.tokenize import sent_tokenize
+from core.utils.text import count_chars
 
 from infrastructure.configs.task import (
     TranslationTaskStepEnum, 
@@ -28,7 +26,7 @@ class TranslationRequestProps(TaskProps):
     current_step: TranslationTaskStepEnum = Field(...)
     task_name: TranslationTaskNameEnum = Field(...)
     
-    num_sents: int = 0
+    num_chars: int = 0
     
     receiver_email: Optional[str]
     total_email_sent: Optional[int] 
@@ -47,13 +45,11 @@ class TranslationRequestEntity(TaskEntity, AggregateRoot[TranslationRequestProps
     def props_klass(self):
         return get_args(self.__orig_bases__[1])[0]
     
-    async def update_num_sents(self, doc):
+    async def update_num_chars(self, doc):
         
         if self.props.task_name in PLAIN_TEXT_TRANSLATION_TASKS:
             
-            sentences = sent_tokenize(doc)
-            
-            self.props.num_sents = len(sentences)
+            self.props.num_chars = count_chars(doc)
             
             return
         
@@ -61,22 +57,22 @@ class TranslationRequestEntity(TaskEntity, AggregateRoot[TranslationRequestProps
             
             if self.props.file_type == AllowedFileTranslationExtensionEnum.docx.value:
             
-                binary_doc, total_doc_paragraphs, sentence_count = get_doc_file_meta(doc)
+                binary_doc, total_doc_paragraphs, character_count = get_doc_file_meta(doc)
                 
-                self.props.num_sents = sentence_count
+                self.props.num_chars = character_count
                 
             if self.props.file_type == AllowedFileTranslationExtensionEnum.pptx.value:
                 
-                binary_presentation, total_presentation_paragraphs, total_slides, sentence_count = get_presentation_file_meta(doc)
+                binary_presentation, total_presentation_paragraphs, total_slides, character_count = get_presentation_file_meta(doc)
                 
-                self.props.num_sents = sentence_count
+                self.props.num_chars = character_count
                 
             if self.props.file_type == AllowedFileTranslationExtensionEnum.xlsx.value:
                 
-                binary_worksheet, total_sheets, total_cells, sentence_count = get_worksheet_file_meta(doc)
+                binary_worksheet, total_sheets, total_cells, character_count = get_worksheet_file_meta(doc)
                 
-                self.props.num_sents = sentence_count
+                self.props.num_chars = character_count
                 
             if self.props.file_type == AllowedFileTranslationExtensionEnum.txt.value:
                     
-                self.props.num_sents = get_txt_file_meta(doc)
+                self.props.num_chars = get_txt_file_meta(doc)
