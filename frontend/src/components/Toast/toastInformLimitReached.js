@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 function ToastInformLimitReached(props) {
 
 	const { t } = useTranslation();
-	const unit = props.type === 'text' ? t('sentence') : t('minute');
+	const unit = props.type === 'text' ? t('character') : t('minute');
 	const used = props.type === 'text' ? props.used : Math.ceil(props.used / 60);
 	const quota = props.type === 'text' ? props.quota : Math.floor(props.quota / 60);
 	return (

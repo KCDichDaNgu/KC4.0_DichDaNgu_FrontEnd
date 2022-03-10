@@ -31,7 +31,7 @@ class TranslationRequestOrmEntity(TaskOrmEntity):
         validate=validate.Range(min=0)
     )
     
-    num_sents = fields.IntegerField(
+    num_chars = fields.IntegerField(
         allow_none=False,
         default=0, 
         validate=validate.Range(min=0)

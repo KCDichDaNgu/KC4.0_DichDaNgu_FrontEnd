@@ -83,7 +83,7 @@ class TranslationRequestDService():
             )
         )
         
-        await new_request.update_num_sents(command.source_text)
+        await new_request.update_num_chars(command.source_text)
         
         new_task_result_entity = TranslationRequestResultEntity(
             TranslationRequestResultProps(
@@ -164,7 +164,7 @@ class TranslationRequestDService():
             )
         )
         
-        await new_request.update_num_sents(command.source_file)
+        await new_request.update_num_chars(command.source_file)
         
         new_task_result_entity = TranslationRequestResultEntity(
             TranslationRequestResultProps(
@@ -177,16 +177,16 @@ class TranslationRequestDService():
 
         if original_file_ext == AllowedFileTranslationExtensionEnum.docx.value:
 
-            binary_doc, total_paragraphs, sentence_count = get_doc_file_meta(command.source_file)
+            binary_doc, total_paragraphs, character_count = get_doc_file_meta(command.source_file)
             create_files_result = await new_task_result_entity.create_required_files_for_file_translation_task(binary_doc, original_file_ext)
         
         elif original_file_ext == AllowedFileTranslationExtensionEnum.pptx.value:
             
-            binary_presentation, total_paragraphs, total_slides, sentence_count = get_presentation_file_meta(command.source_file)
+            binary_presentation, total_paragraphs, total_slides, character_count = get_presentation_file_meta(command.source_file)
             create_files_result = await new_task_result_entity.create_required_files_for_file_translation_task(binary_presentation, original_file_ext)
         
         elif original_file_ext == AllowedFileTranslationExtensionEnum.xlsx.value:
-            binary_worksheet, total_sheets, total_cells, sentence_count = get_worksheet_file_meta(command.source_file)
+            binary_worksheet, total_sheets, total_cells, character_count = get_worksheet_file_meta(command.source_file)
             create_files_result = await new_task_result_entity.create_required_files_for_file_translation_task(binary_worksheet, original_file_ext)
         else:
             create_files_result = await new_task_result_entity.create_required_files_for_txt_file_translation_task(command.source_file)

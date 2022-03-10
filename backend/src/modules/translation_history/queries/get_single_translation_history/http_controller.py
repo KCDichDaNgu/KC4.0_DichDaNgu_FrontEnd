@@ -138,11 +138,11 @@ class GetSingleTranslationHistory(HTTPMethodView):
 
             system_setting = await self.__system_setting_repository.find_one({})
             
-            translation_speed_for_each_sentence = system_setting.props.translation_speed_for_each_sentence 
+            translation_speed_for_each_character = system_setting.props.translation_speed_for_each_character 
             
-            num_sents = sum([trans_req.props.num_sents for trans_req in previous_trans_req]) + translation_request.props.num_sents
+            num_chars = sum([trans_req.props.num_chars for trans_req in previous_trans_req]) + translation_request.props.num_chars
             
-            estimated_watting_time = translation_speed_for_each_sentence * num_sents
+            estimated_watting_time = translation_speed_for_each_character * num_chars
         
 
         return response.json(BaseResponse(**{

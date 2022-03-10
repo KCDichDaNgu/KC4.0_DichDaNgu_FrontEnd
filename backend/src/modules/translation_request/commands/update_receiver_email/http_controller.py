@@ -19,7 +19,6 @@ from modules.translation_request.commands.update_receiver_email.request_dto impo
 from modules.translation_request.dtos.plain_text_translation_response import \
     PlainTextTranslationRequestResponse
     
-from nltk.tokenize import sent_tokenize
 from sanic import response
 from sanic.views import HTTPMethodView
 from sanic_openapi import doc

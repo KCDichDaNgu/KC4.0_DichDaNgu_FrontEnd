@@ -25,7 +25,7 @@ class SystemSettingSeeder(BaseSeeder):
                 'translation_api_allowed_concurrent_req': 1,
                 'language_detection_api_url': "http://nmtuet.ddns.net:1820/detect_lang",
                 'language_detection_api_allowed_concurrent_req': 1,
-                'translation_speed_for_each_sentence': 0.05,
+                'translation_speed_for_each_character': 0.05,
                 'language_detection_speed': 0.05,
                 'email_for_sending_email': 'kcdichdangu.uet@gmail.com',
                 'email_password_for_sending_email': '',

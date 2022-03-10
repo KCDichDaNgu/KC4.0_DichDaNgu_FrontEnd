@@ -27,7 +27,7 @@ class SystemSettingDService():
                     translation_api_allowed_concurrent_req=command.translation_api_allowed_concurrent_req,
                     language_detection_api_url=command.language_detection_api_url,
                     language_detection_api_allowed_concurrent_req=command.language_detection_api_allowed_concurrent_req,
-                    translation_speed_for_each_sentence=command.translation_speed_for_each_sentence,
+                    translation_speed_for_each_character=command.translation_speed_for_each_character,
                     language_detection_speed=command.language_detection_speed,
                     email_for_sending_email=command.email_for_sending_email,
                     email_password_for_sending_email=command.email_password_for_sending_email

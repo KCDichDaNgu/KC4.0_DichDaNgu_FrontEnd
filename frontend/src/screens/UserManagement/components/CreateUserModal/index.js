@@ -89,7 +89,7 @@ const CreateUserModal = (props) => {
 				<Col xs={24} md={12}>
 					<div className={styles.formQuota}>
 						<Form.Item name='text_quota_vi_en' label={t('textQuotaViEn')} rules={[{ required: true, message: t('requiredField') }]}>
-							<Input type="number" suffix={t('sentence')} className={styles.formQuota} />
+							<Input type="number" suffix={t('character')} className={styles.formQuota} />
 						</Form.Item>
 					</div>
 
@@ -97,17 +97,17 @@ const CreateUserModal = (props) => {
 
 				<Col xs={24} md={12}>
 					<Form.Item name='text_quota_vi_zh' label={t('textQuotaViZh')} rules={[{ required: true, message: t('requiredField') }]}>
-						<Input type="number" suffix={t('sentence')} className={styles.formQuota} />
+						<Input type="number" suffix={t('character')} className={styles.formQuota} />
 					</Form.Item>
 				</Col>
 				<Col xs={24} md={12}>
 					<Form.Item name='text_quota_vi_lo' label={t('textQuotaViLo')} rules={[{ required: true, message: t('requiredField') }]}>
-						<Input type="number" suffix={t('sentence')} className={styles.formQuota} />
+						<Input type="number" suffix={t('character')} className={styles.formQuota} />
 					</Form.Item>
 				</Col>
 				<Col xs={24} md={12}>
 					<Form.Item name='text_quota_vi_km' label={t('textQuotaViKm')} rules={[{ required: true, message: t('requiredField') }]}>
-						<Input type="number" suffix={t('sentence')} className={styles.formQuota} />
+						<Input type="number" suffix={t('character')} className={styles.formQuota} />
 					</Form.Item>
 				</Col>
 

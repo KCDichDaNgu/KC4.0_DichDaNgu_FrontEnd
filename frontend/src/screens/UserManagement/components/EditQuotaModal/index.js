@@ -86,25 +86,25 @@ const EditQuotaModal = (props) => {
 
 				<Col xs={24} md={12}>
 					<Form.Item name='text_quota_vi_en' label={t('textViEn')} rules={[{ required: true, message: t('requiredField') }]}>
-						<Input type="number" suffix={t('sentence')} className={styles.formQuota} />
+						<Input type="number" suffix={t('character')} className={styles.formQuota} />
 					</Form.Item>
 				</Col>
 
 				<Col xs={24} md={12}>
 					<Form.Item name='text_quota_vi_zh' label={t('textViZh')} rules={[{ required: true, message: t('requiredField') }]}>
-						<Input type="number" suffix={t('sentence')} className={styles.formQuota} />
+						<Input type="number" suffix={t('character')} className={styles.formQuota} />
 					</Form.Item>
 				</Col>
 				
 				<Col xs={24} md={12}>
 					<Form.Item name='text_quota_vi_lo' label={t('textViLo')} rules={[{ required: true, message: t('requiredField') }]}>
-						<Input type="number" suffix={t('sentence')} className={styles.formQuota} />
+						<Input type="number" suffix={t('character')} className={styles.formQuota} />
 					</Form.Item>
 				</Col>
 
 				<Col xs={24} md={12}>
 					<Form.Item name='text_quota_vi_km' label={t('textViKm')} rules={[{ required: true, message: t('requiredField') }]}>
-						<Input type="number" suffix={t('sentence')} className={styles.formQuota} />
+						<Input type="number" suffix={t('character')} className={styles.formQuota} />
 					</Form.Item>
 				</Col>
 			</Row>

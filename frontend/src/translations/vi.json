@@ -87,7 +87,7 @@
 		"translationApiAllowedConcurrentReq": "Số lượng yêu cầu dịch gửi đồng thời cho api dịch",
 		"languageDetectionApiUrl": "Đường dẫn api phát hiện ngôn ngữ",
 		"languageDetectionApiAllowedConcurrentReq": "Số lượng yêu cầu phát hiện ngôn ngữ gửi đồng thời",
-		"translationSpeedForEachSentence": "Tốc độ dịch số giây / câu",
+		"translationSpeedForEachCharacter": "Tốc độ dịch số giây / ký tự",
 		"languageDetectionSpeed": "Tốc độ phát hiện ngôn ngữ (Tính bằng giây)",
 		"emailForSendingEmail": "Email cho gửi mail",
 		"emailPasswordForSendingEmail": "Mật khẩu email"
@@ -119,7 +119,7 @@
 	"textViKm": "Dịch văn bản Việt - Khơme",
 	"text_translate_limit_reached": "Vượt quá giới hạn dịch",
 	"unauthorized": "Không có quyền truy cập",
-	"sentence": "câu",
+	"character": "ký tự",
 	"minute": "phút",
 	"requiredField": "Thông tin bắt buộc",
 	"cancel": "Đóng",

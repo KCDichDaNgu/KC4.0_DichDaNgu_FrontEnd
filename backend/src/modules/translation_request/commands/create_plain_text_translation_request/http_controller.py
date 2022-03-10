@@ -14,7 +14,7 @@ from modules.translation_request.dtos.plain_text_translation_response import Pla
 from core.middlewares.authentication.core import get_me
 from core.value_objects.id import ID
 
-from nltk.tokenize import sent_tokenize
+from core.utils.text import count_chars
 
 config: GlobalConfig = get_cnf()
 APP_CONFIG = config.APP_CONFIG
@@ -91,9 +91,9 @@ class CreatePlainTextTranslationRequest(HTTPMethodView):
                 }
             )
 
-        sentence_count = len(sent_tokenize(data['sourceText']))
+        character_count = count_chars(data['sourceText'])
             
-        user_statistic_result =  await self.__update_user_statistic.update_text_translate_statistic(user.id, pair, sentence_count)
+        user_statistic_result =  await self.__update_user_statistic.update_text_translate_statistic(user.id, pair, character_count)
 
         if user_statistic_result['code'] == StatusCodeEnum.failed.value:
             return response.json(

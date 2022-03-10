@@ -126,15 +126,15 @@ class CreateFileTranslationRequest(HTTPMethodView):
         file_ext = extract_file_extension(file.name)
 
         if file_ext == 'txt':
-            sentence_count = get_txt_file_meta(file)
+            character_count = get_txt_file_meta(file)
         elif file_ext == 'docx':
-            sentence_count = get_doc_file_meta(file)[2]
+            character_count = get_doc_file_meta(file)[2]
         elif file_ext == 'pptx':
-            sentence_count = get_presentation_file_meta(file)[3]
+            character_count = get_presentation_file_meta(file)[3]
         elif file_ext == 'xlsx':
-            sentence_count = get_worksheet_file_meta(file)[3]
+            character_count = get_worksheet_file_meta(file)[3]
 
-        user_statistic_result =  await self.__update_user_statistic.update_text_translate_statistic(user.id, pair, sentence_count)
+        user_statistic_result =  await self.__update_user_statistic.update_text_translate_statistic(user.id, pair, character_count)
 
         if user_statistic_result['code'] == StatusCodeEnum.failed.value:
             return response.json(
