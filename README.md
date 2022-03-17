@@ -33,7 +33,7 @@
         <img src="images/logo.png" alt="Logo" width="80" height="80">
     </a>
 
-  <h3 align="center">KC4.0 dịch đa ngữ (Backend)</h3>
+  <h3 align="center">KC4.0 dịch đa ngữ (Frontend)</h3>
 
   <p align="center">
     Tài liệu mô tả chi tiết cách cài đặt, sử dụng phần mềm KC4.0 dịch đa ngữ (phần frontend)
