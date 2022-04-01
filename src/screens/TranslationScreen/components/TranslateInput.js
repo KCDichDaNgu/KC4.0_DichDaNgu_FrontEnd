@@ -74,6 +74,7 @@ function TranslateInput(props) {
 				paddingTop: '10px', 
 				paddingBottom: '30px', 
 				display: 'flex',
+				height: '100%'
 			}}>
 				<>
 					<div style={{ paddingRight: '0', flex: 7 }} >
