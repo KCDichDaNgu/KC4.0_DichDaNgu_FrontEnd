@@ -81,6 +81,18 @@ const SettingPage = () => {
                     message: t('requiredField'),
                 },
             ],
+            allowedTotalCharsForTextTranslation: [
+                {
+                    required: true,
+                    message: t('requiredField'),
+                },
+            ],
+    	    allowedFileSizeInMbForFileTranslation: [
+                {
+                    required: true,
+                    message: t('requiredField'),
+                },
+            ]
         }
     };
 
@@ -214,6 +226,28 @@ const SettingPage = () => {
                                     <Form.Item 
                                         name={ ['emailPasswordForSendingEmail'] }
                                         rules={ updateFormRules.emailPasswordForSendingEmail }>
+                                        <Input className='user-input' /> 
+                                    </Form.Item>
+                                </Col>
+
+                                <Col xs={ 24 } md={ 12 }>
+
+                                    <label>{ t('SystemSetting.allowedTotalCharsForTextTranslation') }</label>
+
+                                    <Form.Item 
+                                        name={ ['allowedTotalCharsForTextTranslation'] }
+                                        rules={ updateFormRules.allowedTotalCharsForTextTranslation }>
+                                        <Input className='user-input' /> 
+                                    </Form.Item>
+                                </Col>
+
+                                <Col xs={ 24 } md={ 12 }>
+
+                                    <label>{ t('SystemSetting.allowedFileSizeInMbForFileTranslation') }</label>
+
+                                    <Form.Item 
+                                        name={ ['allowedFileSizeInMbForFileTranslation'] }
+                                        rules={ updateFormRules.allowedFileSizeInMbForFileTranslation }>
                                         <Input className='user-input' /> 
                                     </Form.Item>
                                 </Col>

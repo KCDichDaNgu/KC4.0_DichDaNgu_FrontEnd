@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { 
 	Col,
@@ -21,6 +21,7 @@ function TranslateInput(props) {
 	const inputEl = useRef(null);
 
 	const { translationState } = props;
+	const { systemSetting } = props;
 	const { t } = useTranslation();
 
 	/**
@@ -44,13 +45,16 @@ function TranslateInput(props) {
  	*/
 	 const handleChangeSourceText = (evt) => {
 		evt.preventDefault();
-		props.changeSourceText(evt.target.value);
+
+		if (evt.target.value.length < systemSetting.allowedTotalCharsForTextTranslation) 
+			props.changeSourceText(evt.target.value);
+		
 		if( translationState.translateText.targetText !== '' ){
 			props.changeTargetText('');
 		}
 		if( translationState.translateCode.detectLang ){
 			props.changeDetectLang(null);
-		}
+		}		
 	};
 
 	/**
@@ -72,7 +76,7 @@ function TranslateInput(props) {
 				display: 'flex',
 			}}>
 				<>
-					<div style={{ paddingRight: '0', flex: 1 }} >
+					<div style={{ paddingRight: '0', flex: 7 }} >
 						<TextareaAutosize
 							ref={inputEl}
 							minRows={3}
@@ -84,11 +88,19 @@ function TranslateInput(props) {
 							placeholder={t('Translate.nhapVanBan')}
 						/>
 					</div>
-					<div md={1} style={{ padding: '0' }} className={['text-center']}>
-						{!isShowCloseButton() ? 
-							<IconButton aria-label="Example" onClick={handleResetInput} type="file">
-								<CloseIcon fontSize='small'/>
-							</IconButton> : null}
+					<div md={1} style={{ padding: '0', position: 'relative', flex: 1 }} className={['text-center']}>
+						<div>
+							{!isShowCloseButton() ? 
+								<IconButton aria-label="Example" onClick={handleResetInput} type="file">
+									<CloseIcon fontSize='small'/>
+								</IconButton> : null}
+							</div>
+						<div style={{
+							position: 'absolute',
+							bottom: 0
+						}}>
+							{translationState.translateText.sourceText.length} / { systemSetting.allowedTotalCharsForTextTranslation }
+						</div>
 					</div>
 				</>
 			</div>
@@ -98,6 +110,7 @@ function TranslateInput(props) {
 
 TranslateInput.propTypes = {
 	translationState: PropTypes.object,
+	systemSetting: PropTypes.object,
 	changeSourceText: PropTypes.func,
 	changeTargetText: PropTypes.func,
 	changeDetectLang: PropTypes.func,

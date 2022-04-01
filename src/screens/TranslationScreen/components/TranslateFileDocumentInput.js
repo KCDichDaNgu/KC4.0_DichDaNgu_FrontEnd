@@ -12,8 +12,12 @@ import { connect } from 'react-redux';
 import CloseIcon from '@mui/icons-material/Close';
 import { TRANSLATE_TYPE } from '../../../constants/common';
 
+import {
+    message
+} from 'antd';
 function TranslateFileDocumentInput(props) {
 	const { translationFileState, translateType } = props;
+	const { systemSetting } = props;
 	const { t } = useTranslation();
 
 	/**
@@ -48,8 +52,11 @@ function TranslateFileDocumentInput(props) {
 							<Typography variant="h6">
 								{t('chonTaiLieu')}
 							</Typography>
-							<Typography p={1}>
+							<Typography>
 								{translateType == TRANSLATE_TYPE.document ? t('taiTepTaiLieu') : t('taiTepAmThanh')}
+							</Typography>
+							<Typography p={1}>
+								({t('dungLuongToiDa')} {systemSetting.allowedFileSizeInMbForFileTranslation} MB)
 							</Typography>
 							<input
 								type="file"
@@ -57,7 +64,14 @@ function TranslateFileDocumentInput(props) {
 								style={{ display: 'none' }}
 								id="contained-button-file"
 								onChange={(event) => {
-									props.changeFileDocument(event.target.files[0]);
+
+									let fileSize = event.target.files[0].size / 1024**2;
+
+									if (fileSize <= systemSetting.allowedFileSizeInMbForFileTranslation)
+										props.changeFileDocument(event.target.files[0]);
+									else {
+										message.warn(`Dung lượng tệp ${fileSize.toPrecision(2)} MB vượt quá cho phép!`)
+									}
 								}}
 							/>
 							<label htmlFor="contained-button-file">
@@ -86,6 +100,7 @@ function TranslateFileDocumentInput(props) {
 TranslateFileDocumentInput.propTypes = {
 	translateType: PropTypes.number,
 	translationFileState: PropTypes.object,
+	systemSetting: PropTypes.object,
 	changeFileDocument: PropTypes.func,
 	changeOutputDocument: PropTypes.func,
 	reset: PropTypes.func,
