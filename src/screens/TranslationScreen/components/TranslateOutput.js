@@ -87,11 +87,6 @@ function TranslateOutput(props) {
 							<ContentCopyIcon fontSize='medium'/>
 						</IconButton>
 					</div>
-					<div style={{ justifyContent: 'end', display: 'flex', paddingBottom: 5}}>
-						<IconButton aria-label="Example" onClick={() => navigator.clipboard.writeText(translationState.translateText.targetText)}>
-							<ContentCopyIcon fontSize='medium'/>
-						</IconButton>
-					</div>
 				</div>
 				: <div style={{
 					backgroundColor: translationState.translateText.targetText === '' ? '#f3f3f3' : 'white' , 
