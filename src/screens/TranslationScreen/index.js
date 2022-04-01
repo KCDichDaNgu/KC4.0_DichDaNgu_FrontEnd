@@ -48,6 +48,20 @@ function Index(props) {
 		receiverEmail: "",
 	});
 
+	const [systemSetting, setSystemSetting] = useState({});
+
+	const getSetting = async () => {
+        let result = await axiosHelper.getSystemSetting();
+		
+        if (result.code == STATUS_CODE.success) {
+            setSystemSetting(result.data);
+        }
+    };
+
+	useEffect(() => {
+		getSetting()
+	}, [])
+
 	const handleChange = (event) => {
 		setUpdateReceiverEmailForm((values) => ({
 		  	...values,
@@ -138,9 +152,9 @@ function Index(props) {
 	const renderInput = () => {
 		switch (translateType) {
 		case TRANSLATE_TYPE.plainText:
-			return <TranslateInput translateType={translateType} />;
+			return <TranslateInput translateType={translateType} systemSetting={systemSetting} />;
 		case TRANSLATE_TYPE.document:
-			return <TranslateFileDocumentInput translateType={translateType} />;
+			return <TranslateFileDocumentInput translateType={translateType} systemSetting={systemSetting} />;
 		}
 	};
 

@@ -26,6 +26,7 @@
 	"matKhauMoi": "Mật khẩu mới",
 	"xacNhanMatKhauMoi": "Xác nhận mật khẩu mới",
 	"caiDatTaiKhoan": "Cài đặt tài khoản",
+	"dungLuongToiDa": "Dung lượng tệp tối đa",
 	"chonTaiLieu": "Chọn tài liệu",
 	"taiTepTaiLieu": "Tải lên tệp .docx, .txt, .pptx, .xlsx",
 	"taiTepAmThanh": "Tải lên tệp .mp3, .aac, .wav",
@@ -90,7 +91,9 @@
 		"translationSpeedForEachCharacter": "Tốc độ dịch số giây / ký tự",
 		"languageDetectionSpeed": "Tốc độ phát hiện ngôn ngữ (Tính bằng giây)",
 		"emailForSendingEmail": "Email cho gửi mail",
-		"emailPasswordForSendingEmail": "Mật khẩu email"
+		"emailPasswordForSendingEmail": "Mật khẩu email",
+		"allowedTotalCharsForTextTranslation": "Số ký tự cho phép trong một lần dịch văn bản",
+    	"allowedFileSizeInMbForFileTranslation": "Dung lượng tệp cho phép trong một lần dịch tệp"
 	},
 	"login":"Đăng nhập",
 	"username": "Tên đăng nhập",
