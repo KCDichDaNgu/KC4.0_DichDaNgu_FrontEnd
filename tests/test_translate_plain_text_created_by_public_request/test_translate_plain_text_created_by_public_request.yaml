@@ -1,7 +1,7 @@
-id: 1n4gBAiORE-2T0A9nS93XQ
+id: kHuc2sUvr0Wg9dLAfEDzsQ
 projectId: vkH32iiA7EOkcMXfXN_oMQ
 projectName: My first Project
-created: 2022-04-03T07:20:51.5709224Z
+created: 2022-04-04T01:19:34.0750577Z
 owner: Kiên Lê
 protocol: 1
 tests:
@@ -13,7 +13,7 @@ tests:
   driverType: Chrome
   version: 0.1
   creationDate: 2022-04-03T03:57:14.0000000
-  modificationDate: 2022-04-03T04:29:14.0000000
+  modificationDate: 2022-04-04T01:17:57.0000000
   settings:
     automationAssistant: true
     appId: X4TPYxzlHE-6p0nZPiMf2A
@@ -94,17 +94,39 @@ tests:
     conditions: []
     validations: []
     contexts: []
-  - id: XGGhIgk-OUeci3u87ClMvw
+  - id: BUKVzmh6E0aD5__ZIk_png
+    comments: ''
     enabled: true
     invertResult: false
     order: 4
     repeat: 1
     type: Action
-    elementId: 3Fcw3PLKqka6izo2fHQI7w
+    elementId: 5QGo6iUdzEqSyAC0dGD-jQ
     settings:
-      sleepTime: 5000
+      sleepTime: -1
       timeout: -1
-      sleepTiming: After
+      sleepTiming: Inherit
+      failureBehaviorType: Inherit
+      takeScreenshotConditionType: Inherit
+    action:
+      id: 02d572b2-d610-4700-9ad3-40076ddb9807
+      source: System
+    parameterMaps: []
+    conditions: []
+    validations: []
+    contexts: []
+  - id: 7tyTuN9VUkGKOafJdRIYwA
+    comments: ''
+    enabled: true
+    invertResult: false
+    order: 5
+    repeat: 1
+    type: Action
+    elementId: yiaihojkeES1vvoWPvqDQg
+    settings:
+      sleepTime: -1
+      timeout: -1
+      sleepTiming: Inherit
       failureBehaviorType: Inherit
       takeScreenshotConditionType: Inherit
     action:
@@ -118,7 +140,7 @@ tests:
     comments: ''
     enabled: true
     invertResult: false
-    order: 5
+    order: 6
     repeat: 1
     type: Action
     elementId: o3Eo4-sAQUmK1B44TLXuuw
@@ -162,22 +184,6 @@ elements:
   - name: XPATH
     value: /html/body/div/div/div[3]/div/div[2]/div[2]/div/div[1]/div/div[1]/textarea
     priority: 2
-- id: 3Fcw3PLKqka6izo2fHQI7w
-  name: PHÁT HIỆN VÀ DỊCH
-  type:
-    id: jUwODgyNjAyNzk2NTk1NDc
-    name: Button
-    source: System
-  locators:
-  - name: XPATH
-    value: //button[. = 'Phát hiện và dịch']
-    priority: 0
-  - name: XPATH
-    value: //div[2]/div/div[2]/div/button
-    priority: 1
-  - name: XPATH
-    value: /html/body/div/div/div[3]/div/div[2]/div[2]/div/div[2]/div/button
-    priority: 2
 - id: o3Eo4-sAQUmK1B44TLXuuw
   name: phản ứng
   type:
@@ -216,5 +222,37 @@ elements:
   - name: XPATH
     value: /html/body/div/div/div[3]/div/div[2]/div[2]/div/div[1]/div/div[1]/textarea
     priority: 3
+- id: 5QGo6iUdzEqSyAC0dGD-jQ
+  name: ANH
+  type:
+    id: jUwODgyNjAyNzk2NTk1NDc
+    name: Button
+    source: System
+  locators:
+  - name: XPATH
+    value: //button[. = 'Anh']
+    priority: 0
+  - name: XPATH
+    value: //div[2]//button[2]
+    priority: 1
+  - name: XPATH
+    value: /html/body/div/div/div[3]/div/div[2]/div[1]/div[1]/div/div[2]/div/button[2]
+    priority: 2
+- id: yiaihojkeES1vvoWPvqDQg
+  name: DỊCH
+  type:
+    id: jUwODgyNjAyNzk2NTk1NDc
+    name: Button
+    source: System
+  locators:
+  - name: XPATH
+    value: //button[. = 'Dịch']
+    priority: 0
+  - name: XPATH
+    value: //div[2]/div/div[2]/div/button
+    priority: 1
+  - name: XPATH
+    value: /html/body/div/div/div[3]/div/div[2]/div[2]/div/div[2]/div/button
+    priority: 2
 projectParameters: []
 addons: []
