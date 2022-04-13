@@ -1,7 +1,7 @@
-id: ak0_Nn6jz0WLETAZRNubAA
+id: uvDxx_TJTU2_wb1eI4M0OA
 projectId: 0H-KB3pUukajAQNNNyhliA
 projectName: My first Project
-created: 2022-04-13T00:44:20.8476248Z
+created: 2022-04-13T03:35:30.7991265Z
 owner: Duong Nguyen
 protocol: 1
 tests:
@@ -13,7 +13,7 @@ tests:
   driverType: Chrome
   version: 0.1
   creationDate: 2022-04-13T00:24:39.0000000
-  modificationDate: 2022-04-13T00:31:10.0000000
+  modificationDate: 2022-04-13T03:33:01.0000000
   settings:
     automationAssistant: true
     appId: 9it_3AdWuEWX1He3L_vdyA
@@ -109,7 +109,7 @@ tests:
       source: System
     parameterMaps:
     - name: keys
-      value: randomusername
+      value: admin
       direction: Input
     conditions: []
     validations: []
@@ -132,7 +132,7 @@ tests:
       source: System
     parameterMaps:
     - name: keys
-      value: randompassword
+      value: 12345678
       direction: Input
     conditions: []
     validations: []
