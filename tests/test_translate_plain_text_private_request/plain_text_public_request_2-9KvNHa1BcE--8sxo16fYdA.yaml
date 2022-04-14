@@ -1,0 +1,197 @@
+id: u_OvFJacHk2wwBeKwcVC3w
+projectId: FrN9rpT_yku2wxhldcs22Q
+projectName: DichDaNgu
+created: 2022-04-14T17:35:15.0929041Z
+owner: Vũ Cao Tân
+protocol: 1
+tests:
+- id: 9KvNHa1BcE--8sxo16fYdA
+  name: plain_text_public_request_2
+  description: ''
+  platform: Web
+  type: Web
+  driverType: Chrome
+  version: 0.1
+  creationDate: 2022-04-14T17:11:06.0000000
+  modificationDate: 2022-04-14T17:32:04.0000000
+  settings:
+    automationAssistant: true
+    appId: 9EVvcupN60Gbblgk18Iltw
+    stepSleepTime: 500
+    stepTimeout: 15000
+    stepSleepTiming: Before
+    stepFailureBehaviorType: Abort
+    stepTakeScreenshotConditionType: Failure
+  application:
+    id: 9EVvcupN60Gbblgk18Iltw
+    name: Dich Da Ngu
+    url: http://localhost:3000/
+    platform: Web
+  steps:
+  - id: y1Dctfc0wEKUA3Tx6EvJ2Q
+    comments: Navigates the specified URL (Auto-generated)
+    enabled: true
+    invertResult: false
+    order: 1
+    repeat: 1
+    type: Action
+    settings:
+      sleepTime: -1
+      timeout: -1
+      sleepTiming: Inherit
+      failureBehaviorType: Inherit
+      takeScreenshotConditionType: Inherit
+    action:
+      id: 49c5d8d8-4ba8-42f0-823d-702e6acfb23a
+      source: System
+    parameterMaps:
+    - name: url
+      value: '{{ApplicationURL}}'
+      direction: Input
+    conditions: []
+    validations: []
+    contexts: []
+  - id: ums6jd2Ank6bLX747IJePw
+    enabled: true
+    invertResult: false
+    order: 2
+    repeat: 1
+    type: Action
+    elementId: 5fc9ImG7B0C72sDZw6SQhw
+    settings:
+      sleepTime: -1
+      timeout: -1
+      sleepTiming: Inherit
+      failureBehaviorType: Inherit
+      takeScreenshotConditionType: Inherit
+    action:
+      id: 02d572b2-d610-4700-9ad3-40076ddb9807
+      source: System
+    parameterMaps: []
+    conditions: []
+    validations: []
+    contexts: []
+  - id: r_hQG8X930aMNyRqJEhACA
+    enabled: true
+    invertResult: false
+    order: 3
+    repeat: 1
+    type: Action
+    elementId: 5fc9ImG7B0C72sDZw6SQhw
+    settings:
+      sleepTime: -1
+      timeout: -1
+      sleepTiming: Inherit
+      failureBehaviorType: Inherit
+      takeScreenshotConditionType: Inherit
+    action:
+      id: 6f94fdaa-0041-4265-b73b-ecfcbe702d66
+      source: System
+    parameterMaps:
+    - name: keys
+      value: approve
+      direction: Input
+    conditions: []
+    validations: []
+    contexts: []
+  - id: j1tQf5hQj0e9eXm8kU7TDw
+    enabled: true
+    invertResult: false
+    order: 4
+    repeat: 1
+    type: Action
+    elementId: RYqdTO2D4k2CVpSRJhMPUw
+    settings:
+      sleepTime: 5000
+      timeout: -1
+      sleepTiming: After
+      failureBehaviorType: Inherit
+      takeScreenshotConditionType: Inherit
+    action:
+      id: 02d572b2-d610-4700-9ad3-40076ddb9807
+      source: System
+    parameterMaps: []
+    conditions: []
+    validations: []
+    contexts: []
+  - id: Bk1GhLObbECu53MH67knrA
+    comments: ''
+    enabled: true
+    invertResult: false
+    order: 5
+    repeat: 1
+    type: Action
+    elementId: GuU1ruA8IkWgVGh9Wk_L-A
+    settings:
+      sleepTime: -1
+      timeout: -1
+      sleepTiming: Inherit
+      failureBehaviorType: Inherit
+      takeScreenshotConditionType: Inherit
+    action:
+      id: 85da72d0-c5a4-4587-be33-8cb3b5fa7910
+      source: System
+    parameterMaps:
+    - name: text
+      value: Chấp nhận
+      direction: Input
+    conditions: []
+    validations: []
+    contexts: []
+  parameters:
+  - name: ApplicationURL
+    description: Auto generated application URL parameter
+    value: http://localhost:3000/
+    type: Input
+auxTests: []
+elements:
+- id: 5fc9ImG7B0C72sDZw6SQhw
+  name: Nhập văn bản
+  type:
+    id: jUwODgyNjAyNzk2NTk2OTA
+    name: textarea
+    source: System
+  locators:
+  - name: XPATH
+    value: //textarea[@placeholder = 'Nhập văn bản']
+    priority: 0
+  - name: XPATH
+    value: //div/textarea
+    priority: 1
+  - name: XPATH
+    value: /html/body/div/div/div[3]/div/div[2]/div[2]/div/div[1]/div/div[1]/textarea
+    priority: 2
+- id: RYqdTO2D4k2CVpSRJhMPUw
+  name: PHÁT HIỆN VÀ DỊCH
+  type:
+    id: jUwODgyNjAyNzk2NTk1NDc
+    name: Button
+    source: System
+  locators:
+  - name: XPATH
+    value: //button[. = 'Phát hiện và dịch']
+    priority: 0
+  - name: XPATH
+    value: //div[2]/div/div[2]/div/button
+    priority: 1
+  - name: XPATH
+    value: /html/body/div/div/div[3]/div/div[2]/div[2]/div/div[2]/div/button
+    priority: 2
+- id: GuU1ruA8IkWgVGh9Wk_L-A
+  name: PHÁT HIỆN VÀ DỊCH1
+  type:
+    id: jUwODgyNjAyNzk2NTk1NjM
+    name: Div
+    source: System
+  locators:
+  - name: XPATH
+    value: //div[2][. = 'Phát hiện và dịch']
+    priority: 0
+  - name: XPATH
+    value: //div[2]/div[2]/div/div[2]
+    priority: 1
+  - name: XPATH
+    value: /html/body/div/div/div[3]/div/div[2]/div[2]/div/div[2]
+    priority: 2
+projectParameters: []
+addons: []
