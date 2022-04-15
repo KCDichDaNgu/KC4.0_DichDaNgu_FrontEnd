@@ -1,19 +1,19 @@
-id: 9b0427266c604782d65a36
-created: 2022-04-15T04:21:44.028Z
+id: 38047252ead4d6cdcaefc4
+created: 2022-04-15T04:39:50.796Z
 projectId: EcZS_i-f50WeHDQPXS-Alw
 projectName: KC4.0_DichDaNgu
 owner: Anh Pham
 protocol: 1
 tests:
-  - id: ab2eba227d15620075d891
+  - id: 9260d96489ddf5a213e0ce
     name: test_system_setting
     description: admin
     platform: Web
     type: Web
     driverType: Chrome
     version: "0.1"
-    creationDate: 2022-04-15T04:21:44.028Z
-    modificationDate: 2022-04-15T04:24:42.188Z
+    creationDate: 2022-04-15T04:39:50.796Z
+    modificationDate: 2022-04-15T04:42:48.739Z
     settings:
       appId: RluwvB_pPkWdhws4-U_SCw
       automationAssistant: true
@@ -28,7 +28,7 @@ tests:
       url: http://localhost:3000/
       platform: Web
     steps:
-      - id: 582458a113dcda7cf2f8bc
+      - id: fb2f2ec292e564f4a94387
         comments: Navigates the specified URL (Auto-generated)
         enabled: true
         invertResult: false
@@ -51,7 +51,7 @@ tests:
         conditions: []
         validations: []
         contexts: []
-      - id: adbc1bd82df049fe2cf895
+      - id: 17fa4b8b480321138ff7e7
         comments: ""
         enabled: true
         order: 2
@@ -70,8 +70,8 @@ tests:
         conditions: []
         validations: []
         contexts: []
-        elementId: b4f2b40d3ec70cdc7f0063
-      - id: 83dfefbf8d2ead917b9bfa
+        elementId: b0f69bf504743383d60acc
+      - id: 53cec38f5d99a69216da06
         comments: ""
         enabled: true
         order: 3
@@ -90,8 +90,8 @@ tests:
         conditions: []
         validations: []
         contexts: []
-        elementId: a1771b409a66162fc6197b
-      - id: 3d69cf3b67f4efd848bd72
+        elementId: 797e277dd3547e4b472481
+      - id: b72e506b77a2417761835f
         comments: ""
         enabled: true
         order: 4
@@ -113,8 +113,8 @@ tests:
         conditions: []
         validations: []
         contexts: []
-        elementId: a1771b409a66162fc6197b
-      - id: f40aa87e9dfa4be07ded1a
+        elementId: 797e277dd3547e4b472481
+      - id: 44e703fc489c7735ffa549
         comments: ""
         enabled: true
         order: 5
@@ -136,8 +136,8 @@ tests:
         conditions: []
         validations: []
         contexts: []
-        elementId: 73f8f2b952dd0cd399f9dd
-      - id: 20d522990c52a096985bb3
+        elementId: d382698b2c5b4f3c96f478
+      - id: 33b35ab67a94137a5cfaa0
         comments: ""
         enabled: true
         order: 6
@@ -159,8 +159,8 @@ tests:
         conditions: []
         validations: []
         contexts: []
-        elementId: 73f8f2b952dd0cd399f9dd
-      - id: 0105e14776ae7ee95375f6
+        elementId: d382698b2c5b4f3c96f478
+      - id: 41e7477511504ef12cebea
         comments: ""
         enabled: true
         order: 7
@@ -179,8 +179,8 @@ tests:
         conditions: []
         validations: []
         contexts: []
-        elementId: 51aa018ba1976ad0031141
-      - id: d3b549c8ccd7d53ff0979b
+        elementId: 51df44efd362b3bc280bdb
+      - id: ccdaf3a29f56332ff0c15f
         comments: ""
         enabled: true
         order: 8
@@ -199,8 +199,8 @@ tests:
         conditions: []
         validations: []
         contexts: []
-        elementId: e043bf8bb766480880fc67
-      - id: b85d8bb833621d91739eef
+        elementId: 93441d5dd9cf52ccc415e5
+      - id: fc994d872e333da4ab2b6a
         comments: ""
         enabled: true
         order: 9
@@ -219,11 +219,31 @@ tests:
         conditions: []
         validations: []
         contexts: []
-        elementId: 55b386d3278e030543e2d6
-      - id: d6c8e18fa2358ad4a3a8ef
+        elementId: 652e00153f9b975400e354
+      - id: fef683f578ba7610467f89
         comments: ""
         enabled: true
         order: 10
+        repeat: 1
+        type: Action
+        settings:
+          sleepTime: -1
+          timeout: -1
+          sleepTiming: Inherit
+          failureBehaviorType: Inherit
+          takeScreenshotConditionType: Inherit
+        action:
+          source: System
+          id: 02d572b2-d610-4700-9ad3-40076ddb9807
+        parameterMaps: []
+        conditions: []
+        validations: []
+        contexts: []
+        elementId: 75136de08a590aa88e5350
+      - id: 1bf7ea2f4896d9decdbb81
+        comments: ""
+        enabled: true
+        order: 11
         repeat: 1
         type: Action
         settings:
@@ -242,11 +262,11 @@ tests:
         conditions: []
         validations: []
         contexts: []
-        elementId: 55b386d3278e030543e2d6
-      - id: bb35896831564700132a91
+        elementId: aa368b29b06518b8bc7d9f
+      - id: a62c46968f1af401d675c0
         comments: ""
         enabled: true
-        order: 11
+        order: 12
         repeat: 1
         type: Action
         settings:
@@ -262,11 +282,11 @@ tests:
         conditions: []
         validations: []
         contexts: []
-        elementId: 59bab0b005105ffe0a78a4
-      - id: e3e50ba76f728cb29a21e2
+        elementId: 70771fea9b54b64d761cfd
+      - id: cad861386a37cf6a636d6b
         comments: ""
         enabled: true
-        order: 12
+        order: 13
         repeat: 1
         type: Action
         settings:
@@ -285,11 +305,11 @@ tests:
         conditions: []
         validations: []
         contexts: []
-        elementId: a195ff078066fa65b06951
-      - id: d2c10c1ec78218f6ecc79f
+        elementId: 70771fea9b54b64d761cfd
+      - id: 59cdef0ac0e04aeb49eeb1
         comments: ""
         enabled: true
-        order: 13
+        order: 14
         repeat: 1
         type: Action
         settings:
@@ -305,11 +325,11 @@ tests:
         conditions: []
         validations: []
         contexts: []
-        elementId: 5280a34fb3fa34f66e110d
-      - id: 511880c77ece8b7d34ea62
+        elementId: 7f33c6ec3023fe58ecd557
+      - id: e9e92843ea9e6abb86ca19
         comments: ""
         enabled: true
-        order: 14
+        order: 15
         repeat: 1
         type: Action
         settings:
@@ -328,28 +348,8 @@ tests:
         conditions: []
         validations: []
         contexts: []
-        elementId: 5280a34fb3fa34f66e110d
-      - id: b5d197a738f11d0f0042db
-        comments: ""
-        enabled: true
-        order: 15
-        repeat: 1
-        type: Action
-        settings:
-          sleepTime: -1
-          timeout: -1
-          sleepTiming: Inherit
-          failureBehaviorType: Inherit
-          takeScreenshotConditionType: Inherit
-        action:
-          source: System
-          id: 02d572b2-d610-4700-9ad3-40076ddb9807
-        parameterMaps: []
-        conditions: []
-        validations: []
-        contexts: []
-        elementId: 0de45a8f6c9308ab0ae798
-      - id: 18409057c1c92e3c3e3ccb
+        elementId: 7f33c6ec3023fe58ecd557
+      - id: 603a0a339d38d69dfbcf68
         comments: ""
         enabled: true
         order: 16
@@ -368,8 +368,8 @@ tests:
         conditions: []
         validations: []
         contexts: []
-        elementId: 0de45a8f6c9308ab0ae798
-      - id: 85aff7497bc203d7e7e728
+        elementId: f011a338ca501179b3d5cf
+      - id: ecd44fb444a04b2dc6ed70
         comments: ""
         enabled: true
         order: 17
@@ -387,12 +387,12 @@ tests:
         parameterMaps:
           - direction: Input
             name: keys
-            value: abc
+            value: "10000"
         conditions: []
         validations: []
         contexts: []
-        elementId: 0de45a8f6c9308ab0ae798
-      - id: 5103d7c4bce11340d46fec
+        elementId: f011a338ca501179b3d5cf
+      - id: ba7ce151004a90294d5ec9
         comments: ""
         enabled: true
         order: 18
@@ -411,8 +411,8 @@ tests:
         conditions: []
         validations: []
         contexts: []
-        elementId: 2eec9565feb1ee6f4db5af
-      - id: fdc2c02dd921bd0c4a9a28
+        elementId: 4595438fbc477c7eaee996
+      - id: 4ca658d4bade7b64e3486a
         comments: ""
         enabled: true
         order: 19
@@ -430,12 +430,12 @@ tests:
         parameterMaps:
           - direction: Input
             name: keys
-            value: abc
+            value: a
         conditions: []
         validations: []
         contexts: []
-        elementId: 2eec9565feb1ee6f4db5af
-      - id: 09e5021857477a4815767c
+        elementId: 4595438fbc477c7eaee996
+      - id: 5c3931a749b7987b120be0
         comments: ""
         enabled: true
         order: 20
@@ -454,8 +454,8 @@ tests:
         conditions: []
         validations: []
         contexts: []
-        elementId: 4d629fbd7f0c00f17a88e8
-      - id: 585da08d857c0a3f926e74
+        elementId: b72319dda78097e72859ae
+      - id: 993a73f3117de5f1cedd5a
         comments: ""
         enabled: true
         order: 21
@@ -473,12 +473,12 @@ tests:
         parameterMaps:
           - direction: Input
             name: keys
-            value: "10000"
+            value: abc
         conditions: []
         validations: []
         contexts: []
-        elementId: 4d629fbd7f0c00f17a88e8
-      - id: c8ebfa5850ee914c9c9462
+        elementId: b72319dda78097e72859ae
+      - id: 4d043a995cf83e08d75fbf
         comments: ""
         enabled: true
         order: 22
@@ -497,8 +497,8 @@ tests:
         conditions: []
         validations: []
         contexts: []
-        elementId: b5739944dace0ffb3e70a8
-      - id: 77eadb3af6f6f35ff1104e
+        elementId: 978b9290140bb89a15f531
+      - id: c943597dae282c3e9cca43
         comments: ""
         enabled: true
         order: 23
@@ -516,12 +516,12 @@ tests:
         parameterMaps:
           - direction: Input
             name: keys
-            value: "10000"
+            value: "1"
         conditions: []
         validations: []
         contexts: []
-        elementId: b5739944dace0ffb3e70a8
-      - id: 689ee7b1a67034cfde6828
+        elementId: 978b9290140bb89a15f531
+      - id: 3c31d66c921576395b2551
         comments: ""
         enabled: true
         order: 24
@@ -540,8 +540,8 @@ tests:
         conditions: []
         validations: []
         contexts: []
-        elementId: b8c3d57e19309ea1a911ca
-      - id: 8fbb89d740f835820cd931
+        elementId: 58c9dcd4b8e3a4f9b2fbca
+      - id: fb77fafaf503c603707afc
         comments: ""
         enabled: true
         order: 25
@@ -560,8 +560,8 @@ tests:
         conditions: []
         validations: []
         contexts: []
-        elementId: e646b53c6a3652a40e69c3
-      - id: 19a78acf83a7590a7f50d1
+        elementId: 4595438fbc477c7eaee996
+      - id: 27c1e40bd1d86b47c90e72
         comments: ""
         enabled: true
         order: 26
@@ -580,8 +580,8 @@ tests:
         conditions: []
         validations: []
         contexts: []
-        elementId: 7bf3146f6124b82c1f1a2a
-      - id: 7f380b2a947359fb95f1ba
+        elementId: b72319dda78097e72859ae
+      - id: 5f9b3932993742c3c3e876
         comments: ""
         enabled: true
         order: 27
@@ -600,8 +600,8 @@ tests:
         conditions: []
         validations: []
         contexts: []
-        elementId: 51aa018ba1976ad0031141
-      - id: 898d6dbfe1740f2b395b56
+        elementId: b72319dda78097e72859ae
+      - id: 2b8cfb5e86703dfc432535
         comments: ""
         enabled: true
         order: 28
@@ -620,8 +620,8 @@ tests:
         conditions: []
         validations: []
         contexts: []
-        elementId: e043bf8bb766480880fc67
-      - id: a1611889bb4f8515ed88cb
+        elementId: f011a338ca501179b3d5cf
+      - id: d0fe0470d97742c35264ec
         comments: ""
         enabled: true
         order: 29
@@ -640,7 +640,227 @@ tests:
         conditions: []
         validations: []
         contexts: []
-        elementId: b8c3d57e19309ea1a911ca
+        elementId: f011a338ca501179b3d5cf
+      - id: a97c7a40ac8db8eac62575
+        comments: ""
+        enabled: true
+        order: 30
+        repeat: 1
+        type: Action
+        settings:
+          sleepTime: -1
+          timeout: -1
+          sleepTiming: Inherit
+          failureBehaviorType: Inherit
+          takeScreenshotConditionType: Inherit
+        action:
+          source: System
+          id: 02d572b2-d610-4700-9ad3-40076ddb9807
+        parameterMaps: []
+        conditions: []
+        validations: []
+        contexts: []
+        elementId: 7f33c6ec3023fe58ecd557
+      - id: e304f74d2e5770f9cd2e80
+        comments: ""
+        enabled: true
+        order: 31
+        repeat: 1
+        type: Action
+        settings:
+          sleepTime: -1
+          timeout: -1
+          sleepTiming: Inherit
+          failureBehaviorType: Inherit
+          takeScreenshotConditionType: Inherit
+        action:
+          source: System
+          id: 02d572b2-d610-4700-9ad3-40076ddb9807
+        parameterMaps: []
+        conditions: []
+        validations: []
+        contexts: []
+        elementId: 7f33c6ec3023fe58ecd557
+      - id: b7e20f96333d9f3796fe4e
+        comments: ""
+        enabled: true
+        order: 32
+        repeat: 1
+        type: Action
+        settings:
+          sleepTime: -1
+          timeout: -1
+          sleepTiming: Inherit
+          failureBehaviorType: Inherit
+          takeScreenshotConditionType: Inherit
+        action:
+          source: System
+          id: 02d572b2-d610-4700-9ad3-40076ddb9807
+        parameterMaps: []
+        conditions: []
+        validations: []
+        contexts: []
+        elementId: 978b9290140bb89a15f531
+      - id: 3847686f8eba853e0134bb
+        comments: ""
+        enabled: true
+        order: 33
+        repeat: 1
+        type: Action
+        settings:
+          sleepTime: -1
+          timeout: -1
+          sleepTiming: Inherit
+          failureBehaviorType: Inherit
+          takeScreenshotConditionType: Inherit
+        action:
+          source: System
+          id: 02d572b2-d610-4700-9ad3-40076ddb9807
+        parameterMaps: []
+        conditions: []
+        validations: []
+        contexts: []
+        elementId: 978b9290140bb89a15f531
+      - id: 892918fe501e69d26fa5ab
+        comments: ""
+        enabled: true
+        order: 34
+        repeat: 1
+        type: Action
+        settings:
+          sleepTime: -1
+          timeout: -1
+          sleepTiming: Inherit
+          failureBehaviorType: Inherit
+          takeScreenshotConditionType: Inherit
+        action:
+          source: System
+          id: 02d572b2-d610-4700-9ad3-40076ddb9807
+        parameterMaps: []
+        conditions: []
+        validations: []
+        contexts: []
+        elementId: aa368b29b06518b8bc7d9f
+      - id: dcc9726eaf3f776de333ef
+        comments: ""
+        enabled: true
+        order: 35
+        repeat: 1
+        type: Action
+        settings:
+          sleepTime: -1
+          timeout: -1
+          sleepTiming: Inherit
+          failureBehaviorType: Inherit
+          takeScreenshotConditionType: Inherit
+        action:
+          source: System
+          id: 02d572b2-d610-4700-9ad3-40076ddb9807
+        parameterMaps: []
+        conditions: []
+        validations: []
+        contexts: []
+        elementId: aa368b29b06518b8bc7d9f
+      - id: d6d9895e072b741bd7a220
+        comments: ""
+        enabled: true
+        order: 36
+        repeat: 1
+        type: Action
+        settings:
+          sleepTime: -1
+          timeout: -1
+          sleepTiming: Inherit
+          failureBehaviorType: Inherit
+          takeScreenshotConditionType: Inherit
+        action:
+          source: System
+          id: 02d572b2-d610-4700-9ad3-40076ddb9807
+        parameterMaps: []
+        conditions: []
+        validations: []
+        contexts: []
+        elementId: bfb9f1e7a5eb39f2dc1961
+      - id: eaa7de40d4450d63f7cc85
+        comments: ""
+        enabled: true
+        order: 37
+        repeat: 1
+        type: Action
+        settings:
+          sleepTime: -1
+          timeout: -1
+          sleepTiming: Inherit
+          failureBehaviorType: Inherit
+          takeScreenshotConditionType: Inherit
+        action:
+          source: System
+          id: 02d572b2-d610-4700-9ad3-40076ddb9807
+        parameterMaps: []
+        conditions: []
+        validations: []
+        contexts: []
+        elementId: 58c9dcd4b8e3a4f9b2fbca
+      - id: 77f7ddf13f094617f2a7d9
+        comments: ""
+        enabled: true
+        order: 38
+        repeat: 1
+        type: Action
+        settings:
+          sleepTime: -1
+          timeout: -1
+          sleepTiming: Inherit
+          failureBehaviorType: Inherit
+          takeScreenshotConditionType: Inherit
+        action:
+          source: System
+          id: 02d572b2-d610-4700-9ad3-40076ddb9807
+        parameterMaps: []
+        conditions: []
+        validations: []
+        contexts: []
+        elementId: 0ab22652cc45b062436a4f
+      - id: 347fdf2825ff32167579ba
+        comments: ""
+        enabled: true
+        order: 39
+        repeat: 1
+        type: Action
+        settings:
+          sleepTime: -1
+          timeout: -1
+          sleepTiming: Inherit
+          failureBehaviorType: Inherit
+          takeScreenshotConditionType: Inherit
+        action:
+          source: System
+          id: 02d572b2-d610-4700-9ad3-40076ddb9807
+        parameterMaps: []
+        conditions: []
+        validations: []
+        contexts: []
+        elementId: b91848e9bab371e21a9d9e
+      - id: e827dc99ef4c56df734fc0
+        comments: ""
+        enabled: true
+        order: 40
+        repeat: 1
+        type: Action
+        settings:
+          sleepTime: -1
+          timeout: -1
+          sleepTiming: Inherit
+          failureBehaviorType: Inherit
+          takeScreenshotConditionType: Inherit
+        action:
+          source: System
+          id: 02d572b2-d610-4700-9ad3-40076ddb9807
+        parameterMaps: []
+        conditions: []
+        validations: []
+        contexts: []
+        elementId: 58c9dcd4b8e3a4f9b2fbca
     parameters:
       - name: ApplicationURL
         description: Auto generated application URL parameter
@@ -649,8 +869,8 @@ tests:
     tags: []
 auxTests: []
 elements:
-  - id: 7bf3146f6124b82c1f1a2a
-    name: DÀch
+  - id: b91848e9bab371e21a9d9e
+    name: C‡i ∑t h« th—ng1
     description: ""
     type:
       id: jUwODgyNjAyNzk2NTk1NjU
@@ -658,15 +878,15 @@ elements:
       source: System
     locators:
       - name: XPATH
-        value: //span[. = 'DÀch']
+        value: //span[. = 'C‡i ∑t h« th—ng']
         priority: 0
       - name: XPATH
-        value: //li[3]//span
+        value: //li[6]//span
         priority: 1
       - name: XPATH
-        value: /html/body/div/div/div[2]/nav/ul/li[3]/a/span
+        value: /html/body/div[1]/div/div[2]/nav/ul/li[6]/a/span
         priority: 2
-  - id: e646b53c6a3652a40e69c3
+  - id: 0ab22652cc45b062436a4f
     name: path
     description: ""
     type:
@@ -678,9 +898,173 @@ elements:
         value: //button/*/*[name()='path']
         priority: 0
       - name: XPATH
-        value: /html/body/div/div/div[2]/div/div/button/*[name()='svg']/*[name()='path']
+        value: /html/body/div[1]/div/div[2]/div/div/button/*[name()='svg']/*[name()='path']
         priority: 1
-  - id: b8c3d57e19309ea1a911ca
+  - id: bfb9f1e7a5eb39f2dc1961
+    name: DIV1
+    description: ""
+    type:
+      id: jUwODgyNjAyNzk2NTk1NjM
+      name: Div
+      source: System
+    locators:
+      - name: XPATH
+        value: //form/div
+        priority: 0
+      - name: XPATH
+        value: /html/body/div[1]/div/div[3]/div/div/div/form/div
+        priority: 1
+  - id: 58c9dcd4b8e3a4f9b2fbca
+    name: C≠p nh≠t1
+    description: ""
+    type:
+      id: jUwODgyNjAyNzk2NTk1NjU
+      name: span
+      source: System
+    locators:
+      - name: XPATH
+        value: //span[. = 'C≠p nh≠t']
+        priority: 0
+      - name: XPATH
+        value: //form//span
+        priority: 1
+      - name: XPATH
+        value: /html/body/div[1]/div/div[3]/div/div/div/form/button/span
+        priority: 2
+  - id: 978b9290140bb89a15f531
+    name: taskExpiredDuration
+    description: ""
+    type:
+      id: jUwODgyNjAyNzk2NTk1NDY
+      name: Textbox
+      source: System
+    locators:
+      - name: CSSSELECTOR
+        value: "#taskExpiredDuration"
+        priority: 0
+      - name: XPATH
+        value: //div[1]/div/div/div/div/input
+        priority: 1
+      - name: XPATH
+        value: /html/body/div[1]/div/div[3]/div/div/div/form/div/div[1]/div/div/div/div/input
+        priority: 2
+  - id: b72319dda78097e72859ae
+    name: languageDetectionApiAllowedConcurrent...
+    description: ""
+    type:
+      id: jUwODgyNjAyNzk2NTk1NDY
+      name: Textbox
+      source: System
+    locators:
+      - name: CSSSELECTOR
+        value: "#languageDetectionApiAllowedConcurrentReq"
+        priority: 0
+      - name: XPATH
+        value: //div[3]/div/div/div/div/input
+        priority: 1
+      - name: XPATH
+        value: /html/body/div[1]/div/div[3]/div/div/div/form/div/div[3]/div/div/div/div/input
+        priority: 2
+  - id: 4595438fbc477c7eaee996
+    name: translationApiAllowedConcurrentReq
+    description: ""
+    type:
+      id: jUwODgyNjAyNzk2NTk1NDY
+      name: Textbox
+      source: System
+    locators:
+      - name: CSSSELECTOR
+        value: "#translationApiAllowedConcurrentReq"
+        priority: 0
+      - name: XPATH
+        value: //div[2]//input
+        priority: 1
+      - name: XPATH
+        value: /html/body/div[1]/div/div[3]/div/div/div/form/div/div[2]/div/div/div/div/input
+        priority: 2
+  - id: f011a338ca501179b3d5cf
+    name: languageDetectionSpeed
+    description: ""
+    type:
+      id: jUwODgyNjAyNzk2NTk1NDY
+      name: Textbox
+      source: System
+    locators:
+      - name: CSSSELECTOR
+        value: "#languageDetectionSpeed"
+        priority: 0
+      - name: XPATH
+        value: //div[5]//input
+        priority: 1
+      - name: XPATH
+        value: /html/body/div[1]/div/div[3]/div/div/div/form/div/div[5]/div/div/div/div/input
+        priority: 2
+  - id: 7f33c6ec3023fe58ecd557
+    name: translationSpeedForEachCharacter
+    description: ""
+    type:
+      id: jUwODgyNjAyNzk2NTk1NDY
+      name: Textbox
+      source: System
+    locators:
+      - name: CSSSELECTOR
+        value: "#translationSpeedForEachCharacter"
+        priority: 0
+      - name: XPATH
+        value: //div[4]//input
+        priority: 1
+      - name: XPATH
+        value: /html/body/div[1]/div/div[3]/div/div/div/form/div/div[4]/div/div/div/div/input
+        priority: 2
+  - id: 70771fea9b54b64d761cfd
+    name: emailPasswordForSendingEmail
+    description: ""
+    type:
+      id: jUwODgyNjAyNzk2NTk1NDY
+      name: Textbox
+      source: System
+    locators:
+      - name: CSSSELECTOR
+        value: "#emailPasswordForSendingEmail"
+        priority: 0
+      - name: XPATH
+        value: //div[7]//input
+        priority: 1
+      - name: XPATH
+        value: /html/body/div[1]/div/div[3]/div/div/div/form/div/div[7]/div/div/div/div/input
+        priority: 2
+  - id: aa368b29b06518b8bc7d9f
+    name: emailForSendingEmail
+    description: ""
+    type:
+      id: jUwODgyNjAyNzk2NTk1NDY
+      name: Textbox
+      source: System
+    locators:
+      - name: CSSSELECTOR
+        value: "#emailForSendingEmail"
+        priority: 0
+      - name: XPATH
+        value: //div[6]//input
+        priority: 1
+      - name: XPATH
+        value: /html/body/div[1]/div/div[3]/div/div/div/form/div/div[6]/div/div/div/div/input
+        priority: 2
+  - id: 75136de08a590aa88e5350
+    name: DIV
+    description: ""
+    type:
+      id: jUwODgyNjAyNzk2NTk1NjM
+      name: Div
+      source: System
+    locators:
+      - name: XPATH
+        value: //div[6]
+        priority: 0
+      - name: XPATH
+        value: /html/body/div[1]/div/div[3]/div/div/div/form/div/div[6]
+        priority: 1
+  - id: 652e00153f9b975400e354
     name: C≠p nh≠t
     description: ""
     type:
@@ -697,140 +1081,7 @@ elements:
       - name: XPATH
         value: /html/body/div/div/div[3]/div/div/div/form/button/span
         priority: 2
-  - id: b5739944dace0ffb3e70a8
-    name: taskExpiredDuration
-    description: ""
-    type:
-      id: jUwODgyNjAyNzk2NTk1NDY
-      name: Textbox
-      source: System
-    locators:
-      - name: CSSSELECTOR
-        value: "#taskExpiredDuration"
-        priority: 0
-      - name: XPATH
-        value: //div[1]/div/div/div/div/input
-        priority: 1
-      - name: XPATH
-        value: /html/body/div/div/div[3]/div/div/div/form/div/div[1]/div/div/div/div/input
-        priority: 2
-  - id: 4d629fbd7f0c00f17a88e8
-    name: languageDetectionApiAllowedConcurrent...
-    description: ""
-    type:
-      id: jUwODgyNjAyNzk2NTk1NDY
-      name: Textbox
-      source: System
-    locators:
-      - name: CSSSELECTOR
-        value: "#languageDetectionApiAllowedConcurrentReq"
-        priority: 0
-      - name: XPATH
-        value: //div[3]/div/div/div/div/input
-        priority: 1
-      - name: XPATH
-        value: /html/body/div/div/div[3]/div/div/div/form/div/div[3]/div/div/div/div/input
-        priority: 2
-  - id: 2eec9565feb1ee6f4db5af
-    name: translationApiAllowedConcurrentReq
-    description: ""
-    type:
-      id: jUwODgyNjAyNzk2NTk1NDY
-      name: Textbox
-      source: System
-    locators:
-      - name: CSSSELECTOR
-        value: "#translationApiAllowedConcurrentReq"
-        priority: 0
-      - name: XPATH
-        value: //div[2]//input
-        priority: 1
-      - name: XPATH
-        value: /html/body/div/div/div[3]/div/div/div/form/div/div[2]/div/div/div/div/input
-        priority: 2
-  - id: 0de45a8f6c9308ab0ae798
-    name: languageDetectionSpeed
-    description: ""
-    type:
-      id: jUwODgyNjAyNzk2NTk1NDY
-      name: Textbox
-      source: System
-    locators:
-      - name: CSSSELECTOR
-        value: "#languageDetectionSpeed"
-        priority: 0
-      - name: XPATH
-        value: //div[5]//input
-        priority: 1
-      - name: XPATH
-        value: /html/body/div/div/div[3]/div/div/div/form/div/div[5]/div/div/div/div/input
-        priority: 2
-  - id: 5280a34fb3fa34f66e110d
-    name: translationSpeedForEachSentence
-    description: ""
-    type:
-      id: jUwODgyNjAyNzk2NTk1NDY
-      name: Textbox
-      source: System
-    locators:
-      - name: CSSSELECTOR
-        value: "#translationSpeedForEachSentence"
-        priority: 0
-      - name: XPATH
-        value: //div[4]//input
-        priority: 1
-      - name: XPATH
-        value: /html/body/div/div/div[3]/div/div/div/form/div/div[4]/div/div/div/div/input
-        priority: 2
-  - id: a195ff078066fa65b06951
-    name: emailPasswordForSendingEmail
-    description: ""
-    type:
-      id: jUwODgyNjAyNzk2NTk1NDY
-      name: Textbox
-      source: System
-    locators:
-      - name: CSSSELECTOR
-        value: "#emailPasswordForSendingEmail"
-        priority: 0
-      - name: XPATH
-        value: //div[7]//input
-        priority: 1
-      - name: XPATH
-        value: /html/body/div/div/div[3]/div/div/div/form/div/div[7]/div/div/div/div/input
-        priority: 2
-  - id: 59bab0b005105ffe0a78a4
-    name: DIV
-    description: ""
-    type:
-      id: jUwODgyNjAyNzk2NTk1NjM
-      name: Div
-      source: System
-    locators:
-      - name: XPATH
-        value: //div[7]
-        priority: 0
-      - name: XPATH
-        value: /html/body/div/div/div[3]/div/div/div/form/div/div[7]
-        priority: 1
-  - id: 55b386d3278e030543e2d6
-    name: emailForSendingEmail
-    description: ""
-    type:
-      id: jUwODgyNjAyNzk2NTk1NDY
-      name: Textbox
-      source: System
-    locators:
-      - name: CSSSELECTOR
-        value: "#emailForSendingEmail"
-        priority: 0
-      - name: XPATH
-        value: //div[6]//input
-        priority: 1
-      - name: XPATH
-        value: /html/body/div/div/div[3]/div/div/div/form/div/div[6]/div/div/div/div/input
-        priority: 2
-  - id: e043bf8bb766480880fc67
+  - id: 93441d5dd9cf52ccc415e5
     name: C‡i ∑t h« th—ng
     description: ""
     type:
@@ -847,7 +1098,7 @@ elements:
       - name: XPATH
         value: /html/body/div/div/div[2]/nav/ul/li[6]/a/span
         priority: 2
-  - id: 51aa018ba1976ad0031141
+  - id: 51df44efd362b3bc280bdb
     name: svg
     description: ""
     type:
@@ -861,7 +1112,7 @@ elements:
       - name: XPATH
         value: /html/body/div/div/div[2]/div/div/button/*[name()='svg']
         priority: 1
-  - id: 73f8f2b952dd0cd399f9dd
+  - id: d382698b2c5b4f3c96f478
     name: outlined-basic1
     description: ""
     type:
@@ -875,7 +1126,7 @@ elements:
       - name: XPATH
         value: /html/body/div/div/div[3]/div/div/div/div/div/div/div/div/div/form/div[2]/div/div/input
         priority: 1
-  - id: a1771b409a66162fc6197b
+  - id: 797e277dd3547e4b472481
     name: outlined-basic
     description: ""
     type:
@@ -889,7 +1140,7 @@ elements:
       - name: XPATH
         value: /html/body/div/div/div[3]/div/div/div/div/div/div/div/div/div/form/div[1]/div/div/input
         priority: 1
-  - id: b4f2b40d3ec70cdc7f0063
+  - id: b0f69bf504743383d60acc
     name: NG NH¨P
     description: ""
     type:
