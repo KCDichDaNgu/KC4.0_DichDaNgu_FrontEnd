@@ -1,0 +1,330 @@
+id: Wwsn90KAUE6hRVb9Nj4dsw
+projectId: MhJlllFYV0GyXb_vvKEVZw
+projectName: My first Project
+created: 2022-04-12T18:13:30.1494883Z
+owner: Dang BB
+protocol: 1
+tests:
+- id: LHni_kjF2kahW4GDAG49Dw
+  name: 13 - Public - Test language detection
+  description: a
+  platform: Web
+  type: Web
+  driverType: Chrome
+  version: 0.1
+  creationDate: 2022-04-11T11:53:13.0000000
+  modificationDate: 2022-04-12T18:09:24.0000000
+  settings:
+    automationAssistant: true
+    appId: J0tafD_f8kuzF7F3sNhZ1Q
+    stepSleepTime: 500
+    stepTimeout: 15000
+    stepSleepTiming: Before
+    stepFailureBehaviorType: Abort
+    stepTakeScreenshotConditionType: Failure
+  application:
+    id: J0tafD_f8kuzF7F3sNhZ1Q
+    name: Tool Dich
+    url: http://localhost:3000/
+    platform: Web
+  steps:
+  - id: rQuOQ3oVoECQX2UCf2Fssw
+    comments: Navigates the specified URL (Auto-generated)
+    enabled: true
+    invertResult: false
+    order: 1
+    repeat: 1
+    type: Action
+    settings:
+      sleepTime: -1
+      timeout: -1
+      sleepTiming: Inherit
+      failureBehaviorType: Inherit
+      takeScreenshotConditionType: Inherit
+    action:
+      id: 49c5d8d8-4ba8-42f0-823d-702e6acfb23a
+      source: System
+    parameterMaps:
+    - name: url
+      value: '{{ApplicationURL}}'
+      direction: Input
+    conditions: []
+    validations: []
+    contexts: []
+  - id: bU5k_GMBSUi8dS1HRluijw
+    enabled: true
+    invertResult: false
+    order: 2
+    repeat: 1
+    type: Action
+    elementId: kislK7In7U6ZY-s7zUItVA
+    settings:
+      sleepTime: -1
+      timeout: -1
+      sleepTiming: Inherit
+      failureBehaviorType: Inherit
+      takeScreenshotConditionType: Inherit
+    action:
+      id: 02d572b2-d610-4700-9ad3-40076ddb9807
+      source: System
+    parameterMaps: []
+    conditions: []
+    validations: []
+    contexts: []
+  - id: RQxvLBo59EaG9TiiuJbO3g
+    enabled: true
+    invertResult: false
+    order: 3
+    repeat: 1
+    type: Action
+    elementId: nXq74aDscECCN4LMQ4C01Q
+    settings:
+      sleepTime: -1
+      timeout: -1
+      sleepTiming: Inherit
+      failureBehaviorType: Inherit
+      takeScreenshotConditionType: Inherit
+    action:
+      id: 02d572b2-d610-4700-9ad3-40076ddb9807
+      source: System
+    parameterMaps: []
+    conditions: []
+    validations: []
+    contexts: []
+  - id: 9FWqbIc02E2H_PtxBg8xRA
+    comments: ''
+    enabled: true
+    invertResult: false
+    order: 4
+    repeat: 1
+    type: Addon
+    settings:
+      sleepTime: 2000
+      timeout: -1
+      sleepTiming: Before
+      failureBehaviorType: Inherit
+      takeScreenshotConditionType: Inherit
+    action:
+      id: eZDGTCUB_0CGCjtIljG-aA
+      source: Store
+      addonId: xQczalN7yUK6-wtFItRTLA
+    parameterMaps:
+    - name: path
+      value: /home/dangbb/Downloads/test_file/English.docx
+      direction: Input
+    - name: xpath
+      value: /html/body/div/div/div[3]/div/div[2]/div[2]/div/div[1]/div/div/input
+      direction: Input
+    conditions: []
+    validations: []
+    contexts: []
+  - id: 71cy1W5c80-_yeK0t0te2w
+    enabled: true
+    invertResult: false
+    order: 5
+    repeat: 1
+    type: Action
+    elementId: vkEMiKaaYU-lo_T2KFqmTA
+    settings:
+      sleepTime: -1
+      timeout: -1
+      sleepTiming: Inherit
+      failureBehaviorType: Inherit
+      takeScreenshotConditionType: Inherit
+    action:
+      id: 02d572b2-d610-4700-9ad3-40076ddb9807
+      source: System
+    parameterMaps: []
+    conditions: []
+    validations: []
+    contexts: []
+  - id: xlisF0-3502Yf6u_Jql1qw
+    comments: ''
+    enabled: true
+    invertResult: false
+    order: 6
+    repeat: 1
+    type: Action
+    elementId: qzNe4lguXkmMRShGrVMq2A
+    settings:
+      sleepTime: -1
+      timeout: -1
+      sleepTiming: Inherit
+      failureBehaviorType: Inherit
+      takeScreenshotConditionType: Inherit
+    action:
+      id: 85da72d0-c5a4-4587-be33-8cb3b5fa7910
+      source: System
+    parameterMaps:
+    - name: text
+      value: ANH
+      direction: Input
+    conditions: []
+    validations: []
+    contexts: []
+  - id: _1RcP3flRkeZ3MNHbKlIyg
+    enabled: true
+    invertResult: false
+    order: 7
+    repeat: 1
+    type: Action
+    elementId: Nd5WlY6HY0qQOI8fzW94cA
+    settings:
+      sleepTime: -1
+      timeout: -1
+      sleepTiming: Inherit
+      failureBehaviorType: Inherit
+      takeScreenshotConditionType: Inherit
+    action:
+      id: 02d572b2-d610-4700-9ad3-40076ddb9807
+      source: System
+    parameterMaps: []
+    conditions: []
+    validations: []
+    contexts: []
+  - id: SMqo0QdZ90agW_r90yYJMQ
+    comments: ''
+    enabled: true
+    invertResult: false
+    order: 8
+    repeat: 1
+    type: Action
+    elementId: Nd5WlY6HY0qQOI8fzW94cA
+    settings:
+      sleepTime: -1
+      timeout: -1
+      sleepTiming: Inherit
+      failureBehaviorType: Inherit
+      takeScreenshotConditionType: Inherit
+    action:
+      id: a9ab4ae7-38ca-4451-a636-1b801a774503
+      source: System
+    parameterMaps: []
+    conditions: []
+    validations: []
+    contexts: []
+  - id: e89iVIZ4VEWsfE2O7znfHA
+    comments: ''
+    enabled: true
+    invertResult: false
+    order: 9
+    repeat: 1
+    type: Action
+    elementId: Nd5WlY6HY0qQOI8fzW94cA
+    settings:
+      sleepTime: -1
+      timeout: -1
+      sleepTiming: Inherit
+      failureBehaviorType: Inherit
+      takeScreenshotConditionType: Inherit
+    action:
+      id: a59f3a20-d08d-4293-9add-b279f92e6c41
+      source: System
+    parameterMaps: []
+    conditions: []
+    validations: []
+    contexts: []
+  parameters:
+  - name: ApplicationURL
+    description: Auto generated application URL parameter
+    value: http://localhost:3000/
+    type: Input
+  tags:
+  - a
+auxTests: []
+elements:
+- id: kislK7In7U6ZY-s7zUItVA
+  name: TÀI LIỆU
+  type:
+    id: jUwODgyNjAyNzk2NTk1NDc
+    name: Button
+    source: System
+  locators:
+  - name: XPATH
+    value: //button[. = 'Tài liệu']
+    priority: 0
+  - name: XPATH
+    value: //div[3]/div/div/button[2]
+    priority: 1
+  - name: XPATH
+    value: /html/body/div/div/div[3]/div/div[1]/button[2]
+    priority: 2
+- id: nXq74aDscECCN4LMQ4C01Q
+  name: TÌM TỆP TRÊN MÁY TÍNH CỦA BẠN
+  type:
+    id: jUwODgyNjAyNzk2NTk1NDc
+    name: Button
+    source: System
+  locators:
+  - name: XPATH
+    value: //span[. = 'Tìm tệp trên máy tính của bạn']
+    priority: 0
+  - name: XPATH
+    value: //label/span
+    priority: 1
+  - name: XPATH
+    value: /html/body/div/div/div[3]/div/div[2]/div[2]/div/div[1]/div/div/label/span
+    priority: 2
+- id: vkEMiKaaYU-lo_T2KFqmTA
+  name: PHÁT HIỆN VÀ DỊCH
+  type:
+    id: jUwODgyNjAyNzk2NTk1NDc
+    name: Button
+    source: System
+  locators:
+  - name: XPATH
+    value: //button[. = 'Phát hiện và dịch']
+    priority: 0
+  - name: XPATH
+    value: //div[2]/div/div[2]/div/button
+    priority: 1
+  - name: XPATH
+    value: /html/body/div/div/div[3]/div/div[2]/div[2]/div/div[2]/div/button
+    priority: 2
+- id: Nd5WlY6HY0qQOI8fzW94cA
+  name: TẢI TÀI LIỆU TIẾNG VIỆT
+  type:
+    id: jUwODgyNjAyNzk2NTk1NDc
+    name: Button
+    source: System
+  locators:
+  - name: XPATH
+    value: //button[. = 'Tải tài liệu tiếng Việt']
+    priority: 0
+  - name: XPATH
+    value: //div[2]/div/div[2]/div/button
+    priority: 1
+  - name: XPATH
+    value: /html/body/div/div/div[3]/div/div[2]/div[2]/div/div[2]/div/button
+    priority: 2
+- id: qzNe4lguXkmMRShGrVMq2A
+  name: 'NGÔN NGỮ PHÁT HIỆN: ANH'
+  type:
+    id: jUwODgyNjAyNzk2NTk1NTM
+    name: Paragraph
+    source: System
+  locators:
+  - name: XPATH
+    value: "//p[. = 'Ngôn ngữ phát hiện: Anh']"
+    priority: 0
+  - name: XPATH
+    value: //p
+    priority: 1
+  - name: XPATH
+    value: /html/body/div/div/div[3]/div/div[2]/div[1]/div[1]/div/div[2]/div/button[1]/p
+    priority: 2
+projectParameters: []
+addons:
+- id: xQczalN7yUK6-wtFItRTLA
+  source: Store
+  version: 0.2
+  actions:
+  - id: eZDGTCUB_0CGCjtIljG-aA
+    name: Upload File using XPath
+    description: Upload a file to a specific element identifies by XPath
+    className: actions.UploadFileByXpathAction
+  minSdkLevel: 2
+  minSdkVersion: 0.65.0
+  sdkGeneration: 1
+  language: Java
+  hash: 39D3E443B9616B96F04ACC3BA72CCDBE1F694FAF804F11C21FFDB959ECCFA0D3
