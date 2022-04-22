@@ -1,7 +1,7 @@
-id: cpy-t2W-l0KbiAJIRr73cw
+id: eoJmv1vHrE6bJyDBaUb3dA
 projectId: A8GxyThy2ky8XwQuEy_3Lw
 projectName: My first Project
-created: 2022-04-22T16:02:06.6849134Z
+created: 2022-04-22T16:17:25.9980339Z
 owner: Hải Nam Bùi
 protocol: 1
 tests:
@@ -13,7 +13,7 @@ tests:
   driverType: Chrome
   version: 1.0
   creationDate: 2022-04-18T01:27:45.0000000
-  modificationDate: 2022-04-22T15:58:59.0000000
+  modificationDate: 2022-04-22T16:15:35.0000000
   settings:
     automationAssistant: true
     appId: xigYDYrSMEWao_AV5aOy5g
@@ -219,7 +219,7 @@ tests:
     invertResult: false
     order: 10
     repeat: 1
-    type: Action
+    type: Addon
     elementId: lCIQt4ZmEEaXbR5gZUFCDw
     settings:
       sleepTime: -1
@@ -228,11 +228,12 @@ tests:
       failureBehaviorType: Inherit
       takeScreenshotConditionType: Inherit
     action:
-      id: 6f94fdaa-0041-4265-b73b-ecfcbe702d66
-      source: System
+      id: vIixaIuPdESZy7F5a1d_Dg
+      source: Store
+      addonId: kdm6mjOcjEGSxdIP19l55g
     parameterMaps:
-    - name: keys
-      value: C:\fakepath\test_file_2.xlsx
+    - name: PATH
+      value: /home/nam/Workspace/KC4.0_DichDaNgu_FrontEnd/tests/xlsx_requests/test_files/test_file_2.xlsx
       direction: Input
     conditions: []
     validations: []
@@ -438,4 +439,17 @@ elements:
     value: /html/body/div/div/div[3]/div/div/div/div/div/div/div/div/div/form/button/div
     priority: 2
 projectParameters: []
-addons: []
+addons:
+- id: kdm6mjOcjEGSxdIP19l55g
+  source: Store
+  version: 0.2
+  actions:
+  - id: vIixaIuPdESZy7F5a1d_Dg
+    name: Upload file
+    description: Uploads a file to a given element with the 'file' type
+    className: UploadFileElementAction
+  minSdkLevel: 2
+  minSdkVersion: 0.65.0
+  sdkGeneration: 1
+  language: Java
+  hash: 60728201DEA798F81661DD2D23E27C23B8BF5BFD9D0AB5D0DEC48AB2B481AFB0
