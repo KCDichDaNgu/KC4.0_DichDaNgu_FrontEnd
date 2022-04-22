@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { toastError, toastInformLimitReached } from '../components/Toast';
 import { ACCESS_TOKEN } from '../constants/envVar';
-const SERVER_URL = 'http://localhost:8001';
+const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 
 const queryString = require('query-string');
 
