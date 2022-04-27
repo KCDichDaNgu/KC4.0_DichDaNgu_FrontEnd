@@ -1,0 +1,295 @@
+id: 3Dc6Q6L1xES-AVrEhOESjw
+projectId: 0H-KB3pUukajAQNNNyhliA
+projectName: My first Project
+created: 2022-04-13T00:44:32.8903044Z
+owner: Duong Nguyen
+protocol: 1
+tests:
+- id: g7pwfaRzvUmpf1TAfDKQRA
+  name: test_login_002
+  description: ''
+  platform: Web
+  type: Web
+  driverType: Chrome
+  version: 0.1
+  creationDate: 2022-04-13T00:21:06.0000000
+  modificationDate: 2022-04-13T00:22:00.0000000
+  settings:
+    automationAssistant: true
+    appId: 9it_3AdWuEWX1He3L_vdyA
+    stepSleepTime: 500
+    stepTimeout: 15000
+    stepSleepTiming: Before
+    stepFailureBehaviorType: Abort
+    stepTakeScreenshotConditionType: Failure
+  application:
+    id: 9it_3AdWuEWX1He3L_vdyA
+    name: INT3117
+    url: http://localhost:3000/
+    platform: Web
+  steps:
+  - id: nh6yoiVz9kqkbSuONptzfw
+    comments: Navigates the specified URL (Auto-generated)
+    enabled: true
+    invertResult: false
+    order: 1
+    repeat: 1
+    type: Action
+    settings:
+      sleepTime: -1
+      timeout: -1
+      sleepTiming: Inherit
+      failureBehaviorType: Inherit
+      takeScreenshotConditionType: Inherit
+    action:
+      id: 49c5d8d8-4ba8-42f0-823d-702e6acfb23a
+      source: System
+    parameterMaps:
+    - name: url
+      value: '{{ApplicationURL}}'
+      direction: Input
+    conditions: []
+    validations: []
+    contexts: []
+  - id: LpAKFKrnGEW5TX5XHGx5xQ
+    enabled: true
+    invertResult: false
+    order: 2
+    repeat: 1
+    type: Action
+    elementId: rSDYaiVv_U-8LEndtyeENw
+    settings:
+      sleepTime: -1
+      timeout: -1
+      sleepTiming: Inherit
+      failureBehaviorType: Inherit
+      takeScreenshotConditionType: Inherit
+    action:
+      id: 02d572b2-d610-4700-9ad3-40076ddb9807
+      source: System
+    parameterMaps: []
+    conditions: []
+    validations: []
+    contexts: []
+  - id: kA7wodH7z0OO9MQXSfBwtA
+    enabled: true
+    invertResult: false
+    order: 3
+    repeat: 1
+    type: Action
+    elementId: oDRfQKla50CsqGca0tufHw
+    settings:
+      sleepTime: -1
+      timeout: -1
+      sleepTiming: Inherit
+      failureBehaviorType: Inherit
+      takeScreenshotConditionType: Inherit
+    action:
+      id: 02d572b2-d610-4700-9ad3-40076ddb9807
+      source: System
+    parameterMaps: []
+    conditions: []
+    validations: []
+    contexts: []
+  - id: zp_TDIkq60aVA7RZeKH2oA
+    enabled: true
+    invertResult: false
+    order: 4
+    repeat: 1
+    type: Action
+    elementId: IMrTEgmJRkq3DgCV_bloPw
+    settings:
+      sleepTime: -1
+      timeout: -1
+      sleepTiming: Inherit
+      failureBehaviorType: Inherit
+      takeScreenshotConditionType: Inherit
+    action:
+      id: 02d572b2-d610-4700-9ad3-40076ddb9807
+      source: System
+    parameterMaps: []
+    conditions: []
+    validations: []
+    contexts: []
+  - id: FCGYNistnU6BXBc-oEWFtQ
+    enabled: true
+    invertResult: false
+    order: 5
+    repeat: 1
+    type: Action
+    elementId: IMrTEgmJRkq3DgCV_bloPw
+    settings:
+      sleepTime: -1
+      timeout: -1
+      sleepTiming: Inherit
+      failureBehaviorType: Inherit
+      takeScreenshotConditionType: Inherit
+    action:
+      id: 6f94fdaa-0041-4265-b73b-ecfcbe702d66
+      source: System
+    parameterMaps:
+    - name: keys
+      value: '!@#!@#$!@$%#$%!'
+      direction: Input
+    conditions: []
+    validations: []
+    contexts: []
+  - id: O7ZFMhP2p0ivSnYF0ESSbw
+    enabled: true
+    invertResult: false
+    order: 6
+    repeat: 1
+    type: Action
+    elementId: Z_USPt5jREq18lm-ZXh4NA
+    settings:
+      sleepTime: -1
+      timeout: -1
+      sleepTiming: Inherit
+      failureBehaviorType: Inherit
+      takeScreenshotConditionType: Inherit
+    action:
+      id: 6f94fdaa-0041-4265-b73b-ecfcbe702d66
+      source: System
+    parameterMaps:
+    - name: keys
+      value: mothaibabonhaibamot!@#!@#@$%!@#$!%@DSFASDFFASERQWERQW!@#$!@#$!
+      direction: Input
+    conditions: []
+    validations: []
+    contexts: []
+  - id: lndJUTqe2keNFEAIZcFj0w
+    enabled: true
+    invertResult: false
+    order: 7
+    repeat: 1
+    type: Action
+    elementId: J1hpUCZ5DkOocDWwAckHvg
+    settings:
+      sleepTime: -1
+      timeout: -1
+      sleepTiming: Inherit
+      failureBehaviorType: Inherit
+      takeScreenshotConditionType: Inherit
+    action:
+      id: 02d572b2-d610-4700-9ad3-40076ddb9807
+      source: System
+    parameterMaps: []
+    conditions: []
+    validations: []
+    contexts: []
+  - id: haKDamdOHUCTFGfcqWYKHA
+    enabled: true
+    invertResult: false
+    order: 8
+    repeat: 1
+    type: Action
+    elementId: Ohz3r0hXm0elLsee4d5-UA
+    settings:
+      sleepTime: -1
+      timeout: -1
+      sleepTiming: Inherit
+      failureBehaviorType: Inherit
+      takeScreenshotConditionType: Inherit
+    action:
+      id: 02d572b2-d610-4700-9ad3-40076ddb9807
+      source: System
+    parameterMaps: []
+    conditions: []
+    validations: []
+    contexts: []
+  parameters:
+  - name: ApplicationURL
+    description: Auto generated application URL parameter
+    value: http://localhost:3000/
+    type: Input
+auxTests: []
+elements:
+- id: IMrTEgmJRkq3DgCV_bloPw
+  name: outlined-basic
+  type:
+    id: jUwODgyNjAyNzk2NTk1NDY
+    name: Textbox
+    source: System
+  locators:
+  - name: XPATH
+    value: //div[1]/div/div/input
+    priority: 0
+  - name: XPATH
+    value: /html/body/div/div/div[3]/div/div/div/div/div/div/div/div/div/form/div[1]/div/div/input
+    priority: 1
+- id: Z_USPt5jREq18lm-ZXh4NA
+  name: outlined-basic1
+  type:
+    id: jUwODgyNjAyNzk2NTk1NDY
+    name: Textbox
+    source: System
+  locators:
+  - name: XPATH
+    value: //div[2]//input
+    priority: 0
+  - name: XPATH
+    value: /html/body/div/div/div[3]/div/div/div/div/div/div/div/div/div/form/div[2]/div/div/input
+    priority: 1
+- id: Ohz3r0hXm0elLsee4d5-UA
+  name: Đăng nhập1
+  type:
+    id: jUwODgyNjAyNzk2NTk1NjM
+    name: Div
+    source: System
+  locators:
+  - name: XPATH
+    value: //button/div[. = 'Đăng nhập']
+    priority: 0
+  - name: XPATH
+    value: //form/button/div
+    priority: 1
+  - name: XPATH
+    value: /html/body/div/div/div[3]/div/div/div/div/div/div/div/div/div/form/button/div
+    priority: 2
+- id: J1hpUCZ5DkOocDWwAckHvg
+  name: Đăng nhập bằng Google
+  type:
+    id: jUwODgyNjAyNzk2NTk1NjM
+    name: Div
+    source: System
+  locators:
+  - name: XPATH
+    value: //div[. = 'Đăng nhập bằng Google']
+    priority: 0
+  - name: XPATH
+    value: //div/button/div
+    priority: 1
+  - name: XPATH
+    value: /html/body/div/div/div[3]/div/div/div/div/div/div/div/div/div/button/div
+    priority: 2
+- id: rSDYaiVv_U-8LEndtyeENw
+  name: path
+  type:
+    id: jUwODgyNjAyNzk2NTk1NDM
+    name: Generic Web Element
+    source: System
+  locators:
+  - name: XPATH
+    value: //body/div/div/div[2]//*[name()='path']
+    priority: 0
+  - name: XPATH
+    value: /html/body/div/div/div[2]/div/div/button/*[name()='svg']/*[name()='path']
+    priority: 1
+- id: oDRfQKla50CsqGca0tufHw
+  name: Đăng nhập2
+  type:
+    id: jUwODgyNjAyNzk2NTk1NjU
+    name: span
+    source: System
+  locators:
+  - name: XPATH
+    value: //span[. = 'Đăng nhập']
+    priority: 0
+  - name: XPATH
+    value: //li[4]//span
+    priority: 1
+  - name: XPATH
+    value: /html/body/div/div/div[2]/nav/ul/li[4]/a/span
+    priority: 2
+projectParameters: []
+addons: []

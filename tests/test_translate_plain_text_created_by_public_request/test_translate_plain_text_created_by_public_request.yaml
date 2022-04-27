@@ -1,0 +1,258 @@
+id: kHuc2sUvr0Wg9dLAfEDzsQ
+projectId: vkH32iiA7EOkcMXfXN_oMQ
+projectName: My first Project
+created: 2022-04-04T01:19:34.0750577Z
+owner: Kiên Lê
+protocol: 1
+tests:
+- id: QGUfe86p30SGgxSwXZW8-g
+  name: Test Plain Text
+  description: Test Plain Text in This KC4.0
+  platform: Web
+  type: Web
+  driverType: Chrome
+  version: 0.1
+  creationDate: 2022-04-03T03:57:14.0000000
+  modificationDate: 2022-04-04T01:17:57.0000000
+  settings:
+    automationAssistant: true
+    appId: X4TPYxzlHE-6p0nZPiMf2A
+    stepSleepTime: 500
+    stepTimeout: 15000
+    stepSleepTiming: Before
+    stepFailureBehaviorType: Abort
+    stepTakeScreenshotConditionType: Failure
+  application:
+    id: X4TPYxzlHE-6p0nZPiMf2A
+    name: UET Dịch máy đa ngôn ngữ
+    url: http://localhost:3000/
+    platform: Web
+  steps:
+  - id: wjMaTq2lG0eJe4tPgkWprA
+    comments: Navigates the specified URL (Auto-generated)
+    enabled: true
+    invertResult: false
+    order: 1
+    repeat: 1
+    type: Action
+    settings:
+      sleepTime: -1
+      timeout: -1
+      sleepTiming: Inherit
+      failureBehaviorType: Inherit
+      takeScreenshotConditionType: Inherit
+    action:
+      id: 49c5d8d8-4ba8-42f0-823d-702e6acfb23a
+      source: System
+    parameterMaps:
+    - name: url
+      value: '{{ApplicationURL}}'
+      direction: Input
+    conditions: []
+    validations: []
+    contexts: []
+  - id: ujhzVh-0-EeehmNdAL4XYg
+    enabled: true
+    invertResult: false
+    order: 2
+    repeat: 1
+    type: Action
+    elementId: VfYY7JqcC0Si141EhK6IoQ
+    settings:
+      sleepTime: -1
+      timeout: -1
+      sleepTiming: Inherit
+      failureBehaviorType: Inherit
+      takeScreenshotConditionType: Inherit
+    action:
+      id: 02d572b2-d610-4700-9ad3-40076ddb9807
+      source: System
+    parameterMaps: []
+    conditions: []
+    validations: []
+    contexts: []
+  - id: qFgWq65-Oku_1xEmoYnnjw
+    enabled: true
+    invertResult: false
+    order: 3
+    repeat: 1
+    type: Action
+    elementId: M5aOG35LJEuhLPyThVbISA
+    settings:
+      sleepTime: -1
+      timeout: -1
+      sleepTiming: Inherit
+      failureBehaviorType: Inherit
+      takeScreenshotConditionType: Inherit
+    action:
+      id: 6f94fdaa-0041-4265-b73b-ecfcbe702d66
+      source: System
+    parameterMaps:
+    - name: keys
+      value: response
+      direction: Input
+    conditions: []
+    validations: []
+    contexts: []
+  - id: BUKVzmh6E0aD5__ZIk_png
+    comments: ''
+    enabled: true
+    invertResult: false
+    order: 4
+    repeat: 1
+    type: Action
+    elementId: 5QGo6iUdzEqSyAC0dGD-jQ
+    settings:
+      sleepTime: -1
+      timeout: -1
+      sleepTiming: Inherit
+      failureBehaviorType: Inherit
+      takeScreenshotConditionType: Inherit
+    action:
+      id: 02d572b2-d610-4700-9ad3-40076ddb9807
+      source: System
+    parameterMaps: []
+    conditions: []
+    validations: []
+    contexts: []
+  - id: 7tyTuN9VUkGKOafJdRIYwA
+    comments: ''
+    enabled: true
+    invertResult: false
+    order: 5
+    repeat: 1
+    type: Action
+    elementId: yiaihojkeES1vvoWPvqDQg
+    settings:
+      sleepTime: -1
+      timeout: -1
+      sleepTiming: Inherit
+      failureBehaviorType: Inherit
+      takeScreenshotConditionType: Inherit
+    action:
+      id: 02d572b2-d610-4700-9ad3-40076ddb9807
+      source: System
+    parameterMaps: []
+    conditions: []
+    validations: []
+    contexts: []
+  - id: GKvpDXysJ0W0aS9UeVXW2w
+    comments: ''
+    enabled: true
+    invertResult: false
+    order: 6
+    repeat: 1
+    type: Action
+    elementId: o3Eo4-sAQUmK1B44TLXuuw
+    settings:
+      sleepTime: -1
+      timeout: -1
+      sleepTiming: Inherit
+      failureBehaviorType: Inherit
+      takeScreenshotConditionType: Inherit
+    action:
+      id: 85da72d0-c5a4-4587-be33-8cb3b5fa7910
+      source: System
+    parameterMaps:
+    - name: text
+      value: >
+        phản ứng xxx
+      direction: Input
+    conditions: []
+    validations: []
+    contexts: []
+  parameters:
+  - name: ApplicationURL
+    description: Auto generated application URL parameter
+    value: http://localhost:3000/
+    type: Input
+auxTests: []
+elements:
+- id: VfYY7JqcC0Si141EhK6IoQ
+  name: Nhập văn bản
+  type:
+    id: jUwODgyNjAyNzk2NTk2OTA
+    name: textarea
+    source: System
+  locators:
+  - name: XPATH
+    value: //textarea[@placeholder = 'Nhập văn bản']
+    priority: 0
+  - name: XPATH
+    value: //div/textarea
+    priority: 1
+  - name: XPATH
+    value: /html/body/div/div/div[3]/div/div[2]/div[2]/div/div[1]/div/div[1]/textarea
+    priority: 2
+- id: o3Eo4-sAQUmK1B44TLXuuw
+  name: phản ứng
+  type:
+    id: jUwODgyNjAyNzk2NTk2OTA
+    name: textarea
+    source: System
+  locators:
+  - name: XPATH
+    value: >-
+      //textarea[. = 'phản ứng
+
+      ']
+    priority: 0
+  - name: XPATH
+    value: //div[2]/div/div/textarea
+    priority: 1
+  - name: XPATH
+    value: /html/body/div/div/div[3]/div/div[2]/div[2]/div/div[2]/div/div[1]/textarea
+    priority: 2
+- id: M5aOG35LJEuhLPyThVbISA
+  name: Nhập văn bản1
+  type:
+    id: jUwODgyNjAyNzk2NTk2OTA
+    name: textarea
+    source: System
+  locators:
+  - name: XPATH
+    value: //textarea[. = 'response']
+    priority: 1
+  - name: XPATH
+    value: //textarea[@placeholder = 'Nhập văn bản']
+    priority: 0
+  - name: XPATH
+    value: //div[1]/div/div/textarea
+    priority: 2
+  - name: XPATH
+    value: /html/body/div/div/div[3]/div/div[2]/div[2]/div/div[1]/div/div[1]/textarea
+    priority: 3
+- id: 5QGo6iUdzEqSyAC0dGD-jQ
+  name: ANH
+  type:
+    id: jUwODgyNjAyNzk2NTk1NDc
+    name: Button
+    source: System
+  locators:
+  - name: XPATH
+    value: //button[. = 'Anh']
+    priority: 0
+  - name: XPATH
+    value: //div[2]//button[2]
+    priority: 1
+  - name: XPATH
+    value: /html/body/div/div/div[3]/div/div[2]/div[1]/div[1]/div/div[2]/div/button[2]
+    priority: 2
+- id: yiaihojkeES1vvoWPvqDQg
+  name: DỊCH
+  type:
+    id: jUwODgyNjAyNzk2NTk1NDc
+    name: Button
+    source: System
+  locators:
+  - name: XPATH
+    value: //button[. = 'Dịch']
+    priority: 0
+  - name: XPATH
+    value: //div[2]/div/div[2]/div/button
+    priority: 1
+  - name: XPATH
+    value: /html/body/div/div/div[3]/div/div[2]/div[2]/div/div[2]/div/button
+    priority: 2
+projectParameters: []
+addons: []
