@@ -53,10 +53,22 @@ function Index(props) {
 	const getSetting = async () => {
         let result = await axiosHelper.getSystemSetting();
 		
-        if (result.code == STATUS_CODE.success) {
+        if (result.code === STATUS_CODE.success) {
             setSystemSetting(result.data);
         }
     };
+
+	useEffect(() => {
+		if (currentTranslationHistory && (currentTranslationHistory.status === 'closed' || currentTranslationHistory.status === 'cancelled')) {
+			toastError(t('serverError'));
+		}
+	}, [currentTranslationHistory, t])
+
+	useEffect(() => {
+		if (currentLangDetectionHistory && (currentLangDetectionHistory.status === 'closed' || currentLangDetectionHistory.status === 'cancelled')) {
+			toastError(t('serverError'));
+		}
+	}, [currentLangDetectionHistory, t])
 
 	useEffect(() => {
 		getSetting()
@@ -69,48 +81,9 @@ function Index(props) {
 		}));
 	};
 
-	/**
-	 * @description useEffect cho việc check kết quả và báo noti cho 
-	 * người dùng
-	 */
-	useEffect(() => {
-		switch (translationState.currentState) {
-		case STATE.SUCCESS:
-			break;
-		case STATE.FAILURE:
-			// toastError(translationState.err);
-			break;
-		case STATE.LOADING: {
-			break;
-		}
-		default:
-			break;
-		}
-	}, [translationState.currentState]);
-
-
-	/**
-	 * @description useEffect cho việc check kết quả và báo noti cho 
-	 * người dùng
-	 */
-	useEffect(() => {
-		switch (translationFileState.currentState) {
-		case STATE.SUCCESS:
-			break;
-		case STATE.FAILURE:
-			toastError(translationFileState.err);
-			break;
-		case STATE.LOADING: {
-			break;
-		}
-		default:
-			break;
-		}
-	}, [translationFileState.currentState]);
-
 	useEffect(() => {
 		
-		if (translationState.currentState === STATE.LOADING && translateType == TRANSLATE_TYPE.plainText) {
+		if (translationState.currentState === STATE.LOADING && translateType === TRANSLATE_TYPE.plainText) {
 
 			const interval1 = setInterval(() => {
 				setCurrentTranslationHistory(oldX => translationState.currentTranslationHistory)
@@ -122,7 +95,7 @@ function Index(props) {
 			};
 		}
 
-		if (translationFileState.currentState === STATE.LOADING && translateType == TRANSLATE_TYPE.document) {
+		if (translationFileState.currentState === STATE.LOADING && translateType === TRANSLATE_TYPE.document) {
 
 			const interval1 = setInterval(() => {
 				setCurrentTranslationHistory(oldX => translationFileState.currentTranslationHistory)
@@ -165,12 +138,12 @@ function Index(props) {
 		let posInTranslationQueue = 0;
 		let estimatedWattingTime = 0;
 
-		if (translationState.currentState === STATE.LOADING && translationState.currentTranslationHistory && translateType == TRANSLATE_TYPE.plainText) {
+		if (translationState.currentState === STATE.LOADING && translationState.currentTranslationHistory && translateType === TRANSLATE_TYPE.plainText) {
 			posInTranslationQueue = translationState.currentTranslationHistory.posInTranslationQueue;
 			estimatedWattingTime = translationState.currentTranslationHistory.estimatedWattingTime;
 		}
 
-		if (translationFileState.currentState === STATE.LOADING && translationFileState.currentTranslationHistory && translateType == TRANSLATE_TYPE.document) {
+		if (translationFileState.currentState === STATE.LOADING && translationFileState.currentTranslationHistory && translateType === TRANSLATE_TYPE.document) {
 			posInTranslationQueue = translationFileState.currentTranslationHistory.posInTranslationQueue;
 			estimatedWattingTime = translationFileState.currentTranslationHistory.estimatedWattingTime;
 		}
@@ -198,12 +171,12 @@ function Index(props) {
 		let posInLangDetectionQueue = 0;
 		let estimatedWattingTime = 0;
 		
-		if (translationState.currentState === STATE.LOADING && translationState.currentLangDetectionHistory && translateType == TRANSLATE_TYPE.plainText) {
+		if (translationState.currentState === STATE.LOADING && translationState.currentLangDetectionHistory && translateType === TRANSLATE_TYPE.plainText) {
 			posInLangDetectionQueue = translationState.currentLangDetectionHistory.posInLangDetectionQueue;
 			estimatedWattingTime = translationState.currentLangDetectionHistory.estimatedWattingTime;
 		}
 
-		if (translationFileState.currentState === STATE.LOADING && translationFileState.currentLangDetectionHistory && translateType == TRANSLATE_TYPE.document) {
+		if (translationFileState.currentState === STATE.LOADING && translationFileState.currentLangDetectionHistory && translateType === TRANSLATE_TYPE.document) {
 			posInLangDetectionQueue = translationFileState.currentLangDetectionHistory.posInLangDetectionQueue;
 			estimatedWattingTime = translationFileState.currentLangDetectionHistory.estimatedWattingTime;
 		}
@@ -232,7 +205,7 @@ function Index(props) {
 			receiverEmail: updateReceiverEmailForm.receiverEmail
 		}) 
 		
-		if (result.code == STATUS_CODE.success) {
+		if (result.code === STATUS_CODE.success) {
 			message.success(t('updateSuccess'));
 		}
 	}
@@ -247,7 +220,7 @@ function Index(props) {
 							// props.changeOutput(null);
 						}}
 						style={{ fontWeight: 'bold', marginRight: '20px', display: 'flex', backgroundColor: 'white', color: 'grey', borderColor: 'grey' }}
-						variant={translateType == TRANSLATE_TYPE.plainText ? 'outlined' : null}
+						variant={translateType === TRANSLATE_TYPE.plainText ? 'outlined' : null}
 						disabled={translationState.currentState === STATE.LOADING || translationFileState.currentState === STATE.LOADING}
 					>
 						<div style={{ paddingRight: 5, alignContent: 'center' }}>
@@ -266,7 +239,7 @@ function Index(props) {
 							// props.changeOutput(null);
 						}}
 						style={{ fontWeight: 'bold', marginRight: '20px', display: 'flex', backgroundColor: 'white', color: 'grey', borderColor: 'grey' }}
-						variant={translateType == TRANSLATE_TYPE.document ? 'outlined' : null}
+						variant={translateType === TRANSLATE_TYPE.document ? 'outlined' : null}
 						disabled={translationState.currentState === STATE.LOADING || translationFileState.currentState === STATE.LOADING}
 					>
 						<div style={{ paddingRight: 5, alignContent: 'center' }}>

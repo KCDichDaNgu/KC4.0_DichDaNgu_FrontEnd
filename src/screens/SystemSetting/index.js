@@ -103,7 +103,7 @@ const SettingPage = () => {
     const getSetting = async () => {
         let result = await axiosHelper.getSystemSetting();
 
-        if (result.code == STATUS_CODE.success) {
+        if (result.code === STATUS_CODE.success) {
             form.setFieldsValue(result.data);
         }
     };
@@ -112,7 +112,7 @@ const SettingPage = () => {
 
         let result = await axiosHelper.updateSystemSetting(updatedData);
 
-        if (result.code == STATUS_CODE.success) {
+        if (result.code === STATUS_CODE.success) {
             message.success(t('updateSuccess'));
 
             getSetting();

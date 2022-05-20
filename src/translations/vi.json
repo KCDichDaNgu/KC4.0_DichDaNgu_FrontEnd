@@ -95,6 +95,7 @@
 		"allowedTotalCharsForTextTranslation": "Số ký tự cho phép trong một lần dịch văn bản",
     	"allowedFileSizeInMbForFileTranslation": "Dung lượng tệp cho phép trong một lần dịch tệp"
 	},
+	"serverError": "Hệ thống đang gặp lỗi, xin vui lòng thử lại sau!",
 	"login":"Đăng nhập",
 	"username": "Tên đăng nhập",
 	"lastName": "Họ",

@@ -265,7 +265,7 @@ export const translateFile = (body) => {
 				resolve(result.data);
 			})
 			.catch((error) => {
-				if (error.response.data.message == 'text_translate_limit_reached') {
+				if (error.response.data.message === 'text_translate_limit_reached') {
 					const { used, quota } = error.response.data.data;
 					const { message } = error.response.data;
 					toastInformLimitReached(message, used, quota, 'text');
@@ -290,7 +290,7 @@ export const detectLangFile = (body) => {
 				resolve(result.data);
 			})
 			.catch((error) => {
-				if (error.response.data.message == 'text_translate_limit_reached') {
+				if (error.response.data.message === 'text_translate_limit_reached') {
 					const { used, quota } = error.response.data.data;
 					const { message } = error.response.data;
 					toastInformLimitReached(message, used, quota, 'text');
@@ -309,7 +309,7 @@ export const postTranslate = (body) => {
 				resolve(result.data);
 			})
 			.catch((error) => {
-				if (error.response.data.message == 'text_translate_limit_reached') {
+				if (error.response.data.message === 'text_translate_limit_reached') {
 					const { used, quota } = error.response.data.data;
 					const { message } = error.response.data;
 					toastInformLimitReached(message, used, quota, 'text');

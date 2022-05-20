@@ -1,7 +1,7 @@
 import { 
-	GETHISTORY, 
-	GETHISTORY_FAIL, 
-	GETHISTORY_SUCCESS, 
+	GET_HISTORY, 
+	GET_HISTORY_FAIL, 
+	GET_HISTORY_SUCCESS, 
 	CHANGEHISTORY,
 } from '../constant/historyTypes';
 
@@ -22,13 +22,13 @@ const initialState = {
 
 export default function(state = initialState, action) {
 	switch (action.type) {
-	case GETHISTORY: {
+	case GET_HISTORY: {
 		return {
 			...state,
 			currentState: STATE.LOADING,
 		};
 	}
-	case GETHISTORY_SUCCESS: {
+	case GET_HISTORY_SUCCESS: {
 		return {
 			...state,
 			currentState: STATE.SUCCESS,
@@ -36,7 +36,7 @@ export default function(state = initialState, action) {
 			total: action.payload.total,
 		};
 	}
-	case GETHISTORY_FAIL: {
+	case GET_HISTORY_FAIL: {
 		return {
 			...state,
 			currentState: STATE.FAILURE,

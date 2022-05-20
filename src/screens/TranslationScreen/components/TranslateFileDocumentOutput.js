@@ -23,7 +23,10 @@ function TranslateFileDocumentOutput(props) {
 	* 1. Trong trường hợp có kết quả dịch => reset lại kết quả dịch về rỗng => gọi lại dịch
 	* 2. Còn lại thì dịch vs 2 TH => sourcelang === null (Nhận dạng ngôn ngữ) và sourcelang === vi,cn .. 
  	*/
-	const handleTranslate = () => {
+	const handleTranslate = (e) => {
+
+		e.preventDefault();
+
 		if(translationState.translateCode.sourceLang){
 			const formData = new FormData();
 			formData.append('file', translationFileState.documentFile);
@@ -52,7 +55,7 @@ function TranslateFileDocumentOutput(props) {
 	};
 
 	const isDetect = () =>{ 
-		return (translationState.translateCode.sourceLang == null || translationState.translateCode.detectLang != null);
+		return (translationState.translateCode.sourceLang === null || translationState.translateCode.detectLang != null);
 	};
 
 	const buttonTextDich = () => {

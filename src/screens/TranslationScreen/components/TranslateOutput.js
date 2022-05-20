@@ -31,7 +31,7 @@ function TranslateOutput(props) {
 		if(translationState.translateText.sourceText === '' && translateType === TRANSLATE_TYPE.plainText) {
 			return true;
 		}
-		if ((translationState.translateCode.sourceLang == null || translationState.translateCode.detectLang != null) && translationState.currentState == STATE.FAILURE) {
+		if ((translationState.translateCode.sourceLang === null || translationState.translateCode.detectLang != null) && translationState.currentState === STATE.FAILURE) {
 			return true;
 		};
 		return false;
@@ -42,7 +42,10 @@ function TranslateOutput(props) {
 	* 1. Trong trường hợp có kết quả dịch => reset lại kết quả dịch về rỗng => gọi lại dịch
 	* 2. Còn lại thì dịch vs 2 TH => sourcelang === null (Nhận dạng ngôn ngữ) và sourcelang === vi,cn .. 
  	*/
-	 const handleTranslate = () => {
+	 const handleTranslate = (e) => {
+		
+		e.preventDefault();
+
 		if( translationState.translateText.targetText !== '' ){
 			props.changeTargetText('');
 		}
@@ -61,7 +64,7 @@ function TranslateOutput(props) {
 	};
 
 	const isDetect = () =>{ 
-		return translateType === TRANSLATE_TYPE.plainText && (translationState.translateCode.sourceLang == null || translationState.translateCode.detectLang != null);
+		return translateType === TRANSLATE_TYPE.plainText && (translationState.translateCode.sourceLang === null || translationState.translateCode.detectLang != null);
 	};
 
 	return (

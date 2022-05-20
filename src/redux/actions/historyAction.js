@@ -1,7 +1,7 @@
 import { 
-	GETHISTORY, 
-	GETHISTORY_FAIL, 
-	GETHISTORY_SUCCESS,
+	GET_HISTORY, 
+	GET_HISTORY_FAIL, 
+	GET_HISTORY_SUCCESS,
 	CHANGEHISTORY
 } from '../constant/historyTypes';
 import * as axiosHelper from '../../helpers/axiosHelper';
@@ -23,7 +23,7 @@ export function changeHistory(data) {
  */
 export function getHistoryLoading() {
 	return {
-	  type: GETHISTORY,
+	  type: GET_HISTORY,
 	};
 }
 
@@ -32,7 +32,7 @@ export function getHistoryLoading() {
  */
 export function getHistorySuccess(list, total) {
 	return {
-	  type: GETHISTORY_SUCCESS,
+	  type: GET_HISTORY_SUCCESS,
 	  payload: {
 			data: list,
 			total,
@@ -45,7 +45,7 @@ export function getHistorySuccess(list, total) {
  */
 export function getHistoryFailed(err) {
 	return {
-	  type: GETHISTORY_FAIL,
+	  type: GET_HISTORY_FAIL,
 	  payload: {
 			err,
 		}
