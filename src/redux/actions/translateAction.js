@@ -24,6 +24,7 @@ const STATUS = {
 	TRANSLATING: 'translating',
 	TRANSLATED: 'translated',
 	CANCELLED: 'cancelled',
+	CLOSED: 'closed',
 	DETECTING: 'detecting'
 };
 
@@ -101,6 +102,7 @@ export const changeTarget = (data) => {
  * @description Hoán đổi loại ngôn ngữ ở ra và vào
  */
 export const swapTranslate = (dataSource, dataTarget) => {
+
 	return {
 		type: SWAP_TRANSLATE,
 		payload: {
@@ -231,7 +233,7 @@ const recursiveCheckStatus = async (translationHistoryId, taskId, time, dispatch
 	// if (tmp != JSON.stringify(getTranslationHistoryResult))
 	// 	localStorage.setItem(`get_translation_history_tmp`, JSON.stringify(getTranslationHistoryResult));
 	
-	if(getTranslationHistoryResult.data.status === STATUS.TRANSLATING){
+	if (getTranslationHistoryResult.data.status === STATUS.TRANSLATING){
 		return new Promise((resolve, reject) => {
 			setTimeout(async () => {
 				try {
@@ -296,7 +298,7 @@ const debouncedTranslate = debounce(async (body, dispatch) => {
 			dispatch(translationFailed(getTranslationHistoryResult.message));
 		} else {
 			const getTranslationResult = await axiosHelper.getTranslateResult(getTranslationHistoryResult.data.resultUrl);
-			if (getTranslationResult.status === 'closed'){
+			if (getTranslationResult.status === 'closed' || getTranslationResult.status === 'cancelled'){
 				dispatch(translationFailed(getTranslationHistoryResult.message));
 			}else{
 				dispatch(translationSuccess(getTranslationResult));
@@ -337,9 +339,10 @@ const debouncedTranslateAndDetect = debounce(async (body, dispatch) => {
 			dispatch(detectLangFailed(getSourceLang.message, 'unknown'));
 		} else {
 			const getDetectResult = await axiosHelper.getTranslateResult(getSourceLang.data.resultUrl);
-			if (getDetectResult.status === 'closed'){
+			if (getDetectResult.status === 'closed' || getDetectResult.status === 'cancelled'){
 				dispatch(detectLangFailed(getDetectResult.message, getDetectResult.source_lang));
-			} else {
+			} else if (getDetectResult.source_lang) {
+				
 				// Sử dụng ngôn ngữ phát hiện được và dịch
 				dispatch(detectLangSuccess({target_text: '', source_lang: getDetectResult.source_lang}));
 				const postTranslationResult = await axiosHelper.postTranslate({
@@ -357,6 +360,8 @@ const debouncedTranslateAndDetect = debounce(async (body, dispatch) => {
 				} else {
 					const getTranslationResult = await axiosHelper.getTranslateResult(getTranslationHistoryResult.data.resultUrl);
 					if (getTranslationResult.status === 'closed'){
+						dispatch(detectLangFailed(getTranslationResult.message, getTranslationResult.source_lang));
+					} else if (getTranslationResult.status === 'cancelled'){
 						dispatch(detectLangFailed(getTranslationResult.message, getTranslationResult.source_lang));
 					} else {
 						dispatch(translateAfterDetectLangSuccess(getTranslationResult));

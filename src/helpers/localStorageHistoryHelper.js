@@ -32,7 +32,7 @@
 
 // export const checkVocabularyLocal = () => {
 // 	const arr = [];
-// 	if (arrayVocabulary.length == 0) {
+// 	if (arrayVocabulary.length === 0) {
 // 		localStorage.setItem('Vocabulary', JSON.stringify(arr));
 // 	}
 // 	return null;
@@ -56,7 +56,7 @@
 // 	// eslint-disable-next-line quotes
 // 	console.log("🚀 ~ file: localStorageHelper.js ~ line 56 ~ setVocabularyLocal ~ data", data);
 
-// 	if (arrayVocabulary.length == 0) {
+// 	if (arrayVocabulary.length === 0) {
 // 		arrayVocabulary.push(data);
 // 	} else {
 // 		arrayVocabulary.map((arr) => {
@@ -274,7 +274,7 @@ export const updateRecord = async (id) => {
 
 		const hisDataArr1 = [];
 		hisDataArr.forEach((item) => {
-			if (item.id == id) {
+			if (item.id === id) {
 				item.isSave = !item.isSave;
 			}
 			hisDataArr1.push(item);

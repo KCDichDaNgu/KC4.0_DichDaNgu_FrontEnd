@@ -53,7 +53,7 @@ function TranslateFileDocumentInput(props) {
 								{t('chonTaiLieu')}
 							</Typography>
 							<Typography>
-								{translateType == TRANSLATE_TYPE.document ? t('taiTepTaiLieu') : t('taiTepAmThanh')}
+								{translateType === TRANSLATE_TYPE.document ? t('taiTepTaiLieu') : t('taiTepAmThanh')}
 							</Typography>
 							<Typography p={1}>
 								({t('dungLuongToiDa')} {systemSetting.allowedFileSizeInMbForFileTranslation} MB)

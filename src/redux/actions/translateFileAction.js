@@ -255,10 +255,10 @@ const debouncedTranslateAndDetectFile = debounce(async (body, dispatch) => {
 			dispatch(detectLangFailed(getSourceLang.message, 'unknown'));
 		} else {
 			const getDetectResult = await axiosHelper.getTranslateResult(getSourceLang.data.resultUrl);
-			if (getDetectResult.status === 'closed'){
+			if (getDetectResult.status === 'closed' || getDetectResult.status === 'cancelled'){
 				dispatch(detectLangFileFailed(getDetectResult.message, getDetectResult.source_lang));
 				dispatch(detectLangFailed(getDetectResult.message, getDetectResult.source_lang));
-			} else {
+			} else if (getDetectResult.source_lang) {
 				// Sử dụng ngôn ngữ phát hiện được và dịch
 				dispatch(detectLangFileSuccess({source_lang: getDetectResult.source_lang}));
 				dispatch(detectLangSuccess({source_lang: getDetectResult.source_lang}));
@@ -279,6 +279,9 @@ const debouncedTranslateAndDetectFile = debounce(async (body, dispatch) => {
 				} else {
 					const getTranslationResult = await axiosHelper.getTranslateResult(getTranslationHistoryResult.data.resultUrl);
 					if (getTranslationResult.status === 'closed'){
+						dispatch(detectLangFileFailed(getTranslationResult.message, getTranslationResult.source_lang));
+						dispatch(detectLangFailed(getTranslationResult.message, getTranslationResult.source_lang));
+					} else if (getTranslationResult.status === 'cancelled') {
 						dispatch(detectLangFileFailed(getTranslationResult.message, getTranslationResult.source_lang));
 						dispatch(detectLangFailed(getTranslationResult.message, getTranslationResult.source_lang));
 					} else {

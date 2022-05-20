@@ -66,6 +66,7 @@ export default function(state = initialState, action) {
 		};
 	}
 	case TRANSLATION_FAIL: {
+		console.log('asdsdaasdasd')
 		return {
 			...state,
 			currentState: STATE.FAILURE,

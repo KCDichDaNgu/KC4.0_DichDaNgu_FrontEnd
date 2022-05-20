@@ -29,7 +29,14 @@ function TranslationChooselang(props) {
 	  * @description Function hoán đổi loại ngôn ngữ
 	  */
 	const handleSwap = () => {
-		props.swapTranslate(translationState.translateCode.targetLang, translationState.translateCode.sourceLang);
+
+		let newSourceLang = translationState.translateCode.targetLang,
+			newTargetLang = translationState.translateCode.sourceLang;
+
+		if (newSourceLang === 'vi') newTargetLang = 'en';
+		
+		props.swapTranslate(newSourceLang, newTargetLang);
+		
 		if (translationState.translateText.targetText !== '' && translateType === TRANSLATE_TYPE.plainText) {
 			props.changeSourceText(translationState.translateText.targetText);
 			props.changeTargetText(translationState.translateText.sourceText);
@@ -41,7 +48,7 @@ function TranslationChooselang(props) {
 	* Trong TH đã có kết quả dịch, sẽ reset kết quả về rỗng
 	  */
 	const handleChangeFrom = (event, newValue) => {
-		if (newValue == 'detect') props.changeSource(null);
+		if (newValue === 'detect') props.changeSource(null);
 		else props.changeSource(newValue);
 		if (translationState.translateCode.detectLang !== null) {
 			props.changeDetectLang(null);
@@ -87,7 +94,7 @@ function TranslationChooselang(props) {
 	};
 
 	const returnTabsValue = () => {
-		if (translationState.translateCode.detectLang !== null || translationState.translateCode.sourceLang == null) {
+		if (translationState.translateCode.detectLang !== null || translationState.translateCode.sourceLang === null) {
 			return 'detect';
 		}
 		else
@@ -103,7 +110,7 @@ function TranslationChooselang(props) {
 	};
 
 	const renderDetectLabel = () => {
-		if (translationState.translateCode.detectLang == null) {
+		if (!translationState.translateCode.detectLang) {
 			if (translationState.currentState === STATE.FAILURE)
 				return (
 					<Typography color={showColorText()}>Không thể nhận diện ngôn ngữ</Typography>
@@ -131,9 +138,10 @@ function TranslationChooselang(props) {
 					}}
 				>
 					<Tab
-						icon={isDetectFail() ?
-							null :
-							<Tooltip title={t('Translate.phathienngonngu')}><PageviewIcon fontSize='medium' /></Tooltip>}
+						// icon={isDetectFail() ?
+						// 	null :
+						// 	<Tooltip title={t('Translate.phathienngonngu')}><PageviewIcon fontSize='medium' /></Tooltip>}
+						icon={<Tooltip title={t('Translate.phathienngonngu')}><PageviewIcon fontSize='medium' /></Tooltip>}
 						label={renderDetectLabel()}
 						sx={{
 							minWidth: 'auto',
@@ -154,7 +162,8 @@ function TranslationChooselang(props) {
 				<IconButton
 					aria-label="Example"
 					onClick={handleSwap}
-					disabled={translationState.translateCode.sourceLang === null || isDisableTab()}>
+					// disabled={translationState.translateCode.sourceLang === null || isDisableTab()}
+					>
 					<SwapHorizIcon fontSize='medium' />
 				</IconButton>
 			</div>

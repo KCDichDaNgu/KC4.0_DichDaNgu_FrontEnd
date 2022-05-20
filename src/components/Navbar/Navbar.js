@@ -122,7 +122,7 @@ function Navbar() {
 					{sidebarData.map((item, index) => {
 						return (
 							<li key={index} className={styles.nav_text} >
-								{item.type == 'screen' ?
+								{item.type === 'screen' ?
 									<Link to={item.path} onClick={() => hideSidebar()}>
 										<span>{item.title}</span>
 									</Link> :

@@ -1,4 +1,4 @@
-export const GETHISTORY = 'app/history/GETHISTORY';
-export const GETHISTORY_SUCCESS = 'app/history/GETHISTORY_SUCCESS';
-export const GETHISTORY_FAIL = 'app/history/GETHISTORY_FAIL';
+export const GET_HISTORY = 'app/history/GET_HISTORY';
+export const GET_HISTORY_SUCCESS = 'app/history/GET_HISTORY_SUCCESS';
+export const GET_HISTORY_FAIL = 'app/history/GET_HISTORY_FAIL';
 export const CHANGEHISTORY = 'app/history/CHANGEHISTORY';
