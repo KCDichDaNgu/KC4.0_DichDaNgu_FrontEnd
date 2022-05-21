@@ -34,6 +34,7 @@ function TranslationChooselang(props) {
 			newTargetLang = translationState.translateCode.sourceLang;
 
 		if (newSourceLang === 'vi') newTargetLang = 'en';
+		// else newSourceLang = 'vi';
 		
 		props.swapTranslate(newSourceLang, newTargetLang);
 		
@@ -94,11 +95,12 @@ function TranslationChooselang(props) {
 	};
 
 	const returnTabsValue = () => {
-		if (translationState.translateCode.detectLang !== null || translationState.translateCode.sourceLang === null) {
+		if (translationState.translateCode.sourceLang !== null) return translationState.translateCode.sourceLang;
+
+		if (translationState.translateCode.detectLang !== null || 
+			translationState.translateCode.sourceLang === null) {
 			return 'detect';
 		}
-		else
-			return translationState.translateCode.sourceLang;
 	};
 
 	const isDisableTab = () => {
@@ -121,6 +123,10 @@ function TranslationChooselang(props) {
 			<Typography color={showColorText()}>Ngôn ngữ phát hiện: {t(translationState.translateCode.detectLang)}</Typography>
 		);
 	};
+
+	const showDetectLangTab = () => {
+		return translationState.translateCode.sourceLang === 'vi';
+	}
 
 	return (
 		<div style={{ borderBottom: '1px solid #ccc', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }} >
@@ -148,9 +154,10 @@ function TranslationChooselang(props) {
 							minHeight: 'auto',
 						}}
 						value={'detect'}
-						disabled={isDisableTab()}
+						disabled={isDisableTab() || showDetectLangTab()}
 						style={{ fontWeight: 'bold' }}
 					/> 
+
 					{translationState.isSwap ? <Tab label={t('Translate.listLanguage.anh')} value={'en'} disabled={isDisableTab()} style={{ fontWeight: 'bold' }} /> : null}
 					{translationState.isSwap ? <Tab label={t('Translate.listLanguage.trung')} value={'zh'} disabled={isDisableTab()} style={{ fontWeight: 'bold' }} /> : null}
 					{translationState.isSwap ? <Tab label={t('Translate.listLanguage.lao')} value={'lo'} disabled={isDisableTab()} style={{ fontWeight: 'bold' }} /> : null}
