@@ -48,6 +48,9 @@ function TranslateInput(props) {
 
 		if (evt.target.value.length < systemSetting.allowedTotalCharsForTextTranslation) 
 			props.changeSourceText(evt.target.value);
+		else {
+			props.changeSourceText(evt.target.value.substring(0, systemSetting.allowedTotalCharsForTextTranslation));
+		}
 		
 		if( translationState.translateText.targetText !== '' ){
 			props.changeTargetText('');
