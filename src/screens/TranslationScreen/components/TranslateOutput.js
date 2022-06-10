@@ -74,7 +74,7 @@ function TranslateOutput(props) {
 			style={{
 				backgroundColor: translationState.translateText.targetText === '' ? '#f3f3f3' : 'white'
 			}}>
-			{translationState.translateText.targetText !== '' ?
+			{translationState.translateText.targetText ?
 				<div>
 					<div className={styles.boxdich}>
 						<TextareaAutosize

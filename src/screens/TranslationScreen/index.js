@@ -110,6 +110,7 @@ function Index(props) {
 		
 	}, [
 		translationState, 
+		translateType,
 		translationFileState,
 	])
 
@@ -119,6 +120,8 @@ function Index(props) {
 			return <TranslateOutput translateType={translateType} />;
 		case TRANSLATE_TYPE.document:
 			return <TranslateFileDocumentOutput translateType={translateType} />;
+		default:
+			return <></>
 		}
 	};
 
@@ -128,6 +131,8 @@ function Index(props) {
 			return <TranslateInput translateType={translateType} systemSetting={systemSetting} />;
 		case TRANSLATE_TYPE.document:
 			return <TranslateFileDocumentInput translateType={translateType} systemSetting={systemSetting} />;
+		default:
+			return <></>
 		}
 	};
 

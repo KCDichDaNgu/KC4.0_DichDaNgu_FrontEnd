@@ -185,7 +185,8 @@ const recursiveCheckStatus = async (translationHistoryId, taskId, time, dispatch
 
 	dispatch(saveGetTranslationHistoryGetSingle(getTranslationHistoryResult));
 
-	if (getTranslationHistoryResult.data.status !== STATUS.TRANSLATED) {
+	if (getTranslationHistoryResult.data.status === STATUS.TRANSLATING) {
+		
 		return new Promise((resolve, reject) => {
 			setTimeout(async () => {
 				// 10 * 1000 = 10 sec
@@ -213,6 +214,7 @@ const recursiveCheckStatus = async (translationHistoryId, taskId, time, dispatch
  */
 const debouncedTranslationFile = debounce(async (body, dispatch) => {
 	try {
+		console.log('sadasdasdasdasdsad')
 		let time = 1;
 		const postTranslationResult = await axiosHelper.translateFile(body);
 		const getTranslationFileResult = await recursiveCheckStatus(
@@ -221,6 +223,7 @@ const debouncedTranslationFile = debounce(async (body, dispatch) => {
 			time,
 			dispatch
 		);
+		console.log('sadasdasdasdasdsad')
 		if (getTranslationFileResult.message === 'Time Out') {
 			dispatch(translationFileFailed(getTranslationFileResult.message));
 		} else {
@@ -228,6 +231,7 @@ const debouncedTranslationFile = debounce(async (body, dispatch) => {
 			if (getTranslationResult.status === 'translated') {
 				dispatch(translationFileDocumentSuccess(getTranslationResult));
 			} else {
+				
 				dispatch(translationFileFailed(getTranslationResult.message));
 			}
 		}
