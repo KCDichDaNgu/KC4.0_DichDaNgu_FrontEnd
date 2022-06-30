@@ -214,7 +214,7 @@ const recursiveCheckStatus = async (translationHistoryId, taskId, time, dispatch
  */
 const debouncedTranslationFile = debounce(async (body, dispatch) => {
 	try {
-		console.log('sadasdasdasdasdsad')
+		
 		let time = 1;
 		const postTranslationResult = await axiosHelper.translateFile(body);
 		const getTranslationFileResult = await recursiveCheckStatus(
@@ -223,7 +223,7 @@ const debouncedTranslationFile = debounce(async (body, dispatch) => {
 			time,
 			dispatch
 		);
-		console.log('sadasdasdasdasdsad')
+		
 		if (getTranslationFileResult.message === 'Time Out') {
 			dispatch(translationFileFailed(getTranslationFileResult.message));
 		} else {

@@ -44,6 +44,7 @@
 	"zh": "Trung",
 	"lo": "Lào",
 	"km": "Khơme",
+	"huy": "Hủy",
 	"Translate": {
 		"khongHoTro": "Không hỗ trợ dịnh",
 		"title2" : "UET Multilingual Neural Machine Translation",
@@ -64,7 +65,10 @@
 		"daSaoChep": "Đã sao chép",
 		"vanban": "Văn bản",
 		"tailieu": "Tài liệu",
-		"amthanh": "Âm thanh"
+		"amthanh": "Âm thanh",
+		"xephangbandich": "Xếp hạng bản dịch này",
+		"xephangbandich2": "Chúng tôi sẽ sử dụng ý kiến phản hồi của bạn để giúp cải thiện sản phẩm",
+		"dexuatchinhsua": "Đề xuất chỉnh sửa"
 	},
 	"History":{
 		"title1" : "Lịch sử trống",
@@ -98,6 +102,13 @@
 	"serverError": "Hệ thống đang gặp lỗi, xin vui lòng thử lại sau!",
 	"login":"Đăng nhập",
 	"username": "Tên đăng nhập",
+	"translationType": "Kiểu dịch",
+	"rating": "Đánh giá của người dùng",
+	"sourceText": "Văn bản nguồn",
+	"translatedText": "Văn bản dịch",
+	"userEditedTranslation": "Văn bản chỉnh sửa bởi người dùng",
+	"userUpdatedAt": "Thời điểm cập nhật bởi người dùng",
+	"createdAt": "Thời điểm tạo",
 	"lastName": "Họ",
 	"firstName": "Tên",
 	"password":"Mật khẩu",
@@ -142,5 +153,30 @@
 	"thoiGianChoUocTinh": "Thời gian chờ ước tính",
 	"damBaoEmail": "Chúng tôi sẽ không bao giờ chia sẻ email của bạn với bất kỳ ai khác.",
 	"emailNhanketQua": "Email nhận kết quả",
-	"gui": "Gửi"
+	"gui": "Gửi",
+	"dachinhsua": "Đã chỉnh sửa",
+	"khoiphucvanbangoc": "Khôi phục văn bản gốc",
+	"lydodonggopbandich": "Chúng tôi sẽ sử dụng nội dung bạn đóng góp để cải thiện chất lượng bản dịch và có thể cho người dùng khác xem các nội dung này (mà không xác định danh tính của bạn).",
+	"translationHistory": {
+		"status": {
+			"translating": "Đang được dịch", 
+			"translated": "Đã được dịch",
+			"closed": "Đã đóng",
+			"cancelled": "Đã hủy"
+		},
+		"translationType": {
+			"private_file_translation": "Dịch tệp có xác thực",
+			"private_plain_text_translation": "Dịch văn bản có xác thực",
+			"public_file_translation": "Dịch tệp không xác thực",
+			"public_plain_text_translation": "Dịch văn bản không xác thực"
+		},
+		"rating": {
+			"good": "Tốt",
+			"bad": "Không tốt"
+		}
+	},
+	"total": "Tổng số",
+	"records": "bản ghi",
+	"filter": "Bộ lọc",
+	"timkiem": "Tìm kiếm"
 }

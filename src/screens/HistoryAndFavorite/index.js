@@ -21,7 +21,7 @@ import { toastError } from '../../components/Toast';
 
 const PER_PAGE = 9;
 const STATUS = 'translated';
-const TRANSLATIONTYPE = 'public_plain_text_translation';
+const TRANSLATIONTYPE = 'private_plain_text_translation';
 
 function HistoryAndFavorite(props) {
 	const { historyState, navbarState } = props;

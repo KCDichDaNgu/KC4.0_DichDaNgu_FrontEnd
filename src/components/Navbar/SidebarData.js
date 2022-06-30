@@ -20,6 +20,11 @@ export const AdminSidebarData = [
 		type: 'screen'
 	},
 	{
+		title: 'Quản lý phản hồi của người dùng',
+		path: '/user-feedback-management',
+		type: 'screen'
+	},
+	{
 		title: 'Cài đặt hệ thống',
 		path: '/system-setting',
 		type: 'screen'
