@@ -117,9 +117,18 @@ function Index(props) {
 	const renderOutput = () => {
 		switch (translateType) {
 		case TRANSLATE_TYPE.plainText:
-			return <TranslateOutput translateType={translateType} />;
+			return <TranslateOutput 
+				translationState={translationState}
+				translateType={translateType} 
+				setCurrentTranslationHistory={setCurrentTranslationHistory}
+				currentTranslationHistory={currentTranslationHistory} 
+			/>;
 		case TRANSLATE_TYPE.document:
-			return <TranslateFileDocumentOutput translateType={translateType} />;
+			return <TranslateFileDocumentOutput 
+				translationState={translationState}
+				translateType={translateType} 
+				currentTranslationHistory={currentTranslationHistory} 
+			/>;
 		default:
 			return <></>
 		}

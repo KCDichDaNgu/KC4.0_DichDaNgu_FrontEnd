@@ -162,6 +162,21 @@ export const getUser = (id) => {
 	});
 };
 
+export const getUserTranslationHistoryFeedbackList = (params) => {
+
+	const _params = queryString.stringify(params);
+	
+	return new Promise((resolve, reject) => {
+		axiosDefault.get(`translation-history/feedback-list?${_params}`)
+			.then((result) => {
+				resolve(result.data);
+			})
+			.catch((error) => {
+				reject(error);
+			});
+	});
+}
+
 export const getUserList = (params) => {
 	const _params = queryString.stringify(params);
 	return new Promise((resolve, reject) => {
@@ -178,6 +193,18 @@ export const getUserList = (params) => {
 export const updateReceiverEmail = (data) => {
 	return new Promise((resolve, reject) => {
 		axiosDefault.put('update-receiver-email', data)
+			.then((result) => {
+				resolve(result.data);
+			})
+			.catch((error) => {
+				reject(error);
+			});
+	});
+}
+
+export const updateByOwner = (data) => {
+	return new Promise((resolve, reject) => {
+		axiosDefault.put('update-by-owner', data)
 			.then((result) => {
 				resolve(result.data);
 			})

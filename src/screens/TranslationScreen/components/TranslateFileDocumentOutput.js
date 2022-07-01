@@ -80,10 +80,10 @@ function TranslateFileDocumentOutput(props) {
 			md={6} 
 			className={styles.ResultTranslateBox} 
 			style={{
-				backgroundColor: isNull(translationFileState.documentFile) ? '#f3f3f3' : 'white'
+				backgroundColor: isNull(translationFileState.documentFile) ? '#f8f9fa' : 'white'
 			}}>
 			<div style={{
-				backgroundColor: isNull(translationFileState.documentFile) ? '#f3f3f3' : 'white' , 
+				backgroundColor: isNull(translationFileState.documentFile) ? '#f8f9fa' : 'white' , 
 				display: 'flex', 
 				paddingTop: 10,
 				paddingBottom: 10,

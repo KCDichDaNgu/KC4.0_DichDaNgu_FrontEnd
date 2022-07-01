@@ -13,6 +13,7 @@ import Login from './screens/Login';
 import RulesAndPolicy from './screens/RulesAndPolicy';
 import Help from './screens/Help';
 import UserManagement from './screens/UserManagement';
+import UserTranslationHistoryFeedbackManagement from './screens/UserTranslationHistoryFeedbackManagement';
 import SystemSetting from './screens/SystemSetting';
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
 				<Route path='/forgot-password' exact component={ForgotPassword} /> */}
 				<Route path='/rules-and-policy' exact component={RulesAndPolicy} />
 				<Route path='/help' exact component={Help} />
+				<Route path='/user-feedback-management' exact component={UserTranslationHistoryFeedbackManagement} />
 			</Switch>
 
 			<ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
