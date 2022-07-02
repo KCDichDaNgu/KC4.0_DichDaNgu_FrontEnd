@@ -172,11 +172,13 @@
 		},
 		"rating": {
 			"good": "Tốt",
-			"bad": "Không tốt"
+			"bad": "Không tốt",
+			"not_rated": "Chưa đánh giá"
 		}
 	},
 	"total": "Tổng số",
 	"records": "bản ghi",
 	"filter": "Bộ lọc",
-	"timkiem": "Tìm kiếm"
+	"timkiem": "Tìm kiếm",
+	"chuadanhgia": "Chưa đánh giá"
 }
