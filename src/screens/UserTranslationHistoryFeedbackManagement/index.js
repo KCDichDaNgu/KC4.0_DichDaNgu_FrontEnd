@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { Table, Button, Radio, Row, Col, Card } from 'antd';
 import EditIcon from '@mui/icons-material/Edit';
 import { useTranslation } from 'react-i18next';
-import { STATUS_CODE, USER_STATUS } from '../../constants/common';
+import { STATUS_CODE, USER_STATUS, LANG_CODE } from '../../constants/common';
 import * as axiosHelper from '../../helpers/axiosHelper';
 import { toast } from 'react-toastify';
 import authHoc from '../../hocs/authHoc';
@@ -44,7 +44,9 @@ function UserTranslationHistoryFeedbackManagement(props) {
         score__from: 0,
         score__to: 0,
         status: Object.keys(TRANSLATION_HISTORY_STATUS),
-        rating: ['good', 'bad'],
+        rating: ['good', 'bad', 'not_rated'],
+        source_lang: Object.keys(LANG_CODE),
+        target_lang: Object.keys(LANG_CODE),
         userUpdatedAt__from: null,
         userUpdatedAt__to: null,
         createdAt__from: null,
@@ -150,7 +152,8 @@ function UserTranslationHistoryFeedbackManagement(props) {
     };
 
     const renderRating = (rating, record) => {
-        return t(`translationHistory.rating.${rating}`);
+        if (rating) return t(`translationHistory.rating.${rating}`);
+        else return t('translationHistory.rating.not_rated')
     }
 
     const convertSortDirection = (direction) => {
@@ -196,9 +199,27 @@ function UserTranslationHistoryFeedbackManagement(props) {
 			}
 		},
         {
+			title: t('sourceLang'),
+            align: 'center',
+			dataIndex: 'sourceLang',
+			key: 'source_lang',
+            render: (lang_code, record) => {
+				return t(lang_code);
+			}
+		},
+        {
 			title: t('sourceText'),
 			dataIndex: 'sourceText',
 			key: 'sourceText',
+		},
+        {
+			title: t('targetLang'),
+            align: 'center',
+			dataIndex: 'targetLang',
+			key: 'target_lang',
+            render: (lang_code, record) => {
+				return t(lang_code);
+			}
 		},
         {
 			title: t('translatedText'),
@@ -241,6 +262,8 @@ function UserTranslationHistoryFeedbackManagement(props) {
 
 	if (!isAdmin(JSON.parse(localStorage.getItem('user')))) return <div>No authorized</div>;
 
+    const ratingOptions = [...Object.keys(TRANSLATION_HISTORY_RATING), 'not_rated']
+
 	return (
 		<div style={{
             padding: '50px 200px'
@@ -264,11 +287,59 @@ function UserTranslationHistoryFeedbackManagement(props) {
                                 mode="multiple"
                                 allowClear
                                 style={{ width: '100%' }}
-                                defaultValue={Object.keys(TRANSLATION_HISTORY_RATING)}
+                                defaultValue={ ratingOptions }
                                 onChange={ date => handleFilterChange(date, 'rating') }>
                                 {
-                                    Object.keys(TRANSLATION_HISTORY_RATING).map((r) => {
+                                    ratingOptions.map((r) => {
                                         return <Select.Option key={ r }>{ t(`translationHistory.rating.${r}`) }</Select.Option>
+                                    })
+                                }
+                            </Select>
+                        </Col>
+
+                        <Col style={{ marginTop: '1rem' }} xs={ 24 } md={ 8 }>
+
+                            <div style={{ 
+                                marginBottom: '10px',
+                                fontSize: '20px',
+                                fontWeight: 500
+                            }}>
+                                { t('sourceLang') }
+                            </div>
+
+                            <Select
+                                mode="multiple"
+                                allowClear
+                                style={{ width: '100%' }}
+                                defaultValue={ Object.keys(LANG_CODE) }
+                                onChange={ value => handleFilterChange(value, 'source_lang') }>
+                                {
+                                    Object.keys(LANG_CODE).map((lc) => {
+                                        return <Select.Option key={ lc }>{ t(lc) }</Select.Option>
+                                    })
+                                }
+                            </Select>
+                        </Col>
+
+                        <Col style={{ marginTop: '1rem' }} xs={ 24 } md={ 8 }>
+
+                            <div style={{ 
+                                marginBottom: '10px',
+                                fontSize: '20px',
+                                fontWeight: 500
+                            }}>
+                                { t('targetLang') }
+                            </div>
+
+                            <Select
+                                mode="multiple"
+                                allowClear
+                                style={{ width: '100%' }}
+                                defaultValue={ Object.keys(LANG_CODE) }
+                                onChange={ date => handleFilterChange(date, 'target_lang') }>
+                                {
+                                    Object.keys(LANG_CODE).map((lc) => {
+                                        return <Select.Option key={ lc }>{ t(lc) }</Select.Option>
                                     })
                                 }
                             </Select>
@@ -336,12 +407,6 @@ function UserTranslationHistoryFeedbackManagement(props) {
                             />
                         </Col>
                     </Row>
-                    
-                    {/* <div style={{ textAlign: 'right', marginTop: '2rem' }}>
-                        <Button type="primary" onClick={ searchUserTranslationHistoryFeedback }>
-                            { t('timkiem') }
-                        </Button>
-                    </div> */}
                 </Card>
                 
                 <Card>

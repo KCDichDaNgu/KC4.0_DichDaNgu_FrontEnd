@@ -106,7 +106,7 @@
 	"rating": "Đánh giá của người dùng",
 	"sourceText": "Văn bản nguồn",
 	"translatedText": "Văn bản dịch",
-	"userEditedTranslation": "Văn bản chỉnh sửa bởi người dùng",
+	"userEditedTranslation": "Văn bản người dùng đề xuất",
 	"userUpdatedAt": "Thời điểm cập nhật bởi người dùng",
 	"createdAt": "Thời điểm tạo",
 	"lastName": "Họ",
@@ -172,11 +172,15 @@
 		},
 		"rating": {
 			"good": "Tốt",
-			"bad": "Không tốt"
+			"bad": "Không tốt",
+			"not_rated": "Chưa đánh giá"
 		}
 	},
 	"total": "Tổng số",
 	"records": "bản ghi",
 	"filter": "Bộ lọc",
-	"timkiem": "Tìm kiếm"
+	"timkiem": "Tìm kiếm",
+	"chuadanhgia": "Chưa đánh giá",
+	"sourceLang": "Ngôn ngữ nguồn",
+	"targetLang": "Ngôn ngữ đích"
 }
