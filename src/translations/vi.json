@@ -106,7 +106,7 @@
 	"rating": "Đánh giá của người dùng",
 	"sourceText": "Văn bản nguồn",
 	"translatedText": "Văn bản dịch",
-	"userEditedTranslation": "Văn bản chỉnh sửa bởi người dùng",
+	"userEditedTranslation": "Văn bản người dùng đề xuất",
 	"userUpdatedAt": "Thời điểm cập nhật bởi người dùng",
 	"createdAt": "Thời điểm tạo",
 	"lastName": "Họ",
@@ -180,5 +180,7 @@
 	"records": "bản ghi",
 	"filter": "Bộ lọc",
 	"timkiem": "Tìm kiếm",
-	"chuadanhgia": "Chưa đánh giá"
+	"chuadanhgia": "Chưa đánh giá",
+	"sourceLang": "Ngôn ngữ nguồn",
+	"targetLang": "Ngôn ngữ đích"
 }

@@ -24,3 +24,11 @@ export const TRANSLATION_HISTORY_RATING = {
 	good: 'good',
 	bad: 'bad'
 }
+
+export const LANG_CODE = {
+	vi: 'vi',
+	en: 'en',
+	km: 'km',
+	lo: 'lo',
+	zh: 'zh'
+}
