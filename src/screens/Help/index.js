@@ -17,23 +17,33 @@ function index() {
 								<Col sm={3}>
 									<Nav variant="pills" className="flex-column">
 										<Nav.Item>
-											<Nav.Link eventKey="first">Bắt đầu với App Dịch</Nav.Link>
+											<Nav.Link eventKey="first">Hướng dẫn dùng phần mềm dịch trên Web</Nav.Link>
 										</Nav.Item>
 										<Nav.Item>
-											<Nav.Link eventKey="second">Dịch văn bản, hình ảnh, chữ viết tay hoặc lời nói</Nav.Link>
+											<Nav.Link eventKey="second">Hướng dẫn dùng phần mềm dịch trên iOS</Nav.Link>
 										</Nav.Item>
 										<Nav.Item>
-											<Nav.Link eventKey="three">Sử dụng lịch sử và từ vựng của bạn</Nav.Link>
-										</Nav.Item>
-										<Nav.Item>
-											<Nav.Link eventKey="four">Thông báo</Nav.Link>
+											<Nav.Link eventKey="three">Hướng dẫn dùng phần mềm dịch trên Android</Nav.Link>
 										</Nav.Item>
 									</Nav>
 								</Col>
 								<Col sm={9}>
 									<Tab.Content>
 										<Tab.Pane eventKey="first">
-											<p>
+											<div>
+												<h4>a. Đăng nhập</h4>
+												Người dùng có thể đăng nhập vào phần mềm dịch bằng tài khoản gmail.
+											
+												<h4 style={{ marginTop: '1rem' }}>b. Dịch văn bản</h4>
+												Người dùng nhập văn bản cần dịch
+												Ấn nút “phát hiện và dịch”
+
+												<h4 style={{ marginTop: '1rem' }}>c. Dịch tệp</h4>
+												Người dùng ấn nút “Tài liệu”
+												Lựa chọn tệp văn bản cần dịch
+												Ấn nút “phát hiện và dịch”
+											</div>
+											{/* <p>
 												Tải xuống và sử dụng app Dịch
 											</p>
 											<p>
@@ -73,16 +83,39 @@ function index() {
 												<Tab eventKey="ios" title="IOS">
 													IOS
 												</Tab>
-											</Tabs>
+											</Tabs> */}
 										</Tab.Pane>
 										<Tab.Pane eventKey="second">
-											Dịch văn bản, hình ảnh, chữ viết tay hoặc lời nói
+											<div>
+												<h4>a. Cài đặt</h4>
+												<div>Bước 1: Tải và cài đặt ứng dụng “UET Dịch đa ngôn ngữ” tại App-Store.</div>
+												<div>Bước 2: Thiết lập UET Dịch đa ngôn ngữ.</div>
+												Vào lần đầu tiên mở ứng dụng  dịch, bạn sẽ được yêu cầu chọn ngôn ngữ chính và ngôn ngữ bạn dịch thường xuyên nhất. Để chọn từ các ngôn ngữ có sẵn, hãy nhấn vào biểu tượng mũi tên xuống và chọn ngôn ngữ dịch hoặc chọn tự động nhận diện ngôn ngữ.
+
+												<h4 style={{ marginTop: '1rem' }}>b. Dịch văn bản</h4>
+												Nhập thông tin vào “Nhập nội dung văn bản” sau đó nhấn vào nút “Dịch”
+
+												<h4 style={{ marginTop: '1rem' }}>c. Dịch tệp</h4>
+												Nhấp vào ô “Chọn tài liệu" lựa chọn tài liệu cần dịch, sau đó nhấn vào nút Dịch
+												Lưu ý: Hệ thống chỉ hỗ trợ dịch file dạng docx, ppt, excell, txt.
+
+											</div>
 										</Tab.Pane>
 										<Tab.Pane eventKey="three">
-											Sử dụng lịch sử và từ vựng của bạn
-										</Tab.Pane>
-										<Tab.Pane eventKey="four">
-											Thông báo
+											<div>
+												<h4>a. Cài đặt</h4>
+												<div>Bước 1: Tải và cài đặt ứng dụng “UET Dịch đa ngôn ngữ” tại CH-Play.</div>
+												<div>Bước 2: Thiết lập UET Dịch đa ngôn ngữ.</div>
+												Vào lần đầu tiên mở ứng dụng  dịch, bạn sẽ được yêu cầu chọn ngôn ngữ chính và ngôn ngữ bạn dịch thường xuyên nhất. Để chọn từ các ngôn ngữ có sẵn, hãy nhấn vào biểu tượng mũi tên xuống và chọn ngôn ngữ dịch hoặc chọn tự động nhận diện ngôn ngữ.
+											
+												<h4 style={{ marginTop: '1rem' }}>b. Dịch văn bản</h4>
+												Nhập thông tin vào “Nhập nội dung văn bản” sau đó nhấn vào nút “Dịch”
+
+												<h4 style={{ marginTop: '1rem' }}>c. Dịch tệp</h4>
+												Nhấp vào ô “Chọn tài liệu" lựa chọn tài liệu cần dịch, sau đó nhấn vào nút Dịch
+												Lưu ý: Hệ thống chỉ hỗ trợ dịch file dạng docx, ppt, excell, txt.
+
+											</div>
 										</Tab.Pane>
 									</Tab.Content>
 								</Col>
