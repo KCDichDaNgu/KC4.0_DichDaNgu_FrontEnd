@@ -35,14 +35,14 @@ function index() {
 												Người dùng có thể đăng nhập vào phần mềm dịch bằng tài khoản Gmail.
 											
 												<h4 style={{ marginTop: '1rem' }}>B. Dịch văn bản</h4>
-												+ Người dùng nhập văn bản cần dịch.
-												+ Ấn nút “phát hiện và dịch”.
+												<div>+ Người dùng nhập văn bản cần dịch.</div>
+												<div>+ Ấn nút “phát hiện và dịch”.</div>
 
 
 												<h4 style={{ marginTop: '1rem' }}>C. Dịch tệp</h4>
-												+ Người dùng ấn nút “Tài liệu”.
-												+ Lựa chọn tệp văn bản cần dịch.
-												+ Ấn nút “Phát hiện và dịch”.
+												<div>+ Người dùng ấn nút “Tài liệu”.</div>
+												<div>+ Lựa chọn tệp văn bản cần dịch.</div>
+												<div>+ Ấn nút “Phát hiện và dịch”.</div>
 											</div>
 											{/* <p>
 												Tải xuống và sử dụng app Dịch
@@ -97,8 +97,8 @@ function index() {
 												Nhập thông tin vào “Nhập nội dung văn bản” và sau đó nhấn vào nút “Dịch”.
 
 												<h4 style={{ marginTop: '1rem' }}>C. Dịch tệp</h4>
-												Nhấp vào ô “Chọn tài liệu" để lựa chọn tài liệu cần dịch, sau đó nhấn vào nút “Dịch”.
-												Lưu ý: Hệ thống chỉ hỗ trợ dịch file dạng docx, pptx,và  xlsx, txt.
+												<div>Nhấp vào ô “Chọn tài liệu" để lựa chọn tài liệu cần dịch, sau đó nhấn vào nút “Dịch”.</div>
+												<div>Lưu ý: Hệ thống chỉ hỗ trợ dịch file dạng docx, pptx,và  xlsx, txt.</div>
 
 											</div>
 										</Tab.Pane>
@@ -113,8 +113,8 @@ function index() {
 												Nhập thông tin vào “Nhập nội dung văn bản” và sau đó nhấn vào nút “Dịch”.
 
 												<h4 style={{ marginTop: '1rem' }}>C. Dịch tệp</h4>
-												Nhấp vào ô “Chọn tài liệu" để lựa chọn tài liệu cần dịch, sau đó nhấn vào nút “Dịch”.
-												Lưu ý: Hệ thống chỉ hỗ trợ dịch file dạng docx, pptx, và xlsx, txt.
+												<div>Nhấp vào ô “Chọn tài liệu" để lựa chọn tài liệu cần dịch, sau đó nhấn vào nút “Dịch”.</div>
+												<div>Lưu ý: Hệ thống chỉ hỗ trợ dịch file dạng docx, pptx, và xlsx, txt.</div>
 											</div>
 										</Tab.Pane>
 									</Tab.Content>
