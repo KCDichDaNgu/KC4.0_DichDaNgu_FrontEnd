@@ -33,8 +33,7 @@ function TranslationChooselang(props) {
 		let newSourceLang = translationState.translateCode.targetLang,
 			newTargetLang = translationState.translateCode.sourceLang;
 
-		// if (newSourceLang === 'vi') newTargetLang = 'en';
-		// else newSourceLang = 'vi';
+		if (newSourceLang === 'vi') newTargetLang = 'en';
 		
 		props.swapTranslate(newSourceLang, newTargetLang);
 		

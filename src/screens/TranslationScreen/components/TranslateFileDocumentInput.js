@@ -60,7 +60,7 @@ function TranslateFileDocumentInput(props) {
 							</Typography>
 							<input
 								type="file"
-								accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+								accept=".docx,.xlsx,.pptx"
 								style={{ display: 'none' }}
 								id="contained-button-file"
 								onChange={(event) => {
