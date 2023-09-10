@@ -198,8 +198,7 @@ Dưới đây là những bước chi tiết để cài đặt hệ thống
 
 <!-- CONTRIBUTING -->
 ## Đóng góp
-
-TODO
+Các thành viên đề tài KC4.0
 
 <p align="right">(<a href="#top">Trở lại đầu trang</a>)</p>
 
@@ -207,8 +206,7 @@ TODO
 
 <!-- LICENSE -->
 ## Giấy phép
-
-TODO
+MIT
 
 <!-- Distributed under the MIT License. See `LICENSE.txt` for more information. -->
 
@@ -218,8 +216,8 @@ TODO
 
 <!-- CONTACT -->
 ## Liên hệ
-
-TODO
+Phòng thí nghiệm AI4Life
+Trường Đại học Công nghệ, ĐHQGHN
 
 <!-- Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com
 
